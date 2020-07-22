@@ -33,5 +33,17 @@ namespace Logic.Metrics
 
             return retval;
         }
+
+        public static ITest[] GenerateRandomExitTests(double mean, double standDev, int iterations)
+        {
+            ITest[] retval = new ITest[iterations];
+
+            for (int i = 0; i < iterations; i++)
+            {
+                retval[i] = new RandomExitTest(mean, standDev);   
+            }
+
+            return retval;
+        }
     }
 }

@@ -2,29 +2,35 @@
 using System.Collections.Generic;
 using System.Text;
 using Daedalus.Utils;
+using Logic.Metrics;
 using Logic.Metrics.EntryTests;
 using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
 
 namespace Daedalus.ViewModels
 {
-    public class FixedBarExitViewModel : ViewModelBase
+    public class FixedBarExitViewModel : TestViewModelBase
     {
-        private FixedBarExitTest _test { get; set; }
-
-        public Model PlotModel { get; set; }
-        public PlotController ControllerModel { get; set; }
+        private int upperLimit { get; set; } 
+        private int lowerLimit { get; set; } 
 
 
 
-        public FixedBarExitViewModel()
+        public FixedBarExitViewModel() : base()
         {
-
+            this.InitialiseData();
         }
 
 
-        private void InitialiseData()
+        protected sealed override void InitialiseData()
         {
-            _test = new FixedBarExitTest();
+            upperLimit = 300;
+            lowerLimit = 1;
+
+            _test = TestFactory.GenerateFixedBarExitTest(lowerLimit, upperLimit);
+            
+            base.InitialiseData();
         }
 
     }

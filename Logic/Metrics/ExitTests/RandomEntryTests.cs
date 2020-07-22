@@ -3,7 +3,7 @@ using Logic.Utils;
 
 namespace Logic.Metrics.ExitTests
 {
-    public class RandomEntryTests :TestBase
+    public class RandomEntryTests : TestBase
     {
 
         // Random Entry
