@@ -16,7 +16,7 @@ namespace Logic.Metrics.EntryTests
             StopDistance = stop_distance;
         }
 
-        public void RunFSTE(MarketData[] data, bool[] entries)
+        public override void Run(MarketData[] data, bool[] entries)
         {
             FBELong = new double[data.Length];
             FBEShort = new double[data.Length];

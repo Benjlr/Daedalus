@@ -1,46 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Logic.Metrics.EntryTests;
+﻿using Logic.Metrics.EntryTests;
+using System;
 
 namespace Logic.Metrics
 {
     public class TestFactory
     {
-        public static ITest[] GenerateFixedBarExitTest(int start, int end)
+        public static ITest[] GenerateFixedBarExitTest(int start, int end, Strategy strat, Market market)
         {
             if(start > end) throw new Exception();
 
             ITest[] retval = new ITest[end-start];
 
-            for (int i = start; i < end; i++) retval[i] = new FixedBarExitTest(i);
+            for (int i = start; i < end; i++)
+            {
+                retval[i-start] = new FixedBarExitTest(i);
+                retval[i-start].Run(market.RawData, strat.Entries);
+            }
 
             return retval;
         }
 
-        public static ITest[] GenerateFixedStopTargetExitTest(int lowestStop, int highestStop, int lowestTarget, int highestTarget )
+        public static ITest[] GenerateFixedStopTargetExitTest(int lowestStop, int highestStop, int lowestTarget, int highestTarget, Strategy strat, Market market)
         {
 
-            ITest[] retval = new ITest[(highestStop - lowestStop) * (highestTarget - lowestTarget)];
+            ITest[] retval = new ITest[(lowestStop - highestStop) * (highestTarget - lowestTarget)];
 
-            for (int i = lowestStop; i < highestStop; i++)
+            for (int i = highestStop; i < lowestStop; i++)
             {
-                for (int j = highestTarget; j < lowestTarget; j++)
+                for (int j = lowestTarget; j < highestTarget; j++)
                 {
-                    retval[i] = new FixedStopTargetExitTest(j,i,false);
+                    retval[(i-highestStop) * (highestTarget - lowestTarget) + (j - lowestTarget)] = new FixedStopTargetExitTest(j,i,false);
+                    retval[(i - highestStop) * (highestTarget - lowestTarget) + (j - lowestTarget)].Run(market.RawData, strat.Entries);
+
                 }
             }
 
             return retval;
         }
 
-        public static ITest[] GenerateRandomExitTests(double mean, double standDev, int iterations)
+        public static ITest[] GenerateRandomExitTests(double mean, double standDev, int iterations, Strategy strat, Market market)
         {
             ITest[] retval = new ITest[iterations];
 
             for (int i = 0; i < iterations; i++)
             {
-                retval[i] = new RandomExitTest(mean, standDev);   
+                retval[i] = new RandomExitTest(mean, standDev); 
+                retval[i].Run(market.RawData, strat.Entries);
+
             }
 
             return retval;

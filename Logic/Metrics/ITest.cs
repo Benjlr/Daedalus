@@ -10,5 +10,7 @@
         double WinPercentageShort { get; }
         double ExpectancyLong { get; }
         double ExpectancyShort { get; }
+
+        void Run(MarketData[] data, bool[] entries);
     }
 }

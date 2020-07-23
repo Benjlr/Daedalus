@@ -4,9 +4,22 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Daedalus"
+        xmlns:views ="clr-namespace:Daedalus.Views"
+        xmlns:viewModels="clr-namespace:Daedalus.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Grid.ColumnDefinitions>
+            
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100*"></RowDefinition>
+            <RowDefinition Height="100*"></RowDefinition>
+            <RowDefinition Height="100*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <views:FixedBarExitView Grid.Row="0"></views:FixedBarExitView>
+        <views:FixedStopTargetExitView Grid.Row="1"></views:FixedStopTargetExitView>
+        <views:RandomExitTest Grid.Row="2"></views:RandomExitTest>
 
     </Grid>
 </Window>

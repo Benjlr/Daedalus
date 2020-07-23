@@ -18,5 +18,10 @@ namespace Logic.Metrics
 
         public double ExpectancyLong => (AverageGainLong * WinPercentageLong) / (-AverageLossLong * (1 - WinPercentageLong));
         public double ExpectancyShort => (AverageGainShort * WinPercentageShort) / (-AverageLossShort * (1 - WinPercentageShort));
+
+        public virtual void Run(MarketData[] data, bool[] entries)
+        {
+
+        }
     }
 }

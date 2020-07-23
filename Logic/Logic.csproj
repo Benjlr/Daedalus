@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <Reference Include="PriceSeries">
-      <HintPath>..\..\Costanza\PriceSeries\bin\Release\PriceSeries.dll</HintPath>
+      <HintPath>..\Costanza\PriceSeries.dll</HintPath>
     </Reference>
   </ItemGroup>
 

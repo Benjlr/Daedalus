@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Daedalus.Models;
 using Daedalus.Utils;
 using Logic.Metrics;
-using Logic.Metrics.EntryTests;
-using OxyPlot;
-using OxyPlot.Axes;
-using OxyPlot.Series;
 
 namespace Daedalus.ViewModels
 {
@@ -28,7 +22,9 @@ namespace Daedalus.ViewModels
             upperLimit = 300;
             lowerLimit = 1;
 
-            _test = TestFactory.GenerateFixedBarExitTest(lowerLimit, upperLimit);
+    
+
+            _test = TestFactory.GenerateFixedBarExitTest(lowerLimit, upperLimit, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket);
             
             base.InitialiseData();
         }

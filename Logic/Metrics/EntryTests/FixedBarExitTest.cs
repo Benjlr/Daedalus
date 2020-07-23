@@ -2,7 +2,6 @@
 {
     public class FixedBarExitTest : TestBase
     {
-
         // Fixed Bar Exit
         private int Fixed_Bar_exit { get; }
 
@@ -12,7 +11,7 @@
         }
 
 
-        public void RunFBE(MarketData[] data,bool[] entries)
+        public override void Run(MarketData[] data,bool[] entries)
         {
             FBELong = new double[data.Length];
             FBEShort= new double[data.Length];

@@ -5,6 +5,7 @@ using System.Text;
 using Daedalus.Utils.Enums;
 using Logic.Metrics;
 using OxyPlot;
+using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 
@@ -38,6 +39,21 @@ namespace Daedalus.Utils
             PlotModel = new PlotModel();
             ControllerModel = new PlotController();
 
+            var lineAnnotation = new LineAnnotation
+            {
+                Y = 1,
+                //YAxisKey = "Expectancy",
+                LineStyle = LineStyle.Solid,
+                Type = LineAnnotationType.Horizontal,
+            };
+            var WinAnnotation = new LineAnnotation
+            {
+                Y = 0.5,
+                LineStyle = LineStyle.Dot,
+                //YAxisKey = "Ratio",
+                Type = LineAnnotationType.Horizontal,
+            };
+
             var horiAxis = new LinearAxis()
             {
                 Position = AxisPosition.Bottom,
@@ -46,39 +62,36 @@ namespace Daedalus.Utils
             var vertAxis = new LinearAxis()
             {
                 Position = AxisPosition.Left,
-                Key = "Expectancy"
+                //Key = "Expectancy"
             };
-            var vertAxisRatio = new LinearAxis()
-            {
-                Position = AxisPosition.Right,
-                Key = "Ratio"
-            };
+            //var vertAxisRatio = new LinearAxis()
+            //{
+            //    Position = AxisPosition.Right,
+            //    Key = "Ratio"
+            //};
 
             WinRatioLong = new LineSeries()
             {
+                LineStyle = LineStyle.Dot,
                 Color = OxyColors.Blue,
-                YAxisKey = "Ratio"
+                //YAxisKey = "Ratio"
             };
             WinRatioShort = new LineSeries()
             {
+                LineStyle = LineStyle.Dot,
                 Color = OxyColors.Red,
-                YAxisKey = "Ratio"
-
+                //YAxisKey = "Ratio"
             };
 
             ExpectancyLong = new LineSeries()
             {
                 Color = OxyColors.Blue,
-                LineStyle = LineStyle.Dot,
-                YAxisKey = "Expectancy"
-
+                //YAxisKey = "Expectancy"
             };
             ExpectancyShort = new LineSeries()
             {
                 Color = OxyColors.Red,
-                LineStyle = LineStyle.Dot,
-                YAxisKey = "Expectancy"
-
+                //YAxisKey = "Expectancy"
             };
 
             for (int i = 0; i < _test.Length; i++)
@@ -89,11 +102,10 @@ namespace Daedalus.Utils
                 ExpectancyShort.Points.Add(new DataPoint(i + 1, _test[i].ExpectancyShort));
             }
 
-
+            PlotModel.Annotations.Add(lineAnnotation);
+            PlotModel.Annotations.Add(WinAnnotation);
             PlotModel.Axes.Add(horiAxis);
             PlotModel.Axes.Add(vertAxis);
-            PlotModel.Axes.Add(vertAxisRatio);
-
             Update();
         }
 

@@ -17,7 +17,7 @@ namespace Logic.Metrics.EntryTests
             _sDev = stdev;
         }
 
-        public void RunRE(MarketData[] data, bool[] entries)
+        public override void Run(MarketData[] data, bool[] entries)
         {
             FBELong = new double[data.Length];
             FBEShort = new double[data.Length];

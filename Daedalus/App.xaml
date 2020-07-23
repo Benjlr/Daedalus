@@ -2,8 +2,12 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Daedalus"
+             xmlns:ViewModels="clr-namespace:Daedalus.ViewModels"
              StartupUri="MainWindow.xaml">
+
     <Application.Resources>
-         
+        <ViewModels:FixedBarExitViewModel x:Key="FBEViewModel" />
+        <ViewModels:FixedStopTargetExitViewModel x:Key="FSTEViewModel" />
+        <ViewModels:RandomExitViewModel x:Key="RandViewModel" />
     </Application.Resources>
 </Application>
