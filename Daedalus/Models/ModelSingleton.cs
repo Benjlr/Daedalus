@@ -20,7 +20,7 @@ namespace Daedalus.Models
         {
             Mymarket = MarketBuilder.CreateMarket(Markets.ASX200_Cash_5_Min);
 
-            var entryOne = new BullishMATag();
+            var entryOne = new PriceContraction();
             var exitOne = new ThreeLowerLows();
 
             MyStarrtegy = StrategyBuilder.CreateStrategy(new IRuleSet[] { entryOne, exitOne }, Mymarket);
