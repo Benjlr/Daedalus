@@ -21,7 +21,7 @@ namespace Daedalus.ViewModels
 
         protected sealed override void InitialiseData()
         {
-            _test = TestFactory.GenerateFixedStopTargetExitTest(20, 5,2,50, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket);
+            _test = TestFactory.GenerateFixedStopTargetExitTest(20, 5,5,20, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket);
             
             base.InitialiseData();
         }

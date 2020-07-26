@@ -16,10 +16,12 @@
             <RowDefinition Height="100*"></RowDefinition>
             <RowDefinition Height="100*"></RowDefinition>
             <RowDefinition Height="100*"></RowDefinition>
+            <RowDefinition Height="100*"></RowDefinition>
         </Grid.RowDefinitions>
         <views:FixedBarExitView Grid.Row="0"></views:FixedBarExitView>
         <views:FixedStopTargetExitView Grid.Row="1"></views:FixedStopTargetExitView>
-        <views:RandomExitTest Grid.Row="2"></views:RandomExitTest>
+        <views:RandomExitTests Grid.Row="2"></views:RandomExitTests>
+        <views:RangeTests Grid.Row="3"></views:RangeTests>
 
     </Grid>
 </Window>

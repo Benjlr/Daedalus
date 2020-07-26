@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Logic.Metrics.CoreTests
 {
@@ -29,8 +30,8 @@ namespace Logic.Metrics.CoreTests
 
             for (int i = 0; i < _ranges; i++)
             {
-                var start = _rand.Next(0, data.Length - 1500);
-                var end = _rand.Next(1000, 1500);
+                var start = _rand.Next(0, data.Length - 2000);
+                var end = _rand.Next(1800, 2000);
 
                 double capitalLong = 0;
                 double capitalShort = 0;
@@ -49,7 +50,7 @@ namespace Logic.Metrics.CoreTests
                         x++;
 
                         while (!myStrat.Exits[x] && x < data.Length) x++;
-                        if (x == data.Length - 1) break;
+                        if (x >= data.Length - 1) break;
 
                         totalTrades++;
                         if (data[x].Open_Bid > entryPriceBull) totalWinsLong++;
@@ -65,6 +66,11 @@ namespace Logic.Metrics.CoreTests
                 WinRatioLong[i] = (double)totalWinsLong / totalTrades;
                 WinRatioShort[i] = (double)totalWinsShort / totalTrades;
             }
+
+            FinalResultLong = FinalResultLong.OrderBy(x => x).ToArray();
+            FinalResultShort = FinalResultShort.OrderBy(x => x).ToArray();
+            WinRatioLong = WinRatioLong.OrderBy(x => x).ToArray();
+            WinRatioShort = WinRatioShort.OrderBy(x => x).ToArray();
 
 
         }

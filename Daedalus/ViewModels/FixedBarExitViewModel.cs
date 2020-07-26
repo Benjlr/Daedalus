@@ -6,10 +6,6 @@ namespace Daedalus.ViewModels
 {
     public class FixedBarExitViewModel : TestViewModelBase
     {
-        private int upperLimit { get; set; } 
-        private int lowerLimit { get; set; } 
-
-
 
         public FixedBarExitViewModel() : base()
         {
@@ -19,11 +15,9 @@ namespace Daedalus.ViewModels
 
         protected sealed override void InitialiseData()
         {
-            upperLimit = 300;
-            lowerLimit = 1;
-
-    
-
+            var upperLimit = 865;
+            var lowerLimit = 1;
+            
             _test = TestFactory.GenerateFixedBarExitTest(lowerLimit, upperLimit, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket);
             
             base.InitialiseData();

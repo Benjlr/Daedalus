@@ -5,9 +5,9 @@ namespace Daedalus.Views
     /// <summary>
     /// Interaction logic for RandomExitTest.xaml
     /// </summary>
-    public partial class RandomExitTests : UserControl
+    public partial class RangeTests : UserControl
     {
-        public RandomExitTests()
+        public RangeTests()
         {
             InitializeComponent();
         }

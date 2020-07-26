@@ -44,12 +44,12 @@ namespace UtilConsole
                 //Console.WriteLine(i);
                 FixedBarExitTest t = new FixedBarExitTest(i);
                 FixedStopTargetExitTest u = new FixedStopTargetExitTest(i, i, false);
-                t.RunFBE(asx_200_5_min.RawData, myStrat.Entries);
-                u.RunFSTE(asx_200_5_min.RawData, myStrat.Entries);
+                t.Run(asx_200_5_min.RawData, myStrat.Entries);
+                u.Run(asx_200_5_min.RawData, myStrat.Entries);
 
                 RandomExitTest v = new RandomExitTest(myStrat.Durations.Where(x=>x!=0).Average(), myStrat.Durations.Where(x => x != 0).StandardDeviation());
                 RandomEntryTests w = new RandomEntryTests(myStrat.Durations.Where(x => x != 0).Average(), myStrat.Durations.Where(x => x != 0).StandardDeviation());
-                v.RunRE(asx_200_5_min.RawData, myStrat.Entries);
+                v.Run(asx_200_5_min.RawData, myStrat.Entries);
                 w.RunRE(asx_200_5_min.RawData, myStrat.Exits);
 
                 stringo.AppendLine($"{t.ExpectancyLong:0.00},{u.ExpectancyLong:0.00},{v.ExpectancyLong:0.00},{w.ExpectancyLong:0.00}");

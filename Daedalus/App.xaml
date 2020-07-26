@@ -9,5 +9,6 @@
         <ViewModels:FixedBarExitViewModel x:Key="FBEViewModel" />
         <ViewModels:FixedStopTargetExitViewModel x:Key="FSTEViewModel" />
         <ViewModels:RandomExitViewModel x:Key="RandViewModel" />
+        <ViewModels:RangeTestsViewModel x:Key="RangeViewModel" />
     </Application.Resources>
 </Application>

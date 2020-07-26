@@ -1,5 +1,6 @@
 ﻿using Logic.Metrics.EntryTests;
 using System;
+using Logic.Metrics.CoreTests;
 
 namespace Logic.Metrics
 {
@@ -49,6 +50,13 @@ namespace Logic.Metrics
 
             }
 
+            return retval;
+        }
+
+        public static RangeTest GenerateRangeTest(int rangesToTest, Strategy strat, Market market)
+        {
+            RangeTest retval = new RangeTest(rangesToTest);
+            retval.Run(market.RawData, strat);
             return retval;
         }
     }
