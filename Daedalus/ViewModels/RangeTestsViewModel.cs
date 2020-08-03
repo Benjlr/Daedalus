@@ -1,4 +1,7 @@
-﻿using Daedalus.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Daedalus.Models;
+using LinqStatistics;
 using Logic.Metrics;
 using OxyPlot;
 using OxyPlot.Annotations;
@@ -12,10 +15,10 @@ namespace Daedalus.ViewModels
         public PlotModel PlotModel { get; set; }
         public PlotController ControllerModel { get; set; }
 
-        private LinearBarSeries CapitalLong { get; set; }
-        private LinearBarSeries CapitalShort { get; set; }
-        private LinearBarSeries WinRatioLong { get; set; }
-        private LinearBarSeries WinRatioShort { get; set; }
+        private ColumnSeries CapitalLong { get; set; }
+        private ColumnSeries CapitalShort { get; set; }
+        //private LinearBarSeries WinRatioLong { get; set; }
+        //private LinearBarSeries WinRatioShort { get; set; }
 
         public RangeTestsViewModel() : base()
         {
@@ -25,23 +28,31 @@ namespace Daedalus.ViewModels
 
         protected void InitialiseData()
         {
-            var _test = TestFactory.GenerateRangeTest(1000, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket);
+            var _test = TestFactory.GenerateRangeTest(3000, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket);
 
             PlotModel = new PlotModel();
             ControllerModel = new PlotController();
 
 
-            var WinAnnotation = new LineAnnotation
-            {
-                Y = 0,
-                LineStyle = LineStyle.Solid,
-                YAxisKey = "Expectancy",
-                Type = LineAnnotationType.Horizontal,
-            };
+            List<Bin> LongDistributions = _test.FinalResultLong.Histogram(10).ToList();
+            List<Bin> ShortDistributions = _test.FinalResultShort.Histogram(100).OrderBy(x => x.RepresentativeValue).ToList();
 
-            var horiAxis = new LinearAxis()
+
+            var horiAxis = new CategoryAxis()
             {
                 Position = AxisPosition.Bottom,
+            };
+            horiAxis.ItemsSource = LongDistributions.Select(x => (int)x.RepresentativeValue);
+
+            double aboveZero = LongDistributions.Where(x => x.RepresentativeValue > 0).Sum(x => x.Count);
+            double belowZero = LongDistributions.Where(x => x.RepresentativeValue < 0).Sum(x => x.Count);
+
+            PlotModel.Title = $"{aboveZero / (aboveZero + belowZero): 0.00%} - {LongDistributions.Sum(x=>x.Count):0}";
+            var zeroAnnote = new LineAnnotation
+            {
+                X = LongDistributions.IndexOf(LongDistributions.First(x=>x.RepresentativeValue > 0))-0.5,
+                LineStyle = LineStyle.Solid,
+                Type = LineAnnotationType.Vertical,
             };
 
             var vertAxis = new LinearAxis()
@@ -49,61 +60,35 @@ namespace Daedalus.ViewModels
                 Position = AxisPosition.Left,
                 Key = "Expectancy"
             };
-            var vertAxisRatio = new LinearAxis()
-            {
-                Position = AxisPosition.Right,
-                Key = "Ratio"
-            };
 
-            WinRatioLong = new LinearBarSeries()
-            {
-                
-                FillColor = OxyColors.LightBlue,
-                
-                YAxisKey = "Ratio"
-            };
-            WinRatioShort = new LinearBarSeries()
-            {
-                
-                FillColor = OxyColors.LightPink,
-                YAxisKey = "Ratio"
-            };
-            CapitalLong = new LinearBarSeries()
+            CapitalLong = new ColumnSeries()
             {
                 FillColor = OxyColors.Blue,
-                YAxisKey = "Expectancy"
+                IsStacked = false,
             };
-            CapitalShort = new LinearBarSeries()
+            CapitalShort = new ColumnSeries()
             {
                 FillColor = OxyColors.Red,
-                YAxisKey = "Expectancy"
+                IsStacked = false,
             };
-            for (int i = 0; i < _test.FinalResultLong.Length; i++)
+            for (int i = 0; i < LongDistributions.Count; i++)
             {
-            //    WinRatioLong.Points.Add(new DataPoint(i + i*1, _test.WinRatioLong[i]));
-            //    WinRatioShort.Points.Add(new DataPoint(i + i*2, _test.WinRatioShort[i]));
-                CapitalLong.Points.Add(new DataPoint(i+1, _test.FinalResultLong[i]));
-                //CapitalShort.Points.Add(new DataPoint(i + i*4, _test.FinalResultShort[i]));
+                CapitalLong.Items.Add(new ColumnItem( LongDistributions[i].Count ));
             }
+
+            
 
             PlotModel.Axes.Add(horiAxis);
             PlotModel.Axes.Add(vertAxis);
-            PlotModel.Axes.Add(vertAxisRatio);
-            //PlotModel.Annotations.Add(lineAnnotation);
-            PlotModel.Annotations.Add(WinAnnotation);
+            PlotModel.Annotations.Add(zeroAnnote);
 
             Update();
         }
 
         protected void Update()
         {
-
             PlotModel.Series.Clear();
             PlotModel.Series.Add(CapitalLong);
-            PlotModel.Series.Add(CapitalShort);
-            PlotModel.Series.Add(WinRatioLong);
-            PlotModel.Series.Add(WinRatioShort);
-
             PlotModel.InvalidatePlot(true);
         }
     }

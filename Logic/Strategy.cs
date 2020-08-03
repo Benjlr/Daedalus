@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using LinqStatistics;
-using Logic.Rules;
+﻿using Logic.Rules;
 
 namespace Logic
 {
@@ -11,8 +8,6 @@ namespace Logic
         public bool[] Exits { get; }
 
         public int[] Durations { get; }
-
-        public List<Bin> LongTimeDistribution => Durations.Where(x=>x!=0).Histogram(40).ToList();
 
         public IRuleSet[] Rules { get; }
 

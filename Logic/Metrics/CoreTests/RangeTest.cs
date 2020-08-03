@@ -30,8 +30,8 @@ namespace Logic.Metrics.CoreTests
 
             for (int i = 0; i < _ranges; i++)
             {
-                var start = _rand.Next(0, data.Length - 310);
-                var end = _rand.Next(260, 310);
+                var start = _rand.Next(200, data.Length - 1500);
+                var end = _rand.Next(1400, 1500);
 
                 double capitalLong = 0;
                 double capitalShort = 0;

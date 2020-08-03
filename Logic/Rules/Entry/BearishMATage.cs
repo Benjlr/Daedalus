@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace Logic.Rules.Entry
 {
-    public class BullishMATag : RuleBase
+    public class BearishMATage : RuleBase
     {
-        public BullishMATag()
+        public BearishMATage()
         {
-            Dir = Thesis.Bull;
+            Dir = Thesis.Bear;
             Order = Pos.Entry;
         }
         private double spread = 2;
@@ -25,9 +25,9 @@ namespace Logic.Rules.Entry
 
             for (int i = 200; i < data.Count; i++)
             {
-                if (data[i].High > twohundredMA[i] && 
-                    data[i].Low > twentyMA[i] && 
-                    data[i].High < six[i] &&
+                if (data[i].High < twohundredMA[i] && 
+                    data[i].High < twentyMA[i] && 
+                    data[i].Low > six[i] &&
                     rawData[i].Open_Ask - rawData[i].Open_Bid <= spread) Satisfied[i] = true;
             }
             

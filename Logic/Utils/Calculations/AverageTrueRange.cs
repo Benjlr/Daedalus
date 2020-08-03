@@ -7,7 +7,7 @@ namespace Logic.Calculations
 {
     public class AverageTrueRange
     {
-        public static List<double> Calculate(List<Session> input, int period)
+        public static List<double> Calculate(List<Session> input, int period = 20)
         {
             var atr = new List<double>();
 

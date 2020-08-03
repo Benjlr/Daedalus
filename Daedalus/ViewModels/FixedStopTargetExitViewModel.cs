@@ -1,11 +1,6 @@
 ﻿using Daedalus.Models;
 using Daedalus.Utils;
-using Logic;
 using Logic.Metrics;
-using Logic.Rules;
-using Logic.Rules.Entry;
-using Logic.Rules.Exit;
-using Logic.Utils;
 
 namespace Daedalus.ViewModels
 {
