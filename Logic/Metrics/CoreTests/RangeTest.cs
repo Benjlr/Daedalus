@@ -30,8 +30,8 @@ namespace Logic.Metrics.CoreTests
 
             for (int i = 0; i < _ranges; i++)
             {
-                var start = _rand.Next(0, data.Length - 2000);
-                var end = _rand.Next(1800, 2000);
+                var start = _rand.Next(0, data.Length - 310);
+                var end = _rand.Next(260, 310);
 
                 double capitalLong = 0;
                 double capitalShort = 0;
@@ -49,7 +49,7 @@ namespace Logic.Metrics.CoreTests
                         double entryPriceBear = data[x].Open_Bid;
                         x++;
 
-                        while (!myStrat.Exits[x] && x < data.Length) x++;
+                        while (x < data.Length && !myStrat.Exits[x]) x++;
                         if (x >= data.Length - 1) break;
 
                         totalTrades++;

@@ -12,10 +12,10 @@ namespace Daedalus.ViewModels
         public PlotModel PlotModel { get; set; }
         public PlotController ControllerModel { get; set; }
 
-        private LineSeries CapitalLong { get; set; }
-        private LineSeries CapitalShort { get; set; }
-        private LineSeries WinRatioLong { get; set; }
-        private LineSeries WinRatioShort { get; set; }
+        private LinearBarSeries CapitalLong { get; set; }
+        private LinearBarSeries CapitalShort { get; set; }
+        private LinearBarSeries WinRatioLong { get; set; }
+        private LinearBarSeries WinRatioShort { get; set; }
 
         public RangeTestsViewModel() : base()
         {
@@ -25,7 +25,7 @@ namespace Daedalus.ViewModels
 
         protected void InitialiseData()
         {
-            var _test = TestFactory.GenerateRangeTest(100, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket);
+            var _test = TestFactory.GenerateRangeTest(1000, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket);
 
             PlotModel = new PlotModel();
             ControllerModel = new PlotController();
@@ -33,9 +33,9 @@ namespace Daedalus.ViewModels
 
             var WinAnnotation = new LineAnnotation
             {
-                Y = 0.5,
-                LineStyle = LineStyle.Dot,
-                YAxisKey = "Ratio",
+                Y = 0,
+                LineStyle = LineStyle.Solid,
+                YAxisKey = "Expectancy",
                 Type = LineAnnotationType.Horizontal,
             };
 
@@ -55,34 +55,35 @@ namespace Daedalus.ViewModels
                 Key = "Ratio"
             };
 
-            WinRatioLong = new LineSeries()
+            WinRatioLong = new LinearBarSeries()
             {
-                LineStyle = LineStyle.Dot,
-                Color = OxyColors.Blue,
+                
+                FillColor = OxyColors.LightBlue,
+                
                 YAxisKey = "Ratio"
             };
-            WinRatioShort = new LineSeries()
+            WinRatioShort = new LinearBarSeries()
             {
-                LineStyle = LineStyle.Dot,
-                Color = OxyColors.Red,
+                
+                FillColor = OxyColors.LightPink,
                 YAxisKey = "Ratio"
             };
-            CapitalLong = new LineSeries()
+            CapitalLong = new LinearBarSeries()
             {
-                Color = OxyColors.Blue,
+                FillColor = OxyColors.Blue,
                 YAxisKey = "Expectancy"
             };
-            CapitalShort = new LineSeries()
+            CapitalShort = new LinearBarSeries()
             {
-                Color = OxyColors.Red,
+                FillColor = OxyColors.Red,
                 YAxisKey = "Expectancy"
             };
             for (int i = 0; i < _test.FinalResultLong.Length; i++)
             {
-                WinRatioLong.Points.Add(new DataPoint(i + 1, _test.WinRatioLong[i]));
-                WinRatioShort.Points.Add(new DataPoint(i + 1, _test.WinRatioShort[i]));
-                CapitalLong.Points.Add(new DataPoint(i + 1, _test.FinalResultLong[i]));
-                CapitalShort.Points.Add(new DataPoint(i + 1, _test.FinalResultShort[i]));
+            //    WinRatioLong.Points.Add(new DataPoint(i + i*1, _test.WinRatioLong[i]));
+            //    WinRatioShort.Points.Add(new DataPoint(i + i*2, _test.WinRatioShort[i]));
+                CapitalLong.Points.Add(new DataPoint(i+1, _test.FinalResultLong[i]));
+                //CapitalShort.Points.Add(new DataPoint(i + i*4, _test.FinalResultShort[i]));
             }
 
             PlotModel.Axes.Add(horiAxis);
