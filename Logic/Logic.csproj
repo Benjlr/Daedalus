@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MathTools\MathTools.vcxproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="PriceSeries">
       <HintPath>..\Costanza\PriceSeries.dll</HintPath>
     </Reference>
