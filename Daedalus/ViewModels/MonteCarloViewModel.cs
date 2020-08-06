@@ -1,11 +1,9 @@
 ﻿using Daedalus.Models;
-using LinqStatistics;
 using Logic.Metrics;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Daedalus.ViewModels
 {
@@ -24,30 +22,36 @@ namespace Daedalus.ViewModels
 
         protected void InitialiseData()
         {
-            var _test = TestFactory.GenerateRangeTest(1000, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket);
+            var _test = TestFactory.GenerateMonteCarloTest(500, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket, 10000, 5);
 
             PlotModel = new PlotModel();
             ControllerModel = new PlotController();
 
+            List<LineSeries> mySeries = new List<LineSeries>();
+            foreach (var t in _test.LongIterations)
+            {
+                var series = new LineSeries();
+                for (int i = 0; i < t.Length; i++) series.Points.Add(new DataPoint(i + 1, t[i]));
+                mySeries.Add(series);
+            }
 
-            List<Bin> LongDistributions = _test.FinalResultLong.Where(x => x != 0).Histogram(50).ToList();
-            List<Bin> ShortDistributions = _test.FinalResultShort.Where(x => x != 0).Histogram(100).OrderBy(x => x.RepresentativeValue).ToList();
 
 
-            var horiAxis = new CategoryAxis()
+            var horiAxis = new LinearAxis()
             {
                 Position = AxisPosition.Bottom,
             };
-            horiAxis.ItemsSource = LongDistributions.Select(x => (int)x.RepresentativeValue);
             var vertAxis = new LinearAxis()
             {
                 Position = AxisPosition.Left,
-                Key = "Expectancy"
             };
+
+
 
 
             PlotModel.Axes.Add(horiAxis);
             PlotModel.Axes.Add(vertAxis);
+            mySeries.ForEach(x=>PlotModel.Series.Add(x));
 
             Update();
         }
@@ -55,8 +59,7 @@ namespace Daedalus.ViewModels
         protected void Update()
         {
 
-            PlotModel.Series.Clear();
-
+            //PlotModel.Series.Clear();
 
             PlotModel.InvalidatePlot(true);
         }

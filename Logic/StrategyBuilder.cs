@@ -22,8 +22,8 @@ namespace Logic
 
             for (int i = 0; i < myMarket.RawData.Length; i++)
             {
-                if (entryRules.Any(x => x.Satisfied[i])) entries[i] = true;
-                if (exitRules.Any(x => x.Satisfied[i])) exits[i] = true;
+                if (entryRules.Any(x => x.Satisfied[i]) && RulesContext.IsValid(myMarket.RawData[i])) entries[i] = true;
+                if (exitRules.Any(x => x.Satisfied[i]) || RulesContext.ClosePositions(myMarket.RawData[i])) exits[i] = true;
             }
 
             for (int i = 0; i < entries.Length; i++)

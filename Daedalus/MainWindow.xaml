@@ -1,27 +1,51 @@
 ﻿<Window x:Class="Daedalus.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Daedalus"
-        xmlns:views ="clr-namespace:Daedalus.Views"
-        xmlns:viewModels="clr-namespace:Daedalus.ViewModels"
+        xmlns:views="clr-namespace:Daedalus.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="100*"></RowDefinition>
-            <RowDefinition Height="100*"></RowDefinition>
-            <RowDefinition Height="100*"></RowDefinition>
-            <RowDefinition Height="100*"></RowDefinition>
-        </Grid.RowDefinitions>
-        <views:FixedBarExitView Grid.Row="0"></views:FixedBarExitView>
-        <views:FixedStopTargetExitView Grid.Row="1"></views:FixedStopTargetExitView>
-        <views:RandomExitTests Grid.Row="2"></views:RandomExitTests>
-        <views:RangeTests Grid.Row="3"></views:RangeTests>
+        Title="MainWindow" Height="1200" Width="1900">
+    <TabControl>
+        <TabItem Header="EntryTests">
+            <Grid>
+                <Grid.ColumnDefinitions>
 
-    </Grid>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100*"></RowDefinition>
+                    <RowDefinition Height="100*"></RowDefinition>
+                    <RowDefinition Height="100*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <views:FixedBarExitView Grid.Row="0"></views:FixedBarExitView>
+                <views:FixedStopTargetExitView Grid.Row="1"></views:FixedStopTargetExitView>
+                <views:RandomExitTests Grid.Row="2"></views:RandomExitTests>
+
+            </Grid>
+        </TabItem>
+        <TabItem Header="CoreTests">
+            <Grid>
+                <Grid.ColumnDefinitions>
+
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <views:RangeTests Grid.Row="0"></views:RangeTests>
+
+            </Grid>
+        </TabItem>
+        <TabItem Header="MonteCarloTests">
+            <Grid>
+                <Grid.ColumnDefinitions>
+
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <views:MonteCarloView Grid.Row="0"></views:MonteCarloView>
+
+            </Grid>
+        </TabItem>
+        </TabControl>
 </Window>

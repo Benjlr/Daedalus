@@ -1,9 +1,8 @@
-﻿using System;
-using Logic.Calculations;
+﻿using Logic.Calculations;
 using PriceSeries.FinancialSeries;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using PriceSeries;
 
 namespace Logic.Rules.Entry
 {
@@ -34,8 +33,8 @@ namespace Logic.Rules.Entry
             for (int i = 201; i < data.Count; i++)
             {
                 if ((Math.Abs(data[i].Close - twentyEMA[i]) < atrnum * atr[i]
-                     || Math.Abs(data[i].Close - tenSMA[i]) < atrnum * atr[i])
-                    && data[i].Close > twoHundredSMA[i])
+                     || Math.Abs(data[i].Close - tenSMA[i]) < atrnum * atr[i]))
+                    //&& data[i].Close > twoHundredSMA[i])
 
                     for (int j = i - startLook; j < i - endLook; j++)
                     {

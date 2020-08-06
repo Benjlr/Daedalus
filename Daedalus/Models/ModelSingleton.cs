@@ -23,12 +23,18 @@ namespace Daedalus.Models
             MyStarrtegy = StrategyBuilder.CreateStrategy(new IRuleSet[]
             {
                 //new ThreeLowerLows(),
-                new BullishMATag(),
-                new PriceExpansion(), 
-                //new PriceContraction(),
-                //new InvestorBotEntry(),
+
+                //new BullishMATag(),
+                //new PriceContractionFromLow(), 
+
+                new PriceContraction(),
+                new InvestorBotEntry(),
+
                 //new BearishMATage(), 
                 //new ThreeHigherHighs(), 
+
+                //new FiftyFiftyEntry(), 
+                //new FiftyFiftyExit(), 
             }, Mymarket);
         }
 

@@ -1,5 +1,7 @@
 ﻿using Logic.Metrics.EntryTests;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Logic.Metrics.CoreTests;
 
 namespace Logic.Metrics
@@ -23,20 +25,19 @@ namespace Logic.Metrics
 
         public static ITest[] GenerateFixedStopTargetExitTest(int lowestStop, int highestStop, int lowestTarget, int highestTarget, Strategy strat, Market market)
         {
+            List<ITest> retval = new List<ITest>();
 
-            ITest[] retval = new ITest[(lowestStop - highestStop) * (highestTarget - lowestTarget)];
-
-            for (int i = highestStop; i < lowestStop; i++)
+            for (int i = highestStop; i < lowestStop; i+=3)
             {
-                for (int j = lowestTarget; j < highestTarget; j++)
+                for (int j = lowestTarget; j < highestTarget; j+=3)
                 {
-                    retval[(i-highestStop) * (highestTarget - lowestTarget) + (j - lowestTarget)] = new FixedStopTargetExitTest(j,i,false);
-                    retval[(i - highestStop) * (highestTarget - lowestTarget) + (j - lowestTarget)].Run(market.RawData, strat.Entries);
+                    retval.Add( new FixedStopTargetExitTest(j,i,false));
+                    retval.Last().Run(market.RawData, strat.Entries);
 
                 }
             }
 
-            return retval;
+            return retval.ToArray();
         }
 
         public static ITest[] GenerateRandomExitTests(double mean, double standDev, int iterations, Strategy strat, Market market)
@@ -58,6 +59,13 @@ namespace Logic.Metrics
             RangeTest retval = new RangeTest(rangesToTest);
             retval.Run(market.RawData, strat);
             return retval;
+        }
+
+        public static MonteCarloTest GenerateMonteCarloTest(int iteration, Strategy strat, Market market, double initialCapital, double dollarsPerPoint)
+        {
+            var mt = new MonteCarloTest();
+            mt.Run(strat,market,initialCapital,dollarsPerPoint, iteration);
+            return mt;
         }
     }
 }

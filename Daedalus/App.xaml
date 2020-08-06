@@ -10,5 +10,6 @@
         <ViewModels:FixedStopTargetExitViewModel x:Key="FSTEViewModel" />
         <ViewModels:RandomExitViewModel x:Key="RandViewModel" />
         <ViewModels:RangeTestsViewModel x:Key="RangeViewModel" />
+        <ViewModels:MonteCarloViewModel x:Key="MonteCarloViewModel" />
     </Application.Resources>
 </Application>

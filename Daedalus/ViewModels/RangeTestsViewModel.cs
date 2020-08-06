@@ -48,12 +48,8 @@ namespace Daedalus.ViewModels
             double belowZero = LongDistributions.Where(x => x.RepresentativeValue < 0).Sum(x => x.Count);
 
             PlotModel.Title = $"{aboveZero / (aboveZero + belowZero): 0.00%} - {LongDistributions.Sum(x=>x.Count):0}";
-            var zeroAnnote = new LineAnnotation
-            {
-                X = LongDistributions.IndexOf(LongDistributions.First(x=>x.RepresentativeValue > 0))-0.5,
-                LineStyle = LineStyle.Solid,
-                Type = LineAnnotationType.Vertical,
-            };
+
+
 
             var vertAxis = new LinearAxis()
             {
@@ -75,12 +71,20 @@ namespace Daedalus.ViewModels
             {
                 CapitalLong.Items.Add(new ColumnItem( LongDistributions[i].Count ));
             }
-
             
-
             PlotModel.Axes.Add(horiAxis);
             PlotModel.Axes.Add(vertAxis);
-            PlotModel.Annotations.Add(zeroAnnote);
+
+            if (LongDistributions.Any(x => x.RepresentativeValue > 0))
+            {
+                var zeroAnnote = new LineAnnotation
+                {
+                    X = LongDistributions.IndexOf(LongDistributions.First(x => x.RepresentativeValue > 0)) - 0.5,
+                    LineStyle = LineStyle.Solid,
+                    Type = LineAnnotationType.Vertical,
+                };
+                PlotModel.Annotations.Add(zeroAnnote);
+            }
 
             Update();
         }
