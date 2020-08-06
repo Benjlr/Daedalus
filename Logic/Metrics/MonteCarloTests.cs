@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using LinqStatistics;
 
 
 namespace Logic.Metrics
@@ -9,6 +11,14 @@ namespace Logic.Metrics
     {
         public double[][] LongIterations { get; private set; }
         public double[][] ShortIterations { get; private set; }
+
+        public double[] UpperBound { get; private set; }
+        public double[] UpperQuartile { get; private set; }
+        public double[] LowerQuartile { get; private set; }
+        public double[] LowerBound { get; private set; }
+        public double[] Average { get; private set; }
+        public double[] Median { get; private set; }
+
         private static Random _rand;
 
         public void Run(Strategy strat, Market market, double initCapital, double dollarsPerPoint, int iterations)
@@ -71,6 +81,31 @@ namespace Logic.Metrics
 
                     ShortIterations[i][j] = myCapitalShort;
                 }
+            }
+
+            UpperBound = new double[returnsLong.Length];
+            LowerBound = new double[returnsLong.Length];
+            UpperQuartile = new double[returnsLong.Length];
+            LowerQuartile= new double[returnsLong.Length];
+            Average= new double[returnsLong.Length];
+            Median= new double[returnsLong.Length];
+
+            for (int i = 0; i < returnsLong.Length; i++)
+            {
+                var arraySlice = new double[iterations];
+
+                for (int j = 0; j < iterations; j++) arraySlice[j] = LongIterations[j][i];
+
+                arraySlice = arraySlice.OrderByDescending(x=>x).ToArray();
+                UpperBound[i] = arraySlice[0];
+                UpperQuartile[i] = arraySlice[(int) (iterations / 4.0)];
+                Median[i] = arraySlice.Median();
+                LowerQuartile[i] = arraySlice[(int) (3.0*iterations / 4.0)];
+                LowerBound [i] = arraySlice[iterations-1];
+                Average[i] = arraySlice.Average();
+
+                Console.WriteLine(i);
+
             }
 
 
