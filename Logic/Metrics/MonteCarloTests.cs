@@ -42,8 +42,6 @@ namespace Logic.Metrics
                     returnsLong[x] = market.RawData[x].Open_Bid - entryPriceBull;
                     returnsShort[x] = entryPriceBear - market.RawData[x].Open_Ask;
 
-                    
-
                     j = x;
                 }
             }

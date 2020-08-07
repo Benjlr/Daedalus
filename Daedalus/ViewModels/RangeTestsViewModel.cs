@@ -15,10 +15,8 @@ namespace Daedalus.ViewModels
         public PlotModel PlotModel { get; set; }
         public PlotController ControllerModel { get; set; }
 
-        private ColumnSeries CapitalLong { get; set; }
-        private ColumnSeries CapitalShort { get; set; }
-        //private LinearBarSeries WinRatioLong { get; set; }
-        //private LinearBarSeries WinRatioShort { get; set; }
+        private List<LineSeries> CapitalLong { get; set; }
+        private List<LineSeries> CapitalShort { get; set; }
 
         public RangeTestsViewModel() : base()
         {
@@ -34,22 +32,10 @@ namespace Daedalus.ViewModels
             ControllerModel = new PlotController();
 
 
-            List<Bin> LongDistributions = _test.FinalResultLong.Histogram(10).ToList();
-            List<Bin> ShortDistributions = _test.FinalResultShort.Histogram(100).OrderBy(x => x.RepresentativeValue).ToList();
-
-
-            var horiAxis = new CategoryAxis()
+            var horiAxis = new LinearAxis()
             {
                 Position = AxisPosition.Bottom,
             };
-            horiAxis.ItemsSource = LongDistributions.Select(x => (int)x.RepresentativeValue);
-
-            double aboveZero = LongDistributions.Where(x => x.RepresentativeValue > 0).Sum(x => x.Count);
-            double belowZero = LongDistributions.Where(x => x.RepresentativeValue < 0).Sum(x => x.Count);
-
-            PlotModel.Title = $"{aboveZero / (aboveZero + belowZero): 0.00%} - {LongDistributions.Sum(x=>x.Count):0}";
-
-
 
             var vertAxis = new LinearAxis()
             {
@@ -57,34 +43,15 @@ namespace Daedalus.ViewModels
                 Key = "Expectancy"
             };
 
-            CapitalLong = new ColumnSeries()
+            foreach (var t in _test.FinalResultLong)
             {
-                FillColor = OxyColors.Blue,
-                IsStacked = false,
-            };
-            CapitalShort = new ColumnSeries()
-            {
-                FillColor = OxyColors.Red,
-                IsStacked = false,
-            };
-            for (int i = 0; i < LongDistributions.Count; i++)
-            {
-                CapitalLong.Items.Add(new ColumnItem( LongDistributions[i].Count ));
+                var newSeries = new LineSeries();
+                for (int i = 0; i < t.Length; i++) newSeries.Points.Add(new DataPoint(i+1, t[i]));
+                CapitalLong.Add(newSeries);
             }
             
             PlotModel.Axes.Add(horiAxis);
             PlotModel.Axes.Add(vertAxis);
-
-            if (LongDistributions.Any(x => x.RepresentativeValue > 0))
-            {
-                var zeroAnnote = new LineAnnotation
-                {
-                    X = LongDistributions.IndexOf(LongDistributions.First(x => x.RepresentativeValue > 0)) - 0.5,
-                    LineStyle = LineStyle.Solid,
-                    Type = LineAnnotationType.Vertical,
-                };
-                PlotModel.Annotations.Add(zeroAnnote);
-            }
 
             Update();
         }
@@ -92,7 +59,7 @@ namespace Daedalus.ViewModels
         protected void Update()
         {
             PlotModel.Series.Clear();
-            PlotModel.Series.Add(CapitalLong);
+            CapitalLong.ForEach(x => PlotModel.Series.Add(x));
             PlotModel.InvalidatePlot(true);
         }
     }

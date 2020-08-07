@@ -9,23 +9,20 @@ namespace Logic.Metrics.CoreTests
         private int _length { get; }
         private Random _rand { get; }
 
-        public double[] FinalResultLong { get; private set; }
-        public double[] WinRatioLong { get; private set; }
-        public double[] FinalResultShort { get; private set; }
-        public double[] WinRatioShort { get; private set; }
+        public double[][] FinalResultLong { get; private set; }
+        public double[][] FinalResultShort { get; private set; }
 
 
         public RangeTest(int rangesToTest)
         {
             _ranges = rangesToTest;
-            FinalResultLong = new double[_ranges];
-            FinalResultShort = new double[_ranges];
-            WinRatioLong = new double[_ranges];
-            WinRatioShort = new double[_ranges];
+            FinalResultLong = new double[_ranges][];
+            FinalResultShort = new double[_ranges][];
+            
             _rand = new Random();
         }
 
-        public void Run(MarketData[] data, Strategy myStrat)
+        public void Run(MarketData[] data, Strategy myStrat, double initCapital, double dollarsPerPoint)
         {
 
             for (int i = 0; i < _ranges; i++)
@@ -33,46 +30,42 @@ namespace Logic.Metrics.CoreTests
                 var start = _rand.Next(200, data.Length - 1500);
                 var end = _rand.Next(1400, 1500);
 
-                double capitalLong = 0;
-                double capitalShort = 0;
+                FinalResultLong[i] = new double[end];
+                FinalResultShort[i] = new double[end];
 
-                int totalTrades = 0;
-                int totalWinsLong = 0;
-                int totalWinsShort = 0;
+                double capitalLong = initCapital;
+                double capitalShort = initCapital;
 
                 for (int j = start; j < start + end; j++)
                 {
+                    FinalResultLong[i][j-start] = capitalLong;
+                    FinalResultShort[i][j - start] = capitalShort;
+
+
                     if (myStrat.Entries[j])
                     {
                         var x = j + 1;
                         double entryPriceBull = data[x].Open_Ask;
                         double entryPriceBear = data[x].Open_Bid;
+                        FinalResultLong[i][x-start] = capitalLong;
+                        FinalResultShort[i][x - start] = capitalShort;
+
                         x++;
 
-                        while (x < data.Length && !myStrat.Exits[x]) x++;
+                        while (x < data.Length && !myStrat.Exits[x ])
+                        {
+                            capitalLong += (data[x].Open_Bid - entryPriceBull) * dollarsPerPoint;
+                            capitalShort += (entryPriceBear - data[x].Open_Ask) * dollarsPerPoint;
+                            FinalResultLong[i][x - start] = capitalLong;
+                            FinalResultShort[i][x - start] = capitalShort;
+                            x++;
+                        }
                         if (x >= data.Length - 1) break;
 
-                        totalTrades++;
-                        if (data[x].Open_Bid > entryPriceBull) totalWinsLong++;
-                        if (entryPriceBear > data[x].Open_Ask) totalWinsShort++;
-                        capitalLong += data[x].Open_Bid - entryPriceBull;
-                        capitalShort += entryPriceBear - data[x].Open_Ask;
-
+                        j = x;
                     }
                 }
-
-                FinalResultLong[i] = capitalLong;
-                FinalResultShort[i] = capitalShort;
-                WinRatioLong[i] = (double)totalWinsLong / totalTrades;
-                WinRatioShort[i] = (double)totalWinsShort / totalTrades;
             }
-
-            FinalResultLong = FinalResultLong.OrderBy(x => x).ToArray();
-            FinalResultShort = FinalResultShort.OrderBy(x => x).ToArray();
-            WinRatioLong = WinRatioLong.OrderBy(x => x).ToArray();
-            WinRatioShort = WinRatioShort.OrderBy(x => x).ToArray();
-
-
         }
     }
 }
