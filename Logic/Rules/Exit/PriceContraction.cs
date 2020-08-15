@@ -19,7 +19,7 @@ namespace Logic.Rules.Exit
             
             Satisfied = new bool[data.Count];
             var nrwRs = NRWRBars.Calculate(data);
-            int lookback = 110;
+            int lookback = 90;
 
             for (int i = lookback; i < data.Count; i++)
             {
@@ -29,9 +29,9 @@ namespace Logic.Rules.Exit
 
                 var percentage = (cuur - low) / (max - low);
 
-                if (percentage > 0.95)
+                if (percentage > 0.9)
                 {
-                    if (nrwRs[i] < -10) Satisfied[i] = true;
+                    if (nrwRs[i] < -8) Satisfied[i] = true;
                 }
             }
 

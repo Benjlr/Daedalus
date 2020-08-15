@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Tracing;
-using Logic.Rules;
+﻿using Logic.Rules;
 using System.Linq;
 
 namespace Logic

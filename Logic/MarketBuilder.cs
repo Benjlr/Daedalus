@@ -36,6 +36,14 @@ namespace Logic
                     vol: long.Parse(myLine[9]));
             }
 
+            for (int i = 1; i < myArray.Length; i++)
+            {
+                if (Math.Abs(myArray[i].Open_Bid - myArray[i - 1].Close_Bid) > 50)
+                {
+                    string ss = "";
+                }
+            }
+
             return myArray;
 
         }

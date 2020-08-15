@@ -22,7 +22,7 @@ namespace Daedalus.ViewModels
 
         protected void InitialiseData()
         {
-            var _test = TestFactory.GenerateMonteCarloTest(300, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket, 10000, 10);
+            var _test = TestFactory.GenerateMonteCarloTest(500, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket, 10000, 10);
 
             PlotModel = new PlotModel();
             ControllerModel = new PlotController();

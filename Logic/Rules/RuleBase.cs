@@ -13,4 +13,5 @@ namespace Logic.Rules
         {            
         }
     }
+
 }

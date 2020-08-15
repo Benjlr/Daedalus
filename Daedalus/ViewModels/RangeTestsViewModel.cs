@@ -26,40 +26,83 @@ namespace Daedalus.ViewModels
 
         protected void InitialiseData()
         {
-            var _test = TestFactory.GenerateRangeTest(3000, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket);
-
+            var _test = TestFactory.GenerateRangeTest(5000, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket);
+            
             PlotModel = new PlotModel();
             ControllerModel = new PlotController();
+            List<LineSeries> mySeries = new List<LineSeries>();
+
+            var upperSeries = new LineSeries()
+            {
+                Color = OxyColors.Gray,
+                LineStyle = LineStyle.Solid,
+            };
+            for (int i = 0; i < _test.UpperBound.Length; i++) upperSeries.Points.Add(new DataPoint(i + 1, _test.UpperBound[i]));
+            mySeries.Add(upperSeries);
+
+            var upperQuartSeries = new LineSeries()
+            {
+                Color = OxyColors.Gray,
+                LineStyle = LineStyle.LongDash,
+            };
+            for (int i = 0; i < _test.UpperQuartile.Length; i++) upperQuartSeries.Points.Add(new DataPoint(i + 1, _test.UpperQuartile[i]));
+            mySeries.Add(upperQuartSeries);
+
+            var medianSeries = new LineSeries()
+            {
+                Color = OxyColors.Gray,
+                LineStyle = LineStyle.Dot,
+            };
+            for (int i = 0; i < _test.Median.Length; i++) medianSeries.Points.Add(new DataPoint(i + 1, _test.Median[i]));
+            mySeries.Add(medianSeries);
+
+            var averageSeries = new LineSeries()
+            {
+                Color = OxyColors.Gray,
+                LineStyle = LineStyle.Solid,
+            };
+            for (int i = 0; i < _test.Average.Length; i++) averageSeries.Points.Add(new DataPoint(i + 1, _test.Average[i]));
+            mySeries.Add(averageSeries);
+
+            var lowerQuartileSeries = new LineSeries()
+            {
+                Color = OxyColors.Gray,
+                LineStyle = LineStyle.LongDash,
+            };
+            for (int i = 0; i < _test.LowerQuartile.Length; i++) lowerQuartileSeries.Points.Add(new DataPoint(i + 1, _test.LowerQuartile[i]));
+            mySeries.Add(lowerQuartileSeries);
+
+            var lowerBoundSeries = new LineSeries()
+            {
+                Color = OxyColors.Gray,
+                LineStyle = LineStyle.Solid,
+            };
+            for (int i = 0; i < _test.LowerBound.Length; i++) lowerBoundSeries.Points.Add(new DataPoint(i + 1, _test.LowerBound[i]));
+            mySeries.Add(lowerBoundSeries);
+
 
 
             var horiAxis = new LinearAxis()
             {
                 Position = AxisPosition.Bottom,
             };
-
             var vertAxis = new LinearAxis()
             {
                 Position = AxisPosition.Left,
-                Key = "Expectancy"
             };
 
-            foreach (var t in _test.FinalResultLong)
-            {
-                var newSeries = new LineSeries();
-                for (int i = 0; i < t.Length; i++) newSeries.Points.Add(new DataPoint(i+1, t[i]));
-                CapitalLong.Add(newSeries);
-            }
-            
+
+
+
             PlotModel.Axes.Add(horiAxis);
             PlotModel.Axes.Add(vertAxis);
+            mySeries.ForEach(x => PlotModel.Series.Add(x));
 
             Update();
         }
 
         protected void Update()
         {
-            PlotModel.Series.Clear();
-            CapitalLong.ForEach(x => PlotModel.Series.Add(x));
             PlotModel.InvalidatePlot(true);
         }
     }

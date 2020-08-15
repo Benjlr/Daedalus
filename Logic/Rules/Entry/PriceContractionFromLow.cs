@@ -28,7 +28,7 @@ namespace Logic.Rules.Entry
 
                 var percentage = (cuur - low) / (max - low);
 
-                if (percentage < 0.05)
+                if (percentage > 0.5)
                 {
                     if (nrwRs[i] > 20) Satisfied[i] = true;
                 }

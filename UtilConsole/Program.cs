@@ -37,7 +37,7 @@ namespace UtilConsole
 
 
             RangeTest RT = new RangeTest(20);
-            RT.Run(asx_200_5_min.RawData, myStrat);
+            RT.Run(asx_200_5_min.RawData, myStrat,10000,5);
 
             for (int i = 1; i < 1000; i++)
             {

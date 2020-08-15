@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LinqStatistics;
+using Logic.Utils;
 
 
 namespace Logic.Metrics
@@ -23,8 +27,8 @@ namespace Logic.Metrics
 
         public void Run(Strategy strat, Market market, double initCapital, double dollarsPerPoint, int iterations)
         {
-            double[] returnsLong = new double[market.RawData.Length];
-            double[] returnsShort = new double[market.RawData.Length];
+            List<double> returnsLong = new List<double>();
+            List<double> returnsShort = new List<double>();
 
             for (int j = 0; j < market.RawData.Length; j++)
             {
@@ -35,60 +39,63 @@ namespace Logic.Metrics
                     double entryPriceBear = market.RawData[x].Open_Bid;
                     x++;
 
-                    while (x < market.RawData.Length-1 && !strat.Exits[x-1]) x++;
-                    
-                    if (x >= market.RawData.Length - 1) break;
-                    
-                    returnsLong[x] = market.RawData[x].Open_Bid - entryPriceBull;
-                    returnsShort[x] = entryPriceBear - market.RawData[x].Open_Ask;
+                    while (x < market.RawData.Length && !strat.Exits[x]) x++;
+                    x++;
 
+                    if (x >= market.RawData.Length) continue;
+                    
+                    returnsLong.Add( market.RawData[x].Open_Bid - entryPriceBull);
+                    returnsShort.Add(entryPriceBear - market.RawData[x].Open_Ask);
                     j = x;
                 }
             }
-
-
+            
             LongIterations = new double[iterations][];
             ShortIterations = new double[iterations][];
+            
+            File.WriteAllLines(@"C:\Temp\Rets.csv", returnsLong.Select(x=>x.ToString()).ToList());
+
+            var shortAvg = returnsShort.Average();
+            var longAvg = returnsLong.Average();
+            var stDevLong = returnsLong.StandardDeviation();
+            var stDevShort = returnsShort.StandardDeviation();
 
             _rand = new Random();
+            int count = 365;
 
             for (int i = 0; i < iterations; i++)
             {
-
-                _rand.Shuffle(returnsShort);
-                _rand.Shuffle(returnsLong);
-
                 var myCapitalLong = initCapital;
                 var myCapitalShort = initCapital;
 
-                LongIterations[i] = new double[returnsLong.Length];
-                ShortIterations[i] = new double[returnsShort.Length];
+                LongIterations[i] = new double[count];
+                ShortIterations[i] = new double[count];
 
-                for (int j = 0; j < returnsLong.Length; j++)
+                for (int j = 0; j < count; j++)
                 {
-                    if (myCapitalLong > 0) myCapitalLong += (returnsLong[j] * dollarsPerPoint);
+                    if (myCapitalLong > 0) myCapitalLong += (BoxMullerDistribution.Generate(longAvg,stDevLong) * dollarsPerPoint);
                     if (myCapitalLong < 0) myCapitalLong = 0;
 
                     LongIterations[i][j] = myCapitalLong;
                 }
 
-                for (int j = 0; j < returnsShort.Length; j++)
+                for (int j = 0; j < count; j++)
                 {
-                    if (myCapitalShort > 0) myCapitalShort += (returnsShort[j] * dollarsPerPoint);
+                    if (myCapitalShort > 0) myCapitalShort += (BoxMullerDistribution.Generate(shortAvg,stDevShort) * dollarsPerPoint);
                     if (myCapitalShort < 0) myCapitalShort = 0;
 
                     ShortIterations[i][j] = myCapitalShort;
                 }
             }
 
-            UpperBound = new double[returnsLong.Length];
-            LowerBound = new double[returnsLong.Length];
-            UpperQuartile = new double[returnsLong.Length];
-            LowerQuartile= new double[returnsLong.Length];
-            Average= new double[returnsLong.Length];
-            Median= new double[returnsLong.Length];
+            UpperBound = new double[count];
+            LowerBound = new double[count];
+            UpperQuartile = new double[count];
+            LowerQuartile= new double[count];
+            Average= new double[count];
+            Median= new double[count];
 
-            for (int i = 0; i < returnsLong.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 var arraySlice = new double[iterations];
 
@@ -101,8 +108,7 @@ namespace Logic.Metrics
                 LowerQuartile[i] = arraySlice[(int) (3.0*iterations / 4.0)];
                 LowerBound [i] = arraySlice[iterations-1];
                 Average[i] = arraySlice.Average();
-
-                Console.WriteLine(i);
+                Debug.WriteLine("Monte Carlo Test: " + i);
 
             }
 
@@ -151,6 +157,17 @@ namespace Logic.Metrics
         public static void Shuffle<T>(this Random rng, T[] array)
         {
             int n = array.Length;
+            while (n > 1)
+            {
+                int k = rng.Next(n--);
+                T temp = array[n];
+                array[n] = array[k];
+                array[k] = temp;
+            }
+        }
+        public static void Shuffle<T>(this Random rng, List<T> array)
+        {
+            int n = array.Count;
             while (n > 1)
             {
                 int k = rng.Next(n--);
