@@ -22,18 +22,18 @@ namespace Daedalus.Models
 
             MyStarrtegy = StrategyBuilder.CreateStrategy(new IRuleSet[]
             {
-                new ThreeLowerLows(),
+                //new ThreeLowerLows(),
 
                 //new BullishMATag(),
                 //new PriceContractionFromLow(),
-                new KeltnerOverSold(),
+                //new KeltnerOverSold(),
                 //new KeltnerOverBought(),
 
                 //new TrendDay(),
 
 
-                //new PriceContraction(),
-                //new InvestorBotEntry(),
+                new PriceContraction(),
+                new InvestorBotEntry(),
 
                 //new BearishMATage(), 
                 //new ThreeHigherHighs(), 

@@ -35,7 +35,8 @@ namespace Logic.Metrics.CoreTests
 
         public void Run(MarketData[] data, Strategy myStrat, double initCapital, double dollarsPerPoint)
         {
-            int length = 6000;
+
+            int length = data.Length-300;
 
             for (int i = 0; i < _ranges; i++)
             {
@@ -47,32 +48,44 @@ namespace Logic.Metrics.CoreTests
                 double capitalLong = initCapital;
                 double capitalShort = initCapital;
 
-                for (int j = start; j < start + length-1; j++)
+                for (int j = start; j < start + length; j++)
                 {
                     FinalResultLong[i][j-start] = capitalLong;
                     FinalResultShort[i][j - start] = capitalShort;
 
 
-                    if (myStrat.Entries[j])
+                    if (myStrat.Entries[j] && j+1 < length)
                     {
                         var x = j + 1;
+                        
+
                         double entryPriceBull = data[x].Open_Ask;
                         double entryPriceBear = data[x].Open_Bid;
-                        FinalResultLong[i][x-start] = capitalLong;
-                        FinalResultShort[i][x - start] = capitalShort;
+
+                        var startCapLong = capitalLong;
+                        var startCapShort = capitalShort;
+
+                        FinalResultLong[i][x - start] = startCapLong;
+                        FinalResultShort[i][x - start] = startCapShort;
 
                         x++;
 
                         while (x-start < length && !myStrat.Exits[x ])
                         {
-                            capitalLong += (data[x].Open_Bid - entryPriceBull) * dollarsPerPoint;
-                            capitalShort += (entryPriceBear - data[x].Open_Ask) * dollarsPerPoint;
-                            FinalResultLong[i][x - start] = capitalLong;
-                            FinalResultShort[i][x - start] = capitalShort;
+                            startCapLong = capitalLong+ (data[x].Open_Bid - entryPriceBull) * dollarsPerPoint;
+                            startCapShort = capitalShort + (entryPriceBear - data[x].Open_Ask) * dollarsPerPoint;
+
+
+                            FinalResultLong[i][x - start] = startCapLong;
+                            FinalResultShort[i][x - start] = startCapShort;
                             x++;
                         }
                         if (x >= data.Length - 1) break;
 
+                        capitalLong = capitalLong + (data[x].Open_Bid - entryPriceBull) * dollarsPerPoint; ;
+                        capitalShort = capitalShort + (entryPriceBear - data[x].Open_Ask) * dollarsPerPoint; ;
+                        FinalResultLong[i][x - start] = capitalLong;
+                        FinalResultShort[i][x - start] = capitalShort;
                         j = x;
                     }
                 }
@@ -94,7 +107,7 @@ namespace Logic.Metrics.CoreTests
                 UpperQuartile[i] = array[(int)(_ranges / 4.0)];
                 Median[i] = array.Median();
                 LowerQuartile[i] = array[(int)(3.0 * _ranges / 4.0)];
-                LowerBound[i] = array[_ranges - 1];
+                LowerBound[i] = array.Last();
                 Average[i] = array.Average();
                 Debug.WriteLine("Range Test: " + i.ToString());
             }

@@ -30,6 +30,8 @@ namespace Logic.Metrics
             List<double> returnsLong = new List<double>();
             List<double> returnsShort = new List<double>();
 
+
+
             for (int j = 0; j < market.RawData.Length; j++)
             {
                 if (strat.Entries[j])
@@ -61,7 +63,10 @@ namespace Logic.Metrics
             var stDevShort = returnsShort.StandardDeviation();
 
             _rand = new Random();
-            int count = 365;
+
+            var span = market.RawData.Last().Time.Ticks - market.RawData[0].Time.Ticks;
+            var pcntgeOfYeaar = new TimeSpan(span).TotalDays / 365.0;
+            int count = (int)Math.Round(returnsLong.Count / pcntgeOfYeaar,MidpointRounding.AwayFromZero) ;
 
             for (int i = 0; i < iterations; i++)
             {
@@ -73,7 +78,8 @@ namespace Logic.Metrics
 
                 for (int j = 0; j < count; j++)
                 {
-                    if (myCapitalLong > 0) myCapitalLong += (BoxMullerDistribution.Generate(longAvg,stDevLong) * dollarsPerPoint);
+                    //if (myCapitalLong > 0) myCapitalLong += (BoxMullerDistribution.Generate(longAvg,stDevLong) * dollarsPerPoint);
+                    if (myCapitalLong > 0) myCapitalLong += returnsLong[_rand.Next(returnsLong.Count)]*dollarsPerPoint;
                     if (myCapitalLong < 0) myCapitalLong = 0;
 
                     LongIterations[i][j] = myCapitalLong;

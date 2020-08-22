@@ -31,7 +31,7 @@ namespace Logic.Rules.Exit
 
                 if (percentage > 0.9)
                 {
-                    if (nrwRs[i] < -8) Satisfied[i] = true;
+                    if (nrwRs[i] < -5) Satisfied[i] = true;
                 }
             }
 

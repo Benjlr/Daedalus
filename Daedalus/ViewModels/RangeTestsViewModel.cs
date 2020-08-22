@@ -26,7 +26,7 @@ namespace Daedalus.ViewModels
 
         protected void InitialiseData()
         {
-            var _test = TestFactory.GenerateRangeTest(5000, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket);
+            var _test = TestFactory.GenerateRangeTest(100, ModelSingleton.Instance.MyStarrtegy, ModelSingleton.Instance.Mymarket);
             
             PlotModel = new PlotModel();
             ControllerModel = new PlotController();
@@ -98,6 +98,8 @@ namespace Daedalus.ViewModels
             PlotModel.Axes.Add(vertAxis);
             mySeries.ForEach(x => PlotModel.Series.Add(x));
 
+
+            PlotModel.Title = $"Entries: {ModelSingleton.Instance.MyStarrtegy.Entries.Count(x => x)}   Exits: {ModelSingleton.Instance.MyStarrtegy.Exits.Count(x => x)}";
             Update();
         }
 

@@ -26,7 +26,6 @@ namespace Logic.Rules.Entry
             var twentyEMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
             var tenSMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 10);
             var sixEMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 6);
-            var twoHundredSMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 200);
             var atr = AverageTrueRange.Calculate(data);
             var nrwRs = NRWRBars.Calculate(data);
 
