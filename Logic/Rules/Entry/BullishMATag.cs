@@ -27,8 +27,7 @@ namespace Logic.Rules.Entry
             {
                 if (data[i].Close > twohundredMA[i] && 
                     data[i].Close > twentyMA[i] && 
-                    data[i].High < six[i] &&
-                    rawData[i].Open_Ask - rawData[i].Open_Bid <= spread) Satisfied[i] = true;
+                    data[i].High < six[i] ) Satisfied[i] = true;
             }
             
         }

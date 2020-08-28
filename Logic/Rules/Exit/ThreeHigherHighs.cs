@@ -7,8 +7,8 @@ namespace Logic.Rules.Exit
     {
         public ThreeHigherHighs()
         {
-            Dir = Thesis.Bear;
-            Order = Pos.Exit;
+            Dir = Thesis.Bull;
+            Order = Pos.Entry;
         }
 
         public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)

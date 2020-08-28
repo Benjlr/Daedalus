@@ -70,7 +70,7 @@ namespace Logic.Metrics.CoreTests
 
                         x++;
 
-                        while (x-start < length && !myStrat.Exits[x ])
+                        while (x-start < length && !myStrat.Exits[x-1 ])
                         {
                             startCapLong = capitalLong+ (data[x].Open_Bid - entryPriceBull) * dollarsPerPoint;
                             startCapShort = capitalShort + (entryPriceBear - data[x].Open_Ask) * dollarsPerPoint;
@@ -113,51 +113,118 @@ namespace Logic.Metrics.CoreTests
             }
         }
 
-        private double _initialStop = 1;
-        private double _subsqStop = 0.5;
+        private double _initialStop = 50;
+        private double _subsqStop = 15;
 
-        public void RunLongStops(MarketData[] data, List<Session> sessions, Strategy myStrat, double initCapital, double dollarsPerPoint)
+        public void RunLongStops(
+            MarketData[] data, 
+            Strategy myStrat, 
+            double initCapital, 
+            double dollarsPerPoint)
         {
-            var atr = AverageTrueRange.Calculate(sessions);
+            int length = data.Length - 300;
+            //int length = 3000;
 
             for (int i = 0; i < _ranges; i++)
             {
-                var start = _rand.Next(200, data.Length - 1500);
-                var end = _rand.Next(1400, 1500);
+                var start = _rand.Next(200, data.Length - length);
 
-                FinalResultLong[i] = new double[end];
+                FinalResultLong[i] = new double[length];
+                FinalResultShort[i] = new double[length];
+
                 double capitalLong = initCapital;
+                double capitalShort = initCapital;
 
-                for (int j = start; j < start + end; j++)
+                for (int j = start; j < start + length; j++)
                 {
                     FinalResultLong[i][j - start] = capitalLong;
-
-
-                    if (myStrat.Entries[j])
+                    FinalResultShort[i][j - start] = capitalShort;
+                    
+                    if (myStrat.Entries[j] && j + 1 < length)
                     {
                         var x = j + 1;
+                        
                         double entryPriceBull = data[x].Open_Ask;
-                        double stop = entryPriceBull - (_initialStop * atr[x]);
-                        FinalResultLong[i][x - start] = capitalLong;
+                        var stopLong = data[x].Low_Bid - _initialStop;
 
-                        for (int k = x; k < start+end; k++)
+                        var startCapLong = capitalLong;
+                        FinalResultLong[i][x - start] = startCapLong;
+                        
+                        x++;
+
+                        var longX = x;
+
+                        while (longX - start < length)
                         {
-                            //if()
-                        }
+                            if (data[longX].Low_Bid < stopLong)
+                            {
+                                if (data[longX].Open_Bid < stopLong) stopLong = data[longX].Open_Bid;
+                                break;
+                            }
+                            
+                            //if (data[longX].Low_Bid - stopLong > _initialStop) stopLong = data[longX].Low_Bid - _initialStop;
+                            if (myStrat.Exits[longX]) stopLong = data[longX].Low_Bid - _subsqStop;
 
-                        while (x < data.Length && !myStrat.Exits[x])
-                        {
-                            capitalLong += (data[x].Open_Bid - entryPriceBull) * dollarsPerPoint;
-                            FinalResultLong[i][x - start] = capitalLong;
-                            x++;
-                        }
-                        if (x >= data.Length - 1) break;
+                            startCapLong = capitalLong + (stopLong - entryPriceBull) * dollarsPerPoint;
+                            FinalResultLong[i][longX - start] = startCapLong;
 
-                        j = x;
+                            longX++;
+                        }
+                        if (longX - start >= FinalResultLong[i].Length - 1) break;
+
+                        capitalLong += (stopLong - entryPriceBull) * dollarsPerPoint; ;
+                        FinalResultLong[i][longX - start] = capitalLong;
+                        j = longX;
+
+                        //double entryPriceBear = data[x].Open_Bid;
+                        //var stopShort = data[x].highbis + stopAmount;
+                        //var startCapShort = capitalShort;
+                        //FinalResultShort[i][x - start] = startCapShort;
+                        //var shortX = x;
+
+                        //while (shortX - start < length)
+                        //{
+                        //    if (data[shortX].High_Ask > stopShort)
+                        //    {
+                        //        if (data[shortX].Low_Ask > stopShort) stopShort = data[shortX].Open_Ask;
+                        //        break;
+                        //    }
+
+                        //    if (stopShort - data[shortX].Open_Ask > stopAmount) stopShort = data[shortX].Open_Ask + stopAmount;
+
+                        //    startCapShort = capitalShort + (stopShort - entryPriceBear) * dollarsPerPoint;
+                        //    FinalResultShort[i][shortX - start] = startCapShort;
+
+                        //    shortX++;
+                        //}
+
+                        //capitalShort += (entryPriceBear - stopShort) * dollarsPerPoint; ;
+                        //FinalResultShort[i][shortX - start] = capitalShort;
+                        //j = shortX;
+
                     }
                 }
             }
+            UpperBound = new double[length];
+            LowerBound = new double[length];
+            UpperQuartile = new double[length];
+            LowerQuartile = new double[length];
+            Average = new double[length];
+            Median = new double[length];
+            for (int i = 0; i < length; ++i)
+            {
+                double[] numArray = new double[_ranges];
+                for (int x = 0; x < _ranges; ++x) numArray[x] = FinalResultLong[x][i];
 
+                var array = numArray.OrderByDescending(x => x).ToArray();
+                UpperBound[i] = array[0];
+                UpperQuartile[i] = array[(int)(_ranges / 4.0)];
+                Median[i] = array.Median();
+                LowerQuartile[i] = array[(int)(3.0 * _ranges / 4.0)];
+                LowerBound[i] = array.Last();
+                Average[i] = array.Average();
+                Debug.WriteLine("Range Test: " + i.ToString());
+            }
 
 
         }

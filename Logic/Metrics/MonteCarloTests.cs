@@ -37,6 +37,8 @@ namespace Logic.Metrics
                 if (strat.Entries[j])
                 {
                     var x = j + 1;
+                    if (x >= market.RawData.Length) continue;
+
                     double entryPriceBull = market.RawData[x].Open_Ask;
                     double entryPriceBear = market.RawData[x].Open_Bid;
                     x++;
@@ -119,42 +121,6 @@ namespace Logic.Metrics
             }
 
 
-            //var parallelExec = Parallel.For(0, iterations, (x) =>
-            //{
-            //    double[] cloneShort = (double[])returnsShort.Clone();
-            //    double[] cloneLong = (double[])returnsLong.Clone();
-
-            //    _rand.Shuffle(cloneShort);
-            //    _rand.Shuffle(cloneLong);
-
-            //    var myCapitalLong = initCapital;
-            //    var myCapitalShort = initCapital;
-
-            //    LongIterations[x] = new double[cloneLong.Length];
-            //    ShortIterations[x] = new double[cloneShort.Length];
-
-            //    for (int j = 0; j < cloneLong.Length; j++)
-            //    {
-            //        if (myCapitalLong > 0) myCapitalLong += (cloneLong[j] * dollarsPerPoint);
-            //        if (myCapitalLong < 0) myCapitalLong = 0;
-
-            //        LongIterations[x][j] = myCapitalLong;
-            //    }
-
-            //    for (int j = 0; j < cloneShort.Length; j++)
-            //    {
-            //        if (myCapitalShort > 0) myCapitalShort += (cloneShort[j] * dollarsPerPoint);
-            //        if (myCapitalShort < 0) myCapitalShort = 0;
-
-            //        ShortIterations[x][j] = myCapitalShort;
-            //    }
-
-            //});
-
-            //while (!parallelExec.IsCompleted)
-            //{
-            //    Thread.Sleep(5);
-            //}
 
         }
     }
