@@ -14,7 +14,7 @@ namespace Logic
 
             return new Market(mData, cData);
         }
-
+        
         private static MarketData[] LoadData(string location)
         {
             var fs = File.ReadAllLines(location);
@@ -34,14 +34,6 @@ namespace Logic
                     c_a: double.Parse(myLine[7]),
                     c_b: double.Parse(myLine[8]),
                     vol: long.Parse(myLine[9]));
-            }
-
-            for (int i = 1; i < myArray.Length; i++)
-            {
-                if (Math.Abs(myArray[i].Open_Bid - myArray[i - 1].Close_Bid) > 50)
-                {
-                    string ss = "";
-                }
             }
 
             return myArray;

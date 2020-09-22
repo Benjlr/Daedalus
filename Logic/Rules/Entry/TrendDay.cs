@@ -17,7 +17,7 @@ namespace Logic.Rules.Entry
             Satisfied = new bool[data.Count];
             for (int i = 0; i < data.Count; i++)
             {
-                if (data[i].CloseDate.Hour == 10)
+                if (data[i].OpenDate.Hour == 10)
                 {
                     var prevI = i;
                     i += 10;

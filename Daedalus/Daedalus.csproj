@@ -14,4 +14,10 @@
     <ProjectReference Include="..\Logic\Logic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="PriceSeries">
+      <HintPath>..\..\Costanza\PriceSeries\bin\Release\PriceSeries.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

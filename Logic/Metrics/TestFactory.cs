@@ -57,7 +57,7 @@ namespace Logic.Metrics
         public static RangeTest GenerateRangeTest(int rangesToTest, Strategy strat, Market market)
         {
             RangeTest retval = new RangeTest(rangesToTest);
-            retval.RunLongStops(market.RawData, strat, 10000, 5);
+            retval.Run(market.RawData, strat, 10000, 5);
             return retval;
         }
 

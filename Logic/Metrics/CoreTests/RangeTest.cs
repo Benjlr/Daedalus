@@ -36,7 +36,7 @@ namespace Logic.Metrics.CoreTests
         public void Run(MarketData[] data, Strategy myStrat, double initCapital, double dollarsPerPoint)
         {
 
-            int length = data.Length-300;
+            int length = data.Length-10000;
 
             for (int i = 0; i < _ranges; i++)
             {
@@ -80,7 +80,7 @@ namespace Logic.Metrics.CoreTests
                             FinalResultShort[i][x - start] = startCapShort;
                             x++;
                         }
-                        if (x >= data.Length - 1) break;
+                        if (x-start >= length ) break;
 
                         capitalLong = capitalLong + (data[x].Open_Bid - entryPriceBull) * dollarsPerPoint; ;
                         capitalShort = capitalShort + (entryPriceBear - data[x].Open_Ask) * dollarsPerPoint; ;
@@ -113,8 +113,8 @@ namespace Logic.Metrics.CoreTests
             }
         }
 
-        private double _initialStop = 50;
-        private double _subsqStop = 15;
+        private double _initialStop = 70;
+        private double _subsqStop = 10;
 
         public void RunLongStops(
             MarketData[] data, 

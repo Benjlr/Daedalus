@@ -1,5 +1,7 @@
 ﻿using PriceSeries.FinancialSeries;
 using System.Collections.Generic;
+using System.Linq;
+using PriceSeries.Indicators.Derived;
 
 namespace Logic.Rules.Exit
 {
@@ -7,7 +9,7 @@ namespace Logic.Rules.Exit
     {
         public ThreeLowerLows()
         {
-            Dir = Thesis.Bull;
+            Dir = Thesis.Bear;
             Order = Pos.Exit;
         }
 
@@ -19,6 +21,28 @@ namespace Logic.Rules.Exit
             {
                 if (data[i].Low < data[i - 1].Low && data[i - 1].Low < data[i - 2].Low) Satisfied[i] = true;
             }
+
+        }
+    }
+
+    public class MAViolation : RuleBase
+    {
+        public MAViolation()
+        {
+            Dir = Thesis.Bull;
+            Order = Pos.Exit;
+        }
+
+        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
+        {
+            var twentyMA = ExponentialMovingAverage.Calculate(data.Select(x=>x.Close).ToList(), 20);
+            Satisfied = new bool[data.Count];
+
+            for (int i = 25; i < data.Count; i++)
+            {
+                if (data[i-1].Close < twentyMA[i-1] && data[i].Low < data[i-1].Low ) Satisfied[i] = true;
+            }
+
         }
     }
 }

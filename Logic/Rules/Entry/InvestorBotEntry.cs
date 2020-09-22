@@ -3,6 +3,7 @@ using PriceSeries.FinancialSeries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Logic.Utils.Calculations;
 
 namespace Logic.Rules.Entry
 {

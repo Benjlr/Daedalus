@@ -9,6 +9,7 @@ namespace Logic
         {
             var dt = myMarket.CostanzaData.ToList();
             foreach (var t in myRules) t.CalculateBackSeries(dt, myMarket.RawData);
+            RulesContext.InitBroaderMarketContext(myMarket.CostanzaData.ToList());
 
             var entryRules = myRules.Where(x => x.Order.Equals(Pos.Entry));
             var exitRules = myRules.Where(x => x.Order.Equals(Pos.Exit));

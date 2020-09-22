@@ -2,6 +2,7 @@
 using PriceSeries.FinancialSeries;
 using System.Collections.Generic;
 using System.Linq;
+using Logic.Utils.Calculations;
 
 namespace Logic.Rules.Entry
 {
@@ -13,39 +14,45 @@ namespace Logic.Rules.Entry
             Order = Pos.Entry;
         }
 
-        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
+        public override void CalculateBackSeries(List<Session> myData, MarketData[] rawData)
         {
-            Satisfied = new bool[data.Count];
+            Satisfied = new bool[myData.Count];
+            var daily = SessionCollate.CollateToHourly(myData);
 
-            var ema20 = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
-            var atr = AverageTrueRange.Calculate(data);
+
+            var ema20 = MovingAverage.ExponentialMovingAverage(daily.Select(x => x.Close).ToList(), 20);
+            var atr = AverageTrueRange.Calculate(daily);
+            
 
             var lower = new List<double>();
             var upper = new List<double>();
 
-            for (int i = 0; i < data.Count; i++)
+            for (int i = 0; i < daily.Count; i++)
             {
-                lower.Add(ema20[i] - (2.25 * atr[i]));
+                lower.Add(ema20[i] - (3.2 * atr[i]));
                 upper.Add(ema20[i] + (2.25 * atr[i]));
             }
 
+            var rawToList = rawData.ToList();
 
-            for (int i = 10; i < data.Count; i++)
+            for (int i = 10; i < daily.Count; i++)
             {
-                if (data[i].Close > ema20[i])
+                if (daily[i].Low <  lower[i] )
                 {
-                    for (int j = i; j >= i - 10; j--)
-                    {
-                        if (data[j].Low < ema20[j])
-                        {
-                            for (int k = j; k >= j-10; k--)
-                            {
-                                if(data[k].High > upper[k]) Satisfied[i] = true;
-                            }
-                          
-                        }
-                    }
 
+                    var start = myData.IndexOf(myData.First(x => x.OpenDate == daily[i].OpenDate));
+                    var last = myData.IndexOf(myData.First(x => x.CloseDate== daily[i].CloseDate));
+
+                    for (int j = start; j < last; j++)
+                    {
+                        if (myData[j].Low < lower[i])
+                        {
+                            Satisfied[j] = true;
+                            break;
+                        }
+              
+                    }
+                    
                 }
             }
 

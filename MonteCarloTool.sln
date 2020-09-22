@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Daedalus", "Daedalus\Daedal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtilConsole", "UtilConsole\UtilConsole.csproj", "{8288D8FD-1EC9-4C93-86D1-C9B9CA71D0EA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ML", "ML", "{A39D1EA5-7AEF-488D-BA4B-85F4DB2F0810}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

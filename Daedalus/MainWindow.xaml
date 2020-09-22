@@ -47,5 +47,17 @@
 
             </Grid>
         </TabItem>
-        </TabControl>
+        <TabItem Header="View Egs">
+            <Grid>
+                <Grid.ColumnDefinitions>
+
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <views:EntryViewers Grid.Row="0"></views:EntryViewers>
+
+            </Grid>
+        </TabItem>
+    </TabControl>
 </Window>
