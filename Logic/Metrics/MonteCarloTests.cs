@@ -43,7 +43,15 @@ namespace Logic.Metrics
                     double entryPriceBear = market.RawData[x].Open_Bid;
                     x++;
 
-                    while (x < market.RawData.Length && !strat.Exits[x]) x++;
+                    while (x < market.RawData.Length && !strat.Exits[x])
+                    {
+                        //if (x - j + 1 > 350) break;
+
+
+                            //if ((market.RawData[x].Open_Bid - entryPriceBull) * dollarsPerPoint > 100) break;
+                         if ((market.RawData[x].Open_Bid - entryPriceBull)  < -35) break;
+                        x++;
+                    }
                     x++;
 
                     if (x >= market.RawData.Length) continue;

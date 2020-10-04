@@ -20,10 +20,11 @@ namespace Logic
             int[] durations = new int[myMarket.RawData.Length];
 
 
-            for (int i = 0; i < myMarket.RawData.Length; i++)
+            for (int i = 0; i < myMarket.RawData.Length-2; i++)
             {
                 if (entryRules.Any(x => x.Satisfied[i]) && RulesContext.IsValid(myMarket.RawData[i])) entries[i] = true;
                 if (exitRules.Any(x => x.Satisfied[i]) || RulesContext.ClosePositions(myMarket.RawData[i])) exits[i] = true;
+                //if (entryRules.Any(x => x.Satisfied[i])) exits[i+10] = true;
             }
 
             for (int i = 0; i < entries.Length; i++)

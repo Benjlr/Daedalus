@@ -1,5 +1,4 @@
-﻿using Logic.Calculations;
-using PriceSeries.FinancialSeries;
+﻿using PriceSeries.FinancialSeries;
 using System;
 using System.Collections.Generic;
 using System.Linq;

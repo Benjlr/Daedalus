@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using LinqStatistics;
+using System;
 using System.Diagnostics;
 using System.Linq;
-using LinqStatistics;
-using Logic.Calculations;
-using PriceSeries.FinancialSeries;
 
 namespace Logic.Metrics.CoreTests
 {
@@ -69,7 +66,7 @@ namespace Logic.Metrics.CoreTests
                         FinalResultShort[i][x - start] = startCapShort;
 
                         x++;
-
+                        
                         while (x-start < length && !myStrat.Exits[x-1 ])
                         {
                             startCapLong = capitalLong+ (data[x].Open_Bid - entryPriceBull) * dollarsPerPoint;
@@ -78,7 +75,12 @@ namespace Logic.Metrics.CoreTests
 
                             FinalResultLong[i][x - start] = startCapLong;
                             FinalResultShort[i][x - start] = startCapShort;
+                            
+
                             x++;
+
+                            //if ((data[x].Open_Bid - entryPriceBull)  > 10) break;
+                            //else if ((data[x].Open_Bid - entryPriceBull)  < -10) break;
                         }
                         if (x-start >= length ) break;
 

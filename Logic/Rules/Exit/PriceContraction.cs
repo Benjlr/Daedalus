@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Logic.Calculations;
+using Logic.Utils.Calculations;
 using PriceSeries.FinancialSeries;
 
 namespace Logic.Rules.Exit
@@ -19,7 +19,7 @@ namespace Logic.Rules.Exit
             
             Satisfied = new bool[data.Count];
             var nrwRs = NRWRBars.Calculate(data);
-            int lookback = 90;
+            int lookback = 40;
 
             for (int i = lookback; i < data.Count; i++)
             {
@@ -31,7 +31,7 @@ namespace Logic.Rules.Exit
 
                 if (percentage > 0.9)
                 {
-                    if (nrwRs[i] < -5) Satisfied[i] = true;
+                    if (nrwRs[i] < -3) Satisfied[i] = true;
                 }
             }
 

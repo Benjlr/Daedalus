@@ -1,6 +1,10 @@
-﻿using PriceSeries.FinancialSeries;
+﻿using PriceSeries;
+using PriceSeries.FinancialSeries;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace Logic
 {
@@ -12,9 +16,56 @@ namespace Logic
             var mData = LoadData(data_path);
             var cData = ConvertDataToSession(mData);
 
+
+            StringBuilder t = new StringBuilder();
+            for (int i = 0; i < cData.Length; i++)
+            {
+                t.AppendLine($"{cData[i].CloseDate},{cData[i].Open},{cData[i].High},{cData[i].Low},{cData[i].Close}");
+            }
+            File.WriteAllText(@"C:\Temp\Market.csv",t.ToString());
+
+
             return new Market(mData, cData);
         }
-        
+
+        public static List<Market> CreateStockMarkets()
+        {
+            List<Market> retvals = new List<Market>();
+            var Ticks = new List<string>(File.ReadAllLines(@"C:\Applications\Trading Data\Stocks\ASX\Lists\S&P ASX 200.asx.txt").ToList());
+            foreach (var t in Ticks)
+            {
+                var fs = File.ReadAllLines(t);
+                var stock = IOFunctions.EquityData.Instance.Loaddata(t, MetaStockGrouping.ASXEquities, false);
+                var cut = stock.GetTradeList(Interval.FastFrame).GetRange(stock.GetTradeList(Interval.FastFrame).Count - 300, 300);
+
+                retvals.Add(new Market(BuildFromCoszData(cut), cut.ToArray()));
+            }
+
+            return retvals;
+        }
+
+        private static MarketData[] BuildFromCoszData(List<Session> data)
+        {
+            var myArray = new MarketData[data.Count];
+
+            for (int i = 0; i < data.Count; i++)
+            {
+
+                myArray[i] = new MarketData(time: data[i].CloseDate,
+                    o_a: data[i].Open,
+                    o_b: data[i].Open,
+                    h_a: data[i].High,
+                    h_b: data[i].High,
+                    l_a: data[i].Low,
+                    l_b: data[i].Low,
+                    c_a: data[i].Close,
+                    c_b: data[i].Close,
+                    vol: (long)data[i].Volume);
+            }
+            return myArray;
+
+        }
+
         private static MarketData[] LoadData(string location)
         {
             var fs = File.ReadAllLines(location);
@@ -57,6 +108,7 @@ namespace Logic
                    rawData[i].Low_Ask,
                    rawData[i].Close_Bid, 
                    rawData[i].Close_Ask);
+                if(i > 1) costanzaData[i].ReturnSeries = costanzaData[i].Close / costanzaData[i - 1].Close - 1;
             }
 
             return costanzaData;

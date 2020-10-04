@@ -1,12 +1,21 @@
-﻿using Daedalus.Models;
+﻿using System;
+using Daedalus.Models;
 using Daedalus.Utils;
 using OxyPlot;
 using OxyPlot.Series;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Logic;
+using Logic.Utils.Calculations;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
+using OxyPlot.Wpf;
+using PriceSeries;
+using PriceSeries.Indicators.Derived;
+using AverageTrueRange = Logic.Utils.Calculations.AverageTrueRange;
+using LineAnnotation = OxyPlot.Annotations.LineAnnotation;
+using LinearAxis = OxyPlot.Axes.LinearAxis;
 
 namespace Daedalus.ViewModels
 {
@@ -33,8 +42,6 @@ namespace Daedalus.ViewModels
         }
 
         private List<int> _exitPoint { get; set; } = new List<int >();
-        private int _padding = 200;
-
         public EntryViewModel() : base()
         {
             this.InitialiseData();
@@ -42,14 +49,14 @@ namespace Daedalus.ViewModels
 
         private void InitialiseData()
         {
-            // var 
 
-            for (int i = 0; i < ModelSingleton.Instance.MyStarrtegy.Entries.Length; i++)
-                if(ModelSingleton.Instance.MyStarrtegy.Entries[i])
+
+            for (int i = 0; i < ModelSingleton.Instance.MyStrategy.Entries.Length; i++)
+                if(ModelSingleton.Instance.MyStrategy.Entries[i])
                     EntryPoints.Add(i+1);
 
-            for (int i = 0; i < ModelSingleton.Instance.MyStarrtegy.Exits.Length; i++)
-                if (ModelSingleton.Instance.MyStarrtegy.Exits[i])
+            for (int i = 0; i < ModelSingleton.Instance.MyStrategy.Exits.Length; i++)
+                if (ModelSingleton.Instance.MyStrategy.Exits[i])
                     _exitPoint.Add(i + 1);
 
             Update(0);
@@ -58,26 +65,11 @@ namespace Daedalus.ViewModels
 
         public void Update(int x)
         {
-
+            if(x > EntryPoints.Count) return;
             PlotModel = new PlotModel();
             ControllerModel = new PlotController();
 
-
-            var start = EntryPoints[x] - _padding;
-            if (start < 0) start = 0;
-            var end = _exitPoint.FirstOrDefault(y => y > EntryPoints[x]);
-
-            if (end == 0) 
-                end = ModelSingleton.Instance.Mymarket.CostanzaData.Length - 1;
-            if (end + _padding > ModelSingleton.Instance.Mymarket.CostanzaData.Length) 
-                end = ModelSingleton.Instance.Mymarket.CostanzaData.Length - 1;
-            else 
-                end = end + _padding;
-
             List<OhlcvItem> ohs = new List<OhlcvItem>();
-
-
-
             var series = new CandleStickAndVolumeSeries
             {
                 PositiveColor = OxyColors.SeaGreen,
@@ -89,18 +81,32 @@ namespace Daedalus.ViewModels
                 VolumeStyle = VolumeStyle.None,
                 //CandleWidth = 0.92,
             };
-
-
-            for (int i = start; i < end; i++)
+            var pivseries = new OxyPlot.Series.ScatterSeries()
             {
-                var item = ModelSingleton.Instance.Mymarket.CostanzaData[i];
-                series.Append(new OhlcvItem(i, item.Open, item.High, item.Low, item.Close, item.Volume));
-            }
+                MarkerSize = 5,
+                MarkerFill = OxyColors.Green
+            };
+            var pivseries2 = new OxyPlot.Series.ScatterSeries()
+            {
+                MarkerSize = 5,
+                MarkerFill = OxyColors.Blue
+            };
+            var pivseries3 = new OxyPlot.Series.ScatterSeries()
+            {
+                MarkerSize = 5,
+                MarkerFill = OxyColors.Red
+            };
 
+            var entryPoint = EntryPoints[x];
+            var graphStart = EntryPoints[x] - 40;
+            var graphEnd = entryPoint + 150;
+            //var graphStart = 0;
+            //var graphEnd = ModelSingleton.Instance.Mymarket.CostanzaData.Length;
 
+            var myPivs = Pivots.Calculate(ModelSingleton.Instance.Mymarket.CostanzaData.ToList(), 0);
+            var myPivs2 = Pivots.Calculate(ModelSingleton.Instance.Mymarket.CostanzaData.ToList(), 1);
+            var myPivs3 = Pivots.Calculate(ModelSingleton.Instance.Mymarket.CostanzaData.ToList(), 2);
 
-            series.ItemsSource = ohs;
-            PlotModel.Series.Add(series);
             PlotModel.Annotations.Add(new LineAnnotation()
             {
                 Type = LineAnnotationType.Vertical,
@@ -108,24 +114,134 @@ namespace Daedalus.ViewModels
             });
             PlotModel.Annotations.Add(new LineAnnotation()
             {
-                Type = LineAnnotationType.Vertical,
-                X = _exitPoint.FirstOrDefault(y => y > EntryPoints[x]),
+                MinimumX = entryPoint - 3,
+                MaximumX = entryPoint + 3,
+                Type = LineAnnotationType.Horizontal,
+                Y = ModelSingleton.Instance.MyStrategy.Rules.First(x=>x.Order.Equals(Pos.Entry)).Dir == Thesis.Bull ? 
+                    ModelSingleton.Instance.Mymarket.RawData[EntryPoints[x]].Open_Ask: ModelSingleton.Instance.Mymarket.RawData[EntryPoints[x]].Open_Bid,
             });
+
+            if (_exitPoint.Any(y => y > EntryPoints[x]))
+            {
+                var exitPnt = _exitPoint.First(y => y > EntryPoints[x]);
+
+
+                PlotModel.Annotations.Add(new LineAnnotation()
+                {
+                    Type = LineAnnotationType.Vertical,
+                    X = exitPnt,
+                });
+                PlotModel.Annotations.Add(new LineAnnotation()
+                {
+                    MinimumX = exitPnt -3,
+                    MaximumX= exitPnt +3,
+                    Type = LineAnnotationType.Horizontal,
+                    Y = ModelSingleton.Instance.MyStrategy.Rules.First(x => x.Order.Equals(Pos.Exit)).Dir == Thesis.Bull ?
+                        ModelSingleton.Instance.Mymarket.RawData[exitPnt].Open_Bid : ModelSingleton.Instance.Mymarket.RawData[exitPnt].Open_Ask,
+                });
+                graphEnd = exitPnt + 50;
+                graphEnd = ModelSingleton.Instance.Mymarket.CostanzaData.Length;
+            }
+
+            var atrpc = AverageTrueRange.CalculateATRPC(ModelSingleton.Instance.Mymarket.CostanzaData.ToList());
+            var retval = new List<Tuple<double, double, double>>();
+            var mdpt = new List<double>();
+            var dist = 0.1;
+
+            ModelSingleton.Instance.Mymarket.CostanzaData.ToList().ForEach(x => mdpt.Add(x.High - ((x.High - x.Low) / 2.0)));
+
+            for (var i = 0; i < ModelSingleton.Instance.Mymarket.CostanzaData.Length; i++)
+            {
+                retval.Add(new Tuple<double, double, double>
+                (mdpt[i] + (mdpt[i] / 200 * atrpc[i]),
+                    mdpt[i] - (mdpt[i] / 200 * atrpc[i]),
+                    mdpt[i]));
+            }
+
+            var p = new OxyPlot.Series.AreaSeries
+            {
+                Background = OxyColors.Transparent,
+                Color = OxyColors.Gray,
+                StrokeThickness = 3
+            };
+
+            var pline = new OxyPlot.Series.LineSeries()
+            {
+                Color = OxyColors.Black,
+                StrokeThickness = 1
+            };
+
+            var twenty = ExponentialMovingAverage.Calculate(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(),20);
+
+            var twentytLine = new OxyPlot.Series.LineSeries()
+            {
+                Color = OxyColors.Blue,
+                StrokeThickness = 1
+            };
+            for (var i = 0; i < retval.Count; i++)
+            {
+                twentytLine.Points.Add(new DataPoint(i, twenty[i]));
+            }
+            var fifty = SimpleMovingAverage.Calculate(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(), 50);
+
+            var fiftyLine = new OxyPlot.Series.LineSeries()
+            {
+                Color = OxyColors.Gold,
+                StrokeThickness = 1
+            };
+            for (var i = 0; i < retval.Count; i++)
+            {
+                fiftyLine.Points.Add(new DataPoint(i, fifty[i]));
+            }
+
+            for (var i = 0; i < retval.Count; i++)
+            {
+                pline.Points.Add(new DataPoint(i , retval[i].Item3));
+            }
+            for (var i = 0; i < retval.Count; i++)
+            {
+                p.Points.Add(new DataPoint(i , retval[i].Item2));
+                p.Points2.Add(new DataPoint(i , retval[i].Item1));
+            }
+
+            for (int i = graphStart; i < graphEnd; i++)
+            {
+                if (i < 0) continue;
+                if (i > ModelSingleton.Instance.Mymarket.CostanzaData.Length - 1) continue;
+
+                var item = ModelSingleton.Instance.Mymarket.CostanzaData[i];
+                series.Append(new OhlcvItem(i, item.Open, item.High, item.Low, item.Close, item.Volume));
+                if(myPivs[i].Pivo==Pivot.High) pivseries.Points.Add(new ScatterPoint(i, item.High+2));
+                if(myPivs[i].Pivo == Pivot.Low) pivseries.Points.Add(new ScatterPoint(i, item.Low-2));
+                if (myPivs2[i].Pivo == Pivot.High) pivseries2.Points.Add(new ScatterPoint(i, item.High + 5));
+                if (myPivs2[i].Pivo == Pivot.Low) pivseries2.Points.Add(new ScatterPoint(i, item.Low - 5));
+                if (myPivs3[i].Pivo == Pivot.High) pivseries3.Points.Add(new ScatterPoint(i, item.High + 8));
+                if (myPivs3[i].Pivo
+                    == Pivot.Low) pivseries3.Points.Add(new ScatterPoint(i, item.Low - 8));
+            }
 
             LinearAxis xAx = new LinearAxis()
             {
                 Position = AxisPosition.Bottom,
-                Maximum = _exitPoint.FirstOrDefault(y => y > EntryPoints[x]) + 20,
-                Minimum = EntryPoints[x] - 20
+                Maximum = graphStart+150,
+                Minimum = graphStart
             };
             LinearAxis yAx = new LinearAxis()
             {
                 Position = AxisPosition.Left,
-                Maximum = series.Items.Max(y => y.High),
-                Minimum = series.Items.Min(y => y.Low)
+                Maximum = series.Items.GetRange((int)xAx.Minimum, (int)xAx.Maximum - (int)xAx.Minimum).Max(y => y.High),
+                Minimum = series.Items.GetRange((int)xAx.Minimum, (int)xAx.Maximum - (int)xAx.Minimum).Min(y => y.Low)
             };
             PlotModel.Axes.Add(xAx);
             PlotModel.Axes.Add(yAx);
+            PlotModel.Series.Add(series);
+            //PlotModel.Series.Add(pivseries);
+            //PlotModel.Series.Add(pivseries2);
+            PlotModel.Series.Add(pivseries3);
+            PlotModel.Series.Add(p);
+            PlotModel.Series.Add(pline);
+            PlotModel.Series.Add(twentytLine);
+            PlotModel.Series.Add(fiftyLine);
 
             PlotModel.InvalidatePlot(true);
             NotifyPropertyChanged($"PlotModel");

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Logic.Calculations;
 using Logic.Utils.Calculations;
 using PriceSeries.FinancialSeries;
 
@@ -13,9 +12,6 @@ namespace Logic.Rules.Exit
             Dir = Thesis.Bull;
             Order = Pos.Exit;
         }
-        private double spread = 2;
-
-
         public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
         {
             Satisfied = new bool[data.Count];

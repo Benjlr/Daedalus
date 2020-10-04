@@ -5,12 +5,12 @@ using Logic.Utils.Calculations;
 
 namespace Logic.Rules.Entry
 {
-    public class BearishMATage : RuleBase
+    public class Sigma : RuleBase
     {
-        public BearishMATage()
+        public Sigma()
         {
             Dir = Thesis.Bull;
-            Order = Pos.Exit;
+            Order = Pos.Entry;
         }
 
 
@@ -18,12 +18,23 @@ namespace Logic.Rules.Entry
         {
             var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
             var fiftyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 50);
+            var sigma = SigmaSpike.Calculate(data);
+
+            int lookback = 300;
+
+
 
             Satisfied = new bool[data.Count];
 
-            for (int i = 55; i < data.Count; i++)
+            for (int i = lookback; i < data.Count; i++)
             {
-                if (twentyMA[i-1] > fiftyMA[i-1] && twentyMA[i] < fiftyMA[i]) Satisfied[i] = true;
+                var max = data.GetRange(i - lookback, lookback).Max(x => x.High);
+                var low = data.GetRange(i - lookback, lookback).Min(x => x.Low);
+                var cuur = data[i].Close;
+
+                var percentage = (cuur - low) / (max - low);
+
+                if (percentage > 0.6 && sigma.Skip(i-5).Any(x=>x>10)) Satisfied[i] = true;
             }
             
         }

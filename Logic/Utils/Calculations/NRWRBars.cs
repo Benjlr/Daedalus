@@ -1,7 +1,7 @@
-﻿using PriceSeries.FinancialSeries;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using PriceSeries.FinancialSeries;
 
-namespace Logic.Calculations
+namespace Logic.Utils.Calculations
 {
     public class NRWRBars
     {
