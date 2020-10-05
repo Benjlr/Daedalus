@@ -21,22 +21,31 @@ namespace Logic.Rules.Entry
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             var atr = AverageTrueRange.Calculate(data);
             var twentyMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
+            var fissy = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 50);
             var tenMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 10);
             var SixMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 6);
 
             Satisfied = new bool[data.Count];
             var coun = 0;
 
-            for (int i = 0; i < data.Count; i++)
+            for (int i = 50; i < data.Count; i++)
             {
                 var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);
                 var tentoTwenny = Math.Abs(twentyMa[i] - tenMA[i]);
+                var max = data.GetRange(i - 11, 12).Max(x => x.High);
+                var low = data.GetRange(i - 11, 12).Min(x => x.Low);
+                var cuur = data[i].Close;
 
-                if (atrPC[i] < 0.1 && tentoTwenny < atr[i] * 0.4 && sixtoTen < atr[i] * 0.4)
+                var percentage = (cuur - low) / (max - low);
+
+
+                if ( tentoTwenny < atr[i] * 0.5 
+                    && sixtoTen < atr[i] * 0.5
+                    )
                 {
                     coun++;
 
-                    if(coun > 4)Satisfied[i] = true;
+                    if(coun > 8 && twentyMa[i] > fissy[i] && percentage > 0.8 && atrPC[i] < 0.1) Satisfied[i] = true;
                 }
                 else
                 {

@@ -226,20 +226,24 @@ namespace Daedalus.ViewModels
                 Maximum = graphStart+150,
                 Minimum = graphStart
             };
+            var rane = ModelSingleton.Instance.Mymarket.CostanzaData.ToList().GetRange(graphStart, 150).ToList();
+            var yMax = rane.Max(x=>x.High);
+            var yMin = rane.Min(x=>x.Low);
+
             LinearAxis yAx = new LinearAxis()
             {
                 Position = AxisPosition.Left,
-                Maximum = series.Items.GetRange((int)xAx.Minimum, (int)xAx.Maximum - (int)xAx.Minimum).Max(y => y.High),
-                Minimum = series.Items.GetRange((int)xAx.Minimum, (int)xAx.Maximum - (int)xAx.Minimum).Min(y => y.Low)
+                Maximum = yMax,
+                Minimum = yMin
             };
             PlotModel.Axes.Add(xAx);
             PlotModel.Axes.Add(yAx);
             PlotModel.Series.Add(series);
             //PlotModel.Series.Add(pivseries);
             //PlotModel.Series.Add(pivseries2);
-            PlotModel.Series.Add(pivseries3);
+            //PlotModel.Series.Add(pivseries3);
             PlotModel.Series.Add(p);
-            PlotModel.Series.Add(pline);
+            //PlotModel.Series.Add(pline);
             PlotModel.Series.Add(twentytLine);
             PlotModel.Series.Add(fiftyLine);
 

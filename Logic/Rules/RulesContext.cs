@@ -76,19 +76,11 @@ namespace Logic.Rules
         {
             var timeCheck = okToTrade.Any(x => entryPoint.Time.TimeOfDay > x.Item1.TimeOfDay && entryPoint.Time.TimeOfDay < x.Item2.TimeOfDay);
             var maxSpread = (entryPoint.Close_Ask - entryPoint.Close_Bid) <= MaxSpread;
-            //var index = _broaderMarket.IndexOf(_broaderMarket.FirstOrDefault(x => x.CloseDate.Date == entryPoint.Time.Date)) - 3;
-            bool marketUp = false;
-            //if (index > 0)
-            //{
-            //    var priorMarket = _broaderMarket.GetRange(index, 3).ToList();
-            //    marketUp = priorMarket[0].Close < priorMarket[0].Open && priorMarket[1].Close < priorMarket[1].Open /*&& priorMarket[2].Close < priorMarket[2].Open*/;
 
-            //}
-
-            return  maxSpread /*&& marketUp*/; 
+            return  maxSpread ;
         }
 
         //public static bool ClosePositions(MarketData exitPoint) => (exitPoint.Time.DayOfWeek == DayOfWeek.Saturday && exitPoint.Time.Hour > ExitPosition.Hour);
-        public static bool ClosePositions(MarketData exitPoint) =>false;
+        public static bool ClosePositions(MarketData exitPoint) => false;
     }
 }
