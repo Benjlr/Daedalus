@@ -17,7 +17,7 @@ namespace Logic.Metrics
             for (int i = start; i < end; i++)
             {
                 retval[i-start] = new FixedBarExitTest(i);
-                retval[i-start].Run(market.RawData, strat.Entries);
+                retval[i-start].Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
             }
 
             return retval;

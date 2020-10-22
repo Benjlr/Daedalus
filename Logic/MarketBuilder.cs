@@ -1,10 +1,7 @@
-﻿using PriceSeries;
-using PriceSeries.FinancialSeries;
+﻿using PriceSeries.FinancialSeries;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Logic
 {
@@ -13,42 +10,42 @@ namespace Logic
         
         public static Market CreateMarket(string data_path)
         {
-            var mData = LoadData(data_path);
-            var cData = ConvertDataToSession(mData);
+            //StringBuilder t = new StringBuilder();
+            //for (int i = 0; i < cData.Length; i++)
+            //{
+            //    t.AppendLine($"{cData[i].CloseDate},{cData[i].Open},{cData[i].High},{cData[i].Low},{cData[i].Close}");
+            //}
+            //File.WriteAllText(@"C:\Temp\Market.csv",t.ToString());
 
-
-            StringBuilder t = new StringBuilder();
-            for (int i = 0; i < cData.Length; i++)
-            {
-                t.AppendLine($"{cData[i].CloseDate},{cData[i].Open},{cData[i].High},{cData[i].Low},{cData[i].Close}");
-            }
-            File.WriteAllText(@"C:\Temp\Market.csv",t.ToString());
-
-
-            return new Market(mData, cData);
+            return LoadData(data_path);
         }
 
-        public static List<Market> CreateStockMarkets()
+        private static Market LoadData(string data_path)
         {
-            List<Market> retvals = new List<Market>();
-            var Ticks = new List<string>(File.ReadAllLines(@"C:\Applications\Trading Data\Stocks\ASX\Lists\S&P ASX 200.asx.txt").ToList());
-            foreach (var t in Ticks)
-            {
-                var fs = File.ReadAllLines(t);
-                var stock = IOFunctions.EquityData.Instance.Loaddata(t, MetaStockGrouping.ASXEquities, false);
-                var cut = stock.GetTradeList(Interval.FastFrame).GetRange(stock.GetTradeList(Interval.FastFrame).Count - 300, 300);
+            var data = File.ReadAllLines(data_path);
+            MarketData[] myBidAskData;
+            Session[] myConsolidatedData;
 
-                retvals.Add(new Market(BuildFromCoszData(cut), cut.ToArray()));
+
+            if (data[0].Split(',').Length == 10)
+            {
+                myBidAskData = LoadBidAskData(data_path);
+                myConsolidatedData = ConvertDataToSession(myBidAskData);
+            }
+            else
+            {
+                myConsolidatedData = LoadConsolidatedData(data_path);
+                myBidAskData = BuildFromCoszData(myConsolidatedData);
             }
 
-            return retvals;
+            return new Market(myBidAskData, myConsolidatedData);
         }
 
-        private static MarketData[] BuildFromCoszData(List<Session> data)
+        private static MarketData[] BuildFromCoszData(Session[] data)
         {
-            var myArray = new MarketData[data.Count];
+            var myArray = new MarketData[data.Length];
 
-            for (int i = 0; i < data.Count; i++)
+            for (int i = 0; i < data.Length; i++)
             {
 
                 myArray[i] = new MarketData(time: data[i].CloseDate,
@@ -60,13 +57,35 @@ namespace Logic
                     l_b: data[i].Low,
                     c_a: data[i].Close,
                     c_b: data[i].Close,
-                    vol: (long)data[i].Volume);
+                    vol: data[i].Volume );
             }
             return myArray;
 
         }
 
-        private static MarketData[] LoadData(string location)
+        private static Session[] LoadConsolidatedData(string location)
+        {
+            var fs = File.ReadAllLines(location);
+            var myArray = new Session[fs.Length-1];
+
+            for (int i = 1; i < fs.Length; i++)
+            {
+                var myLine = fs[i].Split(',');
+
+                myArray[i-1] = new Session(
+                    cd: DateTime.ParseExact(myLine[0], "yyyy/MM/dd", null),
+                    v: double.Parse(myLine[5]),
+                    o: double.Parse(myLine[1]),
+                    h: double.Parse(myLine[2]),
+                    l: double.Parse(myLine[3]),
+                    c: double.Parse(myLine[4]));
+            }
+
+            return myArray.Where(x=>x.CloseDate > new DateTime(2018,06,01)).ToArray();
+
+        }
+
+        private static MarketData[] LoadBidAskData(string location)
         {
             var fs = File.ReadAllLines(location);
             var myArray = new MarketData[fs.Length];

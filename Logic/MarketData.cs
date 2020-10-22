@@ -13,7 +13,7 @@ namespace Logic
         public double Low_Bid { get; set; }
         public double Close_Ask { get; set; }
         public double Close_Bid { get; set; }
-        public long volume{ get; set; }
+        public double volume { get; set; }
 
         public MarketData(DateTime time,
                             double o_a,
@@ -24,7 +24,7 @@ namespace Logic
                             double l_b,
                             double c_a,
                             double c_b,
-                            long vol)
+                            double vol)
         {
             Time = time;
             Open_Ask = o_a;

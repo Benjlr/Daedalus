@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 using Daedalus.Utils.Enums;
 using Logic.Metrics;
@@ -36,97 +37,99 @@ namespace Daedalus.Utils
 
         protected virtual void InitialiseData()
         {
+
             PlotModel = new PlotModel();
             ControllerModel = new PlotController();
 
-            var lineAnnotation = new LineAnnotation
+            List<LineSeries> mySeries = new List<LineSeries>();
+
+            //var upperSeries = new LineSeries()
+            //{
+            //    Color = OxyColors.Gray,
+            //    LineStyle = LineStyle.Solid,
+            //};
+            //for (int i = 0; i < _test.Length; i++) upperSeries.Points.Add(new DataPoint(i + 1, _test[i].ExpectancyLongMax));
+            //mySeries.Add(upperSeries);
+
+            //var upperQuartSeries = new LineSeries()
+            //{
+            //    Color = OxyColors.Gray,
+            //    LineStyle = LineStyle.LongDash,
+            //};
+            //for (int i = 0; i < _test.Length; i++) upperQuartSeries.Points.Add(new DataPoint(i + 1, _test[i].ExpectancyLongUQ));
+            //mySeries.Add(upperQuartSeries);
+
+            var medianSeries = new LineSeries()
             {
-                Y = 1,
-                //YAxisKey = "Expectancy",
-                LineStyle = LineStyle.Solid,
-                Type = LineAnnotationType.Horizontal,
-            };
-            var WinAnnotation = new LineAnnotation
-            {
-                Y = 0.5,
+                Color = OxyColors.Gray,
                 LineStyle = LineStyle.Dot,
-                //YAxisKey = "Ratio",
-                Type = LineAnnotationType.Horizontal,
             };
+            for (int i = 0; i < _test.Length; i++) medianSeries.Points.Add(new DataPoint(i + 1, _test[i].ExpectancyLongMedian));
+            mySeries.Add(medianSeries);
+
+            var averageSeries = new LineSeries()
+            {
+                Color = OxyColors.Gray,
+                LineStyle = LineStyle.Solid,
+            };
+            for (int i = 0; i < _test.Length; i++) averageSeries.Points.Add(new DataPoint(i + 1, _test[i].ExpectancyLongAverage));
+            mySeries.Add(averageSeries);
+
+            //var lowerQuartileSeries = new LineSeries()
+            //{
+            //    Color = OxyColors.Gray,
+            //    LineStyle = LineStyle.LongDash,
+            //};
+            //for (int i = 0; i < _test.Length; i++) lowerQuartileSeries.Points.Add(new DataPoint(i + 1, _test[i].ExpectancyLongLQ));
+            //mySeries.Add(lowerQuartileSeries);
+
+            //var lowerBoundSeries = new LineSeries()
+            //{
+            //    Color = OxyColors.Gray,
+            //    LineStyle = LineStyle.Solid,
+            //};
+            //for (int i = 0; i < _test.Length; i++) lowerBoundSeries.Points.Add(new DataPoint(i + 1, _test[i].ExpectancyLongMin));
+            //mySeries.Add(lowerBoundSeries);
+
+
 
             var horiAxis = new LinearAxis()
             {
                 Position = AxisPosition.Bottom,
             };
-
             var vertAxis = new LinearAxis()
             {
                 Position = AxisPosition.Left,
-                //Key = "Expectancy"
-            };
-            //var vertAxisRatio = new LinearAxis()
-            //{
-            //    Position = AxisPosition.Right,
-            //    Key = "Ratio"
-            //};
-
-            WinRatioLong = new LineSeries()
-            {
-                LineStyle = LineStyle.Dot,
-                Color = OxyColors.Blue,
-                //YAxisKey = "Ratio"
-            };
-            WinRatioShort = new LineSeries()
-            {
-                LineStyle = LineStyle.Dot,
-                Color = OxyColors.Red,
-                //YAxisKey = "Ratio"
             };
 
-            ExpectancyLong = new LineSeries()
-            {
-                Color = OxyColors.Blue,
-                //YAxisKey = "Expectancy"
-            };
-            ExpectancyShort = new LineSeries()
-            {
-                Color = OxyColors.Red,
-                //YAxisKey = "Expectancy"
-            };
 
-            for (int i = 0; i < _test.Length; i++)
-            {
-                WinRatioLong.Points.Add(new DataPoint(i + 1, _test[i].WinPercentageLong));
-                WinRatioShort.Points.Add(new DataPoint(i + 1, _test[i].WinPercentageShort));
-                ExpectancyLong.Points.Add(new DataPoint(i + 1, _test[i].ExpectancyLong));
-                ExpectancyShort.Points.Add(new DataPoint(i + 1, _test[i].ExpectancyShort));
-            }
 
-            PlotModel.Annotations.Add(lineAnnotation);
-            PlotModel.Annotations.Add(WinAnnotation);
+
             PlotModel.Axes.Add(horiAxis);
             PlotModel.Axes.Add(vertAxis);
+            mySeries.ForEach(x => PlotModel.Series.Add(x));
+
             Update();
         }
 
         protected void Update()
         {
 
-            PlotModel.Series.Clear();
-            foreach (var dataEnum in LinesToDisplay)
-            {
-                switch (dataEnum)
-                {
-                    case TestDataEnum.ExpectancyLong: PlotModel.Series.Add(ExpectancyLong);
-                        break;
-                    case TestDataEnum.ExpectancyShort: PlotModel.Series.Add(ExpectancyShort);
-                        break;
-                    case TestDataEnum.WinRatioLong: PlotModel.Series.Add(WinRatioLong);
-                        break;
-                    case TestDataEnum.WinRatioShort: PlotModel.Series.Add(WinRatioShort);
-                        break;
-                }
-            }
+            //PlotModel.Series.Clear();
+            //foreach (var dataEnum in LinesToDisplay)
+            //{
+            //    switch (dataEnum)
+            //    {
+            //        case TestDataEnum.ExpectancyLong: PlotModel.Series.Add(ExpectancyLong);
+            //            break;
+            //        case TestDataEnum.ExpectancyShort: PlotModel.Series.Add(ExpectancyShort);
+            //            break;
+            //        case TestDataEnum.WinRatioLong: PlotModel.Series.Add(WinRatioLong);
+            //            break;
+            //        case TestDataEnum.WinRatioShort: PlotModel.Series.Add(WinRatioShort);
+            //            break;
+            //    }
+            //}
 
             PlotModel.InvalidatePlot(true);
         }

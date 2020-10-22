@@ -15,7 +15,7 @@ namespace Daedalus.ViewModels
 
         protected sealed override void InitialiseData()
         {
-            var upperLimit = 865;
+            var upperLimit = 1000;
             var lowerLimit = 1;
             
             _test = TestFactory.GenerateFixedBarExitTest(lowerLimit, upperLimit, ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket);

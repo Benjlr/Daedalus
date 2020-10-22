@@ -1,5 +1,7 @@
 ﻿using Logic.Utils;
 using System;
+using System.Collections.Generic;
+using PriceSeries.FinancialSeries;
 
 namespace Logic.Metrics.EntryTests
 {
@@ -17,7 +19,7 @@ namespace Logic.Metrics.EntryTests
             _sDev = stdev;
         }
 
-        public override void Run(MarketData[] data, bool[] entries)
+        public override void Run(MarketData[] data, bool[] entries, List<Session> myInputs = null)
         {
             FBELong = new double[data.Length];
             FBEShort = new double[data.Length];

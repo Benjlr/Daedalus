@@ -81,31 +81,12 @@ namespace Daedalus.ViewModels
                 VolumeStyle = VolumeStyle.None,
                 //CandleWidth = 0.92,
             };
-            var pivseries = new OxyPlot.Series.ScatterSeries()
-            {
-                MarkerSize = 5,
-                MarkerFill = OxyColors.Green
-            };
-            var pivseries2 = new OxyPlot.Series.ScatterSeries()
-            {
-                MarkerSize = 5,
-                MarkerFill = OxyColors.Blue
-            };
-            var pivseries3 = new OxyPlot.Series.ScatterSeries()
-            {
-                MarkerSize = 5,
-                MarkerFill = OxyColors.Red
-            };
 
             var entryPoint = EntryPoints[x];
             var graphStart = EntryPoints[x] - 40;
             var graphEnd = entryPoint + 150;
             //var graphStart = 0;
             //var graphEnd = ModelSingleton.Instance.Mymarket.CostanzaData.Length;
-
-            var myPivs = Pivots.Calculate(ModelSingleton.Instance.Mymarket.CostanzaData.ToList(), 0);
-            var myPivs2 = Pivots.Calculate(ModelSingleton.Instance.Mymarket.CostanzaData.ToList(), 1);
-            var myPivs3 = Pivots.Calculate(ModelSingleton.Instance.Mymarket.CostanzaData.ToList(), 2);
 
             PlotModel.Annotations.Add(new LineAnnotation()
             {
@@ -143,7 +124,7 @@ namespace Daedalus.ViewModels
                 graphEnd = ModelSingleton.Instance.Mymarket.CostanzaData.Length;
             }
 
-            var atrpc = AverageTrueRange.CalculateATRPC(ModelSingleton.Instance.Mymarket.CostanzaData.ToList());
+            var atrpc = AverageTrueRange.CalculateATRPC(ModelSingleton.Instance.Mymarket.CostanzaData.ToList(),2,60);
             var retval = new List<Tuple<double, double, double>>();
             var mdpt = new List<double>();
             var dist = 0.1;
@@ -165,39 +146,47 @@ namespace Daedalus.ViewModels
                 StrokeThickness = 3
             };
 
-            var pline = new OxyPlot.Series.LineSeries()
+            var six= MovingAverage.ExponentialMovingAverage(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(),6);
+            var ten = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(),10);
+            var twenty = MovingAverage.ExponentialMovingAverage(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(),20);
+            var fifty = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(),50);
+            var twoHunMA = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(), 200);
+
+            var sixLine = new OxyPlot.Series.LineSeries()
             {
-                Color = OxyColors.Black,
+                Color = OxyColors.Lime,
                 StrokeThickness = 1
             };
-
-            var twenty = ExponentialMovingAverage.Calculate(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(),20);
-
+            var tenLine = new OxyPlot.Series.LineSeries()
+            {
+                Color = OxyColors.Pink,
+                StrokeThickness = 1
+            };
             var twentytLine = new OxyPlot.Series.LineSeries()
             {
                 Color = OxyColors.Blue,
                 StrokeThickness = 1
             };
-            for (var i = 0; i < retval.Count; i++)
-            {
-                twentytLine.Points.Add(new DataPoint(i, twenty[i]));
-            }
-            var fifty = SimpleMovingAverage.Calculate(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(), 50);
 
             var fiftyLine = new OxyPlot.Series.LineSeries()
             {
                 Color = OxyColors.Gold,
                 StrokeThickness = 1
             };
+            var twoHunLinw = new OxyPlot.Series.LineSeries()
+            {
+                Color = OxyColors.Black,
+                StrokeThickness = 1
+            };
             for (var i = 0; i < retval.Count; i++)
             {
+                sixLine.Points.Add(new DataPoint(i, six[i]));
+                tenLine.Points.Add(new DataPoint(i, ten[i]));
+                twentytLine.Points.Add(new DataPoint(i, twenty[i]));
                 fiftyLine.Points.Add(new DataPoint(i, fifty[i]));
+                twoHunLinw.Points.Add(new DataPoint(i, twoHunMA[i]));
             }
-
-            for (var i = 0; i < retval.Count; i++)
-            {
-                pline.Points.Add(new DataPoint(i , retval[i].Item3));
-            }
+            
             for (var i = 0; i < retval.Count; i++)
             {
                 p.Points.Add(new DataPoint(i , retval[i].Item2));
@@ -211,13 +200,6 @@ namespace Daedalus.ViewModels
 
                 var item = ModelSingleton.Instance.Mymarket.CostanzaData[i];
                 series.Append(new OhlcvItem(i, item.Open, item.High, item.Low, item.Close, item.Volume));
-                if(myPivs[i].Pivo==Pivot.High) pivseries.Points.Add(new ScatterPoint(i, item.High+2));
-                if(myPivs[i].Pivo == Pivot.Low) pivseries.Points.Add(new ScatterPoint(i, item.Low-2));
-                if (myPivs2[i].Pivo == Pivot.High) pivseries2.Points.Add(new ScatterPoint(i, item.High + 5));
-                if (myPivs2[i].Pivo == Pivot.Low) pivseries2.Points.Add(new ScatterPoint(i, item.Low - 5));
-                if (myPivs3[i].Pivo == Pivot.High) pivseries3.Points.Add(new ScatterPoint(i, item.High + 8));
-                if (myPivs3[i].Pivo
-                    == Pivot.Low) pivseries3.Points.Add(new ScatterPoint(i, item.Low - 8));
             }
 
             LinearAxis xAx = new LinearAxis()
@@ -235,13 +217,12 @@ namespace Daedalus.ViewModels
             PlotModel.Axes.Add(xAx);
             PlotModel.Axes.Add(yAx);
             PlotModel.Series.Add(series);
-            //PlotModel.Series.Add(pivseries);
-            //PlotModel.Series.Add(pivseries2);
-            PlotModel.Series.Add(pivseries3);
             PlotModel.Series.Add(p);
-            PlotModel.Series.Add(pline);
+            PlotModel.Series.Add(sixLine);
+            PlotModel.Series.Add(tenLine);
             PlotModel.Series.Add(twentytLine);
             PlotModel.Series.Add(fiftyLine);
+            PlotModel.Series.Add(twoHunLinw);
 
             PlotModel.InvalidatePlot(true);
             NotifyPropertyChanged($"PlotModel");

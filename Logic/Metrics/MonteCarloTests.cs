@@ -48,8 +48,9 @@ namespace Logic.Metrics
                         //if (x - j + 1 > 350) break;
 
 
-                            //if ((market.RawData[x].Open_Bid - entryPriceBull) * dollarsPerPoint > 100) break;
-                         if ((market.RawData[x].Open_Bid - entryPriceBull)  < -35) break;
+                        //if ((market.RawData[x].Open_Bid - entryPriceBull)  > 10) break;
+                        //if ((market.RawData[x].Open_Bid - entryPriceBull) < -10) breazk;
+                        counts++;
                         x++;
                     }
                     x++;

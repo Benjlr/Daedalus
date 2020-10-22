@@ -33,7 +33,7 @@ namespace Logic.Metrics.CoreTests
         public void Run(MarketData[] data, Strategy myStrat, double initCapital, double dollarsPerPoint)
         {
 
-            int length = data.Length-10000;
+            int length = data.Length/4;
 
             for (int i = 0; i < _ranges; i++)
             {

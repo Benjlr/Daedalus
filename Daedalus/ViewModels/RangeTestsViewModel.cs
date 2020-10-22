@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Data;
 using Daedalus.Models;
 using LinqStatistics;
 using Logic.Metrics;
@@ -80,8 +81,6 @@ namespace Daedalus.ViewModels
             for (int i = 0; i < _test.LowerBound.Length; i++) lowerBoundSeries.Points.Add(new DataPoint(i + 1, _test.LowerBound[i]));
             mySeries.Add(lowerBoundSeries);
 
-
-
             var horiAxis = new LinearAxis()
             {
                 Position = AxisPosition.Bottom,
@@ -91,15 +90,12 @@ namespace Daedalus.ViewModels
                 Position = AxisPosition.Left,
             };
 
-
-
-
             PlotModel.Axes.Add(horiAxis);
             PlotModel.Axes.Add(vertAxis);
             mySeries.ForEach(x => PlotModel.Series.Add(x));
 
+            
 
-            PlotModel.Title = $"Entries: {ModelSingleton.Instance.MyStrategy.Entries.Count(x => x)}   Exits: {ModelSingleton.Instance.MyStrategy.Exits.Count(x => x)}";
             Update();
         }
 

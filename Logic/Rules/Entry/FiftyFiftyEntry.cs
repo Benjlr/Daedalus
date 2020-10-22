@@ -18,7 +18,7 @@ namespace Logic.Rules.Entry
             Random rand = new Random();
             for (int i = 0; i < data.Count; i++)
             {
-                if (rand.NextDouble() > 0.5) Satisfied[i] = true;
+                /*if (rand.NextDouble() > 0.5) */Satisfied[i] = true;
             }
 
         }

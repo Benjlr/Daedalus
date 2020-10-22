@@ -15,11 +15,10 @@ namespace Logic.Rules.Entry
             Order = Pos.Entry;
         }
 
-
-        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
+        public void Calc(List<Session> data, MarketData[] rawData)
         {
             var atrPC = AverageTrueRange.CalculateATRPC(data);
-            var atr = AverageTrueRange.Calculate(data);
+            var atr = AverageTrueRange.Calculate(data, 20);
             var twentyMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
             var tenMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 10);
             var SixMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 6);
@@ -30,20 +29,52 @@ namespace Logic.Rules.Entry
             for (int i = 0; i < data.Count; i++)
             {
                 var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);
-                var tentoTwenny = Math.Abs(twentyMa[i] - tenMA[i]);
 
-                if (atrPC[i] < 0.1 && tentoTwenny < atr[i] * 0.4 && sixtoTen < atr[i] * 0.4)
+                if (sixtoTen < atr[i] * 0.5
+                )
                 {
                     coun++;
-
-                    if(coun > 4)Satisfied[i] = true;
+                    if (coun > 7 && twentyMa[i] > fissy[i] && atrPC[i - 1] == 0.0 && atrPC[i] != 0.0) Satisfied[i] = true;
                 }
-                else
-                {
-                    coun = 0;
-                }
+                else coun = 0;
             }
-            
+
+            //var atrPC = AverageTrueRange.CalculateATRPC(data);
+
+            //for (int i = 50; i < data.Count; i++)
+            //{
+            //    if (atrPC[i - 1] == 0.0 && atrPC[i] != 0.0 && twentyMa[i] > fissy[i] ) Satisfied[i] = true;
+            //}
+        }
+
+
+
+        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
+        {
+            return;
+            var atrPC = AverageTrueRange.CalculateATRPC(data);
+            var atr = AverageTrueRange.Calculate(data,20);
+            var twentyMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
+            var fissy = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 50);
+            var tenMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 10);
+            var SixMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 6);
+
+            Satisfied = new bool[data.Count];
+            var coun = 0;
+
+            for (int i = 50; i < data.Count; i++)
+            {
+                var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);
+
+                if (sixtoTen < atr[i] * 0.5
+                )
+                {
+                    coun++;
+                    if (coun > 9 && twentyMa[i] > fissy[i] && atrPC[i] == 0.0) Satisfied[i] = true;
+                }
+                else coun = 0;
+            }
+
         }
     }
 
@@ -58,25 +89,33 @@ namespace Logic.Rules.Entry
 
         public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
         {
+
+
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             var atr = AverageTrueRange.Calculate(data);
             var twentyMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
             var tenMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 10);
             var SixMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 6);
 
+            var myLineCloseness = MovingAverage.GetRMSE(new List<List<double>>() { tenMA, SixMA, twentyMa });
+
             Satisfied = new bool[data.Count];
-            var coun = 0;
 
             for (int i = 0; i < data.Count; i++)
             {
-                var sixToClose = ( data[i].Close- tenMA[i]);
-                //var tentoTwenny = Math.Abs(twentyMa[i] - tenMA[i]);
 
-                if (atrPC[i] > 0.66 && sixToClose > atr[i] * 1 )
+                var lines = myLineCloseness.Skip(Math.Max(0, i - 8)).Take(9).ToList();
+
+                if (atrPC[i] == 0.0 && lines.All(x => x < 0.1))
                 {
+                    var m = (tenMA[i] - tenMA[i - 6]) / 6;
+
+                    /*   if(Math.Abs(m) <2)*/
                     Satisfied[i] = true;
                 }
             }
+
+
 
         }
     }
