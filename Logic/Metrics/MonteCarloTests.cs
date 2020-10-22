@@ -28,6 +28,7 @@ namespace Logic.Metrics
         public void Run(Strategy strat, Market market, double initCapital, double dollarsPerPoint, int iterations)
         {
             List<double> returnsLong = new List<double>();
+            List<double> ddura = new List<double>();
             List<double> returnsShort = new List<double>();
 
 
@@ -41,6 +42,7 @@ namespace Logic.Metrics
 
                     double entryPriceBull = market.RawData[x].Open_Ask;
                     double entryPriceBear = market.RawData[x].Open_Bid;
+                    var counts = 0;
                     x++;
 
                     while (x < market.RawData.Length && !strat.Exits[x])
@@ -59,6 +61,8 @@ namespace Logic.Metrics
                     
                     returnsLong.Add( market.RawData[x].Open_Bid - entryPriceBull);
                     returnsShort.Add(entryPriceBear - market.RawData[x].Open_Ask);
+                    ddura.Add(counts);
+                    counts = 0;
                     j = x;
                 }
             }
@@ -67,6 +71,7 @@ namespace Logic.Metrics
             ShortIterations = new double[iterations][];
             
             File.WriteAllLines(@"C:\Temp\Rets.csv", returnsLong.Select(x=>x.ToString()).ToList());
+            File.WriteAllLines(@"C:\Temp\surs.csv", ddura.Select(x=>x.ToString()).ToList());
 
             var shortAvg = returnsShort.Average();
             var longAvg = returnsLong.Average();

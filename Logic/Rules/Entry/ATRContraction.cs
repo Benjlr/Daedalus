@@ -20,13 +20,14 @@ namespace Logic.Rules.Entry
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             var atr = AverageTrueRange.Calculate(data, 20);
             var twentyMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
+            var fissy = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 50);
             var tenMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 10);
             var SixMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 6);
 
             Satisfied = new bool[data.Count];
             var coun = 0;
 
-            for (int i = 0; i < data.Count; i++)
+            for (int i = 50; i < data.Count; i++)
             {
                 var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);
 

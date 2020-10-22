@@ -27,7 +27,7 @@ namespace Daedalus.ViewModels
 
         protected void InitialiseData()
         {
-            var _test = TestFactory.GenerateRangeTest(100, ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket);
+            var _test = TestFactory.GenerateRangeTest(50, ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket);
             
             PlotModel = new PlotModel();
             ControllerModel = new PlotController();
