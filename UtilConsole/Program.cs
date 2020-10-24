@@ -150,11 +150,11 @@ namespace UtilConsole
                         if (tests[k].FBELong[i] != 0)
                         {
                             CategoriseItem(myReturnBins, tests[k].FBELong[i]);
-                            CategoriseItem(categoriseDrawdown, tests[k].FBEDrawdown[i], tests[k].FBELong[i]);
+                            CategoriseItem(categoriseDrawdown, tests[k].FBEDrawdownLong[i], tests[k].FBELong[i]);
                             CategoriseItem(allRetruns, tests[k].FBELong[i]);
                         }
 
-                        if (tests[k].FBELong[i] > 0) CategoriseItem(myDrawdownBins, tests[k].FBEDrawdown[i]);
+                        if (tests[k].FBELong[i] > 0) CategoriseItem(myDrawdownBins, tests[k].FBEDrawdownLong[i]);
                     }
 
                     histogramReturns.Add(GenerateHistogramRow(myReturnBins));
@@ -188,7 +188,7 @@ namespace UtilConsole
             myReturnBins.Keys.ToList().ForEach(x => returnBinGeaders += $"{x},");
             generalResultsIteration.ToList().ForEach(x=>finalGeneralResults.Add($"{x[0]:0.00},{x[1]:0.00},{x[2]:0%},{x[3]:0.0},{x[4]:0.0},{x[5]:0.0},{x[6]:0.0}"));
 
-            StringBuilder GeneralStats = WriteStats(finalGeneralResults, "AvgExpectancy,MedianExpectncy,Win%,AverageDrawdown,MedianDrawdown,MedianGainATR20,MedianDownATR20");
+            StringBuilder GeneralStats = WriteStats(finalGeneralResults, "AvgExpectancy,MedianExpectncy,Win%,AverageDrawdown,MedianDrawdown");
             StringBuilder DrawdownStats = WriteStats(histogramDrawdowns, drawdownBindHeaders);
             StringBuilder returnStats = WriteStats(histogramReturns, returnBinGeaders);
             StringBuilder allReturnStats = WriteStats(new List<string>(){ GenerateHistogramRow(allRetruns) }, returnBinGeaders);
@@ -264,10 +264,7 @@ namespace UtilConsole
                 for (int j = 0; j < results[i].Length; j++)
                 {
                     results[i][j] = (results[i][j] * (currentIteration - 1.00) + newResults[i][j]) / currentIteration;
-                    if (double.IsInfinity(results[i][j]))
-                    {
-                        string a = "";
-                    }
+
                 }
             }
 
@@ -275,18 +272,14 @@ namespace UtilConsole
 
         private static double[] AddGeneralResultsArray(ITest test)
         {
-            var medianUpAtr = test.AtrsUp.Count(x => x > 0) > 0 ? test.AtrsUp.Where(x => x > 0).Median() : 0;
-            var medianDownAtr = test.AtrsDown.Count(x => x < 0) > 0 ? test.AtrsDown.Where(x => x < 0).Median() : 0;
-            var myMedian = test.MedianDrawDown;
-            return new double[7]
+            var myMedian = test.MedianDrawDownLong;
+            return new double[5]
             {
                 test.ExpectancyLongAverage,
                 test.ExpectancyLongMedian,
                 test.WinPercentageLong,
-                test.AverageDD,
+                test.AverageDrawdownLong,
                 myMedian,
-                medianUpAtr,
-                medianDownAtr,
 
             };
 
