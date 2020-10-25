@@ -73,27 +73,5 @@ namespace Logic.Utils
            var Max = myInput.Max();
            return (value - Min) / (Max - Min);
        }
-
-       public static Dictionary<double, int> BinGenerator(int min, int max, int width)
-       {
-           if ((max - min) % width != 0) throw new Exception();
-
-           var count = (max - min) / width;
-           var myDict = new Dictionary<double, int>();
-
-           for (int i = 0; i < count; i++) myDict.Add(min + width * i, 0);
-           return myDict;
-       }
-
-       public static Dictionary<double, List<double>> CategoryGenerator(int min, int max, int width)
-       {
-           if ((max - min) % width != 0) throw new Exception();
-
-           var count = (max - min) / width;
-           var myDict = new Dictionary<double, List<double>>();
-
-           for (int i = 0; i < count; i++) myDict.Add(min + width * i, new List<double>());
-           return myDict;
-       }
     }
 }

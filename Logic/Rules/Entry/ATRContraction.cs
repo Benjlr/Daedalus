@@ -52,7 +52,7 @@ namespace Logic.Rules.Entry
 
         public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
         {
-            return;
+
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             var atr = AverageTrueRange.Calculate(data,20);
             var twentyMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);

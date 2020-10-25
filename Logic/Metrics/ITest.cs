@@ -9,8 +9,9 @@ namespace Logic.Metrics
         public double[] FBEShort { get;  }
         public double[] FBEDrawdownLong { get;  }
         public double[] FBEDrawdownShort { get;  }
-        public double[] FBEDrawdownLongWinners { get;  }
-        public double[] FBEDrawdownShortWinners { get;  }
+        public double[] FBEDrawdownLongWinners { get; }
+        public double[] FBEDrawdownShortWinners { get; }
+        public List<int[]> RunIndices { get; set; }
 
         public double AverageGainLong { get; }
         public double AverageLossLong { get; }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Xml.Xsl;
 using PriceSeries.FinancialSeries;
 
 namespace Logic.Utils.Calculations
@@ -57,6 +59,37 @@ namespace Logic.Utils.Calculations
 
             return returnValue;
         }
+
+        //public static List<Session> CollateToTradingWeek(List<Session> input)
+        //{
+        //    var consignmentsByWeek = from inp in input
+        //        group inp by inp.CloseDate.AddDays(-(int)inp.CloseDate.DayOfWeek);
+
+
+        //    var yearWeekGroups = input.GroupBy(d => new { d.CloseDate.Year, WeekNum = Calendar.ReadOnly().GetWeekOfYear(d.CloseDate, CalendarWeekRule.FirstFullWeek,DayOfWeek.Sunday) });
+
+        //    var grouped = input.GroupBy(x=>x.CloseDate.AddDays(-(int)x.CloseDate.DayOfWeek)).ToList();
+        //    var retVal = new List<Session>();
+
+        //    foreach (var t in grouped)
+        //    {
+        //        var high = t.Max(x => x.High);
+        //        var low = t.Min(x => x.Low);
+        //        retVal.Add(new Session(t.First().OpenDate, 
+        //                                t.First(x => x.Low == low).LowDate, 
+        //                                t.First(x=>x.High == high).HighDate, 
+        //                                t.Last().CloseDate, 
+        //                                t.Sum(x=>x.Volume), 
+        //                                t.First().Open,
+        //                                high,
+        //                                low,
+        //                                t.Last().Close));
+        //    }
+
+
+
+        //    return retVal;
+        //}
 
         private static Session BuildSingleSessionFromList(List<Session> input)
         {

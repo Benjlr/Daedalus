@@ -11,6 +11,7 @@ namespace Logic.Metrics
         public double[] FBEDrawdownShort { get; protected set; }
         public double[] FBEDrawdownLongWinners { get; protected set; }
         public double[] FBEDrawdownShortWinners { get; protected set; }
+        public List<int[]> RunIndices { get; set; }
 
         public double AverageGainLong { get; protected set; }
         public double AverageLossLong { get; protected set; }

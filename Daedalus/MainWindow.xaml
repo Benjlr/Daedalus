@@ -6,7 +6,17 @@
         xmlns:views="clr-namespace:Daedalus.Views"
         mc:Ignorable="d"
         Title="MainWindow" Height="1200" Width="1900">
-    <TabControl>
+
+    <Grid>
+
+        <views:DetailedFBETests Grid.Row="0"></views:DetailedFBETests>
+
+    </Grid>
+
+    <!--<TabControl>
+
+
+
         <TabItem Header="EntryTests">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -59,5 +69,5 @@
 
             </Grid>
         </TabItem>
-    </TabControl>
+    </TabControl>-->
 </Window>

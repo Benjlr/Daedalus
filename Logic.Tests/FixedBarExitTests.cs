@@ -11,9 +11,11 @@ namespace Logic.Tests
 {
     public class FixedBarExitTests
     {
+        private int _precision = 6;
         private ITest[] myTests { get; set; }
         private ITest myInvalidTests { get; set; }
-
+        private double _round(double x) => Math.Round(x, _precision);
+        
         public FixedBarExitTests()
         {
             var market = MarketBuilder.CreateMarket(Markets.ASX200_Cash_5_Min);
@@ -59,7 +61,7 @@ namespace Logic.Tests
             var resultsLong = LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\LongData.txt");
             for (var i = 0; i < resultsLong.Count; i++)
             for (var j = 0; j < resultsLong[i].Count; j++)
-                Assert.Equal(Math.Round(myTests[i].FBELong[j], 4), Math.Round(resultsLong[i][j], 4));
+                Assert.Equal(_round(myTests[i].FBELong[j]), _round(resultsLong[i][j]));
         }
 
         [Fact]
@@ -68,7 +70,7 @@ namespace Logic.Tests
             var resultsLong = LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\ShortData.txt");
             for (var i = 0; i < resultsLong.Count; i++)
             for (var j = 0; j < resultsLong[i].Count; j++)
-                Assert.Equal(Math.Round(myTests[i].FBEShort[j], 4), Math.Round(resultsLong[i][j], 4));
+                Assert.Equal(_round(myTests[i].FBEShort[j]), _round(resultsLong[i][j]));
         }
 
         [Fact]
@@ -77,7 +79,7 @@ namespace Logic.Tests
             var resultsLong = LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownData.txt");
             for (var i = 0; i < resultsLong.Count; i++)
             for (var j = 0; j < resultsLong[i].Count; j++)
-                Assert.Equal(Math.Round(myTests[i].FBEDrawdownLong[j], 4), Math.Round(resultsLong[i][j], 4));
+                Assert.Equal(_round(myTests[i].FBEDrawdownLong[j]), _round(resultsLong[i][j]));
         }
 
         [Fact]
@@ -86,7 +88,7 @@ namespace Logic.Tests
             var resultsLong = LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownShort.txt");
             for (var i = 0; i < resultsLong.Count; i++)
             for (var j = 0; j < resultsLong[i].Count; j++)
-                Assert.Equal(Math.Round(myTests[i].FBEDrawdownShort[j], 4), Math.Round(resultsLong[i][j], 4));
+                Assert.Equal(_round(myTests[i].FBEDrawdownShort[j]), _round(resultsLong[i][j]));
         }
 
         [Fact]
@@ -95,7 +97,7 @@ namespace Logic.Tests
             var resultsLong = LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownDataWinners.txt");
             for (var i = 0; i < resultsLong.Count; i++)
             for (var j = 0; j < resultsLong[i].Count; j++)
-                Assert.Equal(Math.Round(myTests[i].FBEDrawdownLongWinners[j], 4), Math.Round(resultsLong[i][j], 4));
+                Assert.Equal(_round(myTests[i].FBEDrawdownLongWinners[j]), _round(resultsLong[i][j]));
         }
 
         [Fact]
@@ -104,107 +106,107 @@ namespace Logic.Tests
             var resultsLong = LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownShortWinners.txt");
             for (var i = 0; i < resultsLong.Count; i++)
             for (var j = 0; j < resultsLong[i].Count; j++)
-                Assert.Equal(Math.Round(myTests[i].FBEDrawdownShortWinners[j], 4), Math.Round(resultsLong[i][j], 4));
+                Assert.Equal(_round(myTests[i].FBEDrawdownShortWinners[j]), _round(resultsLong[i][j]));
         }
 
         [Fact]
         public void ShouldGenerateCorrectLongAverages()
         {
-            var avgGainsLong = new List<double>() {13.37317073, 12.88478261, 13.11836735, 14.4893617};
-            var avgLossLong = new List<double>() {-15.80175439, -17.9745098, -19.44375, -18.90612245};
-            var avgddLong = new List<double>() {-18.38571429, -19.00510204, -19.5255102, -19.91020408};
-            var avgddLongWinners = new List<double>() {-11.31707317, -12.65217391, -12.09183673, -12.93617021};
+            var avgGainsLong = new List<double>() {0.002438,0.002349,0.002392,0.002642};
+            var avgLossLong = new List<double>() {-0.002863,-0.003256,-0.003522,-0.003424};
+            var avgddLong = new List<double>() {-0.003335,-0.003447,-0.003542,-0.003611};
+            var avgddLongWinners = new List<double>() {-0.002059,-0.002301,-0.002200,-0.002354};
             for (var i = 0; i < myTests.Length; i++)
             {
-                Assert.Equal(Math.Round(myTests[i].AverageGainLong, 4), Math.Round(avgGainsLong[i], 4));
-                Assert.Equal(Math.Round(myTests[i].AverageLossLong, 4), Math.Round(avgLossLong[i], 4));
-                Assert.Equal(Math.Round(myTests[i].AverageDrawdownLong, 4), Math.Round(avgddLong[i], 4));
-                Assert.Equal(Math.Round(myTests[i].AverageDrawdownWinnersLong, 4), Math.Round(avgddLongWinners[i], 4));
+                Assert.Equal(_round(myTests[i].AverageGainLong), _round(avgGainsLong[i]));
+                Assert.Equal(_round(myTests[i].AverageLossLong), _round(avgLossLong[i]));
+                Assert.Equal(_round(myTests[i].AverageDrawdownLong), _round(avgddLong[i]));
+                Assert.Equal(_round(myTests[i].AverageDrawdownWinnersLong), _round(avgddLongWinners[i]));
             }
         }
 
         [Fact]
         public void ShouldGenerateCorrectLongMedians()
         {
-            var medianGainsLong = new List<double>() {13, 12, 11.5, 13.5};
-            var medianLossLong = new List<double>() {-8.6, -9, -12.1, -10.5};
-            var medianddLong = new List<double>() {-12.25, -13, -14.25, -15};
-            var medianddLongWinners = new List<double>() {-11, -11, -11, -11.5};
+            var medianGainsLong = new List<double>() {0.002366,0.002183,0.002091,0.002470};
+            var medianLossLong = new List<double>() {-0.001558,-0.001630,-0.002190,-0.001898};
+            var medianddLong = new List<double>() {-0.002224,-0.002357,-0.002609,-0.002734};
+            var medianddLongWinners = new List<double>() {-0.001995,-0.001997,-0.002000,-0.002090
+            };
             for (var i = 0; i < myTests.Length; i++)
             {
-                Assert.Equal(Math.Round(myTests[i].MedianGainLong, 4), Math.Round(medianGainsLong[i], 4));
-                Assert.Equal(Math.Round(myTests[i].MedianLossLong, 4), Math.Round(medianLossLong[i], 4));
-                Assert.Equal(Math.Round(myTests[i].MedianDrawDownLong, 4), Math.Round(medianddLong[i], 4));
-                Assert.Equal(Math.Round(myTests[i].MedianDrawDownWinnersLong, 4), Math.Round(medianddLongWinners[i], 4));
+                Assert.Equal(_round(myTests[i].MedianGainLong), _round(medianGainsLong[i]));
+                Assert.Equal(_round(myTests[i].MedianLossLong), _round(medianLossLong[i]));
+                Assert.Equal(_round(myTests[i].MedianDrawDownLong), _round(medianddLong[i]));
+                Assert.Equal(_round(myTests[i].MedianDrawDownWinnersLong), _round(medianddLongWinners[i]));
             }
         }
 
         [Fact]
         public void ShouldGenerateCorrectShortAverages()
         {
-            var avgGainsShort = new List<double>() {19.33333333, 20.4, 20.84642857, 20.0862069};
-            var avgLossShort = new List<double>() {-14.19428571, -15.02571429, -16.22028986, -17.11911765};
-            var avgddShort = new List<double>() {-17.63265306, -18.28571429, -18.93877551, -19.59183673};
-            var avgddShortWinners = new List<double>() {-11.68888889, -11.22592593, -10.77857143, -10.92068966};
+            var avgGainsShort = new List<double>() {0.003505,0.003699,0.003780,0.003642};
+            var avgLossShort = new List<double>() {-0.002586,-0.002738,-0.002956,-0.003120};
+            var avgddShort = new List<double>() {-0.003208,-0.003327,-0.003446,-0.003565};
+            var avgddShortWinners = new List<double>() {-0.002122,-0.002036,-0.001955,-0.001980};
             for (var i = 0; i < myTests.Length; i++)
             {
-                Assert.Equal(Math.Round(myTests[i].AverageGainShort, 4), Math.Round(avgGainsShort[i], 4));
-                Assert.Equal(Math.Round(myTests[i].AverageLossShort, 4), Math.Round(avgLossShort[i], 4));
-                Assert.Equal(Math.Round(myTests[i].AverageDrawdownShort, 4), Math.Round(avgddShort[i], 4));
-                Assert.Equal(Math.Round(myTests[i].AverageDrawdownWinnersShort, 4), Math.Round(avgddShortWinners[i], 4));
+                Assert.Equal(_round(myTests[i].AverageGainShort), _round(avgGainsShort[i]));
+                Assert.Equal(_round(myTests[i].AverageLossShort), _round(avgLossShort[i]));
+                Assert.Equal(_round(myTests[i].AverageDrawdownShort), _round(avgddShort[i]));
+                Assert.Equal(_round(myTests[i].AverageDrawdownWinnersShort), _round(avgddShortWinners[i]));
             }
         }
 
         [Fact]
         public void ShouldGenerateCorrectShortMedians()
         {
-            var medianGainsShort = new List<double>() {8, 10.1, 11.1, 7.8};
-            var medianLossShort = new List<double>() {-10.65, -13, -15, -16};
-            var medianddShort = new List<double>() {-14.75, -15.5, -18, -19};
-            var medianddShortWinners = new List<double>() {-7.6, -7.6, -7.15, -7.2};
+            var medianGainsShort = new List<double>() {0.001444,0.001827,0.002018,0.001413};
+            var medianLossShort = new List<double>() {-0.001931,-0.002362,-0.002728,-0.002905};
+            var medianddShort = new List<double>() {-0.002682,-0.002812,-0.003266,-0.003447};
+            var medianddShortWinners = new List<double>() {-0.001375,-0.001375,-0.001294,-0.001303};
             for (var i = 0; i < myTests.Length; i++)
             {
-                Assert.Equal(Math.Round(myTests[i].MedianGainShort, 4), Math.Round(medianGainsShort[i], 4));
-                Assert.Equal(Math.Round(myTests[i].MedianLossShort, 4), Math.Round(medianLossShort[i], 4));
-                Assert.Equal(Math.Round(myTests[i].MedianDrawDownShort, 4), Math.Round(medianddShort[i], 4));
-                Assert.Equal(Math.Round(myTests[i].MedianDrawDownWinnersShort, 4), Math.Round(medianddShortWinners[i], 4));
+                Assert.Equal(_round(myTests[i].MedianGainShort), _round(medianGainsShort[i]));
+                Assert.Equal(_round(myTests[i].MedianLossShort), _round(medianLossShort[i]));
+                Assert.Equal(_round(myTests[i].MedianDrawDownShort), _round(medianddShort[i]));
+                Assert.Equal(_round(myTests[i].MedianDrawDownWinnersShort), _round(medianddShortWinners[i]));
             }
         }
 
         [Fact]
         public void ShouldGenerateWinRatios()
         {
-            var longRatios = new List<double>() {0.418367347,0.474226804,0.505154639,0.489583333};
-            var shortRatios = new List<double>() {0.278350515,0.278350515,0.288659794,0.298969072
-            };
+            var longRatios = new List<double>() {0.418367,0.474227,0.505155,0.489583};
+            var shortRatios = new List<double>() {0.278351,0.278351,0.288660,0.298969};
             for (var i = 0; i < myTests.Length; i++)
             {
-                Assert.Equal(Math.Round(myTests[i].WinPercentageLong, 4), Math.Round(longRatios[i], 4));
-                Assert.Equal(Math.Round(myTests[i].WinPercentageShort, 4), Math.Round(shortRatios[i], 4));
+                Assert.Equal(_round(myTests[i].WinPercentageLong), _round(longRatios[i]));
+                Assert.Equal(_round(myTests[i].WinPercentageShort), _round(shortRatios[i]));
             }
         }
 
         [Fact]
         public void ShouldGenerateExpectancyLong()
         {
-            var medianExp = new List<double>() {1.087311302,1.202614379,0.970213499,1.233236152};
-            var avgExp = new List<double>() {0.608748751,0.646558307,0.688738884,0.735103627};
+            var medianExp = new List<double>() {1.092873,1.207866,0.975082,1.248808};
+            var avgExp = new List<double>() {0.612498,0.650634,0.693185,0.740016};
             for (var i = 0; i < myTests.Length; i++)
             {
-                Assert.Equal(Math.Round(myTests[i].ExpectancyLongAverage, 4), Math.Round(avgExp[i], 4));
-                Assert.Equal(Math.Round(myTests[i].ExpectancyLongMedian, 4), Math.Round(medianExp[i], 4));
+                Assert.Equal(_round(myTests[i].ExpectancyLongAverage), _round(avgExp[i]));
+                Assert.Equal(_round(myTests[i].ExpectancyLongMedian), _round(medianExp[i]));
             }
         }
 
         [Fact]
         public void ShouldGenerateExpectancyShort()
         {
-            var medianExp = new List<double>() {0.289738431,0.29967033,0.300289855,0.207904412};
-            var avgExp = new List<double>() {0.525362319,0.523673702,0.521533238,0.500386565};
+            var medianExp = new List<double>() {0.288436,0.298440,0.300177,0.207513};
+            var avgExp = new List<double>() {0.522861,0.521180,0.519022,0.497864};
             for (var i = 0; i < myTests.Length; i++)
             {
-                Assert.Equal(Math.Round(myTests[i].ExpectancyShortAverage, 4), Math.Round(avgExp[i], 4));
-                Assert.Equal(Math.Round(myTests[i].ExpectancyShortMedian, 4), Math.Round(medianExp[i], 4));
+                Assert.Equal(_round(myTests[i].ExpectancyShortAverage), _round(avgExp[i]));
+                Assert.Equal(_round(myTests[i].ExpectancyShortMedian), _round(medianExp[i]));
             }
         }
 
@@ -258,6 +260,18 @@ namespace Logic.Tests
             Assert.Equal(myInvalidTests.MedianLossShort, 0);
             Assert.Equal(myInvalidTests.MedianDrawDownShort, 0);
             Assert.Equal(myInvalidTests.MedianDrawDownWinnersShort, 0);
+        }
+
+        [Fact]
+        private void ShouldGenerateRunHistory()
+        {
+            for (int i = 0; i < myTests.Length; i++)
+            for (int j = 0; j < myTests[i].RunIndices.Count; j++)
+            {
+                var myindt = new int[i + 1 + 10];
+                for (int k = 0; k < myindt.Length; k++) myindt[k] = 1 + j + k;
+                Assert.Equal(myTests[i].RunIndices[j], myindt);
+            }
         }
     }
 }

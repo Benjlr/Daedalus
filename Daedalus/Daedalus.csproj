@@ -20,4 +20,16 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Views\DetailedFBETests.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\DetailedFBETests.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>

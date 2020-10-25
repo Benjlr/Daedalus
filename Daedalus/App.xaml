@@ -12,5 +12,6 @@
         <ViewModels:RangeTestsViewModel x:Key="RangeViewModel" />
         <ViewModels:MonteCarloViewModel x:Key="MonteCarloViewModel" />
         <ViewModels:EntryViewModel x:Key="EntryViewModel" />
+        <ViewModels:DetailedFixBarExits x:Key="DetailedFixBar" />
     </Application.Resources>
 </Application>
