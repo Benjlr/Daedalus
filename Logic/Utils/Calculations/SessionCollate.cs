@@ -60,6 +60,44 @@ namespace Logic.Utils.Calculations
             return returnValue;
         }
 
+        public static List<MarketData> CollateToHourly(List<MarketData> input)
+        {
+            List<MarketData> returnValue = new List<MarketData>();
+            int day = input[0].Time.Hour;
+            int start = 0;
+            for (int i = 0; i < input.Count; i++)
+            {
+                if (input[i].Time.Hour != day)
+                {
+                    returnValue.Add(BuildSingleSessionFromList(input.GetRange(start, i - start)));
+                    day = input[i].Time.Hour;
+                    start = i;
+                }
+
+            }
+
+            return returnValue;
+        }
+
+        public static List<MarketData> CollateToHalfHourly(List<MarketData> input)
+        {
+            List<MarketData> returnValue = new List<MarketData>();
+            int start = 0;
+            for (int i = 1; i < input.Count; i++)
+            {
+                var lastmin = input[i].Time.Minute;
+
+                if (lastmin ==30 || lastmin == 0)
+                {
+                    returnValue.Add(BuildSingleSessionFromList(input.GetRange(start, i - start)));
+                    start = i;
+                }
+
+            }
+
+            return returnValue;
+        }
+
         //public static List<Session> CollateToTradingWeek(List<Session> input)
         //{
         //    var consignmentsByWeek = from inp in input
@@ -105,6 +143,23 @@ namespace Logic.Utils.Calculations
                 h: input[highBar].High,
                 l: input[lowBar].Low,
                 c: input.Last().Close);
+        }
+
+        private static MarketData BuildSingleSessionFromList(List<MarketData> input)
+        {
+            var highBar = input.IndexOf(input.First(x => x.High_Ask.Equals(input.Max(y => y.High_Ask))));
+            var lowBar = input.IndexOf(input.First(x => x.Low_Bid.Equals(input.Min(y => y.Low_Bid))));
+            return new MarketData(
+                time: input[0].Time,
+                o_a: input[0].Open_Ask,
+                o_b: input[0].Open_Bid,
+                h_a: input[highBar].High_Ask,
+                h_b: input[highBar].High_Bid,
+                l_a: input[lowBar].Low_Ask,
+                l_b: input[lowBar].Low_Bid,
+                c_a: input.Last().Close_Ask, 
+                c_b: input.Last().Close_Bid,
+                vol: input.Sum(x => x.volume));
         }
     }
 }

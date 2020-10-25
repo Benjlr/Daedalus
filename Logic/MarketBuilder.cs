@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Logic.Utils.Calculations;
 
 namespace Logic
 {
@@ -30,6 +31,7 @@ namespace Logic
             if (data[0].Split(',').Length == 10)
             {
                 myBidAskData = LoadBidAskData(data_path);
+                myBidAskData = SessionCollate.CollateToHalfHourly(myBidAskData.ToList()).ToArray();
                 myConsolidatedData = ConvertDataToSession(myBidAskData);
             }
             else

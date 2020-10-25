@@ -65,15 +65,17 @@ namespace Logic.Rules.Entry
 
             for (int i = 50; i < data.Count; i++)
             {
-                var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);
 
-                if (sixtoTen < atr[i] * 0.5
-                )
-                {
-                    coun++;
-                    if (coun > 9 && twentyMa[i] > fissy[i] && atrPC[i] == 0.0) Satisfied[i] = true;
-                }
-                else coun = 0;
+                if ( atrPC[i] == 0.0) Satisfied[i] = true;
+                //var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);
+
+                //if (sixtoTen < atr[i] * 0.5
+                //)
+                //{
+                //    coun++;
+                //    if (coun > 9 && twentyMa[i] > fissy[i] && atrPC[i] == 0.0) Satisfied[i] = true;
+                //}
+                //else coun = 0;
             }
 
         }

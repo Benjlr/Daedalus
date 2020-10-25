@@ -1,6 +1,7 @@
 ﻿using OxyPlot.Series;
 using System.Collections.Generic;
 using OxyPlot;
+using OxyPlot.Annotations;
 using OxyPlot.Axes;
 
 namespace Daedalus.Charts
@@ -24,7 +25,10 @@ namespace Daedalus.Charts
                 Key = "return",
                 ItemsSource = y_label
             });
-            retval.Axes.Add(new LinearColorAxis());
+            retval.Axes.Add(new LinearColorAxis()
+            {
+                Palette = OxyPalettes.Jet(1000),
+            });
             retval.Series.Add(new HeatMapSeries
             {
                 X0 = 0,
@@ -37,6 +41,8 @@ namespace Daedalus.Charts
                 YAxisKey = "return",
                 RenderMethod = HeatMapRenderMethod.Rectangles,
             });
+
+            retval.Annotations.Add(new LineAnnotation(){Type = LineAnnotationType.Vertical, X = 0});
 
             return retval;
         }
@@ -57,7 +63,7 @@ namespace Daedalus.Charts
     }
     public class Series
     {
-        public static PlotModel GenerateSeries(List<double> values)
+        public static PlotModel GenerateSeries(List<double> values, List<double> values2)
         {
 
             var retval = new PlotModel();
@@ -70,6 +76,8 @@ namespace Daedalus.Charts
             retval.Axes.Add(new LinearAxis
             {
                 Position = AxisPosition.Left,
+                Maximum = 3,
+                Minimum = 0
                 //Key = "return",
                 //ItemsSource = y_label
             });
@@ -78,9 +86,18 @@ namespace Daedalus.Charts
                 Color = OxyColors.Blue,
                 LineStyle = LineStyle.Solid,
             };
+            var series2 = new LineSeries()
+            {
+                Color = OxyColors.Blue,
+                LineStyle = LineStyle.Dash,
+            };
             for (int i = 0; i < values.Count; i++) series.Points.Add(new DataPoint(i + 1, values[i]));
+            for (int i = 0; i < values2.Count; i++) series2.Points.Add(new DataPoint(i + 1, values2[i]));
 
             retval.Series.Add(series);
+            retval.Series.Add(series2);
+            retval.Annotations.Add(new LineAnnotation(){Type = LineAnnotationType.Horizontal, Y = 1.0});
+            retval.Annotations.Add(new LineAnnotation(){Type = LineAnnotationType.Horizontal, Y = 1.5});
 
 
 

@@ -27,9 +27,9 @@ namespace Logic.Analysis
         private Dictionary<double, List<double>> _returnByDrawdown;
         private Dictionary<double, List<double>> _returnByDrawdownShort;
 
-        private double _lowerBound = -0.02;
-        private double _upperBound = 0.02;
-        private double _width = 1.0 / 1000;
+        private double _lowerBound = -0.05;
+        private double _upperBound = 0.05;
+        private double _width = 1.0 / 500;
 
         public List<string> X_label_categorised;
         public List<string> Y_label_categorised;
@@ -87,9 +87,9 @@ namespace Logic.Analysis
         private void InitHistogramsForCurrentTest()
         {
             _returnByFbe = HistogramTools.BinGenerator(_lowerBound, _upperBound, _width);
-            _drawdownByFbe = HistogramTools.BinGenerator(_lowerBound, _upperBound, _width);
+            _drawdownByFbe = HistogramTools.BinGenerator(_lowerBound, 0, _width);
             _returnByFbeShort = HistogramTools.BinGenerator(_lowerBound, _upperBound, _width);
-            _drawdownByFbeShort = HistogramTools.BinGenerator(_lowerBound, _upperBound, _width);
+            _drawdownByFbeShort = HistogramTools.BinGenerator(_lowerBound, 0, _width);
         }
         
         private void GetLongStatistics(ITest result)
@@ -133,9 +133,9 @@ namespace Logic.Analysis
         private void AddHistogramStats()
         {
             ReturnByFbeLong.Add(HistogramTools.GenerateHistogram(_returnByFbe));
-            DrawdownByFbeLong.Add(HistogramTools.GenerateHistogram(_drawdownByFbe));
+            DrawdownByFbeLong.Add(HistogramTools.MakeCumulative(HistogramTools.GenerateHistogram(_drawdownByFbe)));
             ReturnByFbeShort.Add(HistogramTools.GenerateHistogram(_returnByFbeShort));
-            DrawdownByFbeShort.Add(HistogramTools.GenerateHistogram(_drawdownByFbeShort));
+            DrawdownByFbeShort.Add(HistogramTools.MakeCumulative(HistogramTools.GenerateHistogram(_drawdownByFbeShort)));
         }
 
         private void AddCategorisedStats()
