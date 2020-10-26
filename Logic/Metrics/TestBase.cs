@@ -40,6 +40,8 @@ namespace Logic.Metrics
         public double ExpectancyLongMedian { get; protected set; }
         public double ExpectancyShortAverage { get; protected set; }
         public double ExpectancyShortMedian { get; protected set; }
+        public double[] ExpectancyByPositionInSeriesLongAverage { get; protected set; }
+        public double[] ExpectancyByPositionInSeriesShortAverage { get; protected set; }
 
         public virtual void Run(MarketData[] data, bool[] entries, List<Session> myInputs = null)
         { }

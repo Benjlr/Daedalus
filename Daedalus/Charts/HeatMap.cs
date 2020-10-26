@@ -72,12 +72,14 @@ namespace Daedalus.Charts
                 Position = AxisPosition.Bottom,
                 //Key = "drawdown",
                 //ItemsSource = x_labels
+
+                Maximum = 3,
+                Minimum = 0
             });
             retval.Axes.Add(new LinearAxis
             {
                 Position = AxisPosition.Left,
-                Maximum = 3,
-                Minimum = 0
+
                 //Key = "return",
                 //ItemsSource = y_label
             });
@@ -85,21 +87,59 @@ namespace Daedalus.Charts
             {
                 Color = OxyColors.Blue,
                 LineStyle = LineStyle.Solid,
+                InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+
             };
             var series2 = new LineSeries()
             {
                 Color = OxyColors.Blue,
                 LineStyle = LineStyle.Dash,
+                InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+
             };
-            for (int i = 0; i < values.Count; i++) series.Points.Add(new DataPoint(i + 1, values[i]));
-            for (int i = 0; i < values2.Count; i++) series2.Points.Add(new DataPoint(i + 1, values2[i]));
+            for (int i = 0; i < values.Count; i++) series.Points.Add(new DataPoint(values[i], i + 1));
+            for (int i = 0; i < values2.Count; i++) series2.Points.Add(new DataPoint(values2[i], i + 1));
 
             retval.Series.Add(series);
             retval.Series.Add(series2);
-            retval.Annotations.Add(new LineAnnotation(){Type = LineAnnotationType.Horizontal, Y = 1.0});
-            retval.Annotations.Add(new LineAnnotation(){Type = LineAnnotationType.Horizontal, Y = 1.5});
+            retval.Annotations.Add(new LineAnnotation(){Type = LineAnnotationType.Vertical, X = 1.0});
+            retval.Annotations.Add(new LineAnnotation(){Type = LineAnnotationType.Vertical, X = 1.5});
 
 
+
+            return retval;
+        }
+
+        public static PlotModel GenerateSeries(List<List<double>> values)
+        {
+
+            var retval = new PlotModel();
+            retval.Axes.Add(new LinearAxis()
+            {
+                Position = AxisPosition.Bottom,
+            });
+            retval.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                Maximum = 3,
+                Minimum = 0.2
+            });
+            foreach (var t in values)
+            {
+                var series = new LineSeries()
+                {
+                    Color = OxyColors.Blue,
+                    LineStyle = LineStyle.Solid,
+                    InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+
+                };
+                for (int i = 0; i < t.Count; i++) series.Points.Add(new DataPoint(i+1, t[i]));
+                retval.Series.Add(series);
+
+            }
+
+            retval.Annotations.Add(new LineAnnotation() { Type = LineAnnotationType.Horizontal, Y = 1.0 });
+            retval.Annotations.Add(new LineAnnotation() { Type = LineAnnotationType.Horizontal, Y = 2.0 });
 
             return retval;
         }

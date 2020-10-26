@@ -3,6 +3,7 @@ using PriceSeries.FinancialSeries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Logic.Utils;
 
 namespace Logic.Metrics.EntryTests
 {
@@ -11,13 +12,11 @@ namespace Logic.Metrics.EntryTests
 
         private int Fixed_Bar_exit { get; }
 
-
         public FixedBarExitTest(int bars_to_wait)
         {
             Fixed_Bar_exit = bars_to_wait;
         }
-
-
+        
         public override void Run(MarketData[] data, bool[] entries, List<Session> myInputs)
         {
             initLists(data.Length);
@@ -35,7 +34,8 @@ namespace Logic.Metrics.EntryTests
             FBEDrawdownLongWinners = new double[length];
             FBEDrawdownShortWinners = new double[length];
             RunIndices = new List<int[]>();
-    }
+
+        }
 
         private void IterateEntries(MarketData[] data, bool[] entries)
         {
@@ -108,6 +108,72 @@ namespace Logic.Metrics.EntryTests
             FindAverages();
             FindMedians();
             FindExpectancy();
+            FindRollingExpectancy();
+        }
+
+        private void FindRollingExpectancy()
+        {
+            ExpectancyByPositionLong();
+            ExpectancyByPositionShort();
+        }
+
+
+
+
+        private int _period = 150;
+        private List<double> myList;
+        private List<double> myWinPercent = new List<double>();
+        private List<double> myAvgGain = new List<double>();
+        private List<double> myAvgLoss = new List<double>();
+
+        private void ExpectancyByPositionLong()
+        {
+            InitLocalLists(FBELong);
+            ExpectancyByPositionInSeriesLongAverage = new double[myList.Count];
+
+            for (int i = _period; i < myList.Count; i++)
+            {
+                var range = myList.GetRange(i - _period, _period+1).ToList();
+                CalculateRollingStats(range);
+                ExpectancyByPositionInSeriesLongAverage[i] = (myAvgGain.Last() * myWinPercent.Last()) / (-myAvgLoss.Last() * (1 - myWinPercent.Last()));
+                if (ExpectancyByPositionInSeriesLongAverage[i] > 3) ExpectancyByPositionInSeriesLongAverage[i] = 3.0;
+            }
+        }
+
+        private void CalculateRollingStats(List<double> range)
+        {
+            if (range.Any(x => x > 0))
+                myAvgGain.Add(range.Where(x => x > 0).Average());
+            if (range.Any(x => x < 0))
+                myAvgLoss.Add(range.Where(x => x < 0).Average());
+            myWinPercent.Add(range.Count(x => x > 0) / (double) range.Count(x => Math.Abs(x) > 0));
+        }
+
+        private void InitLocalLists(double[] resultList)
+        {
+            myList = resultList.Where(x => x != 0).ToList();
+
+            for (int i = 0; i < _period; i++)
+            {
+                myWinPercent.Add(0);
+                myAvgGain.Add(0);
+                myAvgLoss.Add(0);
+            }
+        }
+
+        private void ExpectancyByPositionShort()
+        {
+            InitLocalLists(FBEShort);
+            ExpectancyByPositionInSeriesShortAverage = new double[myList.Count];
+
+            for (int i = _period; i < myList.Count; i++)
+            {
+                var range = myList.GetRange(i - _period, _period+1).ToList();
+                CalculateRollingStats(range);
+                ExpectancyByPositionInSeriesShortAverage[i] = (myAvgGain.Last() * myWinPercent.Last()) / (-myAvgLoss.Last() * (1 - myWinPercent.Last()));
+                if (ExpectancyByPositionInSeriesShortAverage[i] > 3) ExpectancyByPositionInSeriesShortAverage[i] = 3.0;
+
+            }
         }
 
         private void FindWinPercentage()

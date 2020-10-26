@@ -21,6 +21,8 @@ namespace Daedalus.ViewModels
         public PlotModel PlotModelDDsShort { get; set; }
         public PlotModel ExpectancyLong { get; set; }
         public PlotModel ExpectancyShort { get; set; }
+        public PlotModel testone { get; set; }
+        public PlotModel testtwo { get; set; }
         private PlaceholderName myTests { get; set; }
         
         public DetailedFixBarExits()
@@ -32,7 +34,7 @@ namespace Daedalus.ViewModels
             }, market);
 
             myTests = new PlaceholderName();
-            myTests.GenerateFixedBarResults(TestFactory.GenerateFixedBarExitTest(20, 100, strat, market));
+            myTests.GenerateFixedBarResults(TestFactory.GenerateFixedBarExitTest(50, 250, strat, market,10).ToArray());
 
             PlotModelDrawdownLong = HeatMap.GenerateHeatMap(myTests.ReturnByDrawdownLong, myTests.X_label_categorised, myTests.Y_label_categorised);
             PlotModelDrawdownShort = HeatMap.GenerateHeatMap(myTests.ReturnByDrawdownShort, myTests.X_label_categorised, myTests.Y_label_categorised);
@@ -42,6 +44,8 @@ namespace Daedalus.ViewModels
             PlotModelDDsShort = HeatMap.GenerateHeatMap(myTests.DrawdownByFbeShort, myTests.X_label_categorised, myTests.Y_label);
             ExpectancyLong = Series.GenerateSeries(myTests.ExpectancyLongMed, myTests.ExpectancyLongAvg);
             ExpectancyShort = Series.GenerateSeries(myTests.ExpectancyShortMed, myTests.ExpectancyShortAvg);
+            testone = Series.GenerateSeries(myTests.ExpByPlaceInSeriesLong);
+            testtwo = Series.GenerateSeries(myTests.ExpByPlaceInSeriesShort);
 
             //PlotModelDrawdownLong.InvalidatePlot(true);
             //PlotModelDrawdownShort.InvalidatePlot(true);

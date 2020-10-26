@@ -1,5 +1,6 @@
 ﻿using PriceSeries.FinancialSeries;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace Logic.Metrics
 {
@@ -40,6 +41,8 @@ namespace Logic.Metrics
         public double ExpectancyLongMedian { get;  }
         public double ExpectancyShortAverage { get;  }
         public double ExpectancyShortMedian { get;  }
+        public double[] ExpectancyByPositionInSeriesLongAverage { get; }
+        public double[] ExpectancyByPositionInSeriesShortAverage { get; }
 
         void Run(MarketData[] data, bool[] entries, List<Session> myInputs = null);
     }

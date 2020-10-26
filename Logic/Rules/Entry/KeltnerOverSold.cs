@@ -20,38 +20,26 @@ namespace Logic.Rules.Entry
 
 
             var ema20 = MovingAverage.ExponentialMovingAverage(daily.Select(x => x.Close).ToList(), 20);
-            var atr = AverageTrueRange.Calculate(daily);
-            
+            var atr = AverageTrueRange.Calculate(myData);
+
 
             var lower = new List<double>();
             var upper = new List<double>();
 
             for (int i = 0; i < daily.Count; i++)
             {
-                lower.Add(ema20[i] - (3.2 * atr[i]));
-                upper.Add(ema20[i] + (2.25 * atr[i]));
+                lower.Add(ema20[i] - (3 * atr[i]));
+                upper.Add(ema20[i] + (3 * atr[i]));
             }
-
-            var rawToList = rawData.ToList();
-
+            
             for (int i = 10; i < daily.Count; i++)
             {
-                if (daily[i].Low <  lower[i] )
+                if (daily[i].Low < lower[i])
                 {
 
-                    var start = myData.IndexOf(myData.First(x => x.OpenDate == daily[i].OpenDate));
-                    var last = myData.IndexOf(myData.First(x => x.CloseDate== daily[i].CloseDate));
+                    Satisfied[i] = true;
+                    break;
 
-                    for (int j = start; j < last; j++)
-                    {
-                        if (myData[j].Low < lower[i])
-                        {
-                            Satisfied[j] = true;
-                            break;
-                        }
-              
-                    }
-                    
                 }
             }
 

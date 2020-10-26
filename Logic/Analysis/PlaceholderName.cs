@@ -1,6 +1,7 @@
 ﻿using Logic.Metrics;
 using Logic.Utils;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Logic.Analysis
 {
@@ -19,6 +20,8 @@ namespace Logic.Analysis
         public List<List<double>> DrawdownByFbeShort;
         public List<List<double>> ReturnByDrawdownShort;
         public List<List<double>> ReturnByDrawdownLong;
+        public List<List<double>> ExpByPlaceInSeriesLong;
+        public List<List<double>> ExpByPlaceInSeriesShort;
 
         private Dictionary<double, int> _returnByFbe;
         private Dictionary<double, int> _drawdownByFbe;
@@ -27,9 +30,10 @@ namespace Logic.Analysis
         private Dictionary<double, List<double>> _returnByDrawdown;
         private Dictionary<double, List<double>> _returnByDrawdownShort;
 
-        private double _lowerBound = -0.05;
-        private double _upperBound = 0.05;
-        private double _width = 1.0 / 500;
+
+        private double _lowerBound = -0.02;
+        private double _upperBound = 0.02;
+        private double _width = 1.0 / 1000;
 
         public List<string> X_label_categorised;
         public List<string> Y_label_categorised;
@@ -71,6 +75,8 @@ namespace Logic.Analysis
             DrawdownByFbeShort = new List<List<double>>();
             ReturnByDrawdownShort = new List<List<double>>();
             ReturnByDrawdownLong = new List<List<double>>();
+            ExpByPlaceInSeriesShort = new List<List<double>>();
+            ExpByPlaceInSeriesLong = new List<List<double>>();
 
 
             X_label = new List<string>();
@@ -103,7 +109,7 @@ namespace Logic.Analysis
         {
             HistogramTools.CategoriseItem(_returnByDrawdown, result.FBEDrawdownLong[j], result.FBELong[j]);
             HistogramTools.CategoriseItem(_returnByFbe, result.FBELong[j]);
-            HistogramTools.CategoriseItem(_drawdownByFbe, result.FBEDrawdownLong[j]);
+            if(result.FBELong[j]>0) HistogramTools.CategoriseItem(_drawdownByFbe, result.FBEDrawdownLong[j]);
         }
 
         private void GetShortStatistics(ITest results)
@@ -117,7 +123,7 @@ namespace Logic.Analysis
         {
             HistogramTools.CategoriseItem(_returnByDrawdownShort, results.FBEDrawdownShort[j], results.FBEShort[j]);
             HistogramTools.CategoriseItem(_returnByFbeShort, results.FBEShort[j]);
-            HistogramTools.CategoriseItem(_drawdownByFbeShort, results.FBEDrawdownShort[j]);
+            if(results.FBEShort[j] > 0) HistogramTools.CategoriseItem(_drawdownByFbeShort, results.FBEDrawdownShort[j]);
         }
 
         private void AddGeneralStats(ITest[] results, int i)
@@ -128,6 +134,8 @@ namespace Logic.Analysis
             ExpectancyShortMed.Add(results[i].ExpectancyShortMedian);
             WinpercentageLong.Add(results[i].WinPercentageLong);
             WinpercentageShort.Add(results[i].WinPercentageShort);
+            ExpByPlaceInSeriesLong.Add(results[i].ExpectancyByPositionInSeriesLongAverage.ToList());
+            ExpByPlaceInSeriesShort.Add(results[i].ExpectancyByPositionInSeriesShortAverage.ToList());
         }
 
         private void AddHistogramStats()

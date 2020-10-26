@@ -24,7 +24,7 @@ namespace Logic.Tests
                 new DummyEntries(1, 98)
             }, market);
 
-            myTests = TestFactory.GenerateFixedBarExitTest(10, 14, strat, market);
+            myTests = TestFactory.GenerateFixedBarExitTest(10, 14, strat, market).ToArray();
 
             var invalidstrat = StrategyBuilder.CreateStrategy(new Rules.IRuleSet[]
             {
@@ -264,6 +264,30 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldGenerateRunHistory()
+        {
+            for (int i = 0; i < myTests.Length; i++)
+            for (int j = 0; j < myTests[i].RunIndices.Count; j++)
+            {
+                var myindt = new int[i + 1 + 10];
+                for (int k = 0; k < myindt.Length; k++) myindt[k] = 1 + j + k;
+                Assert.Equal(myTests[i].RunIndices[j], myindt);
+            }
+        }
+        
+        [Fact]
+        private void ShouldGenerateRollingExpectancy()
+        {
+            for (int i = 0; i < myTests.Length; i++)
+            for (int j = 0; j < myTests[i].RunIndices.Count; j++)
+            {
+                var myindt = new int[i + 1 + 10];
+                for (int k = 0; k < myindt.Length; k++) myindt[k] = 1 + j + k;
+                Assert.Equal(myTests[i].RunIndices[j], myindt);
+            }
+        }
+        
+        [Fact]
+        private void ShouldGenerateExpectancyByPeriod()
         {
             for (int i = 0; i < myTests.Length; i++)
             for (int j = 0; j < myTests[i].RunIndices.Count; j++)

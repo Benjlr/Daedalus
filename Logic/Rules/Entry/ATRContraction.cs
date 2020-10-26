@@ -3,6 +3,7 @@ using PriceSeries.FinancialSeries;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Logic.Utils;
 using Logic.Utils.Calculations;
 
 namespace Logic.Rules.Entry
@@ -63,19 +64,27 @@ namespace Logic.Rules.Entry
             Satisfied = new bool[data.Count];
             var coun = 0;
 
-            for (int i = 50; i < data.Count; i++)
+            for (int i = 0; i < data.Count; i++)
             {
 
-                if ( atrPC[i] == 0.0) Satisfied[i] = true;
-                //var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);
+                //if ( atrPC[i] == 0.0) Satisfied[i] = true;
 
-                //if (sixtoTen < atr[i] * 0.5
-                //)
-                //{
-                //    coun++;
-                //    if (coun > 9 && twentyMa[i] > fissy[i] && atrPC[i] == 0.0) Satisfied[i] = true;
-                //}
-                //else coun = 0;
+                //var xxx = ListTools.GetPositionRange(ListTools.GetNewList(data, i - 25, i), data[i].Close);
+                var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);
+
+                if (sixtoTen < atr[i] * 0.5
+                )
+                {
+                    coun++;
+                    if (coun > 9 && twentyMa[i] > fissy[i] && atrPC[i - 1] == 0.0 && atrPC[i] == 0.0)
+                    {
+                        //var newIndex = i + Satisfied.Length / 2;
+                        //if (newIndex > Satisfied.Length) newIndex -= Satisfied.Length;
+                        //Satisfied[newIndex] = true;
+                        Satisfied[i] = true;
+                    }
+                }
+                else coun = 0;
             }
 
         }
