@@ -46,9 +46,9 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
 
         private static List<double> RunThroughResultSet(List<double> resultList, int lookbackPeriod)
         {
-            var retVal = AddOnes(lookbackPeriod);
-            for (int i = lookbackPeriod; i < resultList.Count; i++)
-                retVal.Add(IterateExpectancy(resultList.GetRange(i - lookbackPeriod, lookbackPeriod + 1).ToList()));
+            var retVal = AddOnes(lookbackPeriod-1);
+            for (int i = lookbackPeriod-1; i < resultList.Count; i++)
+                retVal.Add(IterateExpectancy(ListTools.GetNewList(resultList,i-(lookbackPeriod-1),i)));
             return retVal;
         }
 
@@ -58,12 +58,20 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
 
         private static void CalculateRollingStats(List<double> range)
         {
+            ReinitLocals();
             if (range.Any(x => x > 0))
                 myAvgGain = range.Where(x => x > 0).Average();
             if (range.Any(x => x < 0))
                 myAvgLoss = range.Where(x => x < 0).Average();
 
             myWinPercent = range.Count(x => x > 0) / (double)range.Count(x => Math.Abs(x) > 0);
+        }
+
+        private static void ReinitLocals()
+        {
+            myWinPercent = 0;
+            myAvgGain = 0;
+            myAvgLoss = 0;
         }
 
         private static double IterateExpectancy(List<double> resultsList)
@@ -78,7 +86,7 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
         {
             var expectancy = myAvgGain * myWinPercent / (-myAvgLoss * (1 - myWinPercent));
 
-            if (expectancy > 3) expectancy = 3.0;
+            if (expectancy > 3 || double.IsInfinity(expectancy)) expectancy = 3.0;
             return expectancy;
         }
 
