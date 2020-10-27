@@ -34,7 +34,7 @@ namespace Daedalus.ViewModels
             }, market);
 
             myTests = new PlaceholderName();
-            myTests.GenerateFixedBarResults(TestFactory.GenerateFixedBarExitTest(50, 250, strat, market,10).ToArray());
+            myTests.GenerateFixedBarResults(TestFactory.GenerateFixedBarExitTest(50, 250, strat, market,10));
 
             PlotModelDrawdownLong = HeatMap.GenerateHeatMap(myTests.ReturnByDrawdownLong, myTests.X_label_categorised, myTests.Y_label_categorised);
             PlotModelDrawdownShort = HeatMap.GenerateHeatMap(myTests.ReturnByDrawdownShort, myTests.X_label_categorised, myTests.Y_label_categorised);

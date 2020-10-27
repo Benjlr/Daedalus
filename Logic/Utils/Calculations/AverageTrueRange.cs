@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using PriceSeries.FinancialSeries;
+using PriceSeriesCore.FinancialSeries;
 
 namespace Logic.Utils.Calculations
 {

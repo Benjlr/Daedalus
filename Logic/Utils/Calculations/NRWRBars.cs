@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using PriceSeries.FinancialSeries;
+using PriceSeriesCore.FinancialSeries;
 
 namespace Logic.Utils.Calculations
 {

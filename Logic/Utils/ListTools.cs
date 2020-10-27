@@ -1,8 +1,7 @@
-﻿using System;
+﻿using PriceSeriesCore.FinancialSeries;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PriceSeries.FinancialSeries;
 
 namespace Logic.Utils
 {
@@ -14,7 +13,6 @@ namespace Logic.Utils
             {
                 if (inouts[i] != 0.0) return i + 1;
             }
-
             return 0;
         }
 

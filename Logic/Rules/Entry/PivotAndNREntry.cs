@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using Logic.Utils;
 using Logic.Utils.Calculations;
-using PriceSeries;
-using PriceSeries.FinancialSeries;
+using PriceSeriesCore;
+using PriceSeriesCore.FinancialSeries;
 
 namespace Logic.Rules.Entry
 {

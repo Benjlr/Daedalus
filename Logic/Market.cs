@@ -1,4 +1,4 @@
-﻿using PriceSeries.FinancialSeries;
+﻿using PriceSeriesCore.FinancialSeries;
 
 namespace Logic
 {
@@ -12,7 +12,5 @@ namespace Logic
             RawData = data;
             CostanzaData = costanza;
         }
-
-
     }
 }

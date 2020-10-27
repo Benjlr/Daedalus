@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml.Xsl;
-using PriceSeries.FinancialSeries;
+using PriceSeriesCore.FinancialSeries;
 
 namespace Logic.Utils.Calculations
 {

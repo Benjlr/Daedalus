@@ -1,7 +1,7 @@
-﻿using PriceSeries.FinancialSeries;
+﻿using PriceSeriesCore.FinancialSeries;
 using System.Collections.Generic;
 using System.Linq;
-using PriceSeries.Indicators.Derived;
+using PriceSeriesCore.Indicators.Derived;
 
 namespace Logic.Rules.Exit
 {

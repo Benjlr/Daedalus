@@ -1,8 +1,7 @@
-﻿using PriceSeries.FinancialSeries;
+﻿using PriceSeriesCore.FinancialSeries;
 using System;
 using System.IO;
 using System.Linq;
-using Logic.Utils.Calculations;
 
 namespace Logic
 {
@@ -11,13 +10,6 @@ namespace Logic
         
         public static Market CreateMarket(string data_path)
         {
-            //StringBuilder t = new StringBuilder();
-            //for (int i = 0; i < cData.Length; i++)
-            //{
-            //    t.AppendLine($"{cData[i].CloseDate},{cData[i].Open},{cData[i].High},{cData[i].Low},{cData[i].Close}");
-            //}
-            //File.WriteAllText(@"C:\Temp\Market.csv",t.ToString());
-
             return LoadData(data_path);
         }
 

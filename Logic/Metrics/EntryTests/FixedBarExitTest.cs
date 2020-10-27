@@ -1,18 +1,17 @@
 ﻿using LinqStatistics;
-using PriceSeries.FinancialSeries;
+using PriceSeriesCore.FinancialSeries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Logic.Utils;
 
 namespace Logic.Metrics.EntryTests
 {
     public class FixedBarExitTest : TestBase
     {
 
-        private int Fixed_Bar_exit { get; }
+        protected int Fixed_Bar_exit { get;  }
 
-        public FixedBarExitTest(int bars_to_wait)
+        protected FixedBarExitTest(int bars_to_wait)
         {
             Fixed_Bar_exit = bars_to_wait;
         }
@@ -27,14 +26,10 @@ namespace Logic.Metrics.EntryTests
 
         private void initLists(int length)
         {
-            FBELong = new double[length];
-            FBEShort = new double[length];
-            FBEDrawdownLong = new double[length];
-            FBEDrawdownShort = new double[length];
-            FBEDrawdownLongWinners = new double[length];
-            FBEDrawdownShortWinners = new double[length];
+            FBEResults = new double[length];
+            FBEDrawdown = new double[length];
+            FBEDrawdownWinners = new double[length];
             RunIndices = new List<int[]>();
-
         }
 
         private void IterateEntries(MarketData[] data, bool[] entries)
@@ -48,15 +43,11 @@ namespace Logic.Metrics.EntryTests
         {
             SetResult(data, i);
             SetRuns(i);
-            FindDrawdownLong(data, i);
-            FindDrawdownShort(data, i);
+            FindDrawdown(data, i);
         }
 
-        private void SetResult(MarketData[] data, int i)
-        {
-            FBELong[i] = (data[i + Fixed_Bar_exit].Open_Bid - data[i].Open_Ask)/ data[i].Open_Ask;
-            FBEShort[i] = (data[i].Open_Bid - data[i + Fixed_Bar_exit].Open_Ask)/ data[i].Open_Bid;
-        }
+        protected virtual void SetResult(MarketData[] data, int i)
+        { throw new Exception("instantiate long or short version"); }
 
         private void SetRuns(int i)
         {
@@ -65,41 +56,21 @@ namespace Logic.Metrics.EntryTests
             RunIndices.Add(runIndex);
         }
 
-        private void FindDrawdownLong(MarketData[] data, int i)
+        private void FindDrawdown(MarketData[] data, int i)
         {
-            IterateTimeLong(data, i);
-            if (FBELong[i] < FBEDrawdownLong[i])
-                FBEDrawdownLong[i] = FBELong[i];
-            if (FBELong[i] > 0)
-                FBEDrawdownLongWinners[i] = FBEDrawdownLong[i];
+            IterateTime(data, i);
+            if (FBEResults[i] < FBEDrawdown[i])
+                FBEDrawdown[i] = FBEResults[i];
+            if (FBEResults[i] > 0)
+                FBEDrawdownWinners[i] = FBEDrawdown[i];
         }
 
-        private void IterateTimeLong(MarketData[] data, int i)
-        {
-            for (int j = i; j < i + Fixed_Bar_exit; j++)
-                if ((data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask < FBEDrawdownLong[i])
-                    FBEDrawdownLong[i] = (data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask;
-        }
-
-        private void FindDrawdownShort(MarketData[] data, int i)
-        {
-            IterateTimeShort(data, i);
-            if (FBEShort[i] < FBEDrawdownShort[i])
-                FBEDrawdownShort[i] = FBEShort[i];
-            if (FBEShort[i] > 0)
-                FBEDrawdownShortWinners[i] = FBEDrawdownShort[i];
-        }
-
-        private void IterateTimeShort(MarketData[] data, int i)
-        {
-            for (int j = i; j < i + Fixed_Bar_exit; j++)
-                if ((data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid < FBEDrawdownShort[i])
-                    FBEDrawdownShort[i] = (data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid;
-        }
+        protected virtual void IterateTime(MarketData[] data, int i)
+        { throw new Exception("instantiate long or short version"); }
 
         private bool ValidTest()
         {
-            return FBELong.Count(x => x != 0) > 50;
+            return FBEResults.Count(x => x != 0) > 50;
         }
 
         private void GenerateStats()
@@ -108,78 +79,11 @@ namespace Logic.Metrics.EntryTests
             FindAverages();
             FindMedians();
             FindExpectancy();
-            FindRollingExpectancy();
-        }
-
-        private void FindRollingExpectancy()
-        {
-            ExpectancyByPositionLong();
-            ExpectancyByPositionShort();
-        }
-
-
-
-
-        private int _period = 150;
-        private List<double> myList;
-        private List<double> myWinPercent = new List<double>();
-        private List<double> myAvgGain = new List<double>();
-        private List<double> myAvgLoss = new List<double>();
-
-        private void ExpectancyByPositionLong()
-        {
-            InitLocalLists(FBELong);
-            ExpectancyByPositionInSeriesLongAverage = new double[myList.Count];
-
-            for (int i = _period; i < myList.Count; i++)
-            {
-                var range = myList.GetRange(i - _period, _period+1).ToList();
-                CalculateRollingStats(range);
-                ExpectancyByPositionInSeriesLongAverage[i] = (myAvgGain.Last() * myWinPercent.Last()) / (-myAvgLoss.Last() * (1 - myWinPercent.Last()));
-                if (ExpectancyByPositionInSeriesLongAverage[i] > 3) ExpectancyByPositionInSeriesLongAverage[i] = 3.0;
-            }
-        }
-
-        private void CalculateRollingStats(List<double> range)
-        {
-            if (range.Any(x => x > 0))
-                myAvgGain.Add(range.Where(x => x > 0).Average());
-            if (range.Any(x => x < 0))
-                myAvgLoss.Add(range.Where(x => x < 0).Average());
-            myWinPercent.Add(range.Count(x => x > 0) / (double) range.Count(x => Math.Abs(x) > 0));
-        }
-
-        private void InitLocalLists(double[] resultList)
-        {
-            myList = resultList.Where(x => x != 0).ToList();
-
-            for (int i = 0; i < _period; i++)
-            {
-                myWinPercent.Add(0);
-                myAvgGain.Add(0);
-                myAvgLoss.Add(0);
-            }
-        }
-
-        private void ExpectancyByPositionShort()
-        {
-            InitLocalLists(FBEShort);
-            ExpectancyByPositionInSeriesShortAverage = new double[myList.Count];
-
-            for (int i = _period; i < myList.Count; i++)
-            {
-                var range = myList.GetRange(i - _period, _period+1).ToList();
-                CalculateRollingStats(range);
-                ExpectancyByPositionInSeriesShortAverage[i] = (myAvgGain.Last() * myWinPercent.Last()) / (-myAvgLoss.Last() * (1 - myWinPercent.Last()));
-                if (ExpectancyByPositionInSeriesShortAverage[i] > 3) ExpectancyByPositionInSeriesShortAverage[i] = 3.0;
-
-            }
         }
 
         private void FindWinPercentage()
         {
-            WinPercentageLong = FBELong.Count(x => x > 0) / (double)FBELong.Count(x => Math.Abs(x) > 0);
-            WinPercentageShort = FBEShort.Count(x => x > 0) / (double)FBEShort.Count(x => Math.Abs(x) > 0);
+            WinPercentage = FBEResults.Count(x => x > 0) / (double)FBEResults.Count(x => Math.Abs(x) > 0);
         }
 
         private void FindAverages()
@@ -190,26 +94,18 @@ namespace Logic.Metrics.EntryTests
 
         private void FindAverage()
         {
-            if (FBELong.Any(x => x > 0))
-                AverageGainLong = FBELong.Where(x => x > 0).Average();
-            if (FBELong.Any(x => x < 0))
-                AverageLossLong = FBELong.Where(x => x < 0).Average();
-            if (FBEShort.Any(x => x > 0))
-                AverageGainShort = FBEShort.Where(x => x > 0).Average();
-            if (FBEShort.Any(x => x < 0))
-                AverageLossShort = FBEShort.Where(x => x < 0).Average();
+            if (FBEResults.Any(x => x > 0))
+                AverageGain = FBEResults.Where(x => x > 0).Average();
+            if (FBEResults.Any(x => x < 0))
+                AverageLoss = FBEResults.Where(x => x < 0).Average();
         }
 
         private void FindAverageDD()
         {
-            if (FBEDrawdownLong.Any(x => x < 0))
-                AverageDrawdownLong = FBEDrawdownLong.Where(x => x < 0).Average();
-            if (FBEDrawdownShort.Any(x => x < 0))
-                AverageDrawdownShort = FBEDrawdownShort.Where(x => x < 0).Average();
-            if (FBEDrawdownLongWinners.Any(x => x < 0))
-                AverageDrawdownWinnersLong = FBEDrawdownLongWinners.Where(x => x < 0).Average();
-            if (FBEDrawdownShortWinners.Any(x => x < 0))
-                AverageDrawdownWinnersShort = FBEDrawdownShortWinners.Where(x => x < 0).Average();
+            if (FBEDrawdown.Any(x => x < 0))
+                AverageDrawdown = FBEDrawdown.Where(x => x < 0).Average();
+            if (FBEDrawdownWinners.Any(x => x < 0))
+                AverageDrawdownWinners = FBEDrawdownWinners.Where(x => x < 0).Average();
         }
 
         private void FindMedians()
@@ -220,34 +116,63 @@ namespace Logic.Metrics.EntryTests
 
         private void FindMedian()
         {
-            if (FBELong.Any(x => x > 0))
-                MedianGainLong = FBELong.Where(x => x > 0).Median();
-            if (FBELong.Any(x => x < 0))
-                MedianLossLong = FBELong.Where(x => x < 0).Median();
-            if (FBEShort.Any(x => x > 0))
-                MedianGainShort = FBEShort.Where(x => x > 0).Median();
-            if (FBEShort.Any(x => x < 0))
-                MedianLossShort = FBEShort.Where(x => x < 0).Median();
+            if (FBEResults.Any(x => x > 0))
+                MedianGain = FBEResults.Where(x => x > 0).Median();
+            if (FBEResults.Any(x => x < 0))
+                MedianLoss = FBEResults.Where(x => x < 0).Median();
         }
 
         private void FindMedianDD()
         {
-            if (FBEDrawdownLong.Any(x => x < 0))
-                MedianDrawDownLong = FBEDrawdownLong.Where(x => x < 0).Median();
-            if (FBEDrawdownShort.Any(x => x < 0))
-                MedianDrawDownShort = FBEDrawdownShort.Where(x => x < 0).Median();
-            if (FBEDrawdownLongWinners.Any(x => x < 0))
-                MedianDrawDownWinnersLong = FBEDrawdownLongWinners.Where(x => x < 0).Median();
-            if (FBEDrawdownShortWinners.Any(x => x < 0))
-                MedianDrawDownWinnersShort = FBEDrawdownShortWinners.Where(x => x < 0).Median();
+            if (FBEDrawdown.Any(x => x < 0))
+                MedianDrawDown = FBEDrawdown.Where(x => x < 0).Median();
+            if (FBEDrawdownWinners.Any(x => x < 0))
+                MedianDrawDownWinners = FBEDrawdownWinners.Where(x => x < 0).Median();
         }
 
         private void FindExpectancy()
         {
-            ExpectancyLongAverage = (AverageGainLong * WinPercentageLong) / (-AverageLossLong * (1 - WinPercentageLong));
-            ExpectancyLongMedian = (MedianGainLong * WinPercentageLong) / (-MedianLossLong * (1 - WinPercentageLong));
-            ExpectancyShortAverage = (AverageGainShort * WinPercentageShort) / (-AverageLossShort * (1 - WinPercentageShort));
-            ExpectancyShortMedian = (MedianGainShort * WinPercentageShort) / (-MedianLossShort * (1 - WinPercentageShort));
+            ExpectancyAverage = (AverageGain * WinPercentage) / (-AverageLoss * (1 - WinPercentage));
+            ExpectancyMedian = (MedianGain * WinPercentage) / (-MedianLoss * (1 - WinPercentage));
         }
     }
+    
+    public class LongFixedBarExitTest : FixedBarExitTest
+    {
+        public LongFixedBarExitTest(int bars_to_wait) : base(bars_to_wait)
+        { }
+
+    protected override void SetResult(MarketData[] data, int i)
+        {
+            FBEResults[i] = (data[i + Fixed_Bar_exit].Open_Bid - data[i].Open_Ask) / data[i].Open_Ask;
+        }
+
+        protected override void IterateTime(MarketData[] data, int i)
+        {
+            for (int j = i; j < i + Fixed_Bar_exit; j++)
+                if ((data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask < FBEDrawdown[i])
+                    FBEDrawdown[i] = (data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask;
+        }
+
+    }
+
+    public class ShortFixedBarExitTest : FixedBarExitTest
+    {
+        public ShortFixedBarExitTest(int bars_to_wait) : base(bars_to_wait)
+        { }
+        protected override void SetResult(MarketData[] data, int i)
+        {
+            FBEResults[i] = (data[i].Open_Bid - data[i + Fixed_Bar_exit].Open_Ask) / data[i].Open_Bid;
+        }
+
+
+        protected override void IterateTime(MarketData[] data, int i)
+        {
+            for (int j = i; j < i + Fixed_Bar_exit; j++)
+                if ((data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid < FBEDrawdown[i])
+                    FBEDrawdown[i] = (data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid;
+        }
+
+    }
+
 }

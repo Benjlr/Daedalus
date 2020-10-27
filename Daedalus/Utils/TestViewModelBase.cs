@@ -14,7 +14,7 @@ namespace Daedalus.Utils
 {
     public abstract class TestViewModelBase : ViewModelBase
     {
-        protected ITest[] _test { get; set; }
+        protected List<ITest[]> _test { get; set; }
         public PlotModel PlotModel { get; set; }
         public PlotController ControllerModel { get; set; }
         public ObservableCollection<TestDataEnum> LinesToDisplay { get; }
@@ -64,7 +64,7 @@ namespace Daedalus.Utils
                 Color = OxyColors.Gray,
                 LineStyle = LineStyle.Dot,
             };
-            for (int i = 0; i < _test.Length; i++) medianSeries.Points.Add(new DataPoint(i + 1, _test[i].ExpectancyLongMedian));
+            for (int i = 0; i < _test.Count; i++) medianSeries.Points.Add(new DataPoint(i + 1, _test[i][0].ExpectancyMedian));
             mySeries.Add(medianSeries);
 
             var averageSeries = new LineSeries()
@@ -72,7 +72,7 @@ namespace Daedalus.Utils
                 Color = OxyColors.Gray,
                 LineStyle = LineStyle.Solid,
             };
-            for (int i = 0; i < _test.Length; i++) averageSeries.Points.Add(new DataPoint(i + 1, _test[i].ExpectancyLongAverage));
+            for (int i = 0; i < _test.Count; i++) averageSeries.Points.Add(new DataPoint(i + 1, _test[i][0].ExpectancyAverage));
             mySeries.Add(averageSeries);
 
             //var lowerQuartileSeries = new LineSeries()

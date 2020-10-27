@@ -1,8 +1,8 @@
-﻿using PriceSeries.FinancialSeries;
+﻿using Logic.Utils.Calculations;
+using PriceSeriesCore.FinancialSeries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Logic.Utils.Calculations;
 
 namespace Logic.Rules.Entry
 {

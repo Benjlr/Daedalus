@@ -8,15 +8,20 @@ namespace Logic.Metrics
 {
     public class TestFactory
     {
-        public static List<ITest> GenerateFixedBarExitTest(int start, int end, Strategy strat, Market market, int increment = 1)
+        public static List<ITest[]> GenerateFixedBarExitTest(int start, int end, Strategy strat, Market market, int increment = 1)
         {
             if(start > end) throw new Exception();
 
-            List<ITest> retval = new List<ITest>();
+            List<ITest[]> retval = new List<ITest[]>();
             for (int i = start; i < end; i+=increment)
             {
-                var myTest = new FixedBarExitTest(i);
-                myTest.Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
+                ITest[] myTest = new ITest[2]
+                {
+                     new LongFixedBarExitTest(i),
+                     new ShortFixedBarExitTest(i),
+                };
+                myTest[0].Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
+                myTest[1].Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
                 retval.Add(myTest);
             }
 

@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="PriceSeries">
-      <HintPath>..\..\Costanza\PriceSeries\bin\Release\PriceSeries.dll</HintPath>
+    <Reference Include="PriceSeriesCore">
+      <HintPath>Y:\my documents\Costanza\PriceSeriesCore\bin\Release\netcoreapp3.1\PriceSeriesCore.dll</HintPath>
     </Reference>
   </ItemGroup>
 

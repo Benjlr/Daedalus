@@ -1,8 +1,8 @@
 ﻿using Logic;
 using Logic.Utils;
 using Logic.Utils.Calculations;
-using PriceSeries;
-using PriceSeries.FinancialSeries;
+using PriceSeriesCore;
+using PriceSeriesCore.FinancialSeries;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -20,8 +20,7 @@ namespace Logic.Metrics.ExitTests
 
         public void RunRE(MarketData[] data, bool[] exits)
         {
-            FBELong= new double[data.Length];
-            FBEShort = new double[data.Length];
+            FBEResults= new double[data.Length];
 
             for (int i = 0; i < exits.Length - 1; i++)
             {
@@ -39,10 +38,8 @@ namespace Logic.Metrics.ExitTests
                     if ( x-fbel > 0 && x-fbel < data.Length )
                     {
                         double exitPriceBull = data[x].Open_Bid;
-                        FBELong[i] = exitPriceBull - data[x - fbel].Open_Ask;
+                        FBEResults[i] = exitPriceBull - data[x - fbel].Open_Ask;
 
-                        double exitPriceBear = data[x].Open_Ask;
-                        FBEShort[i] = data[x - fbel].Open_Bid - exitPriceBear;
                     }
                 }
             }

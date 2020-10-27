@@ -13,6 +13,7 @@
     <None Remove="FBEData\DrawdownShortWinners.txt" />
     <None Remove="FBEData\LongData.txt" />
     <None Remove="FBEData\ShortData.txt" />
+    <None Remove="FBEData\TestMarketData.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +35,9 @@
     <Content Include="FBEData\ShortData.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="FBEData\TestMarketData.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -48,8 +52,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="PriceSeries">
-      <HintPath>..\..\Costanza\PriceSeries\bin\Release\PriceSeries.dll</HintPath>
+    <Reference Include="PriceSeriesCore">
+      <HintPath>Y:\my documents\Costanza\PriceSeriesCore\bin\Release\netcoreapp3.1\PriceSeriesCore.dll</HintPath>
     </Reference>
   </ItemGroup>
 

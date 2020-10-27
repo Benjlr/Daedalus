@@ -1,4 +1,4 @@
-﻿using PriceSeries.FinancialSeries;
+﻿using PriceSeriesCore.FinancialSeries;
 using System;
 using System.Collections.Generic;
 using System.Linq;

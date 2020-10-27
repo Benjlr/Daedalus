@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using PriceSeries.FinancialSeries;
+using PriceSeriesCore.FinancialSeries;
 
 namespace Logic.Metrics.EntryTests
 {
@@ -20,8 +20,7 @@ namespace Logic.Metrics.EntryTests
 
         public override void Run(MarketData[] data, bool[] entries, List<Session> myInputs = null)
         {
-            FBELong = new double[data.Length];
-            FBEShort = new double[data.Length];
+            FBEResults = new double[data.Length];
 
             for (int i = 0; i < entries.Length - 1; i++)
             {
@@ -56,28 +55,15 @@ namespace Logic.Metrics.EntryTests
                     {
                         if (stillLong)
                         {
-                            if (data[x].Open_Bid <= stopBull) FBELong[i] = data[x].Open_Bid - entryPriceBull;
-                            else if (data[x].Low_Bid <= stopBull) FBELong[i] = stopBull - entryPriceBull;
-                            else if (data[x].Open_Bid >= targetBull) FBELong[i] = data[x].Open_Bid - entryPriceBull;
-                            else if (data[x].High_Bid >= targetBull) FBELong[i] = targetBull - entryPriceBull;
+                            if (data[x].Open_Bid <= stopBull) FBEResults[i] = data[x].Open_Bid - entryPriceBull;
+                            else if (data[x].Low_Bid <= stopBull) FBEResults[i] = stopBull - entryPriceBull;
+                            else if (data[x].Open_Bid >= targetBull) FBEResults[i] = data[x].Open_Bid - entryPriceBull;
+                            else if (data[x].High_Bid >= targetBull) FBEResults[i] = targetBull - entryPriceBull;
 
-                            if (  Math.Abs(FBELong[i]) > 0)
+                            if (  Math.Abs(FBEResults[i]) > 0)
                             {
                                 //longDuration[i] = x - i;
                                 stillLong = false;
-                            }
-                        }
-                        if (stillShort)
-                        {
-                            if (data[x].Open_Ask >= stopBear) FBEShort[i] = entryPriceBear - data[x].Open_Ask;
-                            else if (data[x].High_Ask >= stopBear) FBEShort[i] = entryPriceBear - stopBear;
-                            else if (data[x].Open_Ask <= targetBear) FBEShort[i] = entryPriceBear - data[x].Open_Ask;
-                            else if (data[x].High_Ask <= targetBear) FBEShort[i] = entryPriceBear - targetBear;
-
-                            if (Math.Abs(FBEShort[i]) > 0)
-                            {
-                                //shortDuration[i] = x - i;
-                                stillShort = false;
                             }
                         }
 

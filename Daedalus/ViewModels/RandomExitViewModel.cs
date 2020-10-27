@@ -18,13 +18,6 @@ namespace Daedalus.ViewModels
 
         protected sealed override void InitialiseData()
         {
-            _test = TestFactory.GenerateRandomExitTests(
-                ModelSingleton.Instance.MyStrategy.Durations.Where(x=>x!=0).Average(), 
-                ModelSingleton.Instance.MyStrategy.Durations.Where(x=>x!=0).StandardDeviation(),
-                250, 
-                ModelSingleton.Instance.MyStrategy,
-                ModelSingleton.Instance.Mymarket);
-            
             base.InitialiseData();
         }
 

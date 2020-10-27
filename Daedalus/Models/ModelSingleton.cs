@@ -3,7 +3,7 @@ using Logic.Rules;
 using Logic.Rules.Entry;
 using Logic.Utils;
 using Logic.Utils.Calculations;
-using PriceSeries.FinancialSeries;
+using PriceSeriesCore.FinancialSeries;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

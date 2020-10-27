@@ -1,7 +1,7 @@
 ﻿using Logic.Utils;
 using System;
 using System.Collections.Generic;
-using PriceSeries.FinancialSeries;
+using PriceSeriesCore.FinancialSeries;
 
 namespace Logic.Metrics.EntryTests
 {
@@ -21,9 +21,7 @@ namespace Logic.Metrics.EntryTests
 
         public override void Run(MarketData[] data, bool[] entries, List<Session> myInputs = null)
         {
-            FBELong = new double[data.Length];
-            FBEShort = new double[data.Length];
-
+            FBEResults = new double[data.Length];
             for (int i = 0; i < entries.Length - 1; i++)
             {
                 if (entries[i])
@@ -39,10 +37,7 @@ namespace Logic.Metrics.EntryTests
                     if (x + fbel < data.Length && x + fbel > 0)
                     {
                         double entryPriceBull = data[x].Open_Ask;
-                        FBELong[i] = data[x + fbel].Open_Bid - entryPriceBull;
-
-                        double entryPriceBear = data[x].Open_Bid;
-                        FBEShort[i] = entryPriceBear - data[x + fbel].Open_Ask;
+                        FBEResults[i] = data[x + fbel].Open_Bid - entryPriceBull;
                     }
 
                 }

@@ -1,4 +1,5 @@
 ﻿using Logic.Metrics;
+using Logic.Metrics.EntryTests.TestsDrillDown;
 using Logic.Utils;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,16 +41,14 @@ namespace Logic.Analysis
         public List<string> X_label;
         public List<string> Y_label;
 
-        public void GenerateFixedBarResults(ITest[] results)
+        public void GenerateFixedBarResults(List<ITest[]> results)
         {
             InitListsAndLabels();
-            for (int i = 0; i < results.Length; i++)
+            for (int i = 0; i < results.Count; i++)
             {
-
                 InitHistogramsForCurrentTest();
-                GetLongStatistics(results[i]);
-                GetShortStatistics(results[i]);
-                AddGeneralStats(results, i);
+                GetStatistics(results[i]);
+                AddGeneralStats(results[i]);
                 AddHistogramStats();
             }
 
@@ -97,45 +96,42 @@ namespace Logic.Analysis
             _returnByFbeShort = HistogramTools.BinGenerator(_lowerBound, _upperBound, _width);
             _drawdownByFbeShort = HistogramTools.BinGenerator(_lowerBound, 0, _width);
         }
-        
-        private void GetLongStatistics(ITest result)
+        private void GetStatistics(ITest[] results)
         {
-            for (int j = 0; j < result.FBELong.Length; j++)
-                if (result.FBELong[j] != 0)
-                    LongHistogramOperations(result, j);
+            for (int i = 0; i < 2; i++)
+            for (int j = 0; j < results[i].FBEResults.Length; j++)
+                if (results[i].FBEResults[j] != 0)
+                    HistogramOperations(results[i], j, i);
         }
 
-        private void LongHistogramOperations(ITest result, int j)
+        private void HistogramOperations(ITest results, int j, int i)
         {
-            HistogramTools.CategoriseItem(_returnByDrawdown, result.FBEDrawdownLong[j], result.FBELong[j]);
-            HistogramTools.CategoriseItem(_returnByFbe, result.FBELong[j]);
-            if(result.FBELong[j]>0) HistogramTools.CategoriseItem(_drawdownByFbe, result.FBEDrawdownLong[j]);
+            if(i == 0)
+            {
+                HistogramTools.CategoriseItem(_returnByDrawdown, results.FBEDrawdown[j], results.FBEResults[j]);
+                HistogramTools.CategoriseItem(_returnByFbe, results.FBEResults[j]);
+                if (results.FBEResults[j] > 0) HistogramTools.CategoriseItem(_drawdownByFbe, results.FBEDrawdown[j]);
+            }
+            else
+            {
+                HistogramTools.CategoriseItem(_returnByDrawdownShort, results.FBEDrawdown[j], results.FBEResults[j]);
+                HistogramTools.CategoriseItem(_returnByFbeShort, results.FBEResults[j]);
+                if (results.FBEResults[j] > 0) HistogramTools.CategoriseItem(_drawdownByFbeShort, results.FBEDrawdown[j]);
+            }
+
         }
 
-        private void GetShortStatistics(ITest results)
+        private void AddGeneralStats(ITest[] results)
         {
-            for (int j = 0; j < results.FBEShort.Length; j++)
-                if (results.FBEShort[j] != 0)
-                    ShortHistogramOperations(results, j);
-        }
+            ExpectancyLongAvg.Add(results[0].ExpectancyAverage);
+            ExpectancyLongMed.Add(results[0].ExpectancyMedian);
+            WinpercentageLong.Add(results[0].WinPercentage);
+            ExpByPlaceInSeriesLong.Add(EntryTestDrilldown.GetRollingExpectancy(results[0].FBEResults.ToList(), 50));
 
-        private void ShortHistogramOperations(ITest results, int j)
-        {
-            HistogramTools.CategoriseItem(_returnByDrawdownShort, results.FBEDrawdownShort[j], results.FBEShort[j]);
-            HistogramTools.CategoriseItem(_returnByFbeShort, results.FBEShort[j]);
-            if(results.FBEShort[j] > 0) HistogramTools.CategoriseItem(_drawdownByFbeShort, results.FBEDrawdownShort[j]);
-        }
-
-        private void AddGeneralStats(ITest[] results, int i)
-        {
-            ExpectancyLongAvg.Add(results[i].ExpectancyLongAverage);
-            ExpectancyShortAvg.Add(results[i].ExpectancyShortAverage);
-            ExpectancyLongMed.Add(results[i].ExpectancyLongMedian);
-            ExpectancyShortMed.Add(results[i].ExpectancyShortMedian);
-            WinpercentageLong.Add(results[i].WinPercentageLong);
-            WinpercentageShort.Add(results[i].WinPercentageShort);
-            ExpByPlaceInSeriesLong.Add(results[i].ExpectancyByPositionInSeriesLongAverage.ToList());
-            ExpByPlaceInSeriesShort.Add(results[i].ExpectancyByPositionInSeriesShortAverage.ToList());
+            ExpectancyShortAvg.Add(results[1].ExpectancyAverage);
+            ExpectancyShortMed.Add(results[1].ExpectancyMedian);
+            WinpercentageShort.Add(results[1].WinPercentage);
+            ExpByPlaceInSeriesShort.Add(EntryTestDrilldown.GetRollingExpectancy(results[1].FBEResults.ToList(), 50));
         }
 
         private void AddHistogramStats()

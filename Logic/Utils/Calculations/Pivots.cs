@@ -1,18 +1,16 @@
-﻿using System;
+﻿using PriceSeriesCore;
+using PriceSeriesCore.FinancialSeries;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using PriceSeries;
-using PriceSeries.FinancialSeries;
 
 namespace Logic.Utils.Calculations
 {
     public struct PivotStruct
     {
         public int index { get; set; }
-        public PriceSeries.Pivot Pivo{ get; set; }
+        public Pivot Pivo{ get; set; }
 
-        public PivotStruct(PriceSeries.Pivot piv, int ind)
+        public PivotStruct(Pivot piv, int ind)
         {
             index = ind;
             Pivo = piv;

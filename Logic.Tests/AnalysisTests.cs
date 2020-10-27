@@ -1,9 +1,6 @@
-﻿using System;
+﻿using Logic.Utils;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Logic.Utils;
-using Logic.Utils.Calculations;
 using Xunit;
 
 namespace Logic.Tests
@@ -45,6 +42,34 @@ namespace Logic.Tests
         private double _round(double x) => Math.Round(x, _precision);
         private int _precision = 6;
 
+
+        [Fact]
+        public void ShouldInitHistogram()
+        {
+            
+            Assert.True(false);
+        }
+
+        [Fact]
+        public void ShouldInitCategories()
+        {
+
+            Assert.True(false);
+        }
+
+        [Fact]
+        public void ShouldCategoriseItemInHistogram()
+        {
+
+            Assert.True(false);
+        }
+
+        [Fact]
+        public void ShouldCategoriseItemInCategory()
+        {
+
+            Assert.True(false);
+        }
 
         [Fact]
         public void ShouldGenerateHistogram()

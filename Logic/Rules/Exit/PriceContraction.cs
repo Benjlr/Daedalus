@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Logic.Utils.Calculations;
-using PriceSeries.FinancialSeries;
-using PriceSeries.Indicators.Derived;
+using PriceSeriesCore.FinancialSeries;
+using PriceSeriesCore.Indicators.Derived;
 using AverageTrueRange = Logic.Utils.Calculations.AverageTrueRange;
 
 namespace Logic.Rules.Exit
