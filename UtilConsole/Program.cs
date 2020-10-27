@@ -70,7 +70,7 @@ namespace UtilConsole
                         {
                             var currentClose = bidASkData[i].Close_Bid;
                             var currentLow = bidASkData[i].Low_Bid;
-                            List<Session> myREcentSessions = ListTools.GetNewList(collatedData, i - 5, i - 1);
+                            List<Session> myREcentSessions = ListTools.GetNewListByIndex(collatedData, i - 5, i - 1);
                             var positionREcent = ListTools.GetPositionRange(myREcentSessions, myREcentSessions.Last().Close);
                             if (currentClose > t.Entry && myStop < currentLow - 5) myStop = currentLow - 5;
                             t.prices.Add(currentClose);

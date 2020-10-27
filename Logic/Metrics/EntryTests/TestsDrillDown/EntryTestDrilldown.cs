@@ -22,7 +22,7 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
         {
             var resultsByEpoch = new List<List<double>>();
             for (int i = 0; i < divisions; i++)
-                resultsByEpoch.Add(ListTools.GetNewList(resultList, i * resultList.Count / divisions, (i + 1) * resultList.Count / divisions));
+                resultsByEpoch.Add(ListTools.GetNewListByIndex(resultList, i * resultList.Count / divisions, (i + 1) * resultList.Count / divisions));
             return resultsByEpoch;
         }
 
@@ -48,7 +48,7 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
         {
             var retVal = AddOnes(lookbackPeriod-1);
             for (int i = lookbackPeriod-1; i < resultList.Count; i++)
-                retVal.Add(IterateExpectancy(ListTools.GetNewList(resultList,i-(lookbackPeriod-1),i)));
+                retVal.Add(IterateExpectancy(ListTools.GetNewListByIndex(resultList,i-(lookbackPeriod-1),i)));
             return retVal;
         }
 

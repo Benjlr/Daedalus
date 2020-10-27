@@ -7,18 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="FBEData\10PeriodExp.txt" />
+    <None Remove="FBEData\30PeriodExp.txt" />
     <None Remove="FBEData\DrawdownData.txt" />
     <None Remove="FBEData\DrawdownDataWinners.txt" />
     <None Remove="FBEData\DrawdownShort.txt" />
     <None Remove="FBEData\DrawdownShortWinners.txt" />
     <None Remove="FBEData\LongData.txt" />
-    <None Remove="FBEData\Rolling10Exp.txt" />
-    <None Remove="FBEData\Rolling17Exp.txt" />
+    <None Remove="FBEData\Rolling18Exp.txt" />
+    <None Remove="FBEData\Rolling8Exp.txt" />
     <None Remove="FBEData\ShortData.txt" />
     <None Remove="FBEData\TestMarketData.txt" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="FBEData\30PeriodExp.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="FBEData\DrawdownDataWinners.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -34,10 +39,13 @@
     <Content Include="FBEData\DrawdownShort.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="FBEData\Rolling17Exp.txt">
+    <Content Include="FBEData\Rolling18Exp.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="FBEData\Rolling10Exp.txt">
+    <Content Include="FBEData\10PeriodExp.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FBEData\Rolling8Exp.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="FBEData\ShortData.txt">

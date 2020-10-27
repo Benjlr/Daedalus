@@ -144,7 +144,7 @@ namespace Daedalus.Models
                 if(i < lookback) retval.Add(0.5);
                 else
                 {
-                    var range2 = ListTools.GetNewList(range, i - lookback, i);
+                    var range2 = ListTools.GetNewListByIndex(range, i - lookback, i);
                     retval.Add( ListTools.GetPositionRange(range2, range2.Last()));
                 }
             }

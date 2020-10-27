@@ -260,10 +260,9 @@ namespace Logic.Tests
         }
 
         [Fact]
-        private void ShouldGenerateRollingExpectancy()
-        {
-            var resultsLong = LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\FBEData\\Rolling10Exp.txt");
-            var resultsLongSeventeen = LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\FBEData\\Rolling17Exp.txt");
+        private void ShouldGenerateRollingExpectancy() {
+            var resultsLong = LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\FBEData\\Rolling8Exp.txt");
+            var resultsLongSeventeen = LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\FBEData\\Rolling18Exp.txt");
             var eight = EntryTestDrilldown.GetRollingExpectancy(myTests[0][0].FBEResults.ToList(), 8);
             var Seventeen = EntryTestDrilldown.GetRollingExpectancy(myTests[0][0].FBEResults.ToList(), 18);
             Assert.Equal(eight.Select(_round).ToList(), resultsLong.Select(_round).ToList());
@@ -271,9 +270,13 @@ namespace Logic.Tests
         }
         
         [Fact]
-        private void ShouldGenerateExpectancyByPeriod()
-        {
-            Assert.Equal(true, false);
+        private void ShouldGenerateExpectancyByPeriod() {
+            var resultsTenPeriod = LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\FBEData\\10PeriodExp.txt");
+            var resultsThirtyPeriod = LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\FBEData\\30PeriodExp.txt");
+            var ten = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 10);
+            var thirty = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 30);
+            Assert.Equal(resultsTenPeriod.Select(_round).ToList(), ten.Select(_round).ToList());
+            Assert.Equal(resultsThirtyPeriod.Select(_round).ToList(), thirty.Select(_round).ToList());
         }
     }
 }
