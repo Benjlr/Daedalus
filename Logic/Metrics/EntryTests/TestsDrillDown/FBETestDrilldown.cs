@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Logic.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,59 +7,80 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
 {
     public class EntryTestDrilldown
     {
-        private static List<double> myList;
-        private static List<double> myWinPercent;
-        private static List<double> myAvgGain;
-        private static List<double> myAvgLoss;
-
 
         public static List<double> GetRollingExpectancy(List<double> resultList, int lookbackPeriod)
-        {   
-            InitLocalLists(resultList, lookbackPeriod);
-            for (int i = lookbackPeriod; i < resultList.Count; i++)
-                IterateExpectancy(resultList.GetRange(i - lookbackPeriod, lookbackPeriod + 1).ToList(), lookbackPeriod,i);
-            return new List<double>( myList);
+        {
+            return RunThroughResultSet(resultList.Where(x => x != 0).ToList(), lookbackPeriod);            
         }
 
-        private static void InitLocalLists(List<double> resultList, int initPeriod)
+        public static List<double> GetExpectancyByEpoch(List<double> resultList, int divisions)
         {
-            resultList = resultList.Where(x => x != 0).ToList();
-            ClearList();
-            AddZeroes(initPeriod);
+            return IterateThroughEpochs(SplitResultsIntoEpochs(resultList, divisions));
         }
 
-        private static void ClearList()
+        private static List<List<double>> SplitResultsIntoEpochs(List<double> resultList, int divisions)
         {
-            myWinPercent = new List<double>();
-            myAvgGain = new List<double>();
-            myAvgLoss = new List<double>();
-            myList = new List<double>();
+            var resultsByEpoch = new List<List<double>>();
+            for (int i = 0; i < divisions; i++)
+                resultsByEpoch.Add(ListTools.GetNewList(resultList, i * resultList.Count / divisions, (i + 1) * resultList.Count / divisions));
+            return resultsByEpoch;
         }
 
-        private static void AddZeroes(int initPeriod)
+        private static List<double> IterateThroughEpochs(List<List<double>> epochs)
         {
+            var retval = new List<double>();
+            foreach (var epoch in epochs) {
+                var vals = epoch.Where(x => x != 0).ToList();
+                retval.Add(IterateExpectancy(vals));
+            }
+            return retval;
+        }
+
+        private static List<double> AddOnes(int initPeriod)
+        {
+            var myList = new List<double>();
             for (int i = 0; i < initPeriod; i++)
-                myWinPercent.Add(0);
-                myAvgGain.Add(0);
-                myAvgLoss.Add(0);
-                myList.Add(0);
+                myList.Add(1);
+            return myList;
         }
 
-        private static void IterateExpectancy(List<double> resultsList, int lookBack, int i)
+        private static List<double> RunThroughResultSet(List<double> resultList, int lookbackPeriod)
         {
-            CalculateRollingStats(resultsList);
-            myList.Add(myAvgGain.Last() * myWinPercent.Last() / (-myAvgLoss.Last() * (1 - myWinPercent.Last())));
-            if (myList[i] > 3) myList[i] = 3.0;
+            var retVal = AddOnes(lookbackPeriod);
+            for (int i = lookbackPeriod; i < resultList.Count; i++)
+                retVal.Add(IterateExpectancy(resultList.GetRange(i - lookbackPeriod, lookbackPeriod + 1).ToList()));
+            return retVal;
         }
+
+        private static double myWinPercent;
+        private static double myAvgGain;
+        private static double myAvgLoss;
 
         private static void CalculateRollingStats(List<double> range)
         {
             if (range.Any(x => x > 0))
-                myAvgGain.Add(range.Where(x => x > 0).Average());
+                myAvgGain = range.Where(x => x > 0).Average();
             if (range.Any(x => x < 0))
-                myAvgLoss.Add(range.Where(x => x < 0).Average());
+                myAvgLoss = range.Where(x => x < 0).Average();
 
-            myWinPercent.Add(range.Count(x => x > 0) / (double)range.Count(x => Math.Abs(x) > 0));
+            myWinPercent = range.Count(x => x > 0) / (double)range.Count(x => Math.Abs(x) > 0);
         }
+
+        private static double IterateExpectancy(List<double> resultsList)
+        {
+            if (resultsList.Count == 0) return 1;
+
+            CalculateRollingStats(resultsList);
+            return CalculateExpectancy();
+        }
+
+        private static double CalculateExpectancy()
+        {
+            var expectancy = myAvgGain * myWinPercent / (-myAvgLoss * (1 - myWinPercent));
+
+            if (expectancy > 3) expectancy = 3.0;
+            return expectancy;
+        }
+
     }
 }
