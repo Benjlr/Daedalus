@@ -25,16 +25,16 @@ namespace Logic.Tests
 
         private List<List<double>> RanDResults = new List<List<double>>()
         {
-            new List<double>() {0, 0, 0, 0, 1, 0},
+            new List<double>() {0, 0, 0, 0, 1, 1},
             new List<double>() {double.NaN, double.NaN, double.NaN, double.NaN, double.NaN, double.NaN},
             new List<double>() {double.NaN, double.NaN, double.NaN, double.NaN, double.NaN, double.NaN},
-            new List<double>() {0.5, 0, 0, 0, 0.5, 0},
+            new List<double>() {0.5, 0.5, 0.5, 0.5, 1, 1},
             new List<double>() {double.NaN, double.NaN, double.NaN, double.NaN, double.NaN, double.NaN},
-            new List<double>() {0, 0.5, 0, 0, 0, 0.5},
+            new List<double>() {0, 0.5, 0.5, 0.5, 0.5, 1},
             new List<double>() {double.NaN, double.NaN, double.NaN, double.NaN, double.NaN, double.NaN},
-            new List<double>() {0.5, 0, 0, 0, 0.5, 0},
-            new List<double>() {0, 0, 1, 0, 0, 0},
-            new List<double>() {1, 0, 0, 0, 0, 0},
+            new List<double>() {0.5, 0.5, 0.5, 0.5, 1.0, 1},
+            new List<double>() {0, 0, 1, 1, 1, 1},
+            new List<double>() {1, 1, 1, 1, 1, 1},
         };
 
 
@@ -46,29 +46,76 @@ namespace Logic.Tests
         [Fact]
         public void ShouldInitHistogram()
         {
+            var myhistogram = HistogramTools.BinGenerator(-100, 100, 25);
+            var expected = new Dictionary<double, int>()
+            {
+                {-100,0},
+                {-75,0 },
+                {-50,0 },
+                {-25,0 },
+                {0,0 },
+                {25,0 },
+                {50,0 },
+                {75,0 },
+                {100,0 },
+                {Double.PositiveInfinity, 0 },
+            };
             
-            Assert.True(false);
+            Assert.Equal(expected, myhistogram);
         }
 
         [Fact]
         public void ShouldInitCategories()
         {
+            var myhistogram = HistogramTools.CategoryGenerator(-66, 33, 11);
+            var expected = new Dictionary<double, List<double>>()
+            {
+                {-66,new List<double>()},
+                {-55,new List<double>() },
+                {-44,new List<double>() },
+                {-33,new List<double>() },
+                {-22,new List<double>()},
+                {-11,new List<double>()},
+                {0,new List<double>()},
+                {11,new List<double>()},
+                {22,new List<double>()},
+                {33,new List<double>() },
+                {Double.PositiveInfinity, new List<double>() },
+            };
 
-            Assert.True(false);
+            Assert.Equal(expected, myhistogram);
         }
 
         [Fact]
         public void ShouldCategoriseItemInHistogram()
         {
-
-            Assert.True(false);
+            var myhistogram = HistogramTools.BinGenerator(-100, 100, 25);
+            HistogramTools.CategoriseItem(myhistogram, 72);
+            HistogramTools.CategoriseItem(myhistogram, 0);
+            HistogramTools.CategoriseItem(myhistogram, -0.001);
+            HistogramTools.CategoriseItem(myhistogram, 200);
+            HistogramTools.CategoriseItem(myhistogram, 52);
+            Assert.Equal(myhistogram[75], 2);
+            Assert.Equal(myhistogram[Double.PositiveInfinity], 1);
+            Assert.Equal(myhistogram[0], 1);
+            Assert.Equal(myhistogram[25], 1);
+            Assert.Equal(myhistogram[-50], 0);
         }
 
         [Fact]
         public void ShouldCategoriseItemInCategory()
         {
-
-            Assert.True(false);
+            var myhistogram = HistogramTools.CategoryGenerator(-66, 33, 11);
+            HistogramTools.CategoriseItem(myhistogram,7,-45);
+            HistogramTools.CategoriseItem(myhistogram,12365.022,-54);
+            HistogramTools.CategoriseItem(myhistogram,2.3,-45);
+            HistogramTools.CategoriseItem(myhistogram,-0.2,235);
+            HistogramTools.CategoriseItem(myhistogram,-6.5,-0);
+            
+            Assert.Equal(myhistogram[-44], new List<double>(){7,12365.022,2.3});
+            Assert.Equal(myhistogram[11], new List<double>(){-6.5});
+            Assert.Equal(myhistogram[-66], new List<double>());
+            Assert.Equal(myhistogram[double.PositiveInfinity], new List<double>(){-0.2});
         }
 
         [Fact]
@@ -110,7 +157,7 @@ namespace Logic.Tests
             for (int j = 0; j < results[i].Count; j++)
                 results[i][j] = _round(results[i][j]);
 
-            for (int i = 0; i < results.Count; i++) Assert.Equal(results[i], RanDResults[i]);
+            Assert.Equal(results, RanDResults);
 
         }
     }

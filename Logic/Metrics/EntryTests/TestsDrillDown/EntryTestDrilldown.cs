@@ -1,6 +1,7 @@
 ﻿using Logic.Utils;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace Logic.Metrics.EntryTests.TestsDrillDown
@@ -15,16 +16,9 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
 
         public static List<double> GetExpectancyByEpoch(List<double> resultList, int divisions)
         {
-            return IterateThroughEpochs(SplitResultsIntoEpochs(resultList, divisions));
+            return IterateThroughEpochs(EpochGenerator.SplitListIntoEpochs(resultList,divisions).EpochContainer);
         }
 
-        private static List<List<double>> SplitResultsIntoEpochs(List<double> resultList, int divisions)
-        {
-            var resultsByEpoch = new List<List<double>>();
-            for (int i = 0; i < divisions; i++)
-                resultsByEpoch.Add(ListTools.GetNewListByIndex(resultList, i * resultList.Count / divisions, (i + 1) * resultList.Count / divisions));
-            return resultsByEpoch;
-        }
 
         private static List<double> IterateThroughEpochs(List<List<double>> epochs)
         {
@@ -36,58 +30,96 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
             return retval;
         }
 
-        private static List<double> AddOnes(int initPeriod)
-        {
+        private static List<double> AddOnes(int initPeriod) {
             var myList = new List<double>();
             for (int i = 0; i < initPeriod; i++)
                 myList.Add(1);
             return myList;
         }
 
-        private static List<double> RunThroughResultSet(List<double> resultList, int lookbackPeriod)
-        {
+        private static List<double> RunThroughResultSet(List<double> resultList, int lookbackPeriod) {
             var retVal = AddOnes(lookbackPeriod-1);
             for (int i = lookbackPeriod-1; i < resultList.Count; i++)
                 retVal.Add(IterateExpectancy(ListTools.GetNewListByIndex(resultList,i-(lookbackPeriod-1),i)));
             return retVal;
         }
 
-        private static double myWinPercent;
-        private static double myAvgGain;
-        private static double myAvgLoss;
-
-        private static void CalculateRollingStats(List<double> range)
-        {
-            ReinitLocals();
-            if (range.Any(x => x > 0))
-                myAvgGain = range.Where(x => x > 0).Average();
-            if (range.Any(x => x < 0))
-                myAvgLoss = range.Where(x => x < 0).Average();
-
-            myWinPercent = range.Count(x => x > 0) / (double)range.Count(x => Math.Abs(x) > 0);
-        }
-
-        private static void ReinitLocals()
-        {
-            myWinPercent = 0;
-            myAvgGain = 0;
-            myAvgLoss = 0;
-        }
-
-        private static double IterateExpectancy(List<double> resultsList)
-        {
+        private static double IterateExpectancy(List<double> resultsList) {
             if (resultsList.Count == 0) return 1;
+            return new DrillDownStats(resultsList).CalculateExpectancy();
+        }
+    }
 
-            CalculateRollingStats(resultsList);
-            return CalculateExpectancy();
+    public class DrillDownStats
+    {
+        public double WinPercent { get; }
+        public double AvgGain { get; }
+        public double AvgLoss { get; }
+
+        public DrillDownStats(List<double> range) {
+            AvgGain = CalculateAvgGain(range);
+            AvgLoss = CalculateAvgLoss(range);
+            WinPercent = CalculateWinPercent(range);
         }
 
-        private static double CalculateExpectancy()
-        {
-            var expectancy = myAvgGain * myWinPercent / (-myAvgLoss * (1 - myWinPercent));
+        private double CalculateAvgGain(List<double> range) {
+            if (range.Any(x => x > 0))
+                return range.Where(x => x > 0).Average();
+            return 0;
+        }
 
+        private double CalculateAvgLoss(List<double> range) {
+            if (range.Any(x => x < 0))
+                return range.Where(x => x < 0).Average();
+            return 0;
+        }
+
+        private double CalculateWinPercent(List<double> range) {
+            var numerator = range.Count(x => x > 0);
+            var denominator = (double) range.Count(x => Math.Abs(x) > 0);
+            return  numerator / denominator;
+        }
+
+        public double CalculateExpectancy() {
+            var expectancy = this.AvgGain * this.WinPercent/ (-this.AvgLoss * (1 - this.WinPercent));
             if (expectancy > 3 || double.IsInfinity(expectancy)) expectancy = 3.0;
             return expectancy;
+        }
+    }
+
+    public class EpochGenerator {
+        public int Period { get; set; }
+        public int Remainder { get; set; }
+        public List<List<double>> EpochContainer { get; set; }
+
+        private EpochGenerator(int count, int divisions) {
+            Period = count / divisions;
+            Remainder = count % divisions;
+            EpochContainer = new List<List<double>>();
+        }
+
+        public static EpochGenerator SplitListIntoEpochs(List<double> list, int divisions)
+        {
+            var myEpoch = new EpochGenerator(list.Count, divisions);
+            myEpoch.GenerateEpochs(list);
+            return myEpoch;
+        }
+
+        private void GenerateEpochs(List<double> list) {
+            InitialiseFirstEpoch(list);
+            GenerateRemainingEpochs(list);
+        }
+
+        private void InitialiseFirstEpoch(List<double> list)
+        {
+            if (Remainder > 0)
+                EpochContainer.Add(ListTools.GetNewListByStartIndexAndCount(list, 0, Remainder));
+        }
+
+        private void GenerateRemainingEpochs(List<double> list) {
+            for (int i = Remainder; i < list.Count; i += Period) {
+                EpochContainer.Add(ListTools.GetNewListByIndex(list, i, i + Period - 1));
+            }
         }
 
     }

@@ -44,5 +44,20 @@ namespace Logic.Metrics.ExitTests
                 }
             }
         }
+
+        protected override void SetResult(MarketData[] data, int i)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void SetRuns(int i)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void IterateTime(MarketData[] data, int i)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

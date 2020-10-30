@@ -11,9 +11,8 @@ namespace Logic.Tests
 {
     public class FixedBarExitTests
     {
-        private int _precision = 6;
+        private int _precision = 4;
         private List<ITest[]> myTests { get; set; }
-        private ITest myInvalidTests { get; set; }
         private string marketData => Directory.GetCurrentDirectory() + "\\FBEData\\TestMarketData.txt";        
         private double _round(double x) => Math.Round(x, _precision);
         
@@ -24,12 +23,7 @@ namespace Logic.Tests
                 new DummyEntries(1, 98)
             }, market);
 
-            myTests = TestFactory.GenerateFixedBarExitTest(10, 14, strat, market);
-
-            var invalidstrat = StrategyBuilder.CreateStrategy(new Rules.IRuleSet[] {
-                new DummyEntries(65, 98)
-            }, market);
-            myInvalidTests = TestFactory.GenerateFixedBarExitTest(10, 11, invalidstrat, market)[0][0];
+            myTests = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(10, 14, 1));
         }
 
         private List<List<double>> LoadData(string path) {
@@ -66,48 +60,42 @@ namespace Logic.Tests
         public void ShouldGenerateLongResults() {
             var resultsLong = LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\LongData.txt");
             for (var i = 0; i < resultsLong.Count; i++)
-            for (var j = 0; j < resultsLong[i].Count; j++)
-                Assert.Equal(_round(myTests[i][0].FBEResults[j]), _round(resultsLong[i][j]));
+                Assert.Equal(myTests[i][0].FBEResults.Select(_round), resultsLong[i].Select(_round));
         }
 
         [Fact]
         public void ShouldGenerateShortResults() {
             var resultsLong = LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\ShortData.txt");
             for (var i = 0; i < resultsLong.Count; i++)
-            for (var j = 0; j < resultsLong[i].Count; j++)
-                Assert.Equal(_round(myTests[i][1].FBEResults[j]), _round(resultsLong[i][j]));
+                Assert.Equal(myTests[i][1].FBEResults.Select(_round), resultsLong[i].Select(_round));
         }
 
         [Fact]
         public void ShouldGenerateDrawDownLongResults() {
             var resultsLong = LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownData.txt");
             for (var i = 0; i < resultsLong.Count; i++)
-            for (var j = 0; j < resultsLong[i].Count; j++)
-                Assert.Equal(_round(myTests[i][0].FBEDrawdown[j]), _round(resultsLong[i][j]));
+                Assert.Equal(myTests[i][0].FBEDrawdown.Select(_round), resultsLong[i].Select(_round));
         }
 
         [Fact]
         public void ShouldGenerateDrawDownShortResults() {
             var resultsLong = LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownShort.txt");
             for (var i = 0; i < resultsLong.Count; i++)
-            for (var j = 0; j < resultsLong[i].Count; j++)
-                Assert.Equal(_round(myTests[i][1].FBEDrawdown[j]), _round(resultsLong[i][j]));
+                Assert.Equal(myTests[i][1].FBEDrawdown.Select(_round), resultsLong[i].Select(_round));
         }
 
         [Fact]
         public void ShouldGenerateDrawDownLongWinnersResults() {
             var resultsLong = LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownDataWinners.txt");
             for (var i = 0; i < resultsLong.Count; i++)
-            for (var j = 0; j < resultsLong[i].Count; j++)
-                Assert.Equal(_round(myTests[i][0].FBEDrawdownWinners[j]), _round(resultsLong[i][j]));
+                Assert.Equal(myTests[i][0].FBEDrawdownWinners.Select(_round), resultsLong[i].Select(_round));
         }
 
         [Fact]
         public void ShouldGenerateDrawDownShortWinnersResults() {
             var resultsLong = LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownShortWinners.txt");
             for (var i = 0; i < resultsLong.Count; i++)
-            for (var j = 0; j < resultsLong[i].Count; j++)
-                Assert.Equal(_round(myTests[i][1].FBEDrawdownWinners[j]), _round(resultsLong[i][j]));
+                Assert.Equal(myTests[i][1].FBEDrawdownWinners.Select(_round), resultsLong[i].Select(_round));
         }
 
         [Fact]
@@ -196,48 +184,7 @@ namespace Logic.Tests
             }
         }
 
-        [Fact]
-        public void ShouldNotGenerateExpectancies() {
-            Assert.Equal(0, myInvalidTests.ExpectancyAverage);
-            Assert.Equal(0, myInvalidTests.ExpectancyMedian);
-        }
 
-        [Fact]
-        private void ShouldNotGenerateRatios() {
-            Assert.Equal(0, myInvalidTests.WinPercentage);
-        }
-
-        [Fact]
-        private void ShouldNotGenerateAveragesLong() {
-            Assert.Equal(0, myInvalidTests.AverageGain);
-            Assert.Equal(0, myInvalidTests.AverageLoss);
-            Assert.Equal(0, myInvalidTests.AverageDrawdown);
-            Assert.Equal(0, myInvalidTests.AverageDrawdownWinners);
-        }
-
-        [Fact]
-        private void ShouldNotGenerateMediansLong() {
-            Assert.Equal(0, myInvalidTests.MedianGain);
-            Assert.Equal(0, myInvalidTests.MedianLoss);
-            Assert.Equal(0, myInvalidTests.MedianDrawDown);
-            Assert.Equal(0, myInvalidTests.MedianDrawDownWinners);
-        }
-
-        [Fact]
-        private void ShouldNotGenerateAveragesShort() {
-            Assert.Equal(0, myInvalidTests.AverageGain);
-            Assert.Equal(0, myInvalidTests.AverageLoss);
-            Assert.Equal(0, myInvalidTests.AverageDrawdown);
-            Assert.Equal(0, myInvalidTests.AverageDrawdownWinners);
-        }
-
-        [Fact]
-        private void ShouldNotGenerateMediansShort() {
-            Assert.Equal(0, myInvalidTests.MedianGain);
-            Assert.Equal(0, myInvalidTests.MedianLoss);
-            Assert.Equal(0, myInvalidTests.MedianDrawDown);
-            Assert.Equal(0, myInvalidTests.MedianDrawDownWinners);
-        }
 
         [Fact]
         private void ShouldGenerateLongRunHistory() {
@@ -274,7 +221,7 @@ namespace Logic.Tests
             var resultsTenPeriod = LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\FBEData\\10PeriodExp.txt");
             var resultsThirtyPeriod = LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\FBEData\\30PeriodExp.txt");
             var ten = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 10);
-            var thirty = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 30);
+            var thirty = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 3);
             Assert.Equal(resultsTenPeriod.Select(_round).ToList(), ten.Select(_round).ToList());
             Assert.Equal(resultsThirtyPeriod.Select(_round).ToList(), thirty.Select(_round).ToList());
         }

@@ -18,7 +18,7 @@ namespace Daedalus.ViewModels
             var upperLimit = 1000;
             var lowerLimit = 1;
 
-            _test = TestFactory.GenerateFixedBarExitTest(lowerLimit, upperLimit, ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket);
+            _test = TestFactory.GenerateFixedBarExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, new FixedBarExitTestOptions(lowerLimit, upperLimit, 1));
             
             base.InitialiseData();
         }
