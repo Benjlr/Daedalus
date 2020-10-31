@@ -11,7 +11,7 @@ namespace Logic.Tests
 {
     public class FixedBarExitTests
     {
-        private int _precision = 4;
+        private int _precision = 7;
         private List<ITest[]> myTests { get; set; }
         private string marketData => Directory.GetCurrentDirectory() + "\\FBEData\\TestMarketData.txt";        
         private double _round(double x) => Math.Round(x, _precision);
@@ -156,7 +156,7 @@ namespace Logic.Tests
 
         [Fact]
         public void ShouldGenerateWinRatios() {
-            var longRatios = new List<double>() {0.418367,0.474227,0.505155,0.489583};
+            var longRatios = new List<double>() {0.418367,0.474227,0.5051546392,0.489583};
             var shortRatios = new List<double>() {0.278351,0.278351,0.288660,0.298969};
             for (var i = 0; i < myTests.Count; i++) {
                 Assert.Equal(_round(myTests[i][0].WinPercentage), _round(longRatios[i]));

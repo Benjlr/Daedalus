@@ -11,7 +11,7 @@ namespace Logic.Tests
 {
     public class StopTargetExitTests
     {
-        private int _precision = 4;
+        private int _precision = 7;
         private List<ITest[]> myTests { get; set; }
         private ITest myInvalidTests { get; set; }
         private string marketData => Directory.GetCurrentDirectory() + "\\StopTarget\\TestMarketData.txt";
@@ -114,8 +114,8 @@ namespace Logic.Tests
         [Fact]
         public void ShouldGenerateCorrectLongAverages()
         {
-            var avgGainsLong = new List<double>() { 0.002438, 0.002349, 0.002392, 0.002642 };
-            var avgLossLong = new List<double>() { -0.002863, -0.003256, -0.003522, -0.003424 };
+            var avgGainsLong = new List<double>() { 0.0015, 0.003};
+            var avgLossLong = new List<double>() { -0.0015, -0.003};
             var avgddLong = new List<double>() { -0.003335, -0.003447, -0.003542, -0.003611 };
             var avgddLongWinners = new List<double>() { -0.002059, -0.002301, -0.002200, -0.002354 };
             for (var i = 0; i < myTests.Count; i++) {
@@ -129,8 +129,8 @@ namespace Logic.Tests
         [Fact]
         public void ShouldGenerateCorrectLongMedians()
         {
-            var medianGainsLong = new List<double>() { 0.002366, 0.002183, 0.002091, 0.002470 };
-            var medianLossLong = new List<double>() { -0.001558, -0.001630, -0.002190, -0.001898 };
+            var medianGainsLong = new List<double>() { 0.0015, 0.003 };
+            var medianLossLong = new List<double>() { -0.0015, -0.003 };
             var medianddLong = new List<double>() { -0.002224, -0.002357, -0.002609, -0.002734 };
             var medianddLongWinners = new List<double>() { -0.001995, -0.001997, -0.002000, -0.002090 };
             for (var i = 0; i < myTests.Count; i++) {
@@ -144,8 +144,8 @@ namespace Logic.Tests
         [Fact]
         public void ShouldGenerateCorrectShortAverages()
         {
-            var avgGainsShort = new List<double>() { 0.003505, 0.003699, 0.003780, 0.003642 };
-            var avgLossShort = new List<double>() { -0.002586, -0.002738, -0.002956, -0.003120 };
+            var avgGainsShort = new List<double>() { 0.0015, 0.003 };
+            var avgLossShort = new List<double>() { -0.0015, -0.003};
             var avgddShort = new List<double>() { -0.003208, -0.003327, -0.003446, -0.003565 };
             var avgddShortWinners = new List<double>() { -0.002122, -0.002036, -0.001955, -0.001980 };
             for (var i = 0; i < myTests.Count; i++) {
@@ -159,8 +159,8 @@ namespace Logic.Tests
         [Fact]
         public void ShouldGenerateCorrectShortMedians()
         {
-            var medianGainsShort = new List<double>() { 0.001444, 0.001827, 0.002018, 0.001413 };
-            var medianLossShort = new List<double>() { -0.001931, -0.002362, -0.002728, -0.002905 };
+            var medianGainsShort = new List<double>() { 0.0015, 0.003};
+            var medianLossShort = new List<double>() { -0.0015, -0.003};
             var medianddShort = new List<double>() { -0.002682, -0.002812, -0.003266, -0.003447 };
             var medianddShortWinners = new List<double>() { -0.001375, -0.001375, -0.001294, -0.001303 };
             for (var i = 0; i < myTests.Count; i++) {
