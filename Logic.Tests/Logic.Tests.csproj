@@ -18,13 +18,17 @@
     <None Remove="FBEData\Rolling8Exp.txt" />
     <None Remove="FBEData\ShortData.txt" />
     <None Remove="FBEData\TestMarketData.txt" />
+    <None Remove="StopTarget\DrawdownLong.txt" />
+    <None Remove="StopTarget\DrawdownLongWinners.txt" />
+    <None Remove="StopTarget\DrawdownShort.txt" />
+    <None Remove="StopTarget\DrawdownShortWinners.txt" />
     <None Remove="StopTarget\longResults.txt" />
     <None Remove="StopTarget\shortResults.txt" />
     <None Remove="StopTarget\TestMarketData.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="FBEData\30PeriodExp.txt">
+    <Content Include="DrilldownData\30PeriodExp.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="FBEData\DrawdownDataWinners.txt">
@@ -42,19 +46,31 @@
     <Content Include="FBEData\DrawdownShort.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="FBEData\Rolling18Exp.txt">
+    <Content Include="DrilldownData\Rolling18Exp.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="FBEData\10PeriodExp.txt">
+    <Content Include="DrilldownData\10PeriodExp.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="FBEData\Rolling8Exp.txt">
+    <Content Include="DrilldownData\Rolling8Exp.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="FBEData\ShortData.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="FBEData\TestMarketData.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="StopTarget\DrawdownShortWinners.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="StopTarget\DrawdownLongWinners.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="StopTarget\DrawdownShort.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="StopTarget\DrawdownLong.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="StopTarget\shortResults.txt">

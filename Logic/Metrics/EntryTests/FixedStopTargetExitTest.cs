@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using PriceSeriesCore.FinancialSeries;
-
-namespace Logic.Metrics.EntryTests
+﻿namespace Logic.Metrics.EntryTests
 {
     public abstract class FixedStopTargetExitTest : TestBase
     {
@@ -11,7 +7,7 @@ namespace Logic.Metrics.EntryTests
         protected double _stopPrice { get; set; }
         protected double _targetPrice { get; set; }
 
-        public FixedStopTargetExitTest(double target_distance, double stop_distance) {
+        protected FixedStopTargetExitTest(double target_distance, double stop_distance) {
             TargetDistance = target_distance;
             StopDistance = stop_distance;
         }
@@ -29,7 +25,7 @@ namespace Logic.Metrics.EntryTests
                 x++;
             }
 
-            _endIndex = x-i;
+            _endIndex = x-i+1;
         }
 
         private bool ParseConditionals(MarketData[] data, int i, int x) {
@@ -84,9 +80,12 @@ namespace Logic.Metrics.EntryTests
         }
 
         protected override void IterateTime(MarketData[] data, int i) {
-            for (int j = i; j < i + _endIndex; j++)
-                if ((data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask < FBEDrawdown[i])
-                    FBEDrawdown[i] = (data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask;
+            if (_endIndex + i > data.Length) FBEDrawdown[i] = 0;
+            else if (FBEResults[i] < 0) FBEDrawdown[i] = FBEResults[i];
+            else
+                for (int j = i; j < i + _endIndex; j++)
+                    if ((data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask < FBEDrawdown[i])
+                        FBEDrawdown[i] = (data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask;
         }
     }
 
@@ -128,10 +127,14 @@ namespace Logic.Metrics.EntryTests
         }
 
 
-        protected override void IterateTime(MarketData[] data, int i) {
-            for (int j = i; j < i + _endIndex; j++)
-                if ((data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid < FBEDrawdown[i])
-                    FBEDrawdown[i] = (data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid;
+        protected override void IterateTime(MarketData[] data, int i)
+        {
+            if (_endIndex + i > data.Length) FBEDrawdown[i] = 0;
+            else if (FBEResults[i] < 0) FBEDrawdown[i] = FBEResults[i];
+            else
+                for (int j = i; j < i + _endIndex; j++)
+                    if ((data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid < FBEDrawdown[i])
+                        FBEDrawdown[i] = (data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid;
         }
 
     }
