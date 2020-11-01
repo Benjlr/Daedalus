@@ -21,8 +21,8 @@ namespace Logic.Analysis
         public List<List<double>> DrawdownByFbeShort;
         public List<List<double>> ReturnByDrawdownShort;
         public List<List<double>> ReturnByDrawdownLong;
-        public List<List<double>> ExpByPlaceInSeriesLong;
-        public List<List<double>> ExpByPlaceInSeriesShort;
+        public List<List<double>> RollingExpectancyLong;
+        public List<List<double>> RollingExpectancyShort;
 
         private Dictionary<double, int> _returnByFbe;
         private Dictionary<double, int> _drawdownByFbe;
@@ -52,7 +52,7 @@ namespace Logic.Analysis
                 AddHistogramStats();
             }
 
-            AddCategorisedStats();
+            AddCategorisedAndBoundedStats();
         }
         
         private void InitListsAndLabels()
@@ -74,8 +74,8 @@ namespace Logic.Analysis
             DrawdownByFbeShort = new List<List<double>>();
             ReturnByDrawdownShort = new List<List<double>>();
             ReturnByDrawdownLong = new List<List<double>>();
-            ExpByPlaceInSeriesShort = new List<List<double>>();
-            ExpByPlaceInSeriesLong = new List<List<double>>();
+            RollingExpectancyLong = new List<List<double>>();
+            RollingExpectancyShort = new List<List<double>>();
 
 
             X_label = new List<string>();
@@ -126,12 +126,12 @@ namespace Logic.Analysis
             ExpectancyLongAvg.Add(results[0].ExpectancyAverage);
             ExpectancyLongMed.Add(results[0].ExpectancyMedian);
             WinpercentageLong.Add(results[0].WinPercentage);
-            ExpByPlaceInSeriesLong.Add(EntryTestDrilldown.GetRollingExpectancy(results[0].FBEResults.ToList(), 50));
+            RollingExpectancyLong.Add(EntryTestDrilldown.GetRollingExpectancy(results[0].FBEResults.ToList(), 60));
 
             ExpectancyShortAvg.Add(results[1].ExpectancyAverage);
             ExpectancyShortMed.Add(results[1].ExpectancyMedian);
             WinpercentageShort.Add(results[1].WinPercentage);
-            ExpByPlaceInSeriesShort.Add(EntryTestDrilldown.GetRollingExpectancy(results[1].FBEResults.ToList(), 50));
+            RollingExpectancyShort.Add(EntryTestDrilldown.GetRollingExpectancy(results[1].FBEResults.ToList(), 60));
         }
 
         private void AddHistogramStats()
@@ -142,7 +142,7 @@ namespace Logic.Analysis
             DrawdownByFbeShort.Add(HistogramTools.MakeCumulative(HistogramTools.GenerateHistogram(_drawdownByFbeShort)));
         }
 
-        private void AddCategorisedStats()
+        private void AddCategorisedAndBoundedStats()
         {
             ReturnByDrawdownLong = HistogramTools.GenerateHistorgramsFromCategories(_returnByDrawdown, HistogramTools.BinGenerator(_lowerBound, 0, _width));
             ReturnByDrawdownShort = HistogramTools.GenerateHistorgramsFromCategories(_returnByDrawdownShort, HistogramTools.BinGenerator(_lowerBound, 0, _width));

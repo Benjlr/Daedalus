@@ -47,7 +47,7 @@ namespace Logic.Metrics
 
         protected void IterateEntries(MarketData[] data, bool[] entries)
         {
-            for (int i = 1; i < entries.Length; i++)
+            for (int i = 1; i < entries.Length-_endIndex; i++)
                 if (entries[i - 1])
                     PerformEntryActions(data, i);
         }

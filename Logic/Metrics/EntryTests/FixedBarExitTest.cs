@@ -11,6 +11,8 @@
             for (int j = i; j <= i + _endIndex; j++) runIndex[j - i] = j;
             RunIndices.Add(runIndex);
         }
+
+
     }
 
     public class LongFixedBarExitTest : FixedBarExitTest

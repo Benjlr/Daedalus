@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Logic.Metrics;
 using Logic.Rules.Entry;
+using Logic.Utils;
 using Xunit;
 
 namespace Logic.Tests
@@ -47,6 +48,20 @@ namespace Logic.Tests
             var thirty = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 3);
             Assert.Equal(resultsTenPeriod.Select(TestUtils._round).ToList(), ten.Select(TestUtils._round).ToList());
             Assert.Equal(resultsThirtyPeriod.Select(TestUtils._round).ToList(), thirty.Select(TestUtils._round).ToList());
+        }
+
+        [Fact]
+        private void GeneratesBoundedStats()
+        {
+            var myLIst = new List<double>();
+            for (int i = 0; i <= 100; i++)myLIst.Add(i);
+            var myStat = new BoundedStat(myLIst, 0.85);
+            Assert.Equal(0, myStat.Minimum);
+            Assert.Equal(100, myStat.Maximum);
+            Assert.Equal(50, myStat.Average);
+            Assert.Equal(50, myStat.Median);
+            Assert.Equal(85, myStat.Upper);
+            Assert.Equal(15, myStat.Lower);
         }
     }
 }

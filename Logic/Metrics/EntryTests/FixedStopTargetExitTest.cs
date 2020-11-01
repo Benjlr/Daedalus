@@ -86,6 +86,7 @@
                 for (int j = i; j < i + _endIndex; j++)
                     if ((data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask < FBEDrawdown[i])
                         FBEDrawdown[i] = (data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask;
+            _endIndex = 0;
         }
     }
 
@@ -135,6 +136,8 @@
                 for (int j = i; j < i + _endIndex; j++)
                     if ((data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid < FBEDrawdown[i])
                         FBEDrawdown[i] = (data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid;
+            _endIndex = 0;
+
         }
 
     }

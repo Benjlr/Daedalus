@@ -65,24 +65,24 @@ namespace Logic.Rules.Entry
             for (int i = 0; i < data.Count; i++)
             {
 
-                //if ( atrPC[i] == 0.0) Satisfied[i] = true;
+                if (atrPC[i] == 0.0) Satisfied[i] = true;
 
-                //var xxx = ListTools.GetPositionRange(ListTools.GetNewList(data, i - 25, i), data[i].Close);
-                var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);
+                ////var xxx = ListTools.GetPositionRange(ListTools.GetNewList(data, i - 25, i), data[i].Close);
+                //var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);
 
-                if (sixtoTen < atr[i] * 0.5
-                )
-                {
-                    coun++;
-                    if (coun > 9 && twentyMa[i] > fissy[i] && atrPC[i - 1] == 0.0 && atrPC[i] == 0.0)
-                    {
-                        //var newIndex = i + Satisfied.Length / 2;
-                        //if (newIndex > Satisfied.Length) newIndex -= Satisfied.Length;
-                        //Satisfied[newIndex] = true;
-                        Satisfied[i] = true;
-                    }
-                }
-                else coun = 0;
+                //if (sixtoTen < atr[i] * 0.5
+                //)
+                //{
+                //    coun++;
+                //    if (coun > 9 && twentyMa[i] > fissy[i] && atrPC[i - 1] == 0.0 && atrPC[i] == 0.0)
+                //    {
+                //        //var newIndex = i + Satisfied.Length / 2;
+                //        //if (newIndex > Satisfied.Length) newIndex -= Satisfied.Length;
+                //        //Satisfied[newIndex] = true;
+                //        Satisfied[i] = true;
+                //    }
+                //}
+                //else coun = 0;
             }
 
         }
