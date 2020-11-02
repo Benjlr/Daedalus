@@ -75,6 +75,14 @@ namespace Logic.Utils
             return listofVals;
         }
 
+        public static int GetIndexOfLastNonZero(double[] array, int start)
+        {
+            for (int i = start; i >= 0; i--)
+                if (array[i] != 0) return i;
+
+            return 0;
+
+        }
 
         public static void AppendBar(Session bar, StringBuilder text)
         {

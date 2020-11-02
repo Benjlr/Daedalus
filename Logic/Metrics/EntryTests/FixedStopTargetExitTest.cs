@@ -136,6 +136,7 @@
                 for (int j = i; j < i + _endIndex; j++)
                     if ((data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid < FBEDrawdown[i])
                         FBEDrawdown[i] = (data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid;
+            Durations[i] = _endIndex;
             _endIndex = 0;
 
         }

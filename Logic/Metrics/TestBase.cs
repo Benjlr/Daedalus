@@ -3,6 +3,7 @@ using PriceSeriesCore.FinancialSeries;
 using System.Collections.Generic;
 using System.Linq;
 using LinqStatistics;
+using Logic.Utils;
 
 namespace Logic.Metrics
 {
@@ -11,6 +12,7 @@ namespace Logic.Metrics
         public double[] FBEResults { get; protected set; }
         public double[] FBEDrawdown { get; protected set; }
         public double[] FBEDrawdownWinners { get; protected set; }
+        public double[] Durations { get; protected set; }
         public List<int[]> RunIndices { get; protected set; }
 
         public double AverageGain { get; protected set; }
@@ -42,14 +44,17 @@ namespace Logic.Metrics
             FBEResults = new double[length];
             FBEDrawdown = new double[length];
             FBEDrawdownWinners = new double[length];
+            Durations = new double[length];
             RunIndices = new List<int[]>();
         }
 
         protected void IterateEntries(MarketData[] data, bool[] entries)
         {
-            for (int i = 1; i < entries.Length-_endIndex; i++)
-                if (entries[i - 1])
+            for (int i = 1; i < entries.Length - _endIndex; i++) {
+                var lastNonZero = ListTools.GetIndexOfLastNonZero(Durations, i - 1);
+                if (entries[i - 1] && Durations[lastNonZero] < i - lastNonZero)
                     PerformEntryActions(data, i);
+            }
         }
 
         protected void PerformEntryActions(MarketData[] data, int i)

@@ -28,6 +28,7 @@
             for (int j = i; j < i + _endIndex; j++)
                 if ((data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask < FBEDrawdown[i])
                     FBEDrawdown[i] = (data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask;
+            Durations[i] = _endIndex;
         }
     }
 

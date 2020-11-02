@@ -36,7 +36,7 @@ namespace Logic.Utils
 
         private bool IsValidList(ref List<double> input)
         {
-            input = input.Where(x => x != 0).OrderBy(x => x).ToList();
+            input = input.OrderBy(x => x).ToList();
             return input.Count > 0;
         }
 

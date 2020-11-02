@@ -1,7 +1,9 @@
 ﻿using Logic.Metrics.EntryTests;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Logic.Metrics.CoreTests;
 
 namespace Logic.Metrics
@@ -45,18 +47,22 @@ namespace Logic.Metrics
             if(options.MinimumExitPeriod > options.MaximumExitPeriod)
                 throw new Exception();
 
-            List<ITest[]> retval = new List<ITest[]>();
-            for (int i = options.MinimumExitPeriod; i < options.MaximumExitPeriod; i+= options.Increment) {
-                ITest[] myTest = new ITest[2] {
-                     new LongFixedBarExitTest(i),
-                     new ShortFixedBarExitTest(i),
+            ConcurrentBag<ITest[]> retval = new ConcurrentBag<ITest[]>();
+            Parallel.For(options.MinimumExitPeriod, options.MaximumExitPeriod, (i) =>
+            {
+                ITest[] myTest = new ITest[2]
+                {
+                    new LongFixedBarExitTest(i),
+                    new ShortFixedBarExitTest(i),
                 };
                 myTest[0].Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
                 myTest[1].Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
                 retval.Add(myTest);
-            }
 
-            return retval;
+            });
+            
+
+            return retval.ToList();
         }
 
         public static List<ITest[]> GenerateFixedStopTargetExitTest(Strategy strat, Market market, FixedStopTargetExitTestOptions options)
