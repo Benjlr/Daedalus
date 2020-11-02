@@ -50,10 +50,6 @@ namespace Logic.Metrics.ExitTests
             throw new NotImplementedException();
         }
 
-        protected override void SetRuns(int i)
-        {
-            throw new NotImplementedException();
-        }
 
         protected override void IterateTime(MarketData[] data, int i)
         {

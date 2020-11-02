@@ -5,14 +5,6 @@
         protected FixedBarExitTest(int bars_to_wait) {
             _endIndex = bars_to_wait;
         }
-
-        protected override void SetRuns(int i) {
-            var runIndex = new int[_endIndex + 1];
-            for (int j = i; j <= i + _endIndex; j++) runIndex[j - i] = j;
-            RunIndices.Add(runIndex);
-        }
-
-
     }
 
     public class LongFixedBarExitTest : FixedBarExitTest
@@ -46,6 +38,7 @@
             for (int j = i; j < i + _endIndex; j++)
                 if ((data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid < FBEDrawdown[i])
                     FBEDrawdown[i] = (data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid;
+            Durations[i] = _endIndex;
         }
 
     }

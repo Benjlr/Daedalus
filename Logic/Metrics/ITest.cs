@@ -8,7 +8,7 @@ namespace Logic.Metrics
         public double[] FBEResults { get;  }
         public double[] FBEDrawdown { get;  }
         public double[] FBEDrawdownWinners { get; }
-        public List<int[]> RunIndices { get;  }
+        public double[] Durations { get; }
 
         public double AverageGain { get; }
         public double AverageLoss { get; }

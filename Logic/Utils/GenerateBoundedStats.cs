@@ -10,7 +10,7 @@ namespace Logic.Utils
         {
             var retVal = new List<BoundedStat>();
             for (int i = 0; i < tests[0].Count; i++) 
-                retVal.Add(new BoundedStat(tests.Select(x => x.Count - 1 > i ? x[i] : 1).ToList(),0.75));
+                retVal.Add(new BoundedStat(tests.Select(x => x.Count - 1 > i ? x[i] : 1).ToList(),0.9));
 
             return retVal;
         }
@@ -54,8 +54,8 @@ namespace Logic.Utils
 
         private void GenerateBounds(List<double> input, double breadth)
         {
-            int lowerIndex = (int)(input.Count * (1 - breadth));
-            int upperIndex = (int)(input.Count * (breadth));
+            int lowerIndex = (int)(input.Count * ((1 - breadth)/2.0));
+            int upperIndex = (int)(input.Count * (breadth + ((1 - breadth) / 2.0)));
 
             Lower = input[lowerIndex];
             Upper = input[upperIndex];

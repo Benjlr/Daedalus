@@ -11,5 +11,6 @@
         <ViewModels:MonteCarloViewModel x:Key="MonteCarloViewModel" />
         <ViewModels:EntryViewModel x:Key="EntryViewModel" />
         <ViewModels:DetailedFixBarExits x:Key="DetailedFixBar" />
+        <ViewModels:DetailedFixStopExits x:Key="DetailedStopBar" />
     </Application.Resources>
 </Application>

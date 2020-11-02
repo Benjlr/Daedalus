@@ -9,66 +9,19 @@
         Title="MainWindow" Height="1200" Width="1900">
 
     <Grid>
+        <TabControl>
+            <TabItem Header="Fixed Bar Exits">
+                <views:DetailedFBETests Grid.Row="0"></views:DetailedFBETests>
+            </TabItem>
+            <TabItem Header="Stop Target Exits">
+                <views:DetailedStopExit Grid.Row="0"></views:DetailedStopExit>
+            </TabItem>
+        </TabControl>
 
-        <views:DetailedFBETests Grid.Row="0"></views:DetailedFBETests>
+
+           
 
     </Grid>
 
-    <!--<TabControl>
 
-
-
-        <TabItem Header="EntryTests">
-            <Grid>
-                <Grid.ColumnDefinitions>
-
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="100*"></RowDefinition>
-                    <RowDefinition Height="100*"></RowDefinition>
-                    <RowDefinition Height="100*"></RowDefinition>
-                </Grid.RowDefinitions>
-                <views:FixedBarExitView Grid.Row="0"></views:FixedBarExitView>
-                <views:FixedStopTargetExitView Grid.Row="1"></views:FixedStopTargetExitView>
-                <views:RandomExitTests Grid.Row="2"></views:RandomExitTests>
-
-            </Grid>
-        </TabItem>
-        <TabItem Header="CoreTests">
-            <Grid>
-                <Grid.ColumnDefinitions>
-
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="100*"></RowDefinition>
-                </Grid.RowDefinitions>
-                <views:RangeTests Grid.Row="0"></views:RangeTests>
-
-            </Grid>
-        </TabItem>
-        <TabItem Header="MonteCarloTests">
-            <Grid>
-                <Grid.ColumnDefinitions>
-
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="100*"></RowDefinition>
-                </Grid.RowDefinitions>
-                <views:MonteCarloView Grid.Row="0"></views:MonteCarloView>
-
-            </Grid>
-        </TabItem>
-        <TabItem Header="View Egs">
-            <Grid>
-                <Grid.ColumnDefinitions>
-
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="100*"></RowDefinition>
-                </Grid.RowDefinitions>
-                <views:EntryViewers Grid.Row="0"></views:EntryViewers>
-
-            </Grid>
-        </TabItem>
-    </TabControl>-->
 </Window>

@@ -11,12 +11,14 @@ namespace Logic.Tests
     {
 
         private List<ITest[]> myTests { get; set; }
-        private string marketData => Directory.GetCurrentDirectory() + "\\FBEData\\TestMarketData.txt";        
-        
+        private string marketData => Directory.GetCurrentDirectory() + "\\FBEData\\TestMarketData.txt";
 
-        public FixedBarExitTests() {
+
+        public FixedBarExitTests()
+        {
             var market = MarketBuilder.CreateMarket(marketData);
-            var strat = StrategyBuilder.CreateStrategy(new Rules.IRuleSet[] {
+            var strat = StrategyBuilder.CreateStrategy(new Rules.IRuleSet[]
+            {
                 new DummyEntries(1, 98)
             }, market);
 
@@ -26,68 +28,67 @@ namespace Logic.Tests
 
 
         [Fact]
-        public void ShouldGenerateLongResults() {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\LongData.txt",4);
+        public void ShouldGenerateLongResults()
+        {
+            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\LongData.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
                 Assert.Equal(myTests[i][0].FBEResults.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
         }
 
         [Fact]
-        public void ShouldGenerateShortResults() {
+        public void ShouldGenerateShortResults()
+        {
             var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\ShortData.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
                 Assert.Equal(myTests[i][1].FBEResults.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
         }
 
         [Fact]
-        public void ShouldGenerateDrawDownLongResults() {
+        public void ShouldGenerateDrawDownLongResults()
+        {
             var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownData.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
                 Assert.Equal(myTests[i][0].FBEDrawdown.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
         }
 
         [Fact]
-        public void ShouldGenerateDrawDownShortResults() {
+        public void ShouldGenerateDrawDownShortResults()
+        {
             var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownShort.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
                 Assert.Equal(myTests[i][1].FBEDrawdown.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
         }
 
         [Fact]
-        public void ShouldGenerateDrawDownLongWinnersResults() {
+        public void ShouldGenerateDrawDownLongWinnersResults()
+        {
             var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownDataWinners.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
                 Assert.Equal(myTests[i][0].FBEDrawdownWinners.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
         }
 
         [Fact]
-        public void ShouldGenerateDrawDownShortWinnersResults() {
+        public void ShouldGenerateDrawDownShortWinnersResults()
+        {
             var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownShortWinners.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
                 Assert.Equal(myTests[i][1].FBEDrawdownWinners.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
         }
 
-
         [Fact]
-        private void ShouldGenerateLongRunHistory() {
-            for (int i = 0; i < myTests.Count; i++)
-            for (int j = 0; j < myTests[i][0].RunIndices.Count; j++) {
-                var myindt = new int[i + 1 + 10];
-                for (int k = 0; k < myindt.Length; k++) myindt[k] = 1 + j + k;
-                Assert.Equal(myTests[i][0].RunIndices[j], myindt);
-            }
+        public void ShouldGenerateLongDurations()
+        {
+            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DurationLong.txt", 4);
+            for (var i = 0; i < resultsLong.Count; i++)
+                Assert.Equal(myTests[i][0].Durations, resultsLong[i]);
         }
 
         [Fact]
-        private void ShouldGenerateShortRunHistory() {
-            for (int i = 0; i < myTests.Count; i++)
-                for (int j = 0; j < myTests[i][1].RunIndices.Count; j++) {
-                    var myindt = new int[i + 1 + 10];
-                    for (int k = 0; k < myindt.Length; k++) myindt[k] = 1 + j + k;
-                    Assert.Equal(myTests[i][1].RunIndices[j], myindt);
-                }
+        public void ShouldGenerateShortDurations()
+        {
+            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DurationShort.txt", 4);
+            for (var i = 0; i < resultsLong.Count; i++)
+                Assert.Equal(myTests[i][1].Durations, resultsLong[i]);
         }
-
-
     }
 }

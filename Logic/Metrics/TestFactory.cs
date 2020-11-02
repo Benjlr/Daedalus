@@ -47,38 +47,62 @@ namespace Logic.Metrics
             if(options.MinimumExitPeriod > options.MaximumExitPeriod)
                 throw new Exception();
 
-            ConcurrentBag<ITest[]> retval = new ConcurrentBag<ITest[]>();
-            Parallel.For(options.MinimumExitPeriod, options.MaximumExitPeriod, (i) =>
+            var threadSafeDict = new ConcurrentDictionary<int, ITest []>(FixedBarTestsToDictionary(options));
+            ExecuteFixedBarTests(strat, market, threadSafeDict);
+            return threadSafeDict.Values.ToList();
+        }
+
+        private static void ExecuteFixedBarTests(Strategy strat, Market market, ConcurrentDictionary<int, ITest[]> threadSafeDict)
+        {
+            Parallel.For(0, threadSafeDict.Count, (i) =>
             {
-                ITest[] myTest = new ITest[2]
-                {
-                    new LongFixedBarExitTest(i),
-                    new ShortFixedBarExitTest(i),
-                };
-                myTest[0].Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
-                myTest[1].Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
-                retval.Add(myTest);
-
+                threadSafeDict.TryGetValue(i, out ITest[] myTests);
+                myTests[0].Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
+                myTests[1].Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
             });
-            
+        }
 
-            return retval.ToList();
+        private static Dictionary<int, ITest[]> FixedBarTestsToDictionary(FixedBarExitTestOptions options)
+        {
+            Dictionary<int, ITest[]> retval = new Dictionary<int, ITest[]>();
+            for (int i = options.MinimumExitPeriod; i < options.MaximumExitPeriod; i++) 
+                retval.Add(i - options.MinimumExitPeriod, FixedBarTestArrayInitiliser(i));
+            return retval;
+        }
+
+        private static ITest[] FixedBarTestArrayInitiliser(int i)
+        {
+            ITest[] myTest = new ITest[2]
+            {
+                new LongFixedBarExitTest(i),
+                new ShortFixedBarExitTest(i),
+            };
+            return myTest;
         }
 
         public static List<ITest[]> GenerateFixedStopTargetExitTest(Strategy strat, Market market, FixedStopTargetExitTestOptions options)
         {
-            List<ITest[]> retval = new List<ITest[]>();
+            var threadSafeDict = new ConcurrentDictionary<int, ITest[]>(StopTargetTestsToDictionary(options));
+            ExecuteFixedBarTests(strat, market, threadSafeDict);
+            return threadSafeDict.Values.ToList();
+        }
 
-            for (double i = 0; i <= options.Range; i += options.Increment) {
-                    ITest[] myTest = new ITest[2] {
-                        new LongFixedStopTargetExitTest(i  + options.MinimumTarget, options.MinimumStop + i ),
-                        new ShortFixedStopTargetExitTest(options.MinimumTarget + i , options.MinimumStop + i )
-                    };
-                    myTest[0].Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
-                    myTest[1].Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
-                    retval.Add(myTest);
-            }
 
+        private static ITest[] StopTargetTestArrayInitiliser(FixedStopTargetExitTestOptions options, int i)
+        {
+            ITest[] myTest = new ITest[2]
+            {
+                new LongFixedStopTargetExitTest(i * options.Increment + options.MinimumTarget, options.MinimumStop + i * options.Increment), 
+                new ShortFixedStopTargetExitTest(i * options.Increment + options.MinimumTarget, options.MinimumStop + i * options.Increment)
+            };
+            return myTest;
+        }
+
+        private static Dictionary<int, ITest[]> StopTargetTestsToDictionary(FixedStopTargetExitTestOptions options)
+        {
+            Dictionary<int, ITest[]> retval = new Dictionary<int, ITest[]>();
+            for (int i = 0; i <= options.Range / options.Increment; i++)
+                retval.Add(i, StopTargetTestArrayInitiliser(options, i));
             return retval;
         }
 

@@ -21,12 +21,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\DetailedStopExit.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\DetailedFBETests.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Views\DetailedStopExit.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\DetailedFBETests.xaml">
       <SubType>Designer</SubType>
     </Page>

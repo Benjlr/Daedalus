@@ -72,26 +72,24 @@ namespace Logic.Tests
                     resultsLong[i].Select(TestUtils._round));
         }
 
-        [Fact(Skip = "Return to this when TestData built")]
-        private void ShouldGenerateLongRunHistory()
+        [Fact]
+        public void ShouldGenerateLongDurations()
         {
-            for (int i = 0; i < myTests.Count; i++)
-                for (int j = 0; j < myTests[i][0].RunIndices.Count; j++) {
-                    var myindt = new int[i + 1 + 10];
-                    for (int k = 0; k < myindt.Length; k++) myindt[k] = 1 + j + k;
-                    Assert.Equal(myTests[i][0].RunIndices[j], myindt);
-                }
+            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DurationLong.txt", 2);
+            for (var i = 0; i < resultsLong.Count; i++)
+            for (int j = 0; j < resultsLong[i].Count; j++)
+            {
+                Assert.Equal(myTests[i][0].Durations[j], resultsLong[i].ToArray()[j]);
+
+            }
         }
 
-        [Fact(Skip = "Return to this when TestData built")]
-        private void ShouldGenerateShortRunHistory()
+        [Fact]
+        public void ShouldGenerateShortDurations()
         {
-            for (int i = 0; i < myTests.Count; i++)
-                for (int j = 0; j < myTests[i][1].RunIndices.Count; j++) {
-                    var myindt = new int[i + 1 + 10];
-                    for (int k = 0; k < myindt.Length; k++) myindt[k] = 1 + j + k;
-                    Assert.Equal(myTests[i][1].RunIndices[j], myindt);
-                }
+            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DurationShort.txt", 2);
+            for (var i = 0; i < resultsLong.Count; i++)
+                Assert.Equal(myTests[i][1].Durations, resultsLong[i].ToArray());
         }
     }
 }

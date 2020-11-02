@@ -102,24 +102,12 @@ namespace Daedalus.Charts
                 Position = AxisPosition.Left,
             });
 
-
-            //var minSeriesValues = values.Select(x => x.Minimum).ToList();
-            //var minSeries = new LineSeries()
-            //{
-            //    Color = OxyColors.Black,
-            //    LineStyle = LineStyle.Solid,
-            //    InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
-
-            //};
-            //for (int i = 0; i < minSeriesValues.Count; i++) minSeries.Points.Add(new DataPoint(i + 1, minSeriesValues[i]));
-            //retval.Series.Add(minSeries);
-
             var lowerSeriesValues = values.Select(x => x.Lower).ToList();
             var lowerSeries = new LineSeries()
             {
                 Color = OxyColors.LightGray,
                 LineStyle = LineStyle.Solid,
-                InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+                InterpolationAlgorithm = InterpolationAlgorithms.UniformCatmullRomSpline
 
             };
             for (int i = 0; i < lowerSeriesValues.Count; i++) lowerSeries.Points.Add(new DataPoint(i + 1, lowerSeriesValues[i]));
@@ -130,7 +118,8 @@ namespace Daedalus.Charts
             {
                 Color = OxyColors.Black,
                 LineStyle = LineStyle.Dot,
-                InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+                //InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+                InterpolationAlgorithm = InterpolationAlgorithms.UniformCatmullRomSpline
 
             };
             for (int i = 0; i < miedianSeriesValues.Count; i++) medianSeries.Points.Add(new DataPoint(i + 1, miedianSeriesValues[i]));
@@ -141,7 +130,8 @@ namespace Daedalus.Charts
             {
                 Color = OxyColors.Black,
                 LineStyle = LineStyle.Dash,
-                InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+                //InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+                InterpolationAlgorithm = InterpolationAlgorithms.UniformCatmullRomSpline
 
             };
             for (int i = 0; i < avgSeriesValues.Count; i++) avgSeries.Points.Add(new DataPoint(i + 1, avgSeriesValues[i]));
@@ -152,23 +142,12 @@ namespace Daedalus.Charts
             {
                 Color = OxyColors.LightGray,
                 LineStyle = LineStyle.Solid,
-                InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+                //InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+                InterpolationAlgorithm = InterpolationAlgorithms.UniformCatmullRomSpline
 
             };
             for (int i = 0; i < upperSeriesValues.Count; i++) upperSeries.Points.Add(new DataPoint(i + 1, upperSeriesValues[i]));
             retval.Series.Add(upperSeries);
-
-            //var maxSeriesValues = values.Select(x => x.Maximum).ToList();
-            //var maxSeries = new LineSeries()
-            //{
-            //    Color = OxyColors.Black,
-            //    LineStyle = LineStyle.Solid,
-            //    InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
-
-            //};
-            //for (int i = 0; i < maxSeriesValues.Count; i++) maxSeries.Points.Add(new DataPoint(i + 1, maxSeriesValues[i]));
-            //retval.Series.Add(maxSeries);
-
 
 
 

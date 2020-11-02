@@ -126,12 +126,12 @@ namespace Logic.Analysis
             ExpectancyLongAvg.Add(results[0].ExpectancyAverage);
             ExpectancyLongMed.Add(results[0].ExpectancyMedian);
             WinpercentageLong.Add(results[0].WinPercentage);
-            RollingExpectancyLong.Add(EntryTestDrilldown.GetExpectancyByEpoch(results[0].FBEResults.ToList(), 28));
+            RollingExpectancyLong.Add(EntryTestDrilldown.GetExpectancyByEpoch(results[0].FBEResults.ToList(), 30));
 
             ExpectancyShortAvg.Add(results[1].ExpectancyAverage);
             ExpectancyShortMed.Add(results[1].ExpectancyMedian);
             WinpercentageShort.Add(results[1].WinPercentage);
-            RollingExpectancyShort.Add(EntryTestDrilldown.GetExpectancyByEpoch(results[1].FBEResults.ToList(), 28));
+            RollingExpectancyShort.Add(EntryTestDrilldown.GetExpectancyByEpoch(results[1].FBEResults.ToList(), 30));
         }
 
         private void AddHistogramStats()

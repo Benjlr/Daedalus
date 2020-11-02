@@ -1,9 +1,8 @@
-﻿using System;
+﻿using LinqStatistics;
 using PriceSeriesCore.FinancialSeries;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using LinqStatistics;
-using Logic.Utils;
 
 namespace Logic.Metrics
 {
@@ -13,7 +12,6 @@ namespace Logic.Metrics
         public double[] FBEDrawdown { get; protected set; }
         public double[] FBEDrawdownWinners { get; protected set; }
         public double[] Durations { get; protected set; }
-        public List<int[]> RunIndices { get; protected set; }
 
         public double AverageGain { get; protected set; }
         public double AverageLoss { get; protected set; }
@@ -45,14 +43,12 @@ namespace Logic.Metrics
             FBEDrawdown = new double[length];
             FBEDrawdownWinners = new double[length];
             Durations = new double[length];
-            RunIndices = new List<int[]>();
         }
 
         protected void IterateEntries(MarketData[] data, bool[] entries)
         {
             for (int i = 1; i < entries.Length - _endIndex; i++) {
-                var lastNonZero = ListTools.GetIndexOfLastNonZero(Durations, i - 1);
-                if (entries[i - 1] && Durations[lastNonZero] < i - lastNonZero)
+                if (entries[i - 1])
                     PerformEntryActions(data, i);
             }
         }
@@ -60,12 +56,10 @@ namespace Logic.Metrics
         protected void PerformEntryActions(MarketData[] data, int i)
         {
             SetResult(data, i);
-            SetRuns(i);
             FindDrawdown(data, i);
         }
 
         protected abstract void SetResult(MarketData[] data, int i);
-        protected abstract void SetRuns(int i);
 
         protected bool ValidTest()
         {
