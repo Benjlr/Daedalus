@@ -75,14 +75,35 @@ namespace Logic.Utils
             return listofVals;
         }
 
-        public static int GetIndexOfLastNonZero(double[] array, int start)
-        {
+        public static int GetIndexOfLastNonZero(double[] array, int start) {
             for (int i = start; i >= 0; i--)
                 if (array[i] != 0) return i;
 
             return 0;
-
         }
+
+        public static int GetIndexAtThresholdNonZeroes(int nonZeroCount, List<double> list) {
+            var count = 0;
+            for (int i = 0; i < list.Count; i++) {
+                if (list[i] != 0) {
+                    count++;
+                    if (count == nonZeroCount) return i;
+                }
+            }
+            return list.Count;
+        }
+
+        public static List<double> GetLastNnonZeroValues(int nonZeroCount, int startindex, List<double> list) {
+            var retVal = new List<double>();
+            for (int i = startindex; i >= 0 ; i--) {
+                if (list[i] != 0) {
+                    retVal.Insert(0, list[i]);
+                    if(retVal.Count == nonZeroCount) return retVal;
+                }
+            }
+            return null;
+        }
+
 
         public static void AppendBar(Session bar, StringBuilder text)
         {

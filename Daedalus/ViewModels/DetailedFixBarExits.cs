@@ -9,6 +9,7 @@ using Logic.Rules.Entry;
 using Logic.Utils;
 using OxyPlot;
 using OxyPlot.Axes;
+using System.Linq;
 
 namespace Daedalus.ViewModels
 {
@@ -26,28 +27,29 @@ namespace Daedalus.ViewModels
         public PlotModel ShortRollingExp { get; set; }
         public PlotModel LongDrawdowns { get; set; }
         public PlotModel ShortDrawdowns { get; set; }
-        private PlaceholderName myTests { get; set; }
 
         public DetailedFixBarExits()
         {
+            var tests = TestFactory.GenerateFixedBarExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket,
+                new FixedBarExitTestOptions(5, 220, 1));
 
+            var myTestsLong = new AnalysisBuilder();
+            var myTestsShort = new AnalysisBuilder();
+            myTestsLong.GenerateFixedBarResults(tests.Select(x=>x[0]).ToList());
+            myTestsShort.GenerateFixedBarResults(tests.Select(x=>x[1]).ToList());
 
-            myTests = new PlaceholderName();
-            myTests.GenerateFixedBarResults(TestFactory.GenerateFixedBarExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket,
-                new FixedBarExitTestOptions(5, 220, 1)));
-
-            PlotModelDrawdownLong = HeatMap.GenerateHeatMap(myTests.ReturnByDrawdownLong, myTests.X_label_categorised, myTests.Y_label_categorised);
-            PlotModelDrawdownShort = HeatMap.GenerateHeatMap(myTests.ReturnByDrawdownShort, myTests.X_label_categorised, myTests.Y_label_categorised);
-            PlotModelReturnsLong = HeatMap.GenerateHeatMap(myTests.ReturnByFbeLong, myTests.X_label, myTests.Y_label);
-            PlotModelReturnsShort = HeatMap.GenerateHeatMap(myTests.ReturnByFbeShort, myTests.X_label, myTests.Y_label);
-            PlotModelDDsLong = HeatMap.GenerateHeatMap(myTests.DrawdownByFbeLong, myTests.X_label_categorised, myTests.Y_label);
-            PlotModelDDsShort = HeatMap.GenerateHeatMap(myTests.DrawdownByFbeShort, myTests.X_label_categorised, myTests.Y_label);
-            ExpectancyLong = Series.GenerateExpectanySeries(myTests.ExpectancyLongMed, myTests.ExpectancyLongAvg);
-            ExpectancyShort = Series.GenerateExpectanySeries(myTests.ExpectancyShortMed, myTests.ExpectancyShortAvg);
-            LongRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTests.RollingExpectancyLong));
-            ShortRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTests.RollingExpectancyShort));
-            LongDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTests.DrawdownByFbeLong));
-            ShortDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTests.DrawdownByFbeShort));
+            PlotModelDrawdownLong = HeatMap.GenerateHeatMap(myTestsLong.ReturnByDrawdown, myTestsLong.X_label_categorised, myTestsLong.Y_label_categorised);
+            PlotModelDrawdownShort = HeatMap.GenerateHeatMap(myTestsShort.ReturnByDrawdown, myTestsShort.X_label_categorised, myTestsShort.Y_label_categorised);
+            PlotModelReturnsLong = HeatMap.GenerateHeatMap(myTestsLong.ReturnByFbe, myTestsLong.X_label, myTestsLong.Y_label);
+            PlotModelReturnsShort = HeatMap.GenerateHeatMap(myTestsShort.ReturnByFbe, myTestsShort.X_label, myTestsShort.Y_label);
+            PlotModelDDsLong = HeatMap.GenerateHeatMap(myTestsLong.DrawdownByFbe, myTestsLong.X_label_categorised, myTestsLong.Y_label);
+            PlotModelDDsShort = HeatMap.GenerateHeatMap(myTestsShort.DrawdownByFbe, myTestsShort.X_label_categorised, myTestsShort.Y_label);
+            ExpectancyLong = Series.GenerateExpectanySeries(myTestsLong.ExpectancyMedian, myTestsLong.ExpectancyAverage);
+            ExpectancyShort = Series.GenerateExpectanySeries(myTestsShort.ExpectancyMedian, myTestsShort.ExpectancyAverage);
+            LongRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.RollingExpectancy));
+            ShortRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.RollingExpectancy));
+            LongDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.DrawdownByFbe));
+            ShortDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.DrawdownByFbe));
 
         }
 
@@ -68,26 +70,31 @@ namespace Daedalus.ViewModels
         public PlotModel ShortRollingExp { get; set; }
         public PlotModel LongDrawdowns { get; set; }
         public PlotModel ShortDrawdowns { get; set; }
-        private PlaceholderName myTests { get; set; }
 
         public DetailedFixStopExits()
         {
-            myTests = new PlaceholderName();
-            myTests.GenerateFixedBarResults(TestFactory.GenerateFixedStopTargetExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket,
-                new FixedStopTargetExitTestOptions(0.01 / 10.0, 0.02 / 10.0, 0.02, 50)));
+            var tests = TestFactory.GenerateFixedStopTargetExitTest(
+                ModelSingleton.Instance.MyStrategy,
+                ModelSingleton.Instance.Mymarket,
+                new FixedStopTargetExitTestOptions(0.03 / 10.0, 0.03 / 10.0, 0.009, 1000));
 
-            PlotModelDrawdownLong = HeatMap.GenerateHeatMap(myTests.ReturnByDrawdownLong, myTests.X_label_categorised, myTests.Y_label_categorised);
-            PlotModelDrawdownShort = HeatMap.GenerateHeatMap(myTests.ReturnByDrawdownShort, myTests.X_label_categorised, myTests.Y_label_categorised);
-            PlotModelReturnsLong = HeatMap.GenerateHeatMap(myTests.ReturnByFbeLong, myTests.X_label, myTests.Y_label);
-            PlotModelReturnsShort = HeatMap.GenerateHeatMap(myTests.ReturnByFbeShort, myTests.X_label, myTests.Y_label);
-            PlotModelDDsLong = HeatMap.GenerateHeatMap(myTests.DrawdownByFbeLong, myTests.X_label_categorised, myTests.Y_label);
-            PlotModelDDsShort = HeatMap.GenerateHeatMap(myTests.DrawdownByFbeShort, myTests.X_label_categorised, myTests.Y_label);
-            ExpectancyLong = Series.GenerateExpectanySeries(myTests.ExpectancyLongMed, myTests.ExpectancyLongAvg);
-            ExpectancyShort = Series.GenerateExpectanySeries(myTests.ExpectancyShortMed, myTests.ExpectancyShortAvg);
-            LongRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTests.RollingExpectancyLong));
-            ShortRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTests.RollingExpectancyShort));
-            LongDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTests.DrawdownByFbeLong));
-            ShortDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTests.DrawdownByFbeShort));
+            var myTestsLong = new AnalysisBuilder();
+            var myTestsShort = new AnalysisBuilder();
+            myTestsLong.GenerateFixedBarResults(tests.Select(x => x[0]).ToList());
+            myTestsShort.GenerateFixedBarResults(tests.Select(x => x[1]).ToList());
+
+            PlotModelDrawdownLong = HeatMap.GenerateHeatMap(myTestsLong.ReturnByDrawdown, myTestsLong.X_label_categorised, myTestsLong.Y_label_categorised);
+            PlotModelDrawdownShort = HeatMap.GenerateHeatMap(myTestsShort.ReturnByDrawdown, myTestsShort.X_label_categorised, myTestsShort.Y_label_categorised);
+            PlotModelReturnsLong = HeatMap.GenerateHeatMap(myTestsLong.ReturnByFbe, myTestsLong.X_label, myTestsLong.Y_label);
+            PlotModelReturnsShort = HeatMap.GenerateHeatMap(myTestsShort.ReturnByFbe, myTestsShort.X_label, myTestsShort.Y_label);
+            PlotModelDDsLong = HeatMap.GenerateHeatMap(myTestsLong.DrawdownByFbe, myTestsLong.X_label_categorised, myTestsLong.Y_label);
+            PlotModelDDsShort = HeatMap.GenerateHeatMap(myTestsShort.DrawdownByFbe, myTestsShort.X_label_categorised, myTestsShort.Y_label);
+            ExpectancyLong = Series.GenerateExpectanySeries(myTestsLong.ExpectancyMedian, myTestsLong.ExpectancyAverage);
+            ExpectancyShort = Series.GenerateExpectanySeries(myTestsShort.ExpectancyMedian, myTestsShort.ExpectancyAverage);
+            LongRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.RollingExpectancy));
+            ShortRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.RollingExpectancy));
+            LongDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.DrawdownByFbe));
+            ShortDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.DrawdownByFbe));
 
         }
 

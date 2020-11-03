@@ -8,16 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="OxyPlot.Wpf" Version="2.0.0" />
+    <PackageReference Include="PriceSeriesCore" Version="1.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Logic\Logic.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="PriceSeriesCore">
-      <HintPath>..\..\Costanza\PriceSeriesCore\bin\Release\netcoreapp3.1\PriceSeriesCore.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

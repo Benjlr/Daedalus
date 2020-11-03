@@ -55,13 +55,13 @@ namespace Logic.Tests
         {
             var myLIst = new List<double>();
             for (int i = 0; i <= 100; i++)myLIst.Add(i);
-            var myStat = new BoundedStat(myLIst, 0.85);
+            var myStat = new BoundedStat(myLIst, 0.8);
             Assert.Equal(0, myStat.Minimum);
             Assert.Equal(100, myStat.Maximum);
             Assert.Equal(50, myStat.Average);
             Assert.Equal(50, myStat.Median);
-            Assert.Equal(85, myStat.Upper);
-            Assert.Equal(15, myStat.Lower);
+            Assert.Equal(90, myStat.Upper);
+            Assert.Equal(10, myStat.Lower);
         }
     }
 }

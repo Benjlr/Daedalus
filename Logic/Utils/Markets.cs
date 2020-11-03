@@ -9,15 +9,14 @@ namespace Logic.Utils
 {
     public class Markets
     {
-        public static readonly string ASX200_Cash_5_Min = GetDropboxLocation() + "\\Testing\\asx200cash";
-        public static readonly string AUD_USD_5_Min = GetDropboxLocation() + "\\Testing\\AUDUSD";
-        public static readonly string ASX200_Cash_Daily = @"C:\Applications\Trading Data\CSV\Indices\XJO.csv";
-        public static readonly string Bitcoin = GetDropboxLocation() + "\\Testing\\bitcoin";
-        public static readonly string test_data = GetDropboxLocation() + "\\Testing\\testdata";
-        //public static readonly string ASX200_Cash_5_Min = @"C:\Users\Ben Roberts\Dropbox\Testing\asx200cash";
-        public static readonly string SP500_Cash_5_Min = GetDropboxLocation() + "\\Testing\\sp500cash";
-        public static readonly string APT_Daily = @"C:\Applications\Trading Data\CSV\Equities\APT.csv";
-        public static readonly string CBA_Daily = @"C:\Applications\Trading Data\CSV\Equities\CBA.csv";
+        public static string ASX200_Cash_5_Min => GetDropboxLocation() + "\\Testing\\asx200cash";
+        public static string AUD_USD_5_Min => GetDropboxLocation() + "\\Testing\\AUDUSD";
+        public static string ASX200_Cash_Daily => @"C:\Applications\Trading Data\CSV\Indices\XJO.csv";
+        public static string Bitcoin => GetDropboxLocation() + "\\Testing\\bitcoin";
+        public static string test_data => GetDropboxLocation() + "\\Testing\\testdata";
+        public static string SP500_Cash_5_Min => GetDropboxLocation() + "\\Testing\\sp500cash";
+        public static string APT_Daily => @"C:\Applications\Trading Data\CSV\Equities\APT.csv";
+        public static string CBA_Daily => @"C:\Applications\Trading Data\CSV\Equities\CBA.csv";
 
         public static List<string> ASX300()
         {

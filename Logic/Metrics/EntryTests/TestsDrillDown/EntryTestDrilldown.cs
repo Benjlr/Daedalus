@@ -11,7 +11,7 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
 
         public static List<double> GetRollingExpectancy(List<double> resultList, int lookbackPeriod)
         {
-            return RunThroughResultSet(resultList.Where(x => x != 0).ToList(), lookbackPeriod);            
+            return RunThroughResultSet(resultList, lookbackPeriod);            
         }
 
         public static List<double> GetExpectancyByEpoch(List<double> resultList, int divisions)
@@ -38,9 +38,13 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
         }
 
         private static List<double> RunThroughResultSet(List<double> resultList, int lookbackPeriod) {
-            var retVal = AddOnes(lookbackPeriod-1);
-            for (int i = lookbackPeriod-1; i < resultList.Count; i++)
-                retVal.Add(IterateExpectancy(ListTools.GetNewListByIndex(resultList,i-(lookbackPeriod-1),i)));
+            var retVal = AddOnes(ListTools.GetIndexAtThresholdNonZeroes(lookbackPeriod, resultList));
+            for (int i = retVal.Count-1; i < resultList.Count; i++)
+            {
+                if (resultList[i] == 0) retVal.Add(retVal.Last()); 
+                else retVal.Add(IterateExpectancy(ListTools.GetLastNnonZeroValues(lookbackPeriod, i, resultList)));
+            }
+                
             return retVal;
         }
 

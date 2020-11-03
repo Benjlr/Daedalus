@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using Daedalus.Utils;
 using Logic.Rules.Exit;
+using Microsoft.Win32;
 
 namespace Daedalus.Models
 {
@@ -24,7 +25,11 @@ namespace Daedalus.Models
 
         private ModelSingleton()
         {
-            Mymarket =MarketBuilder.CreateMarket(Markets.ASX200_Cash_5_Min);
+            OpenFileDialog t = new OpenFileDialog();
+            t.ShowDialog();
+            string getData = t.FileName;
+
+            Mymarket =MarketBuilder.CreateMarket(getData);
             
             MyStrategy = StrategyBuilder.CreateStrategy(new IRuleSet[]
             {
