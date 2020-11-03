@@ -39,12 +39,10 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
 
         private static List<double> RunThroughResultSet(List<double> resultList, int lookbackPeriod) {
             var retVal = AddOnes(ListTools.GetIndexAtThresholdNonZeroes(lookbackPeriod, resultList));
-            for (int i = retVal.Count-1; i < resultList.Count; i++)
-            {
+            for (int i = retVal.Count; i < resultList.Count; i++)            {
                 if (resultList[i] == 0) retVal.Add(retVal.Last()); 
                 else retVal.Add(IterateExpectancy(ListTools.GetLastNnonZeroValues(lookbackPeriod, i, resultList)));
-            }
-                
+            }                
             return retVal;
         }
 
