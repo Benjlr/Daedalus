@@ -1,7 +1,6 @@
 ﻿using Logic.Utils;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 
 namespace Logic.Metrics.EntryTests.TestsDrillDown
@@ -39,10 +38,8 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
 
         private static List<double> RunThroughResultSet(List<double> resultList, int lookbackPeriod) {
             var retVal = AddOnes(ListTools.GetIndexAtThresholdNonZeroes(lookbackPeriod, resultList));
-            for (int i = retVal.Count; i < resultList.Count; i++)            {
-                if (resultList[i] == 0) retVal.Add(retVal.Last()); 
-                else retVal.Add(IterateExpectancy(ListTools.GetLastNnonZeroValues(lookbackPeriod, i, resultList)));
-            }                
+            for (int i = retVal.Count; i < resultList.Count; i++)  
+                retVal.Add(IterateExpectancy(ListTools.GetLastNnonZeroValues(lookbackPeriod, i, resultList)));
             return retVal;
         }
 
@@ -95,8 +92,16 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
         public List<List<double>> EpochContainer { get; set; }
 
         private EpochGenerator(int count, int divisions) {
-            Period = count / divisions;
-            Remainder = count % divisions;
+            if (count % divisions == 0)
+            {
+                Remainder = 0;
+                Period = count / divisions;
+            }
+            else
+            {
+                Period = count / (divisions - 1);
+                Remainder = count % (divisions - 1);
+            }
             EpochContainer = new List<List<double>>();
         }
 

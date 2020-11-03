@@ -69,7 +69,7 @@ namespace Logic.Analysis
         }
         private void GetStatistics(ITest results) {
             for (int j = 0; j < results.FBEResults.Length; j++)
-                if (results.FBEResults[j] != 0)
+                if (results.FBEResults[j] !=  0)
                     HistogramOperations(results, j);
         }
 
