@@ -15,13 +15,13 @@ namespace Daedalus.Charts
             var retval = new PlotModel();
             retval.Axes.Add(new CategoryAxis
             {
-                Position = AxisPosition.Bottom,
+                Actionition = AxisActionition.Bottom,
                 Key = "drawdown",
                 ItemsSource = x_labels
             });
             retval.Axes.Add(new CategoryAxis
             {
-                Position = AxisPosition.Left,
+                Actionition = AxisActionition.Left,
                 Key = "return",
                 ItemsSource = y_label
             });

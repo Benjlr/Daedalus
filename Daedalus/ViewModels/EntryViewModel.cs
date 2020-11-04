@@ -69,9 +69,9 @@ namespace Daedalus.ViewModels
             List<OhlcvItem> ohs = new List<OhlcvItem>();
             var series = new CandleStickAndVolumeSeries
             {
-                PositiveColor = OxyColors.SeaGreen,
+                ActionitiveColor = OxyColors.SeaGreen,
                 NegativeColor = OxyColors.DarkRed,
-                PositiveHollow = false,
+                ActionitiveHollow = false,
                 NegativeHollow = false,
                 StrokeThickness = 1.3,
                 RenderInLegend = false,
@@ -95,7 +95,7 @@ namespace Daedalus.ViewModels
                 MinimumX = entryPoint - 3,
                 MaximumX = entryPoint + 3,
                 Type = LineAnnotationType.Horizontal,
-                Y = ModelSingleton.Instance.MyStrategy.Rules.First(x=>x.Order.Equals(Pos.Entry)).Dir == Thesis.Bull ? 
+                Y = ModelSingleton.Instance.MyStrategy.Rules.First(x=>x.Order.Equals(Action.Entry)).Dir == MarketSide.Bull ? 
                     ModelSingleton.Instance.Mymarket.RawData[EntryPoints[x]].Open_Ask: ModelSingleton.Instance.Mymarket.RawData[EntryPoints[x]].Open_Bid,
             });
 
@@ -114,7 +114,7 @@ namespace Daedalus.ViewModels
                     MinimumX = exitPnt -3,
                     MaximumX= exitPnt +3,
                     Type = LineAnnotationType.Horizontal,
-                    Y = ModelSingleton.Instance.MyStrategy.Rules.First(x => x.Order.Equals(Pos.Exit)).Dir == Thesis.Bull ?
+                    Y = ModelSingleton.Instance.MyStrategy.Rules.First(x => x.Order.Equals(Action.Exit)).Dir == MarketSide.Bull ?
                         ModelSingleton.Instance.Mymarket.RawData[exitPnt].Open_Bid : ModelSingleton.Instance.Mymarket.RawData[exitPnt].Open_Ask,
                 });
                 graphEnd = exitPnt + 50;
@@ -201,7 +201,7 @@ namespace Daedalus.ViewModels
 
             LinearAxis xAx = new LinearAxis()
             {
-                Position = AxisPosition.Bottom,
+                Actionition = AxisActionition.Bottom,
                 Maximum = graphStart+150,
                 Minimum = graphStart
             };
@@ -211,7 +211,7 @@ namespace Daedalus.ViewModels
 
             LinearAxis yAx = new LinearAxis()
             {
-                Position = AxisPosition.Left,
+                Actionition = AxisActionition.Left,
                 Maximum = yMax,
                 Minimum = yMin
             };

@@ -1,15 +1,20 @@
 ﻿namespace Logic
 {
-    public enum Thesis
-    {
+    public enum MarketSide {
         Bull,
         Bear
     }
 
-    public enum Pos
-    {
+    public enum Action {
         Entry,
         Exit,
+    }
+
+    public enum StrategyMode
+    {        
+        UsingStopTargets,
+        UsingExits,
+        ExitsRaiseStops
     }
 
 }

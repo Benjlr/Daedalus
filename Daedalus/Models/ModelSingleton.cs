@@ -64,29 +64,5 @@ namespace Daedalus.Models
 
         }
 
-        private List<double> GetRangePositions(List<double> range, int lookback)
-        {
-            var retval = new List<double>();
-            for (int i = 0; i < range.Count; i++)
-            {
-                if(i < lookback) retval.Add(0.5);
-                else
-                {
-                    var range2 = ListTools.GetNewListByIndex(range, i - lookback, i);
-                    retval.Add( ListTools.GetPositionRange(range2, range2.Last()));
-                }
-            }
-
-            return retval;
-        }
-
-
-        public class IndexedDoubles
-        {
-            public int index { get; set; }
-            public double value { get; set; }
-        }
-
-
     }
 }

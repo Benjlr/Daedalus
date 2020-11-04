@@ -27,30 +27,35 @@ namespace Logic.Tests
         }
 
         [Fact]
-        private void ShouldGenerateRollingExpectancy()
-        {
+        private void ShouldGenerateRollingExpectancyOverSmallPeriod() {
             var resultsLong = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\Rolling8Exp.txt");
-            var resultsLongSeventeen = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\Rolling18Exp.txt");
             var eight = EntryTestDrilldown.GetRollingExpectancy(myTests[0][0].FBEResults.ToList(), 8);
-            var Seventeen = EntryTestDrilldown.GetRollingExpectancy(myTests[0][0].FBEResults.ToList(), 18);
-            Assert.Equal(eight.Select(TestUtils._round).ToList(), resultsLong.Select(TestUtils._round).ToList());
-            Assert.Equal(Seventeen.Select(TestUtils._round).ToList(), resultsLongSeventeen.Select(TestUtils._round).ToList());
+            Assert.Equal(resultsLong.Select(TestUtils._round), eight.Select(TestUtils._round));
         }
 
         [Fact]
-        private void ShouldGenerateExpectancyByPeriod()
-        {
+        private void ShouldGenerateRollingExpectancyOverLongPeriod() {
+            var resultsLongSeventeen = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\Rolling18Exp.txt");
+            var eighteen = EntryTestDrilldown.GetRollingExpectancy(myTests[0][0].FBEResults.ToList(), 18);
+            Assert.Equal(resultsLongSeventeen.Select(TestUtils._round), eighteen.Select(TestUtils._round));
+        }
+
+        [Fact]
+        private void ShouldGenerateExpectancyOverSmallEpochSplit()        {
+            var resultsThreePeriod = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\30PeriodExp.txt");
+            var ThreeEpoch = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 3);
+            Assert.Equal(ThreeEpoch.Select(TestUtils._round), resultsThreePeriod.Select(TestUtils._round));
+        }
+
+        [Fact]
+        private void ShouldGenerateExpectancyOverLargerEpochSplit()        {
             var resultsTenPeriod = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\10PeriodExp.txt");
-            var resultsThirtyPeriod = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\30PeriodExp.txt");
-            var ten = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 10);
-            var thirty = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 3);
-            Assert.Equal(resultsTenPeriod.Select(TestUtils._round).ToList(), ten.Select(TestUtils._round).ToList());
-            Assert.Equal(resultsThirtyPeriod.Select(TestUtils._round).ToList(), thirty.Select(TestUtils._round).ToList());
+            var tenEpoch = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 10);
+            Assert.Equal(resultsTenPeriod.Select(TestUtils._round), tenEpoch.Select(TestUtils._round));
         }
 
         [Fact]
-        private void GeneratesBoundedStats()
-        {
+        private void GeneratesBoundedStats()        {
             var myLIst = new List<double>();
             for (int i = 0; i <= 100; i++) myLIst.Add(i);
             var myStat = new BoundedStat(myLIst, 0.8);
@@ -116,7 +121,6 @@ namespace Logic.Tests
             Assert.Equal(myListThree.Count / (29 - 1), epochFour.EpochContainer[21].Count);
             Assert.Equal(myListThree.Count / (29 - 1), epochFour.EpochContainer[3].Count);
             Assert.Equal(12345, epochFour.EpochContainer.Sum(x => x.Count));
-
         }
     }
 }
