@@ -16,14 +16,14 @@ namespace Daedalus.Charts
             var retval = new PlotModel();
             retval.Axes.Add(new LinearAxis()
             {
-                Actionition = AxisActionition.Bottom,
+                Position = AxisPosition.Bottom,
 
                 Maximum = 3,
                 Minimum = 0
             });
             retval.Axes.Add(new LinearAxis
             {
-                Actionition = AxisActionition.Left,
+                Position = AxisPosition.Left,
             });
             var series = new LineSeries()
             {
@@ -58,11 +58,11 @@ namespace Daedalus.Charts
             var retval = new PlotModel();
             retval.Axes.Add(new LinearAxis()
             {
-                Actionition = AxisActionition.Bottom,
+                Position = AxisPosition.Bottom,
             });
             retval.Axes.Add(new LinearAxis
             {
-                Actionition = AxisActionition.Left,
+                Position = AxisPosition.Left,
                 Maximum = 3,
                 Minimum = 0.2
             });
@@ -95,11 +95,11 @@ namespace Daedalus.Charts
             var retval = new PlotModel();
             retval.Axes.Add(new LinearAxis()
             {
-                Actionition = AxisActionition.Bottom,
+                Position = AxisPosition.Bottom,
             });
             retval.Axes.Add(new LinearAxis
             {
-                Actionition = AxisActionition.Left,
+                Position = AxisPosition.Left,
             });
 
             var lowerSeriesValues = values.Select(x => x.Lower).ToList();

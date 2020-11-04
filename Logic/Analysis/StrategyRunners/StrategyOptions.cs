@@ -15,19 +15,28 @@ namespace Logic.Analysis.StrategyRunners
             var boolOne = expectancy < ExpectancyCutOff || ExpectancyCutOff == 0; 
             var boolTwo = winPercent > WinPercentCutOff || WinPercentCutOff == 0; 
             var boolThree = SpreadCutOff > spread || SpreadCutOff == 0;
-            var boolFour = NoTradePeriods.All(x => !CheckTradePeriod(new DateBoundary(date), x));
-            return boolOne && boolTwo && boolThree;
+            var boolFour = NoTradePeriods.All(x => CheckTradePeriod(new DateBoundary(date), x));
+            return boolOne && boolTwo && boolThree && boolFour;
         }
         
         
 
         private bool CheckTradePeriod(DateBoundary time, CashPeriods period)
         {
-            var boolOne = time.DayStart > period.StartCutoff.DayStart && time.DayStart < period.EndCutoff.DayStart;
-            var boolTwo = time.HourStart > period.StartCutoff.HourStart && time.HourStart < period.EndCutoff.HourStart;
-            var boolThree = time.MinuteStart > period.StartCutoff.MinuteStart && time.MinuteStart < period.EndCutoff.MinuteStart;
+            var boolOne = time.DayStart >= period.StartCutoff.DayStart && time.DayStart <= (int)period.StartCutoff.DayStart + period.EndCutoff.DayStart+1;
+            if (time.DayStart > period.StartCutoff.DayStart && time.DayStart < (int)period.StartCutoff.DayStart + period.EndCutoff.DayStart + 1) return false;
+            else if (time.DayStart >= period.StartCutoff.DayStart && time.DayStart <= (int)period.StartCutoff.DayStart + period.EndCutoff.DayStart + 1)
+            {
+                if (time.HourStart > period.StartCutoff.HourStart && time.HourStart < period.StartCutoff.HourStart + period.EndCutoff.HourStart) return false;
+                else if(time.HourStart >= period.StartCutoff.HourStart && time.HourStart <= period.StartCutoff.HourStart + period.EndCutoff.HourStart)
+                {
+                    return time.MinuteStart > period.StartCutoff.MinuteStart;
+                }
+                return true;
+            }
+            else return true;
 
-            return boolOne && boolTwo && boolThree;
+
         }
 
 

@@ -34,7 +34,7 @@ namespace Logic.Tests
 
 
             Assert.False(stratOpt.GoodToEnter(0,0,0, new DateTime(2020,11,7)));
-            Assert.False(stratOpt.GoodToEnter(0,0,0, new DateTime(2020,11,6,16,36,0)));
+            Assert.True(stratOpt.GoodToEnter(0,0,0, new DateTime(2020,11,6,16,36,0)));
         }
     }
 }

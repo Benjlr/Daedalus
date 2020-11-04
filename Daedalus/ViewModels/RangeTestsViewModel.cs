@@ -83,11 +83,11 @@ namespace Daedalus.ViewModels
 
             var horiAxis = new LinearAxis()
             {
-                Actionition = AxisActionition.Bottom,
+                Position = AxisPosition.Bottom,
             };
             var vertAxis = new LinearAxis()
             {
-                Actionition = AxisActionition.Left,
+                Position = AxisPosition.Left,
             };
 
             PlotModel.Axes.Add(horiAxis);
