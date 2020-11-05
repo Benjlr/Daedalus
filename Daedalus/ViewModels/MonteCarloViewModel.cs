@@ -1,5 +1,5 @@
 ﻿using Daedalus.Models;
-using Logic.Metrics;
+using Logic.Analysis.Metrics;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;

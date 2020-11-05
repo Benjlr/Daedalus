@@ -88,6 +88,7 @@ namespace Logic.Utils
                 if (list[i] != 0) {
                     count++;
                     if (count == nonZeroCount) return i;
+                    
                 }
             }
             return list.Count;

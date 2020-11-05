@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Data;
 using Daedalus.Models;
 using LinqStatistics;
+using Logic.Analysis.Metrics;
 using Logic.Metrics;
 using OxyPlot;
 using OxyPlot.Annotations;

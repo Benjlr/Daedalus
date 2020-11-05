@@ -36,6 +36,21 @@ namespace Logic.Analysis.Metrics.EntryTests
         protected abstract bool StopHit(MarketData[] data, int openIndex, int currentIndex);
         protected abstract bool TargetHit(MarketData[] data, int openIndex, int currentIndex);
         protected abstract int SetStopAndTarget(MarketData[] data, int i);
+        protected abstract void IterateDrawdown(MarketData[] data, int i);
+
+        protected override void IterateTime(MarketData[] data, int i)
+        {
+            if (_endIndex + i > data.Length) FBEDrawdown[i] = 0;
+            else if (FBEResults[i] < 0) FBEDrawdown[i] = FBEResults[i];
+            else IterateDrawdown(data, i);
+            SetDuration(i);
+        }
+
+        protected void SetDuration(int i)
+        {
+            Durations[i] = _endIndex;
+            _endIndex = 0;
+        }
 
     }
 
@@ -73,19 +88,8 @@ namespace Logic.Analysis.Metrics.EntryTests
             return data[currentIndex].High_Bid > _targetPrice;
         }
 
-        protected override void IterateTime(MarketData[] data, int i) {
-            if (_endIndex + i > data.Length) FBEDrawdown[i] = 0;
-            else if (FBEResults[i] < 0) FBEDrawdown[i] = FBEResults[i];
-            else IterateDrawdown(data, i);
-            SetDuration(i);
-        }
 
-        private void SetDuration(int i) {
-            Durations[i] = _endIndex;
-            _endIndex = 0;
-        }
-
-        private void IterateDrawdown(MarketData[] data, int i) {
+        protected override void IterateDrawdown(MarketData[] data, int i) {
             for (int j = i; j < i + _endIndex; j++)
                 if ((data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask < FBEDrawdown[i])
                     FBEDrawdown[i] = (data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask;
@@ -125,21 +129,7 @@ namespace Logic.Analysis.Metrics.EntryTests
                 FBEResults[openIndex] = (data[openIndex].Open_Bid - _targetPrice) / data[openIndex].Open_Bid;
             return data[currentIndex].Low_Ask < _targetPrice;
         }
-
-
-        protected override void IterateTime(MarketData[] data, int i) {
-            if (_endIndex + i > data.Length) FBEDrawdown[i] = 0;
-            else if (FBEResults[i] < 0) FBEDrawdown[i] = FBEResults[i];
-            else IterateDrawdown(data, i);
-            SetDuration(i);
-        }
-
-        private void SetDuration(int i) {
-            Durations[i] = _endIndex;
-            _endIndex = 0;
-        }
-
-        private void IterateDrawdown(MarketData[] data, int i) {
+        protected override void IterateDrawdown(MarketData[] data, int i) {
             for (int j = i; j < i + _endIndex; j++)
                 if ((data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid < FBEDrawdown[i])
                     FBEDrawdown[i] = (data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid;

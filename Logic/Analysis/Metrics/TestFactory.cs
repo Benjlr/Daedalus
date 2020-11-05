@@ -1,13 +1,13 @@
-﻿using Logic.Metrics.EntryTests;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Logic.Analysis.Metrics.EntryTests;
+using Logic.Metrics;
 using Logic.Metrics.CoreTests;
 
-namespace Logic.Metrics
+namespace Logic.Analysis.Metrics
 {
     public class FixedBarExitTestOptions
     {
@@ -49,11 +49,26 @@ namespace Logic.Metrics
                 throw new Exception();
 
             var threadSafeDict = new ConcurrentDictionary<int, ITest []>(FixedBarTestsToDictionary(options));
-            ExecuteFixedBarTests(strat, market, threadSafeDict);
+            ExecuteTests(strat, market, threadSafeDict);
             return threadSafeDict.Values.ToList();
         }
 
-        private static void ExecuteFixedBarTests(Strategy strat, Market market, ConcurrentDictionary<int, ITest[]> threadSafeDict)
+        public static List<ITest[]> GenerateFixedStopTargetExitTest(Strategy strat, Market market, FixedStopTargetExitTestOptions options)
+        {
+            var threadSafeDict = new ConcurrentDictionary<int, ITest[]>(StopTargetTestsToDictionary(options));
+            ExecuteTests(strat, market, threadSafeDict);
+            return threadSafeDict.Values.ToList();
+        }
+
+        public static List<ITest[]> GenerateRandomExitTests( Strategy strat, Market market, int iterations, int maxLength)
+        {
+            var threadSafeDict = new ConcurrentDictionary<int, ITest[]>(RandomExitTestsToDictionary(iterations, maxLength));
+            ExecuteTests(strat, market, threadSafeDict);
+            return threadSafeDict.Values.ToList();
+        }
+
+
+        private static void ExecuteTests(Strategy strat, Market market, ConcurrentDictionary<int, ITest[]> threadSafeDict)
         {
             Parallel.For(0, threadSafeDict.Count, (i) =>
             {
@@ -81,15 +96,7 @@ namespace Logic.Metrics
             return myTest;
         }
 
-        public static List<ITest[]> GenerateFixedStopTargetExitTest(Strategy strat, Market market, FixedStopTargetExitTestOptions options) {
-            var threadSafeDict = new ConcurrentDictionary<int, ITest[]>(StopTargetTestsToDictionary(options));
-            ExecuteFixedBarTests(strat, market, threadSafeDict);
-            return threadSafeDict.Values.ToList();
-        }
-
-
-        private static ITest[] StopTargetTestArrayInitiliser(FixedStopTargetExitTestOptions options, int i)
-        {
+        private static ITest[] StopTargetTestArrayInitiliser(FixedStopTargetExitTestOptions options, int i) {
             ITest[] myTest = new ITest[2]
             {
                 new LongFixedStopTargetExitTest(i * options.Increment + options.MinimumTarget, options.MinimumStop + i * options.Increment), 
@@ -98,27 +105,29 @@ namespace Logic.Metrics
             return myTest;
         }
 
-        private static Dictionary<int, ITest[]> StopTargetTestsToDictionary(FixedStopTargetExitTestOptions options)
-        {
+        private static ITest[] RandomExitTestArrayInitiliser(int maxLength) {
+            ITest[] myTest = new ITest[2]
+            {
+                new LongRandomExitTest(maxLength), 
+                new ShortRandomExitTest(maxLength)
+            };
+            return myTest;
+        }
+
+        private static Dictionary<int, ITest[]> StopTargetTestsToDictionary(FixedStopTargetExitTestOptions options) {
             Dictionary<int, ITest[]> retval = new Dictionary<int, ITest[]>();
             for (int i = 0; i <= options.Range / options.Increment; i++)
                 retval.Add(i, StopTargetTestArrayInitiliser(options, i));
             return retval;
         }
-
-        public static ITest[] GenerateRandomExitTests(double mean, double standDev, int iterations, Strategy strat, Market market)
-        {
-            ITest[] retval = new ITest[iterations];
-
-            for (int i = 0; i < iterations; i++)
-            {
-                retval[i] = new RandomExitTest(mean, standDev); 
-                retval[i].Run(market.RawData, strat.Entries);
-
-            }
-
+        private static Dictionary<int, ITest[]> RandomExitTestsToDictionary(int testCount, int maxLength) {
+            Dictionary<int, ITest[]> retval = new Dictionary<int, ITest[]>();
+            for (int i = 0; i <= testCount; i++)
+                retval.Add(i, RandomExitTestArrayInitiliser(maxLength));
             return retval;
         }
+
+
 
         public static RangeTest GenerateRangeTest(int rangesToTest, Strategy strat, Market market)
         {

@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
-using Logic.Metrics.EntryTests.TestsDrillDown;
 using System.IO;
 using System.Linq;
+using Logic.Analysis.Metrics;
+using Logic.Analysis.Metrics.EntryTests.TestsDrillDown;
 using Logic.Metrics;
 using Logic.Rules.Entry;
 using Logic.Utils;
@@ -28,16 +29,28 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldGenerateRollingExpectancyOverSmallPeriod() {
-            var resultsLong = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\Rolling8Exp.txt");
-            var eight = EntryTestDrilldown.GetRollingExpectancy(myTests[0][0].FBEResults.ToList(), 8);
-            Assert.Equal(resultsLong.Select(TestUtils._round), eight.Select(TestUtils._round));
+            var resultsLong = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpResults.txt");
+            var TestData = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpData.txt");
+            var ten = EntryTestDrilldown.GetRollingExpectancy(TestData, 10);
+            Assert.Equal(resultsLong.Select(TestUtils._round), ten.Select(TestUtils._round));
         }
 
         [Fact]
         private void ShouldGenerateRollingExpectancyOverLongPeriod() {
-            var resultsLongSeventeen = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\Rolling18Exp.txt");
-            var eighteen = EntryTestDrilldown.GetRollingExpectancy(myTests[0][0].FBEResults.ToList(), 18);
-            Assert.Equal(resultsLongSeventeen.Select(TestUtils._round), eighteen.Select(TestUtils._round));
+            var resultsLong = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpResults.txt");
+            var TestData = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpData.txt"); 
+             var thirteen = EntryTestDrilldown.GetRollingExpectancy(TestData, 13);
+
+             resultsLong = resultsLong.Select(TestUtils._round).ToList();
+             thirteen = thirteen.Select(TestUtils._round).ToList();
+
+             for (int i = 0; i < thirteen.Count; i++)
+             {
+
+                 Assert.Equal(resultsLong[i], thirteen[i]);
+             }
+
+            Assert.Equal(resultsLong.Select(TestUtils._round), thirteen.Select(TestUtils._round));
         }
 
         [Fact]

@@ -1,9 +1,9 @@
-﻿using Logic.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Logic.Utils;
 
-namespace Logic.Metrics.EntryTests.TestsDrillDown
+namespace Logic.Analysis.Metrics.EntryTests.TestsDrillDown
 {
     public class EntryTestDrilldown
     {
@@ -36,10 +36,25 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
             return myList;
         }
 
-        private static List<double> RunThroughResultSet(List<double> resultList, int lookbackPeriod) {
-            var retVal = AddOnes(ListTools.GetIndexAtThresholdNonZeroes(lookbackPeriod, resultList));
+        private static List<double> RunThroughResultSet(List<double> resultList, int lookbackPeriod)
+        {
+            var indexThresh = ListTools.GetIndexAtThresholdNonZeroes(lookbackPeriod, resultList);
+            var retVal = AddOnes(indexThresh);
+            List<double> validResults = new List<double>();
+
+            for (int i = 0; i < indexThresh; i++)
+            {
+                if(resultList[i] != 0) validResults.Add(resultList[i]);
+            }
+
             for (int i = retVal.Count; i < resultList.Count; i++)  
-                retVal.Add(IterateExpectancy(ListTools.GetLastNnonZeroValues(lookbackPeriod, i, resultList)));
+                if(resultList[i] == 0) retVal.Add(retVal.Last());
+                else
+                {
+                    if(validResults.Count >= lookbackPeriod )validResults.RemoveAt(0);
+                    validResults.Add(resultList[i]);
+                    retVal.Add(IterateExpectancy(validResults));
+                }
             return retVal;
         }
 
@@ -131,5 +146,13 @@ namespace Logic.Metrics.EntryTests.TestsDrillDown
             }
         }
 
+    }
+
+    public class ReturnDictionary
+    {
+        public int MyIndex { get; set; }
+        public int ResultIndex { get; set; }
+        public double Result { get; set; }
+        public List<double> ResultList { get; set; }
     }
 }

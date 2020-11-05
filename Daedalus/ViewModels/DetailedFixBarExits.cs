@@ -10,6 +10,7 @@ using Logic.Utils;
 using OxyPlot;
 using OxyPlot.Axes;
 using System.Linq;
+using Logic.Analysis.Metrics;
 
 namespace Daedalus.ViewModels
 {
@@ -73,10 +74,9 @@ namespace Daedalus.ViewModels
 
         public DetailedRandomExits()
         {
-            var tests = TestFactory.GenerateFixedStopTargetExitTest(
+            var tests = TestFactory.GenerateRandomExitTests(
                 ModelSingleton.Instance.MyStrategy,
-                ModelSingleton.Instance.Mymarket,
-                new FixedStopTargetExitTestOptions(0.03 / 10.0, 0.03 / 10.0, 0.009, 1000));
+                ModelSingleton.Instance.Mymarket, 200, 200);
 
             var myTestsLong = new AnalysisBuilder();
             var myTestsShort = new AnalysisBuilder();
@@ -119,7 +119,7 @@ namespace Daedalus.ViewModels
             var tests = TestFactory.GenerateFixedStopTargetExitTest(
                 ModelSingleton.Instance.MyStrategy,
                 ModelSingleton.Instance.Mymarket,
-                new FixedStopTargetExitTestOptions(0.03 / 10.0, 0.03 / 10.0, 0.009, 1000));
+                new FixedStopTargetExitTestOptions(0.04 / 10.0, 0.04 / 10.0, 0.008, 500));
 
             var myTestsLong = new AnalysisBuilder();
             var myTestsShort = new AnalysisBuilder();

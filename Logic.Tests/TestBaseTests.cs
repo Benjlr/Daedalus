@@ -2,6 +2,7 @@
 using Logic.Metrics;
 using Logic.Rules.Entry;
 using System.IO;
+using Logic.Analysis.Metrics;
 using Xunit;
 
 namespace Logic.Tests

@@ -1,10 +1,6 @@
-﻿using Logic.Analysis.StrategyRunners;
-using Logic.Metrics.EntryTests.TestsDrillDown;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace Logic.Analysis.StrategyRunnerBase
+namespace Logic.Analysis.StrategyRunners
 {
     public abstract class StrategyRunnerBase
     {
@@ -29,13 +25,27 @@ namespace Logic.Analysis.StrategyRunnerBase
 
         public override void ExecuteRunner(StrategyOptions options)
         {
-            var strategyRunner = new RunnerState();
+            List<RunnerState> runner = new List<RunnerState>(){new RunnerState()};
+            
 
-            for (int i = 0; i < _market.RawData.Length; i++)
+            for (int i = 1; i < _market.RawData.Length; i++)
             {
-                if (_strategy.Entries[i])
+                if (_strategy.Entries[i-1])
                 {
-                    //if(strategyRunner.)
+                    if (options.GoodToEnter(runner[i-1].Portfolio.Stats, _market.RawData[i]))
+                    {
+                        if (!runner[i - 1].Portfolio.InvestedState.Invested)
+                        {
+                            var portfolioTrade= new TradeState();
+                            portfolioTrade.Invested = true;
+                            portfolioTrade.EntryPrice = _market.RawData[i].Open_Ask;
+                            portfolioTrade.StopPrice = _market.RawData[i].Open_Ask;
+                            portfolioTrade.TargetPrice = _market.RawData[i].Open_Ask;
+
+                            var newPortfolioState= new StrategyState();
+                        }
+                    }
+                    
                 }
             }
 

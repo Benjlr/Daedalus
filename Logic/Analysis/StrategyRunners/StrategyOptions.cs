@@ -1,44 +1,65 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Logic.Analysis.Metrics.EntryTests.TestsDrillDown;
 
 namespace Logic.Analysis.StrategyRunners
 {
     public class StrategyOptions
     {
-        public double ExpectancyCutOff { get; set; }
-        public double WinPercentCutOff { get; set; }
-        public double SpreadCutOff { get; set; }
+        public double ExpectancyCutOff { get; set; } = -1;
+        public double WinPercentCutOff { get; set; } = -1;
+        public double SpreadCutOff { get; set; } = -1;
         public CashPeriods[] NoTradePeriods { get; set; }
 
-        public bool GoodToEnter(double expectancy, double winPercent, double spread, DateTime date)
+        public bool GoodToEnter(DrillDownStats stats, MarketData data)
         {
-            var boolOne = expectancy < ExpectancyCutOff || ExpectancyCutOff == 0; 
-            var boolTwo = winPercent > WinPercentCutOff || WinPercentCutOff == 0; 
-            var boolThree = SpreadCutOff > spread || SpreadCutOff == 0;
-            var boolFour = NoTradePeriods.All(x => CheckTradePeriod(new DateBoundary(date), x));
+            var boolOne = ExpectancyCutOff == -1 || stats.Expectancy > ExpectancyCutOff; 
+            var boolTwo = WinPercentCutOff == -1 ||  stats.WinPercent > WinPercentCutOff; 
+            var boolThree = SpreadCutOff == -1 || SpreadCutOff > data.Open_Ask - data.Open_Bid;
+            var boolFour = NoTradePeriods == null || NoTradePeriods.All(x => WithinTradeablePeriod(new DateBoundary(data.Time), x));
             return boolOne && boolTwo && boolThree && boolFour;
         }
-        
-        
-
-        private bool CheckTradePeriod(DateBoundary time, CashPeriods period)
+        public bool GoodToEnter(double expectncy, double winPercent, int spread, DateTime time)
         {
-            var boolOne = time.DayStart >= period.StartCutoff.DayStart && time.DayStart <= (int)period.StartCutoff.DayStart + period.EndCutoff.DayStart+1;
-            if (time.DayStart > period.StartCutoff.DayStart && time.DayStart < (int)period.StartCutoff.DayStart + period.EndCutoff.DayStart + 1) return false;
-            else if (time.DayStart >= period.StartCutoff.DayStart && time.DayStart <= (int)period.StartCutoff.DayStart + period.EndCutoff.DayStart + 1)
-            {
-                if (time.HourStart > period.StartCutoff.HourStart && time.HourStart < period.StartCutoff.HourStart + period.EndCutoff.HourStart) return false;
-                else if(time.HourStart >= period.StartCutoff.HourStart && time.HourStart <= period.StartCutoff.HourStart + period.EndCutoff.HourStart)
-                {
-                    return time.MinuteStart > period.StartCutoff.MinuteStart;
-                }
-                return true;
-            }
-            else return true;
-
-
+            var boolOne = ExpectancyCutOff == -1 || expectncy > ExpectancyCutOff;
+            var boolTwo = WinPercentCutOff == -1 || winPercent > WinPercentCutOff;
+            var boolThree = SpreadCutOff == -1 || SpreadCutOff > spread;
+            var boolFour = NoTradePeriods == null || NoTradePeriods.All(x => WithinTradeablePeriod(new DateBoundary(time), x));
+            return boolOne && boolTwo && boolThree && boolFour;
         }
 
+
+        private bool WithinTradeablePeriod(DateBoundary time, CashPeriods period)
+        {
+            if (!DayIsWithinRange(period.StartCutoff.DayStart, time.DayStart, period.EndCutoff.DayStart)) return true;
+            if (time.HourStart < period.StartCutoff.HourStart && period.StartCutoff.DayStart == time.DayStart){ return true;}
+            else if (time.HourStart > period.EndCutoff.HourStart && period.EndCutoff.DayStart == time.DayStart) return true;
+            if (time.MinuteStart < period.StartCutoff.MinuteStart && period.StartCutoff.DayStart == time.DayStart) return true;
+            else if (time.MinuteStart > period.EndCutoff.MinuteStart && period.EndCutoff.DayStart == time.DayStart) return true;
+            return false;
+        }
+
+        private bool DayIsWithinRange(DayOfWeek start, DayOfWeek myDay, DayOfWeek end)
+        {
+            List<DayOfWeek> myDays = new List<DayOfWeek>() {DayOfWeek.Sunday, DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday,DayOfWeek.Thursday, DayOfWeek.Friday,DayOfWeek.Saturday};
+            var currentDay = myDays.IndexOf(start);
+            do {
+                if (CheckDay(myDay, myDays, ref currentDay)) return true;
+            } while (currentDay != myDays.IndexOf(end)+1);
+                
+            return false;
+        }
+
+
+
+        private static bool CheckDay(DayOfWeek myDay, List<DayOfWeek> myDays, ref int currentDay)
+        {
+            if (currentDay == myDays.IndexOf(myDay)) return true;
+            currentDay++;
+            if (currentDay >= myDays.Count) currentDay = 0;
+            return false;
+        }
 
         public bool ShouldExit()
         {

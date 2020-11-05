@@ -25,11 +25,22 @@ namespace Daedalus.Models
 
         private ModelSingleton()
         {
-            OpenFileDialog t = new OpenFileDialog();
-            t.ShowDialog();
-            string getData = t.FileName;
 
-            Mymarket =MarketBuilder.CreateMarket(getData);
+            try
+            {
+                Mymarket = MarketBuilder.CreateMarket(Markets.ASX200_Cash_5_Min);
+
+            }
+            catch
+            {
+                OpenFileDialog t = new OpenFileDialog();
+                t.ShowDialog();
+                string getData = t.FileName;
+                Mymarket = MarketBuilder.CreateMarket(getData);
+            }
+
+
+            
             
             MyStrategy = StrategyBuilder.CreateStrategy(new IRuleSet[]
             {

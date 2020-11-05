@@ -1,7 +1,7 @@
-﻿using Logic.Metrics.EntryTests.TestsDrillDown;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Logic.Analysis.Metrics.EntryTests.TestsDrillDown;
 
 namespace Logic.Analysis.StrategyRunners
 {
@@ -13,14 +13,25 @@ namespace Logic.Analysis.StrategyRunners
 
     public class StrategyState
     {
-        public TradeState Actionition { get; set; }
+        public TradeState InvestedState { get; set; }
         public DrillDownStats Stats { get; set; }
         public double Return { get; set; }
     }
 
     public class TradeState
     {
-        public bool Invested { get; set; }
+        public bool Invested { get; set; } = false;
         public double EntryPrice { get; set; }
+        public double StopPrice { get; set; }
+        public double TargetPrice { get; set; }
+    }
+
+    public interface StopGenerator
+    {
+        public double GenerateStop();
+    }
+    public interface TargetGenerator
+    {
+        public double GenerateTarget();
     }
 }

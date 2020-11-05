@@ -1,8 +1,8 @@
 ﻿using Logic.Metrics;
-using Logic.Metrics.EntryTests.TestsDrillDown;
 using Logic.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using Logic.Analysis.Metrics.EntryTests.TestsDrillDown;
 
 namespace Logic.Analysis
 {
@@ -83,7 +83,7 @@ namespace Logic.Analysis
             ExpectancyAverage.Add(results.ExpectancyAverage);
             ExpectancyMedian.Add(results.ExpectancyMedian);
             Winpercentage.Add(results.WinPercentage);
-            RollingExpectancy.Add(EntryTestDrilldown.GetExpectancyByEpoch(results.FBEResults.ToList(), 30));
+            RollingExpectancy.Add(EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 300));
         }
 
         private void AddHistogramStats() {

@@ -16,6 +16,9 @@
             <TabItem Header="Stop Target Exits">
                 <views:DetailedStopExit Grid.Row="0"></views:DetailedStopExit>
             </TabItem>
+            <TabItem Header="Random Exits">
+                <!--<views:DetailedRandomExit Grid.Row="0"></views:DetailedRandomExit>-->
+            </TabItem>
         </TabControl>
 
 

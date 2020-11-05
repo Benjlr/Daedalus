@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="DrilldownData\10RollingExpData.txt" />
+    <None Remove="DrilldownData\13RollingExpData.txt" />
     <None Remove="FBEData\10PeriodExp.txt" />
     <None Remove="FBEData\30PeriodExp.txt" />
     <None Remove="FBEData\DrawdownData.txt" />
@@ -32,7 +34,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="DrilldownData\13RollingExpData.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="DrilldownData\30PeriodExp.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="DrilldownData\10RollingExpData.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="FBEData\DrawdownDataWinners.txt">
@@ -56,13 +64,13 @@
     <Content Include="FBEData\DrawdownShort.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DrilldownData\Rolling18Exp.txt">
+    <Content Include="DrilldownData\10RollingExpResults.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DrilldownData\10PeriodExp.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DrilldownData\Rolling8Exp.txt">
+    <Content Include="DrilldownData\13RollingExpResults.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="FBEData\ShortData.txt">
