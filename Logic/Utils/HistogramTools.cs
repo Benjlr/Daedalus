@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -43,6 +44,19 @@ namespace Logic.Utils
         }
 
         public static void CategoriseItem(Dictionary<double, List<double>> myBins, double item, double bin)
+        {
+            for (int j = 0; j < myBins.Count - 1; j++)
+            {
+                if (bin < myBins.Keys.ToList()[j])
+                {
+                    myBins[myBins.Keys.ToList()[j]].Add(item);
+                    break;
+                }
+            }
+            if (bin > myBins.Keys.ToList()[myBins.Keys.Count - 2]) myBins[myBins.Keys.ToList()[myBins.Keys.Count - 1]].Add(item);
+        }
+
+        public static void CategoriseItem(ConcurrentDictionary<double, List<double>> myBins, double item, double bin)
         {
             for (int j = 0; j < myBins.Count - 1; j++)
             {
