@@ -12,5 +12,6 @@
         <ViewModels:EntryViewModel x:Key="EntryViewModel" />
         <ViewModels:DetailedFixBarExits x:Key="DetailedFixBar" />
         <ViewModels:DetailedFixStopExits x:Key="DetailedStopBar" />
+        <ViewModels:DetailedRandomExits x:Key="DetailedRandoms" />
     </Application.Resources>
 </Application>

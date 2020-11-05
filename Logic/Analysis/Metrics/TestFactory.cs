@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Logic.Analysis.Metrics.EntryTests;
 using Logic.Metrics.CoreTests;
 
 namespace Logic.Metrics

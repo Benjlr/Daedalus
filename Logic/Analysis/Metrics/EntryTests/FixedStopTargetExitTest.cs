@@ -1,4 +1,6 @@
-﻿namespace Logic.Metrics.EntryTests
+﻿using Logic.Metrics;
+
+namespace Logic.Analysis.Metrics.EntryTests
 {
     public abstract class FixedStopTargetExitTest : TestBase
     {
