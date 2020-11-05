@@ -1,6 +1,8 @@
-﻿using Logic.Metrics;
+﻿using System.Collections.Concurrent;
+using Logic.Metrics;
 using Logic.Utils;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Logic.Analysis.Metrics.EntryTests.TestsDrillDown;
 
@@ -8,18 +10,18 @@ namespace Logic.Analysis
 {
     public class AnalysisBuilder
     {
-        public List<double> ExpectancyAverage;
-        public List<double> ExpectancyMedian;
-        public List<double> Winpercentage;
+        
 
-        public List<List<double>> ReturnByFbe;
-        public List<List<double>> DrawdownByFbe;
-        public List<List<double>> ReturnByDrawdown;
-        public List<List<double>> RollingExpectancy;
+        private ConcurrentDictionary<int,double> ExpectancyAverage;
+        private ConcurrentDictionary<int,double> ExpectancyMedian;
+        private ConcurrentDictionary<int,double> Winpercentage;
+         
+        private ConcurrentDictionary<int, List<List<double>>> ReturnByFbe;
+        private ConcurrentDictionary<int, List<List<double>>> DrawdownByFbe;
+        private ConcurrentDictionary<int, List<List<double>>> ReturnByDrawdown;
+        private ConcurrentDictionary<int,List<double>> RollingExpectancy;
 
-        private Dictionary<double, int> _returnByFbe;
-        private Dictionary<double, int> _drawdownByFbe;
-        private Dictionary<double, List<double>> _returnByDrawdown;
+        private ConcurrentDictionary<double, List<double>> _returnByDrawdown;
 
         private double _lowerBound = -0.02;
         private double _upperBound = 0.02;
@@ -33,25 +35,26 @@ namespace Logic.Analysis
         public void GenerateFixedBarResults(List<ITest> results) {
             InitListsAndLabels();
             for (int i = 0; i < results.Count; i++) {
-                InitHistogramsForCurrentTest();
-                GetStatistics(results[i]);
-                AddGeneralStats(results[i]);
-                AddHistogramStats();
+                var histoStats = new HistogramStatitics(results[i],_lowerBound,_upperBound, _width);
+                histoStats.GenerateHistogramStats(_returnByDrawdown);
+                ReturnByFbe.TryAdd(i, HistogramTools.GenerateHistogram(histoStats.ResultHistogram));
+                DrawdownByFbe.TryAdd(i,HistogramTools.MakeCumulative(HistogramTools.GenerateHistogram(histoStats.DrawdownHistogram)));
+                AddGeneralStats(i, results[i]);
             }
             AddCategorisedAndBoundedStats();
         }
         
         private void InitListsAndLabels() {
-            ExpectancyAverage = new List<double>();
-            ExpectancyMedian = new List<double>();
+            ExpectancyAverage = new ConcurrentDictionary<int, double>();
+            ExpectancyMedian = new ConcurrentDictionary<int, double>() ;
 
-            Winpercentage = new List<double>();
+            Winpercentage = new ConcurrentDictionary<int, double>();
             _returnByDrawdown = HistogramTools.CategoryGenerator(_lowerBound, _upperBound, _width);
 
-            ReturnByFbe = new List<List<double>>();
-            DrawdownByFbe = new List<List<double>>();
-            ReturnByDrawdown = new List<List<double>>();
-            RollingExpectancy = new List<List<double>>();
+            ReturnByFbe = new ConcurrentDictionary<int, List<List<double>>>();
+            DrawdownByFbe = new ConcurrentDictionary<int, List<List<double>>>();
+            ReturnByDrawdown = new ConcurrentDictionary<int, List<List<double>>>();
+            RollingExpectancy = new ConcurrentDictionary<int, List<double>>();
 
             X_label = new List<string>();
             Y_label = new List<string>();
@@ -62,37 +65,49 @@ namespace Logic.Analysis
             for (double i = _lowerBound; i <= _width; i += _width) X_label_categorised.Add($"<{i:0.0%}");
             for (double i = _lowerBound; i <= _upperBound; i += _width) Y_label_categorised.Add($"<{i:0.0%}");                       
         }
+        
 
-        private void InitHistogramsForCurrentTest() {
-            _returnByFbe = HistogramTools.BinGenerator(_lowerBound, _upperBound, _width);
-            _drawdownByFbe = HistogramTools.BinGenerator(_lowerBound, 0, _width);
-        }
-        private void GetStatistics(ITest results) {
-            for (int j = 0; j < results.FBEResults.Length; j++)
-                if (results.FBEResults[j] !=  0)
-                    HistogramOperations(results, j);
+        private void AddGeneralStats(int i, ITest results) {
+            ExpectancyAverage.TryAdd(i, results.ExpectancyAverage);
+            ExpectancyMedian.TryAdd(i, results.ExpectancyMedian);
+            Winpercentage.TryAdd(i, results.WinPercentage);
+            RollingExpectancy.TryAdd(i, EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 300));
         }
 
-        private void HistogramOperations(ITest results, int j) {
-            HistogramTools.CategoriseItem(_returnByDrawdown, results.FBEDrawdown[j], results.FBEResults[j]);
-            HistogramTools.CategoriseItem(_returnByFbe, results.FBEResults[j]);
-            if (results.FBEResults[j] > 0) HistogramTools.CategoriseItem(_drawdownByFbe, results.FBEDrawdown[j]);
-        }
 
-        private void AddGeneralStats(ITest results) {
-            ExpectancyAverage.Add(results.ExpectancyAverage);
-            ExpectancyMedian.Add(results.ExpectancyMedian);
-            Winpercentage.Add(results.WinPercentage);
-            RollingExpectancy.Add(EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 300));
-        }
-
-        private void AddHistogramStats() {
-            ReturnByFbe.Add(HistogramTools.GenerateHistogram(_returnByFbe));
-            DrawdownByFbe.Add(HistogramTools.MakeCumulative(HistogramTools.GenerateHistogram(_drawdownByFbe)));
-        }
 
         private void AddCategorisedAndBoundedStats() {
-            ReturnByDrawdown = HistogramTools.GenerateHistorgramsFromCategories(_returnByDrawdown, HistogramTools.BinGenerator(_lowerBound, 0, _width));
+
+
+            ReturnByDrawdown =  (HistogramTools.GenerateHistorgramsFromCategories(_returnByDrawdown, HistogramTools.BinGenerator(_lowerBound, 0, _width)));HistogramTools.GenerateHistorgramsFromCategories(_returnByDrawdown, HistogramTools.BinGenerator(_lowerBound, 0, _width));
         }
     }
+
+
+    public class HistogramStatitics
+    {
+        private ITest _test { get; set; }
+        public Dictionary<double, int> ResultHistogram { get; private set; }
+        public Dictionary<double, int> DrawdownHistogram { get; private set; }
+
+        public HistogramStatitics(ITest results, double lowerbound, double upperbound, double width)
+        {
+            _test = results;
+            ResultHistogram = HistogramTools.BinGenerator(lowerbound, upperbound, width);
+            DrawdownHistogram = HistogramTools.BinGenerator(lowerbound, 0, width);
+
+        }
+
+        public void GenerateHistogramStats(ConcurrentDictionary<double, List<double>> returnByDrawdown)
+        {
+            for (int j = 0; j < _test.FBEResults.Length; j++)
+                if (_test.FBEResults[j] != 0) {
+                    HistogramTools.CategoriseItem(returnByDrawdown, _test.FBEDrawdown[j], _test.FBEResults[j]);
+                    HistogramTools.CategoriseItem(ResultHistogram, _test.FBEResults[j]);
+                    if (_test.FBEResults[j] > 0) HistogramTools.CategoriseItem(DrawdownHistogram, _test.FBEDrawdown[j]);
+                }
+        }
+    }
+
+
 }
