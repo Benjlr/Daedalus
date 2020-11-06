@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Logic.Analysis.Metrics.EntryTests;
 using Logic.Metrics;
 using Logic.Metrics.CoreTests;
+using Logic.Utils;
 
 namespace Logic.Analysis.Metrics
 {
@@ -29,52 +30,58 @@ namespace Logic.Analysis.Metrics
         public double MinimumTarget { get; }
         public double Increment { get; }
         public double Range { get; }
-        private int _divisions { get; }
+        public int Divisions { get; }
 
         public FixedStopTargetExitTestOptions(double minStop, double minTarget, double range, int intervals)
         {
             MinimumStop = minStop;
             MinimumTarget = minTarget;
             Range = range;
-            _divisions = intervals;
+            Divisions = intervals;
             Increment = range / (intervals-1);
         }
     }
 
     public class TestFactory
     {
-        public static List<ITest[]> GenerateFixedBarExitTest(Strategy strat, Market market, FixedBarExitTestOptions options)
+        public static List<ITest[]> GenerateFixedBarExitTest(Strategy strat, Market market, FixedBarExitTestOptions options, System.Action progress)
         {
-            if(options.MinimumExitPeriod > options.MaximumExitPeriod)
+            IntialisationInformation.ChangeStage($"Executing Fixed Bar Tests");
+
+            if (options.MinimumExitPeriod > options.MaximumExitPeriod)
                 throw new Exception();
 
             var threadSafeDict = new ConcurrentDictionary<int, ITest []>(FixedBarTestsToDictionary(options));
-            ExecuteTests(strat, market, threadSafeDict);
+            ExecuteTests(strat, market, threadSafeDict, progress);
             return threadSafeDict.Values.ToList();
         }
 
-        public static List<ITest[]> GenerateFixedStopTargetExitTest(Strategy strat, Market market, FixedStopTargetExitTestOptions options)
+        public static List<ITest[]> GenerateFixedStopTargetExitTest(Strategy strat, Market market, FixedStopTargetExitTestOptions options, System.Action progress)
         {
+            IntialisationInformation.ChangeStage($"Executing Stop Target Tests");
+
             var threadSafeDict = new ConcurrentDictionary<int, ITest[]>(StopTargetTestsToDictionary(options));
-            ExecuteTests(strat, market, threadSafeDict);
+            ExecuteTests(strat, market, threadSafeDict, progress);
             return threadSafeDict.Values.ToList();
         }
 
-        public static List<ITest[]> GenerateRandomExitTests( Strategy strat, Market market, int iterations, int maxLength)
+        public static List<ITest[]> GenerateRandomExitTests( Strategy strat, Market market, int iterations, int maxLength, System.Action progress)
         {
             var threadSafeDict = new ConcurrentDictionary<int, ITest[]>(RandomExitTestsToDictionary(iterations, maxLength));
-            ExecuteTests(strat, market, threadSafeDict);
+            ExecuteTests(strat, market, threadSafeDict, progress);
             return threadSafeDict.Values.ToList();
         }
 
 
-        private static void ExecuteTests(Strategy strat, Market market, ConcurrentDictionary<int, ITest[]> threadSafeDict)
+        private static void ExecuteTests(Strategy strat, Market market, ConcurrentDictionary<int, ITest[]> threadSafeDict, System.Action progress)
         {
+            IntialisationInformation.ChangeTotalCount(threadSafeDict.Count); 
             Parallel.For(0, threadSafeDict.Count, (i) =>
             {
                 threadSafeDict.TryGetValue(i, out ITest[] myTests);
                 myTests[0].Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
                 myTests[1].Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
+                progress?.Invoke();
             });
         }
 

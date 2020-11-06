@@ -3,15 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Daedalus"
              xmlns:ViewModels="clr-namespace:Daedalus.ViewModels"
-             StartupUri="MainWindow.xaml">
+             StartupUri="MainWindow.xaml"
+             >
 
     <Application.Resources>
-
-        <ViewModels:RangeTestsViewModel x:Key="RangeViewModel" />
-        <ViewModels:MonteCarloViewModel x:Key="MonteCarloViewModel" />
-        <ViewModels:EntryViewModel x:Key="EntryViewModel" />
         <ViewModels:DetailedFixBarExits x:Key="DetailedFixBar" />
         <ViewModels:DetailedFixStopExits x:Key="DetailedStopBar" />
         <ViewModels:DetailedRandomExits x:Key="DetailedRandoms" />
+        <ViewModels:InitTestViewModel x:Key="TestProgress" />
     </Application.Resources>
 </Application>

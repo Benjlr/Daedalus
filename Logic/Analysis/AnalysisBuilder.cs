@@ -1,10 +1,9 @@
-﻿using System.Collections.Concurrent;
+﻿using Logic.Analysis.Metrics.EntryTests.TestsDrillDown;
 using Logic.Metrics;
 using Logic.Utils;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Logic.Analysis.Metrics.EntryTests.TestsDrillDown;
 using System.Threading.Tasks;
 
 namespace Logic.Analysis
@@ -18,7 +17,7 @@ namespace Logic.Analysis
         public List<List<double>> DrawdownByFbe { get; private set; }
         public List<List<double>> RollingExpectancy { get; private set; }
 
-
+        private System.Action UpdateOnProgress;
 
         private ConcurrentDictionary<int, double> _expectancyAverage;
         private ConcurrentDictionary<int, double> _expectancyMedian;
@@ -40,8 +39,14 @@ namespace Logic.Analysis
         public List<string> X_label;
         public List<string> Y_label;
 
+        public AnalysisBuilder(System.Action subscriber)
+        {
+            UpdateOnProgress = subscriber;
+        }
+
         public void GenerateFixedBarResults(List<ITest> results)
         {
+
             InitListsAndLabels();
             Parallel.For(0, results.Count, (i) =>
               {
@@ -50,6 +55,7 @@ namespace Logic.Analysis
                   _returnByFbe.TryAdd(i, HistogramTools.GenerateHistogram(histoStats.ResultHistogram));
                   _drawdownByFbe.TryAdd(i, HistogramTools.MakeCumulative(HistogramTools.GenerateHistogram(histoStats.DrawdownHistogram)));
                   AddGeneralStats(i, results[i]);
+                  UpdateOnProgress?.Invoke();
               });
             AddCategorisedAndBoundedStats();
             InitialiseAndSortPublicLists(results.Count);
@@ -79,16 +85,14 @@ namespace Logic.Analysis
         }
 
 
-        private void AddGeneralStats(int i, ITest results)
-        {
+        private void AddGeneralStats(int i, ITest results)        {
             _expectancyAverage.TryAdd(i, results.ExpectancyAverage);
             _expectancyMedian.TryAdd(i, results.ExpectancyMedian);
             _winpercentage.TryAdd(i, results.WinPercentage);
-            _rollingExpectancy.TryAdd(i, EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 300));
+            _rollingExpectancy.TryAdd(i, EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 600));
         }
 
-        private void AddCategorisedAndBoundedStats()
-        {
+        private void AddCategorisedAndBoundedStats()        {
             ReturnByDrawdown = HistogramTools.GenerateHistorgramsFromCategories(
                 new Dictionary<double, List<double>>(_returnByDrawdown),
                 HistogramTools.BinGenerator(_lowerBound, 0, _width));
@@ -111,7 +115,6 @@ namespace Logic.Analysis
                 ReturnByFbe.Add(_returnByFbe[i]);
                 DrawdownByFbe.Add(_drawdownByFbe[i]);
                 RollingExpectancy.Add(_rollingExpectancy[i]);
-
             }
         }
     }

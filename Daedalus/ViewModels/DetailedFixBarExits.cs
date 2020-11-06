@@ -1,21 +1,21 @@
 ﻿using Daedalus.Charts;
 using Daedalus.Models;
 using Daedalus.Utils;
-using Logic;
 using Logic.Analysis;
-using Logic.Metrics;
-using Logic.Rules;
-using Logic.Rules.Entry;
+using Logic.Analysis.Metrics;
 using Logic.Utils;
 using OxyPlot;
-using OxyPlot.Axes;
+using System.ComponentModel;
 using System.Linq;
-using Logic.Analysis.Metrics;
+using System.Windows;
 
 namespace Daedalus.ViewModels
 {
     public class DetailedFixBarExits : ViewModelBase
     {
+        public InitTestViewModel LoadStatus { get; set; }
+        public Visibility LoadWindowVisibility { get; set; }
+        public Visibility ChartVisibility { get; set; }
         public PlotModel PlotModelDrawdownLong { get; set; }
         public PlotModel PlotModelDrawdownShort { get; set; }
         public PlotModel PlotModelReturnsLong { get; set; }
@@ -31,13 +31,30 @@ namespace Daedalus.ViewModels
 
         public DetailedFixBarExits()
         {
-            var tests = TestFactory.GenerateFixedBarExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket,
-                new FixedBarExitTestOptions(5, 220, 1));
+            LoadStatus = new InitTestViewModel();
+            LoadWindowVisibility = Visibility.Visible;
+            ChartVisibility = Visibility.Collapsed;
+            NotifyPropertyChanged("LoadWindowVisibility");
+            NotifyPropertyChanged("ChartVisibility");
 
-            var myTestsLong = new AnalysisBuilder();
-            var myTestsShort = new AnalysisBuilder();
-            myTestsLong.GenerateFixedBarResults(tests.Select(x=>x[0]).ToList());
-            myTestsShort.GenerateFixedBarResults(tests.Select(x=>x[1]).ToList());
+            var bg = new BackgroundWorker();
+            bg.DoWork += new DoWorkEventHandler(bg_DoWork);
+
+            bg.RunWorkerAsync();
+            bg.RunWorkerCompleted += finished_work;
+        }
+        void bg_DoWork(object sender, DoWorkEventArgs e)
+        {
+            var fixedBarExitOptions = new FixedBarExitTestOptions(5, 220, 1);
+
+            LoadStatus.UpdateNameAndTotal($"Generating Fixed Bar Exit Tests", (fixedBarExitOptions.MaximumExitPeriod - fixedBarExitOptions.MinimumExitPeriod) / fixedBarExitOptions.Increment);
+            var tests = TestFactory.GenerateFixedBarExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, fixedBarExitOptions , LoadStatus.UpdateCount);
+            LoadStatus.UpdateNameAndTotal($"Executing Analysis", tests.Count*2);
+
+            var myTestsLong = new AnalysisBuilder(LoadStatus.UpdateCount);
+            var myTestsShort = new AnalysisBuilder(LoadStatus.UpdateCount);
+            myTestsLong.GenerateFixedBarResults(tests.Select(x => x[0]).ToList());
+            myTestsShort.GenerateFixedBarResults(tests.Select(x => x[1]).ToList());
 
             PlotModelDrawdownLong = HeatMap.GenerateHeatMap(myTestsLong.ReturnByDrawdown, myTestsLong.X_label_categorised, myTestsLong.Y_label_categorised);
             PlotModelDrawdownShort = HeatMap.GenerateHeatMap(myTestsShort.ReturnByDrawdown, myTestsShort.X_label_categorised, myTestsShort.Y_label_categorised);
@@ -51,14 +68,51 @@ namespace Daedalus.ViewModels
             ShortRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.RollingExpectancy));
             LongDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.DrawdownByFbe));
             ShortDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.DrawdownByFbe));
-
         }
 
+        void finished_work(object sender, RunWorkerCompletedEventArgs e)
+        {
+            LoadWindowVisibility = Visibility.Collapsed;
+            ChartVisibility = Visibility.Visible;
 
+            NotifyPropertyChanged("LoadWindowVisibility");
+            NotifyPropertyChanged("ChartVisibility");
+
+
+            PlotModelDrawdownLong.InvalidatePlot(false);
+            PlotModelDrawdownShort.InvalidatePlot(false);
+            PlotModelReturnsLong.InvalidatePlot(false);
+            PlotModelReturnsShort.InvalidatePlot(false);
+            PlotModelDDsLong.InvalidatePlot(false);
+            PlotModelDDsShort.InvalidatePlot(false);
+            ExpectancyLong.InvalidatePlot(false);
+            ExpectancyShort.InvalidatePlot(false);
+            LongRollingExp.InvalidatePlot(false);
+            ShortRollingExp.InvalidatePlot(false);
+            LongDrawdowns.InvalidatePlot(false);
+            ShortDrawdowns.InvalidatePlot(false);
+
+            NotifyPropertyChanged("PlotModelDrawdownLong");
+            NotifyPropertyChanged("PlotModelDrawdownShort");
+            NotifyPropertyChanged("PlotModelReturnsLong");
+            NotifyPropertyChanged("PlotModelReturnsShort");
+            NotifyPropertyChanged("PlotModelDDsLong");
+            NotifyPropertyChanged("PlotModelDDsShort");
+            NotifyPropertyChanged("ExpectancyLong");
+            NotifyPropertyChanged("ExpectancyShort");
+            NotifyPropertyChanged("LongRollingExp");
+            NotifyPropertyChanged("ShortRollingExp");
+            NotifyPropertyChanged("LongDrawdowns");
+            NotifyPropertyChanged("ShortDrawdowns");
+
+        }
     }
 
     public class DetailedRandomExits : ViewModelBase
     {
+        public InitTestViewModel LoadStatus { get; set; }
+        public Visibility LoadWindowVisibility { get; set; }
+        public Visibility ChartVisibility { get; set; }
         public PlotModel PlotModelDrawdownLong { get; set; }
         public PlotModel PlotModelDrawdownShort { get; set; }
         public PlotModel PlotModelReturnsLong { get; set; }
@@ -74,12 +128,28 @@ namespace Daedalus.ViewModels
 
         public DetailedRandomExits()
         {
-            var tests = TestFactory.GenerateRandomExitTests(
-                ModelSingleton.Instance.MyStrategy,
-                ModelSingleton.Instance.Mymarket, 200, 200);
+            LoadStatus = new InitTestViewModel();
 
-            var myTestsLong = new AnalysisBuilder();
-            var myTestsShort = new AnalysisBuilder();
+            var bg = new BackgroundWorker();
+            bg.DoWork += new DoWorkEventHandler(bg_DoWork);
+
+            bg.RunWorkerAsync();
+            bg.RunWorkerCompleted += finished_work;
+        }
+
+        void bg_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+            LoadStatus.UpdateNameAndTotal($"Generating Random Exit Tests", 200);
+            var tests = TestFactory.GenerateRandomExitTests(
+            ModelSingleton.Instance.MyStrategy,
+            ModelSingleton.Instance.Mymarket, 200, 200, null);
+
+            IntialisationInformation.ChangeTotalCount(tests.Count);
+            LoadStatus.UpdateNameAndTotal($"Executing Analysis", tests.Count);
+
+            var myTestsLong = new AnalysisBuilder(LoadStatus.UpdateCount);
+            var myTestsShort = new AnalysisBuilder(LoadStatus.UpdateCount);
             myTestsLong.GenerateFixedBarResults(tests.Select(x => x[0]).ToList());
             myTestsShort.GenerateFixedBarResults(tests.Select(x => x[1]).ToList());
 
@@ -95,12 +165,48 @@ namespace Daedalus.ViewModels
             ShortRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.RollingExpectancy));
             LongDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.DrawdownByFbe));
             ShortDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.DrawdownByFbe));
-
         }
 
+        void finished_work(object sender, RunWorkerCompletedEventArgs e)
+        {
+            LoadWindowVisibility = Visibility.Collapsed;
+            ChartVisibility = Visibility.Visible;
+
+            NotifyPropertyChanged("LoadWindowVisibility");
+            NotifyPropertyChanged("ChartVisibility");
+
+            PlotModelDrawdownLong.InvalidatePlot(false);
+            PlotModelDrawdownShort.InvalidatePlot(false);
+            PlotModelReturnsLong.InvalidatePlot(false);
+            PlotModelReturnsShort.InvalidatePlot(false);
+            PlotModelDDsLong.InvalidatePlot(false);
+            PlotModelDDsShort.InvalidatePlot(false);
+            ExpectancyLong.InvalidatePlot(false);
+            ExpectancyShort .InvalidatePlot(false);
+            LongRollingExp.InvalidatePlot(false);
+            ShortRollingExp.InvalidatePlot(false);
+            LongDrawdowns.InvalidatePlot(false);
+            ShortDrawdowns.InvalidatePlot(false);
+
+            NotifyPropertyChanged("PlotModelDrawdownLong");
+            NotifyPropertyChanged("PlotModelDrawdownShort");
+            NotifyPropertyChanged("PlotModelReturnsLong");
+            NotifyPropertyChanged("PlotModelReturnsShort");
+            NotifyPropertyChanged("PlotModelDDsLong");
+            NotifyPropertyChanged("PlotModelDDsShort");
+            NotifyPropertyChanged("ExpectancyLong");
+            NotifyPropertyChanged("ExpectancyShort");
+            NotifyPropertyChanged("LongRollingExp");
+            NotifyPropertyChanged("ShortRollingExp");
+            NotifyPropertyChanged("LongDrawdowns");
+            NotifyPropertyChanged("ShortDrawdowns");
+        }
     }
     public class DetailedFixStopExits : ViewModelBase
     {
+        public InitTestViewModel LoadStatus { get; set; }
+        public Visibility LoadWindowVisibility { get; set; }
+        public Visibility ChartVisibility { get; set; }
         public PlotModel PlotModelDrawdownLong { get; set; }
         public PlotModel PlotModelDrawdownShort { get; set; }
         public PlotModel PlotModelReturnsLong { get; set; }
@@ -114,15 +220,22 @@ namespace Daedalus.ViewModels
         public PlotModel LongDrawdowns { get; set; }
         public PlotModel ShortDrawdowns { get; set; }
 
-        public DetailedFixStopExits()
+        void bg_DoWork(object sender, DoWorkEventArgs e)
         {
-            var tests = TestFactory.GenerateFixedStopTargetExitTest(
-                ModelSingleton.Instance.MyStrategy,
-                ModelSingleton.Instance.Mymarket,
-                new FixedStopTargetExitTestOptions(0.04 / 10.0, 0.04 / 10.0, 0.008, 500));
 
-            var myTestsLong = new AnalysisBuilder();
-            var myTestsShort = new AnalysisBuilder();
+            var stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.04 / 10.0, 0.04 / 10.0, 0.008, 500);
+
+            LoadStatus.UpdateNameAndTotal($"Generating Stop Target Exit Tests", stopTargetExitOptions.Divisions);
+
+            var tests = TestFactory.GenerateFixedStopTargetExitTest(ModelSingleton.Instance.MyStrategy,ModelSingleton.Instance.Mymarket, stopTargetExitOptions, LoadStatus.UpdateCount);
+
+
+            LoadStatus.UpdateNameAndTotal($"Executing Analysis", tests.Count*2);
+
+
+
+            var myTestsLong = new AnalysisBuilder(LoadStatus.UpdateCount);
+            var myTestsShort = new AnalysisBuilder(LoadStatus.UpdateCount);
             myTestsLong.GenerateFixedBarResults(tests.Select(x => x[0]).ToList());
             myTestsShort.GenerateFixedBarResults(tests.Select(x => x[1]).ToList());
 
@@ -138,7 +251,61 @@ namespace Daedalus.ViewModels
             ShortRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.RollingExpectancy));
             LongDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.DrawdownByFbe));
             ShortDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.DrawdownByFbe));
+        }
 
+        void finished_work(object sender, RunWorkerCompletedEventArgs e)
+        {
+            LoadWindowVisibility = Visibility.Collapsed;
+            ChartVisibility = Visibility.Visible;
+
+            NotifyPropertyChanged("LoadWindowVisibility");
+            NotifyPropertyChanged("ChartVisibility");
+
+            PlotModelDrawdownLong.InvalidatePlot(false);
+            PlotModelDrawdownShort.InvalidatePlot(false);
+            PlotModelReturnsLong.InvalidatePlot(false);
+            PlotModelReturnsShort.InvalidatePlot(false);
+            PlotModelDDsLong.InvalidatePlot(false);
+            PlotModelDDsShort.InvalidatePlot(false);
+            ExpectancyLong.InvalidatePlot(false);
+            ExpectancyShort.InvalidatePlot(false);
+            LongRollingExp.InvalidatePlot(false);
+            ShortRollingExp.InvalidatePlot(false);
+            LongDrawdowns.InvalidatePlot(false);
+            ShortDrawdowns.InvalidatePlot(false);
+
+            NotifyPropertyChanged("PlotModelDrawdownLong");
+            NotifyPropertyChanged("PlotModelDrawdownShort");
+            NotifyPropertyChanged("PlotModelReturnsLong");
+            NotifyPropertyChanged("PlotModelReturnsShort");
+            NotifyPropertyChanged("PlotModelDDsLong");
+            NotifyPropertyChanged("PlotModelDDsShort");
+            NotifyPropertyChanged("ExpectancyLong");
+            NotifyPropertyChanged("ExpectancyShort");
+            NotifyPropertyChanged("LongRollingExp");
+            NotifyPropertyChanged("ShortRollingExp");
+            NotifyPropertyChanged("LongDrawdowns");
+            NotifyPropertyChanged("ShortDrawdowns");
+
+
+        }
+
+        public DetailedFixStopExits()
+        {
+            LoadStatus = new InitTestViewModel();
+
+            LoadWindowVisibility = Visibility.Visible;
+            ChartVisibility = Visibility.Collapsed;
+            NotifyPropertyChanged("LoadWindowVisibility");
+            NotifyPropertyChanged("ChartVisibility");
+
+
+            var bg = new BackgroundWorker();
+            bg.DoWork += new DoWorkEventHandler(bg_DoWork);
+
+
+            bg.RunWorkerAsync();
+            bg.RunWorkerCompleted += finished_work;
         }
 
     }
