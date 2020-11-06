@@ -15,7 +15,7 @@ namespace Logic.Analysis.StrategyRunners
     {
         public TradeState InvestedState { get; set; }
         public DrillDownStats Stats { get; set; }
-        public double Return { get; set; }
+        public List<double> Returns { get; set; }
     }
 
     public class TradeState
@@ -24,6 +24,8 @@ namespace Logic.Analysis.StrategyRunners
         public double EntryPrice { get; set; }
         public double StopPrice { get; set; }
         public double TargetPrice { get; set; }
+        public double Return { get; set; }
+
     }
 
     public interface StopGenerator

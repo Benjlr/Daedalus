@@ -44,7 +44,7 @@ namespace Logic.Analysis.Metrics
 
     public class TestFactory
     {
-        public static List<ITest[]> GenerateFixedBarExitTest(Strategy strat, Market market, FixedBarExitTestOptions options, System.Action progress)
+        public static List<ITest[]> GenerateFixedBarExitTest(Strategy strat, Market market, FixedBarExitTestOptions options, System.Action progress = null)
         {
             IntialisationInformation.ChangeStage($"Executing Fixed Bar Tests");
 
@@ -56,7 +56,7 @@ namespace Logic.Analysis.Metrics
             return threadSafeDict.Values.ToList();
         }
 
-        public static List<ITest[]> GenerateFixedStopTargetExitTest(Strategy strat, Market market, FixedStopTargetExitTestOptions options, System.Action progress)
+        public static List<ITest[]> GenerateFixedStopTargetExitTest(Strategy strat, Market market, FixedStopTargetExitTestOptions options, System.Action progress = null)
         {
             IntialisationInformation.ChangeStage($"Executing Stop Target Tests");
 
@@ -65,7 +65,7 @@ namespace Logic.Analysis.Metrics
             return threadSafeDict.Values.ToList();
         }
 
-        public static List<ITest[]> GenerateRandomExitTests( Strategy strat, Market market, int iterations, int maxLength, System.Action progress)
+        public static List<ITest[]> GenerateRandomExitTests( Strategy strat, Market market, int iterations, int maxLength, System.Action progress=null)
         {
             var threadSafeDict = new ConcurrentDictionary<int, ITest[]>(RandomExitTestsToDictionary(iterations, maxLength));
             ExecuteTests(strat, market, threadSafeDict, progress);
