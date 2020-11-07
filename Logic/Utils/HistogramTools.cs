@@ -19,17 +19,18 @@ namespace Logic.Utils
         }
 
 
-        public static Dictionary<double, List<double>> CategoryGenerator(double min, double max, double width)
+        public static ConcurrentDictionary<double, ConcurrentBag<double>> CategoryGenerator(double min, double max, double width)
         {
             if ((max - min) % width > 0.000001) throw new Exception();
 
             var count = (max - min) / width;
-            var myDict = new Dictionary<double, List<double>>();
+            var myDict = new ConcurrentDictionary<double, ConcurrentBag<double>>();
 
-            for (int i = 0; i <= count; i++) myDict.Add(min + width * i, new List<double>());
-            myDict.Add(Double.PositiveInfinity, new List<double>());
+            for (int i = 0; i <= count; i++) myDict.TryAdd(min + width * i, new ConcurrentBag<double>());
+            myDict.TryAdd(Double.PositiveInfinity, new ConcurrentBag<double>());
             return myDict;
         }
+
 
         public static void CategoriseItem(Dictionary<double, int> myBins, double item)
         {
@@ -43,42 +44,27 @@ namespace Logic.Utils
             }
         }
 
-        public static void CategoriseItem(Dictionary<double, List<double>> myBins, double item, double bin)
-        {
-            for (int j = 0; j < myBins.Count - 1; j++)
-            {
-                if (bin < myBins.Keys.ToList()[j])
-                {
-                    myBins[myBins.Keys.ToList()[j]].Add(item);
+        public static void CategoriseItem(ConcurrentDictionary<double, ConcurrentBag<double>> myBins, double item, double bin) {
+            var keys = myBins.Keys.ToList();
+            for (int j = 0; j < myBins.Count - 1; j++) 
+                if (bin < keys[j]) {
+                    myBins[keys[j]].Add(item);
                     break;
                 }
-            }
-            if (bin > myBins.Keys.ToList()[myBins.Keys.Count - 2]) myBins[myBins.Keys.ToList()[myBins.Keys.Count - 1]].Add(item);
+            if (bin > keys[^2]) myBins[keys[^1]].Add(item);
         }
 
-        public static void CategoriseItem(ConcurrentDictionary<double, List<double>> myBins, double item, double bin)
-        {
-            for (int j = 0; j < myBins.Count - 1; j++)
-            {
-                if (bin < myBins.Keys.ToList()[j])
-                {
-                    myBins[myBins.Keys.ToList()[j]].Add(item);
-                    break;
-                }
-            }
-            if (bin > myBins.Keys.ToList()[myBins.Keys.Count - 2]) myBins[myBins.Keys.ToList()[myBins.Keys.Count - 1]].Add(item);
-        }
-
-        public static List<List<double>> GenerateHistorgramsFromCategories(Dictionary<double, List<double>> CategorisedLists, Dictionary<double, int> bins )
+        public static List<List<double>> GenerateHistorgramsFromCategories(ConcurrentDictionary<double, ConcurrentBag<double>> CategorisedLists, Dictionary<double, int> bins )
         {
             List<List<double>> results = new List<List<double>>();
             var categoryKeys = CategorisedLists.Keys.ToList();
 
-            for (int i = 0; i < categoryKeys.Count; i++)
-            {
-                var DrawddownBins = new Dictionary<double, int>(bins);
-                for (int j = 0; j < CategorisedLists[categoryKeys[i]].Count; j++) HistogramTools.CategoriseItem(DrawddownBins, CategorisedLists[categoryKeys[i]][j]);
-                results.Add(MakeCumulative(GenerateHistogram(DrawddownBins)));
+            for (int i = 0; i < categoryKeys.Count; i++) {
+                var values = CategorisedLists[categoryKeys[i]].ToList();
+                for (int j = 0; j < CategorisedLists[categoryKeys[i]].Count; j++)
+                    HistogramTools.CategoriseItem(bins, values[j]);
+                
+                results.Add(MakeCumulative(GenerateHistogram(bins)));
             }
 
             return results;

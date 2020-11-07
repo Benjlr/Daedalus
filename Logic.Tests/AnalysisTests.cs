@@ -1,5 +1,6 @@
 ﻿using Logic.Utils;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Xunit;
 
@@ -68,19 +69,19 @@ namespace Logic.Tests
         public void ShouldInitCategories()
         {
             var myhistogram = HistogramTools.CategoryGenerator(-66, 33, 11);
-            var expected = new Dictionary<double, List<double>>()
+            var expected = new Dictionary<double, ConcurrentBag<double>>()
             {
-                {-66,new List<double>()},
-                {-55,new List<double>() },
-                {-44,new List<double>() },
-                {-33,new List<double>() },
-                {-22,new List<double>()},
-                {-11,new List<double>()},
-                {0,new List<double>()},
-                {11,new List<double>()},
-                {22,new List<double>()},
-                {33,new List<double>() },
-                {Double.PositiveInfinity, new List<double>() },
+                {-66,new ConcurrentBag<double>()},
+                {-55,new ConcurrentBag<double>() },
+                {-44,new ConcurrentBag<double>() },
+                {-33,new ConcurrentBag<double>() },
+                {-22,new ConcurrentBag<double>()},
+                {-11,new ConcurrentBag<double>()},
+                {0,new ConcurrentBag<double>()},
+                {11,new ConcurrentBag<double>()},
+                {22,new ConcurrentBag<double>()},
+                {33,new ConcurrentBag<double>() },
+                {Double.PositiveInfinity, new ConcurrentBag<double>() },
             };
 
             Assert.Equal(expected, myhistogram);

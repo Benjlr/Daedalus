@@ -33,9 +33,9 @@ namespace Daedalus.ViewModels
         {
             LoadStatus = new InitTestViewModel();
             LoadWindowVisibility = Visibility.Visible;
-            ChartVisibility = Visibility.Collapsed;
-            NotifyPropertyChanged("LoadWindowVisibility");
-            NotifyPropertyChanged("ChartVisibility");
+            ChartVisibility = Visibility.Hidden;
+            NotifyPropertyChanged($"LoadWindowVisibility");
+            NotifyPropertyChanged($"ChartVisibility");
 
             var bg = new BackgroundWorker();
             bg.DoWork += new DoWorkEventHandler(bg_DoWork);
@@ -75,8 +75,8 @@ namespace Daedalus.ViewModels
             LoadWindowVisibility = Visibility.Collapsed;
             ChartVisibility = Visibility.Visible;
 
-            NotifyPropertyChanged("LoadWindowVisibility");
-            NotifyPropertyChanged("ChartVisibility");
+            NotifyPropertyChanged($"LoadWindowVisibility");
+            NotifyPropertyChanged($"ChartVisibility");
 
 
             PlotModelDrawdownLong.InvalidatePlot(false);
@@ -92,18 +92,18 @@ namespace Daedalus.ViewModels
             LongDrawdowns.InvalidatePlot(false);
             ShortDrawdowns.InvalidatePlot(false);
 
-            NotifyPropertyChanged("PlotModelDrawdownLong");
-            NotifyPropertyChanged("PlotModelDrawdownShort");
-            NotifyPropertyChanged("PlotModelReturnsLong");
-            NotifyPropertyChanged("PlotModelReturnsShort");
-            NotifyPropertyChanged("PlotModelDDsLong");
-            NotifyPropertyChanged("PlotModelDDsShort");
-            NotifyPropertyChanged("ExpectancyLong");
-            NotifyPropertyChanged("ExpectancyShort");
-            NotifyPropertyChanged("LongRollingExp");
-            NotifyPropertyChanged("ShortRollingExp");
-            NotifyPropertyChanged("LongDrawdowns");
-            NotifyPropertyChanged("ShortDrawdowns");
+            NotifyPropertyChanged($"PlotModelDrawdownLong");
+            NotifyPropertyChanged($"PlotModelDrawdownShort");
+            NotifyPropertyChanged($"PlotModelReturnsLong");
+            NotifyPropertyChanged($"PlotModelReturnsShort");
+            NotifyPropertyChanged($"PlotModelDDsLong");
+            NotifyPropertyChanged($"PlotModelDDsShort");
+            NotifyPropertyChanged($"ExpectancyLong");
+            NotifyPropertyChanged($"ExpectancyShort");
+            NotifyPropertyChanged($"LongRollingExp");
+            NotifyPropertyChanged($"ShortRollingExp");
+            NotifyPropertyChanged($"LongDrawdowns");
+            NotifyPropertyChanged($"ShortDrawdowns");
 
         }
     }
@@ -173,7 +173,7 @@ namespace Daedalus.ViewModels
             ChartVisibility = Visibility.Visible;
 
             NotifyPropertyChanged("LoadWindowVisibility");
-            NotifyPropertyChanged("ChartVisibility");
+            NotifyPropertyChanged($"ChartVisibility");
 
             PlotModelDrawdownLong.InvalidatePlot(false);
             PlotModelDrawdownShort.InvalidatePlot(false);
@@ -258,8 +258,8 @@ namespace Daedalus.ViewModels
             LoadWindowVisibility = Visibility.Collapsed;
             ChartVisibility = Visibility.Visible;
 
-            NotifyPropertyChanged("LoadWindowVisibility");
-            NotifyPropertyChanged("ChartVisibility");
+            NotifyPropertyChanged($"LoadWindowVisibility");
+            NotifyPropertyChanged($"ChartVisibility");
 
             PlotModelDrawdownLong.InvalidatePlot(false);
             PlotModelDrawdownShort.InvalidatePlot(false);
@@ -274,18 +274,18 @@ namespace Daedalus.ViewModels
             LongDrawdowns.InvalidatePlot(false);
             ShortDrawdowns.InvalidatePlot(false);
 
-            NotifyPropertyChanged("PlotModelDrawdownLong");
-            NotifyPropertyChanged("PlotModelDrawdownShort");
-            NotifyPropertyChanged("PlotModelReturnsLong");
-            NotifyPropertyChanged("PlotModelReturnsShort");
-            NotifyPropertyChanged("PlotModelDDsLong");
-            NotifyPropertyChanged("PlotModelDDsShort");
-            NotifyPropertyChanged("ExpectancyLong");
-            NotifyPropertyChanged("ExpectancyShort");
-            NotifyPropertyChanged("LongRollingExp");
-            NotifyPropertyChanged("ShortRollingExp");
-            NotifyPropertyChanged("LongDrawdowns");
-            NotifyPropertyChanged("ShortDrawdowns");
+            NotifyPropertyChanged($"PlotModelDrawdownLong");
+            NotifyPropertyChanged($"PlotModelDrawdownShort");
+            NotifyPropertyChanged($"PlotModelReturnsLong");
+            NotifyPropertyChanged($"PlotModelReturnsShort");
+            NotifyPropertyChanged($"PlotModelDDsLong");
+            NotifyPropertyChanged($"PlotModelDDsShort");
+            NotifyPropertyChanged($"ExpectancyLong");
+            NotifyPropertyChanged($"ExpectancyShort");
+            NotifyPropertyChanged($"LongRollingExp");
+            NotifyPropertyChanged($"ShortRollingExp");
+            NotifyPropertyChanged($"LongDrawdowns");
+            NotifyPropertyChanged($"ShortDrawdowns");
 
 
         }
@@ -296,8 +296,8 @@ namespace Daedalus.ViewModels
 
             LoadWindowVisibility = Visibility.Visible;
             ChartVisibility = Visibility.Collapsed;
-            NotifyPropertyChanged("LoadWindowVisibility");
-            NotifyPropertyChanged("ChartVisibility");
+            NotifyPropertyChanged($"LoadWindowVisibility");
+            NotifyPropertyChanged($"ChartVisibility");
 
 
             var bg = new BackgroundWorker();

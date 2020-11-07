@@ -100,6 +100,8 @@ namespace Daedalus.Charts
             retval.Axes.Add(new LinearAxis
             {
                 Position = AxisPosition.Left,
+                IsPanEnabled = false,
+                IsZoomEnabled = false
             });
 
             var lowerSeriesValues = values.Select(x => x.Lower).ToList();

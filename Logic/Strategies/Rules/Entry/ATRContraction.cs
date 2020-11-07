@@ -65,7 +65,7 @@ namespace Logic.Rules.Entry
             for (int i =2; i < data.Count; i++)
             {
 
-                if (atrPC[i-1] == 0.0 && atrPC[i] == 0.0) Satisfied[i] = true;
+                if ( atrPC[i] == 0.0) Satisfied[i] = true;
 
                 //////var xxx = ListTools.GetActionitionRange(ListTools.GetNewList(data, i - 25, i), data[i].Close);
                 //var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);

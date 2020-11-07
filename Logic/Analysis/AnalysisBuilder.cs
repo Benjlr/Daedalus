@@ -28,7 +28,7 @@ namespace Logic.Analysis
         private ConcurrentDictionary<int, List<double>> _rollingExpectancy;
         public List<List<double>> ReturnByDrawdown;
 
-        private ConcurrentDictionary<double, List<double>> _returnByDrawdown;
+        private ConcurrentDictionary<double, ConcurrentBag<double>> _returnByDrawdown;
 
         private double _lowerBound = -0.02;
         private double _upperBound = 0.02;
@@ -67,7 +67,7 @@ namespace Logic.Analysis
             _expectancyMedian = new ConcurrentDictionary<int, double>();
 
             _winpercentage = new ConcurrentDictionary<int, double>();
-            _returnByDrawdown = new ConcurrentDictionary<double, List<double>>(HistogramTools.CategoryGenerator(_lowerBound, _upperBound, _width));
+            _returnByDrawdown = HistogramTools.CategoryGenerator(_lowerBound, _upperBound, _width);
 
             _returnByFbe = new ConcurrentDictionary<int, List<double>>();
             _drawdownByFbe = new ConcurrentDictionary<int, List<double>>();
@@ -85,16 +85,16 @@ namespace Logic.Analysis
         }
 
 
-        private void AddGeneralStats(int i, ITest results)        {
+        private void AddGeneralStats(int i, ITest results) {
             _expectancyAverage.TryAdd(i, results.ExpectancyAverage);
             _expectancyMedian.TryAdd(i, results.ExpectancyMedian);
             _winpercentage.TryAdd(i, results.WinPercentage);
-            _rollingExpectancy.TryAdd(i, EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 600));
+            _rollingExpectancy.TryAdd(i, EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 100));
         }
 
-        private void AddCategorisedAndBoundedStats()        {
+        private void AddCategorisedAndBoundedStats() {
             ReturnByDrawdown = HistogramTools.GenerateHistorgramsFromCategories(
-                new Dictionary<double, List<double>>(_returnByDrawdown),
+                _returnByDrawdown,
                 HistogramTools.BinGenerator(_lowerBound, 0, _width));
         }
 
@@ -134,7 +134,7 @@ namespace Logic.Analysis
 
         }
 
-        public void GenerateHistogramStats(ConcurrentDictionary<double, List<double>> returnByDrawdown)
+        public void GenerateHistogramStats(ConcurrentDictionary<double, ConcurrentBag<double>> returnByDrawdown)
         {
             for (int j = 0; j < _test.FBEResults.Length; j++)
                 if (_test.FBEResults[j] != 0) {

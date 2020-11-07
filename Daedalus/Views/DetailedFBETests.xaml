@@ -8,13 +8,21 @@
              
              d:DesignHeight="450" d:DesignWidth="800"
              DataContext="{StaticResource DetailedFixBar}">
-    <StackPanel>
-        <StackPanel Visibility="{Binding  LoadWindowVisibility}" VerticalAlignment="Center">
-            <Label Name="Title" Content="{Binding  LoadStatus.Name}" HorizontalAlignment="Center" />
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Visibility="{Binding  LoadWindowVisibility}" VerticalAlignment="Center">
+            <Label Name="Title" Content="{Binding  LoadStatus.Name}" HorizontalAlignment="Center" FontFamily="Roboto" FontSize="24" />
             <ProgressBar x:Name="myProgress" IsIndeterminate="False"  Value="{Binding LoadStatus.Count}"  
-                         Maximum="{Binding LoadStatus.TotalCount}" Width="400" Height="20"/>
+                         Maximum="{Binding LoadStatus.TotalCount}" Width="1200" Height="40"/>
+            <Label Name="Numbers" Content="{Binding  LoadStatus.Amounts}" HorizontalAlignment="Center" FontFamily="Roboto" FontSize="24" />
+
         </StackPanel>
-        <TabControl Visibility="{Binding  ChartVisibility}">
+        <TabControl Grid.Row="1" Visibility="{Binding ChartVisibility}" >
             <TabItem Header="1">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -96,7 +104,5 @@
                 </Grid>
             </TabItem>
         </TabControl>
-
-    </StackPanel>
-
+    </Grid>
 </UserControl>
