@@ -43,11 +43,10 @@ namespace Logic.Tests
         private double _round(double x) => Math.Round(x, _precision);
         private int _precision = 6;
 
-
         [Fact]
         public void ShouldInitHistogram()
         {
-            var myhistogram = HistogramTools.BinGenerator(-100, 100, 25);
+            var myhistogram = HistogramTools.BinGenerator(new BinDescriptor(-100, 100, 25));
             var expected = new Dictionary<double, int>()
             {
                 {-100,0},
@@ -68,20 +67,20 @@ namespace Logic.Tests
         [Fact]
         public void ShouldInitCategories()
         {
-            var myhistogram = HistogramTools.CategoryGenerator(-66, 33, 11);
-            var expected = new Dictionary<double, ConcurrentBag<double>>()
+            var myhistogram = HistogramTools.CategoryGenerator(new BinDescriptor(-66, 33, 11));
+            var expected = new Dictionary<double, List<double>>()
             {
-                {-66,new ConcurrentBag<double>()},
-                {-55,new ConcurrentBag<double>() },
-                {-44,new ConcurrentBag<double>() },
-                {-33,new ConcurrentBag<double>() },
-                {-22,new ConcurrentBag<double>()},
-                {-11,new ConcurrentBag<double>()},
-                {0,new ConcurrentBag<double>()},
-                {11,new ConcurrentBag<double>()},
-                {22,new ConcurrentBag<double>()},
-                {33,new ConcurrentBag<double>() },
-                {Double.PositiveInfinity, new ConcurrentBag<double>() },
+                {-66,new List<double>()},
+                {-55,new List<double>() },
+                {-44,new List<double>() },
+                {-33,new List<double>() },
+                {-22,new List<double>()},
+                {-11,new List<double>()},
+                {0,new List<double>()},
+                {11,new List<double>()},
+                {22,new List<double>()},
+                {33,new List<double>() },
+                {Double.PositiveInfinity, new List<double>() },
             };
 
             Assert.Equal(expected, myhistogram);
@@ -90,7 +89,7 @@ namespace Logic.Tests
         [Fact]
         public void ShouldCategoriseItemInHistogram()
         {
-            var myhistogram = HistogramTools.BinGenerator(-100, 100, 25);
+            var myhistogram = HistogramTools.BinGenerator(new BinDescriptor(-100, 100, 25));
             HistogramTools.CategoriseItem(myhistogram, 72);
             HistogramTools.CategoriseItem(myhistogram, 0);
             HistogramTools.CategoriseItem(myhistogram, -0.001);
@@ -106,7 +105,7 @@ namespace Logic.Tests
         [Fact]
         public void ShouldCategoriseItemInCategory()
         {
-            var myhistogram = HistogramTools.CategoryGenerator(-66, 33, 11);
+            var myhistogram = HistogramTools.CategoryGenerator(new BinDescriptor(-66, 33, 11));
             HistogramTools.CategoriseItem(myhistogram,7,-45);
             HistogramTools.CategoriseItem(myhistogram,12365.022,-54);
             HistogramTools.CategoriseItem(myhistogram,2.3,-45);
@@ -122,7 +121,7 @@ namespace Logic.Tests
         [Fact]
         public void ShouldGenerateHistogram()
         {
-            var bins = HistogramTools.BinGenerator(-20, 20, 5);
+            var bins = HistogramTools.BinGenerator(new BinDescriptor(-20, 20, 5));
             foreach (var t in numbers) HistogramTools.CategoriseItem(bins,t);
             var hist = HistogramTools.GenerateHistogram(bins);
             for (int i = 0; i < hist.Count; i++) hist[i] = _round(hist[i]);
@@ -133,7 +132,7 @@ namespace Logic.Tests
         [Fact]
         public void ShouldGenerateCumulativeHistogram()
         {
-            var bins = HistogramTools.BinGenerator(-20, 20, 5);
+            var bins = HistogramTools.BinGenerator(new BinDescriptor(-20, 20, 5));
             foreach (var t in numbers) HistogramTools.CategoriseItem(bins, t);
             var hist = HistogramTools.GenerateHistogram(bins);
             hist = HistogramTools.MakeCumulative(hist);
@@ -146,9 +145,9 @@ namespace Logic.Tests
         [Fact]
         public void ShouldGenerateCategorisedSeries()
         {
-            var categoriseDrawdown = HistogramTools.CategoryGenerator(-20, 20, 5);
+            var categoriseDrawdown = HistogramTools.CategoryGenerator(new BinDescriptor(-20, 20, 5));
             foreach (var t in ReturnsAndDrawdown) HistogramTools.CategoriseItem(categoriseDrawdown, t.Item2, t.Item1);
-            var results = HistogramTools.GenerateHistorgramsFromCategories(categoriseDrawdown, HistogramTools.BinGenerator(-20, 0, 5));
+            var results = HistogramTools.GenerateHistorgramsFromCategories(categoriseDrawdown, HistogramTools.BinGenerator(new BinDescriptor(-20, 0, 5)));
 
             for (int i = 0; i < RanDResults.Count; i++)
             for (int j = 0; j < RanDResults[i].Count; j++)

@@ -7,44 +7,39 @@ namespace Logic.Utils
 {
     public  class HistogramTools
     {
-        public static Dictionary<double, int> BinGenerator(double min, double max, double width)
+        public static Dictionary<double, int> BinGenerator(BinDescriptor bin)
         {
-            if ((max - min) % width > 0.000001) throw new Exception();
+            if ((bin.UpperBound - bin.LowerBound) % bin.Width> 0.000001) throw new Exception();
 
-            var count = (max - min) / width;
+            var count = (bin.UpperBound - bin.LowerBound) / bin.Width;
             var myDict = new Dictionary<double, int>();
-            for (int i = 0; i <= count; i++) myDict.Add(min + width * i, 0);
+            for (int i = 0; i <= count; i++) myDict.Add(bin.LowerBound+ bin.Width * i, 0);
             myDict.Add(Double.PositiveInfinity, 0);
             return myDict;
         }
 
 
-        public static ConcurrentDictionary<double, ConcurrentBag<double>> CategoryGenerator(double min, double max, double width)
-        {
-            if ((max - min) % width > 0.000001) throw new Exception();
+        public static Dictionary<double, List<double>> CategoryGenerator(BinDescriptor bin) {
+            if ((bin.UpperBound - bin.LowerBound) % bin.Width> 0.000001) throw new Exception();
 
-            var count = (max - min) / width;
-            var myDict = new ConcurrentDictionary<double, ConcurrentBag<double>>();
+            var count = (bin.UpperBound - bin.LowerBound) / bin.Width;
+            var myDict = new Dictionary<double, List<double>>();
 
-            for (int i = 0; i <= count; i++) myDict.TryAdd(min + width * i, new ConcurrentBag<double>());
-            myDict.TryAdd(Double.PositiveInfinity, new ConcurrentBag<double>());
+            for (int i = 0; i <= count; i++) myDict.TryAdd(bin.LowerBound + bin.Width * i, new List<double>());
+            myDict.TryAdd(Double.PositiveInfinity, new List<double>());
             return myDict;
         }
 
 
-        public static void CategoriseItem(Dictionary<double, int> myBins, double item)
-        {
+        public static void CategoriseItem(Dictionary<double, int> myBins, double item) {
             for (int j = 0; j < myBins.Count; j++)
-            {
-                if (item < myBins.Keys.ToList()[j])
-                {
+                if (item < myBins.Keys.ToList()[j]) {
                     myBins[myBins.Keys.ToList()[j]]++;
                     break;
                 }
-            }
         }
 
-        public static void CategoriseItem(ConcurrentDictionary<double, ConcurrentBag<double>> myBins, double item, double bin) {
+        public static void CategoriseItem(Dictionary<double, List<double>> myBins, double item, double bin) {
             var keys = myBins.Keys.ToList();
             for (int j = 0; j < myBins.Count - 1; j++) 
                 if (bin < keys[j]) {
@@ -54,24 +49,33 @@ namespace Logic.Utils
             if (bin > keys[^2]) myBins[keys[^1]].Add(item);
         }
 
-        public static List<List<double>> GenerateHistorgramsFromCategories(ConcurrentDictionary<double, ConcurrentBag<double>> CategorisedLists, Dictionary<double, int> bins )
-        {
+        public static List<List<double>> GenerateHistorgramsFromCategories(Dictionary<double, List<double>> CategorisedLists, Dictionary<double, int> bins ) {
             List<List<double>> results = new List<List<double>>();
             var categoryKeys = CategorisedLists.Keys.ToList();
-
-            for (int i = 0; i < categoryKeys.Count; i++) {
-                var values = CategorisedLists[categoryKeys[i]].ToList();
-                for (int j = 0; j < CategorisedLists[categoryKeys[i]].Count; j++)
-                    HistogramTools.CategoriseItem(bins, values[j]);
-                
-                results.Add(MakeCumulative(GenerateHistogram(bins)));
-            }
+            for (int i = 0; i < categoryKeys.Count; i++) 
+                CrosslinkCategories(CategorisedLists, bins, categoryKeys, i, results);
 
             return results;
         }
-
-        public static List<double> GenerateHistogram(Dictionary<double, int> myBins)
+        public static Dictionary<double, List<double>> CollateCategories(List<Dictionary<double, List<double>>> ListOfCategorisedLists, BinDescriptor bin)
         {
+            var retVal = CategoryGenerator(bin);
+
+            for (int i = 0; i < ListOfCategorisedLists.Count; i++)
+                foreach (var item in ListOfCategorisedLists[i])
+                    retVal[item.Key].AddRange(item.Value);
+
+            return retVal;
+        }
+
+        private static void CrosslinkCategories(Dictionary<double, List<double>> CategorisedLists, Dictionary<double, int> bins, List<double> categoryKeys, int i, List<List<double>> results) {
+            var values = CategorisedLists[categoryKeys[i]].ToList();
+            for (int j = 0; j < CategorisedLists[categoryKeys[i]].Count; j++)
+                CategoriseItem(bins, values[j]);
+            results.Add(MakeCumulative(GenerateHistogram(bins)));
+        }
+
+        public static List<double> GenerateHistogram(Dictionary<double, int> myBins) {
             var totalItems = myBins.Values.Sum();
             var allBins = myBins.Keys.ToList();
             var list = new List<double>();
@@ -79,10 +83,23 @@ namespace Logic.Utils
             return list;
         }
 
-        public static List<double> MakeCumulative(List<double> list)
-        {
+        public static List<double> MakeCumulative(List<double> list) {
             for (int i = 1; i < list.Count; i++) list[i] = list[i-1] + list[i];
             return list;
+        }
+    }
+
+    public struct BinDescriptor
+    {
+        public double LowerBound { get; set; }
+        public double UpperBound { get; set; }
+        public double Width { get; set; }
+
+        public BinDescriptor(double lowerBound, double upperBound, double width)
+        {
+            LowerBound = lowerBound;
+            UpperBound = upperBound;
+            Width = width;
         }
     }
 }

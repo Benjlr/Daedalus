@@ -13,35 +13,25 @@ namespace Logic.Analysis
         public List<double> ExpectancyAverage { get; private set; }
         public List<double> ExpectancyMedian { get; private set; }
         public List<double> WinPercentage { get; private set; }
-        public List<List<double>> ReturnByFbe { get; private set; }
-        public List<List<double>> DrawdownByFbe { get; private set; }
+        public List<List<double>> ReturnByTest { get; private set; }
+        public List<List<double>> DrawdownByTest { get; private set; }
         public List<List<double>> RollingExpectancy { get; private set; }
-
-        private System.Action UpdateOnProgress;
-
-        private ConcurrentDictionary<int, double> _expectancyAverage;
-        private ConcurrentDictionary<int, double> _expectancyMedian;
-        private ConcurrentDictionary<int, double> _winpercentage;
-
-        private ConcurrentDictionary<int, List<double>> _returnByFbe;
-        private ConcurrentDictionary<int, List<double>> _drawdownByFbe;
-        private ConcurrentDictionary<int, List<double>> _rollingExpectancy;
-        public List<List<double>> ReturnByDrawdown;
-
-        private ConcurrentDictionary<double, ConcurrentBag<double>> _returnByDrawdown;
-
-        private double _lowerBound = -0.02;
-        private double _upperBound = 0.02;
-        private double _width = 1.0 / 1000;
+        public List<List<double>> ReturnByDrawdown { get; private set; }
 
         public List<string> X_label_categorised;
         public List<string> Y_label_categorised;
         public List<string> X_label;
         public List<string> Y_label;
 
+        private List<AnalysisState> _analyses { get; set; }
+        private System.Action UpdateOnProgress { get; set; }
+
+        private static BinDescriptor _binSizing = new BinDescriptor(-0.02, 0.02, 1.0 / 1000);
+
         public AnalysisBuilder(System.Action subscriber)
         {
             UpdateOnProgress = subscriber;
+            _analyses = new List<AnalysisState>();
         }
 
         public void GenerateFixedBarResults(List<ITest> results)
@@ -50,11 +40,7 @@ namespace Logic.Analysis
             InitListsAndLabels();
             Parallel.For(0, results.Count, (i) =>
               {
-                  var histoStats = new HistogramStatistics(results[i], _lowerBound, _upperBound, _width);
-                  histoStats.GenerateHistogramStats(_returnByDrawdown);
-                  _returnByFbe.TryAdd(i, HistogramTools.GenerateHistogram(histoStats.ResultHistogram));
-                  _drawdownByFbe.TryAdd(i, HistogramTools.MakeCumulative(HistogramTools.GenerateHistogram(histoStats.DrawdownHistogram)));
-                  AddGeneralStats(i, results[i]);
+                  _analyses.Add(new AnalysisState(results[i], _binSizing, i));
                   UpdateOnProgress?.Invoke();
               });
             AddCategorisedAndBoundedStats();
@@ -63,15 +49,6 @@ namespace Logic.Analysis
 
         private void InitListsAndLabels()
         {
-            _expectancyAverage = new ConcurrentDictionary<int, double>();
-            _expectancyMedian = new ConcurrentDictionary<int, double>();
-
-            _winpercentage = new ConcurrentDictionary<int, double>();
-            _returnByDrawdown = HistogramTools.CategoryGenerator(_lowerBound, _upperBound, _width);
-
-            _returnByFbe = new ConcurrentDictionary<int, List<double>>();
-            _drawdownByFbe = new ConcurrentDictionary<int, List<double>>();
-            _rollingExpectancy = new ConcurrentDictionary<int, List<double>>();
             ReturnByDrawdown = new List<List<double>>();
 
             X_label = new List<string>();
@@ -79,69 +56,96 @@ namespace Logic.Analysis
             X_label_categorised = new List<string>();
             Y_label_categorised = new List<string>();
 
-            for (double i = _lowerBound; i <= _upperBound; i += _width) X_label.Add($"<{i:0.0%}");
-            for (double i = _lowerBound; i <= _width; i += _width) X_label_categorised.Add($"<{i:0.0%}");
-            for (double i = _lowerBound; i <= _upperBound; i += _width) Y_label_categorised.Add($"<{i:0.0%}");
+            //for (double i = _lowerBound; i <= _upperBound; i += _width) X_label.Add($"<{i:0.0%}");
+            //for (double i = _lowerBound; i <= _width; i += _width) X_label_categorised.Add($"<{i:0.0%}");
+            //for (double i = _lowerBound; i <= _upperBound; i += _width) Y_label_categorised.Add($"<{i:0.0%}");
         }
 
-
-        private void AddGeneralStats(int i, ITest results) {
-            _expectancyAverage.TryAdd(i, results.ExpectancyAverage);
-            _expectancyMedian.TryAdd(i, results.ExpectancyMedian);
-            _winpercentage.TryAdd(i, results.WinPercentage);
-            _rollingExpectancy.TryAdd(i, EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 100));
-        }
 
         private void AddCategorisedAndBoundedStats() {
+
             ReturnByDrawdown = HistogramTools.GenerateHistorgramsFromCategories(
-                _returnByDrawdown,
-                HistogramTools.BinGenerator(_lowerBound, 0, _width));
+                HistogramTools.CollateCategories(_analyses.Select(x=>x._histoStats.DrawdownByReturn).ToList(), _binSizing),
+                HistogramTools.BinGenerator(_binSizing));
         }
 
         private void InitialiseAndSortPublicLists(int count)
         {
-            ExpectancyAverage = new List<double>();
-            ExpectancyMedian = new List<double>();
-            WinPercentage = new List<double>();
-            ReturnByFbe = new List<List<double>>();
-            DrawdownByFbe = new List<List<double>>();
-            RollingExpectancy = new List<List<double>>();
 
-            for (int i = 0; i < count; i++)
-            {
-                ExpectancyAverage.Add(_expectancyAverage[i]);
-                ExpectancyMedian.Add(_expectancyMedian[i]);
-                WinPercentage.Add(_winpercentage[i]);
-                ReturnByFbe.Add(_returnByFbe[i]);
-                DrawdownByFbe.Add(_drawdownByFbe[i]);
-                RollingExpectancy.Add(_rollingExpectancy[i]);
-            }
+            _analyses = _analyses.OrderBy(x => x.Position).ToList();
+            ExpectancyAverage = _analyses.Select(x => x.ExpectancyAverage).ToList();
+            ExpectancyMedian = _analyses.Select(x => x.ExpectancyMedian).ToList();
+            WinPercentage = _analyses.Select(x => x.WinPercentage).ToList();
+            ReturnByTest = _analyses.Select(x => x._histoStats.ResultHistogram).ToList();
+            DrawdownByTest = _analyses.Select(x => x._histoStats.DrawddownHistogram).ToList();
         }
     }
 
 
+
+    public class AnalysisState
+    {
+        public int Position { get; }
+        public HistogramStatistics _histoStats { get; }
+
+        public double ExpectancyAverage { get; private set; }
+        public double ExpectancyMedian { get; private set; }
+        public double WinPercentage { get; private set; }
+
+        public List<double> RollingExpectancy { get; private set; }
+
+
+        public AnalysisState(ITest result, BinDescriptor bin, int i)
+        {
+            Position = i;
+            _histoStats = new HistogramStatistics(result, bin);
+            AddGeneralStats(result);
+        }
+
+        private void AddGeneralStats(ITest results)
+        {
+            ExpectancyAverage = results.ExpectancyAverage;
+            ExpectancyMedian = results.ExpectancyMedian;
+            WinPercentage = (results.WinPercentage);
+            RollingExpectancy = (EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 100));
+        }
+    }
+
+
+
     public class HistogramStatistics
     {
-        private ITest _test { get; set; }
-        public Dictionary<double, int> ResultHistogram { get; private set; }
-        public Dictionary<double, int> DrawdownHistogram { get; private set; }
+        private Dictionary<double, int> _resultHistogramBuilder { get; set; }
+        private Dictionary<double, int> _drawdownHistogramBuilder { get; set; }
+        public List<double> ResultHistogram { get; set; }
+        public List<double> DrawddownHistogram { get; set; }
+        public Dictionary<double, List<double>> DrawdownByReturn { get; set; }
 
-        public HistogramStatistics(ITest results, double lowerbound, double upperbound, double width)
+        public HistogramStatistics(ITest results, BinDescriptor bin)
         {
-            _test = results;
-            ResultHistogram = HistogramTools.BinGenerator(lowerbound, upperbound, width);
-            DrawdownHistogram = HistogramTools.BinGenerator(lowerbound, 0, width);
+            _resultHistogramBuilder = HistogramTools.BinGenerator(bin);
+            _drawdownHistogramBuilder = HistogramTools.BinGenerator(bin);
+            DrawdownByReturn = HistogramTools.CategoryGenerator(bin);
+
+            GenerateHistogramStats(results);
+            Finalise();
 
         }
 
-        public void GenerateHistogramStats(ConcurrentDictionary<double, ConcurrentBag<double>> returnByDrawdown)
+        private void GenerateHistogramStats(ITest results)
         {
-            for (int j = 0; j < _test.FBEResults.Length; j++)
-                if (_test.FBEResults[j] != 0) {
-                    HistogramTools.CategoriseItem(returnByDrawdown, _test.FBEDrawdown[j], _test.FBEResults[j]);
-                    HistogramTools.CategoriseItem(ResultHistogram, _test.FBEResults[j]);
-                    if (_test.FBEResults[j] > 0) HistogramTools.CategoriseItem(DrawdownHistogram, _test.FBEDrawdown[j]);
+            for (int j = 0; j < results.FBEResults.Length; j++)
+                if (results.FBEResults[j] != 0) {
+                    HistogramTools.CategoriseItem(DrawdownByReturn, results.FBEDrawdown[j], results.FBEResults[j]);
+                    HistogramTools.CategoriseItem(_resultHistogramBuilder, results.FBEResults[j]);
+                    if (results.FBEResults[j] > 0) HistogramTools.CategoriseItem(_drawdownHistogramBuilder, results.FBEDrawdown[j]);
                 }
+        }
+
+        private void Finalise()
+        {
+            ResultHistogram = HistogramTools.GenerateHistogram(_resultHistogramBuilder);
+            DrawddownHistogram = HistogramTools.MakeCumulative(HistogramTools.GenerateHistogram(_drawdownHistogramBuilder));
         }
     }
 
