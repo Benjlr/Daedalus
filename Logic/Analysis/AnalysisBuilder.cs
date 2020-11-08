@@ -28,23 +28,19 @@ namespace Logic.Analysis
 
         private static BinDescriptor _binSizing = new BinDescriptor(-0.02, 0.02, 1.0 / 1000);
 
-        public AnalysisBuilder(System.Action subscriber)
-        {
+        public AnalysisBuilder(System.Action subscriber) {
             UpdateOnProgress = subscriber;
             _analyses = new List<AnalysisState>();
         }
 
-        public void GenerateFixedBarResults(List<ITest> results)
-        {
-
+        public void GenerateFixedBarResults(List<ITest> results) {
             InitListsAndLabels();
-            Parallel.For(0, results.Count, (i) =>
-              {
+            Parallel.For(0, results.Count, (i) => {
                   _analyses.Add(new AnalysisState(results[i], _binSizing, i));
                   UpdateOnProgress?.Invoke();
               });
             AddCategorisedAndBoundedStats();
-            InitialiseAndSortPublicLists(results.Count);
+            InitialiseAndSortPublicLists();
         }
 
         private void InitListsAndLabels()
@@ -63,15 +59,12 @@ namespace Logic.Analysis
 
 
         private void AddCategorisedAndBoundedStats() {
-
             ReturnByDrawdown = HistogramTools.GenerateHistorgramsFromCategories(
                 HistogramTools.CollateCategories(_analyses.Select(x=>x._histoStats.DrawdownByReturn).ToList(), _binSizing),
                 HistogramTools.BinGenerator(_binSizing));
         }
 
-        private void InitialiseAndSortPublicLists(int count)
-        {
-
+        private void InitialiseAndSortPublicLists(){
             _analyses = _analyses.OrderBy(x => x.Position).ToList();
             ExpectancyAverage = _analyses.Select(x => x.ExpectancyAverage).ToList();
             ExpectancyMedian = _analyses.Select(x => x.ExpectancyMedian).ToList();
@@ -80,7 +73,6 @@ namespace Logic.Analysis
             DrawdownByTest = _analyses.Select(x => x._histoStats.DrawddownHistogram).ToList();
         }
     }
-
 
 
     public class AnalysisState
