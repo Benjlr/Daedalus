@@ -100,7 +100,7 @@ namespace Logic.Analysis
             ExpectancyAverage = results.ExpectancyAverage;
             ExpectancyMedian = results.ExpectancyMedian;
             WinPercentage = (results.WinPercentage);
-            RollingExpectancy = (EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 100));
+            RollingExpectancy = (EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 200));
         }
     }
 

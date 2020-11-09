@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LinqStatistics;
 using Logic.Utils;
 
 namespace Logic.Analysis.Metrics.EntryTests.TestsDrillDown
@@ -80,13 +81,13 @@ namespace Logic.Analysis.Metrics.EntryTests.TestsDrillDown
 
         private double CalculateAvgGain(List<double> range) {
             if (range.Any(x => x > 0))
-                return range.Where(x => x > 0).Average();
+                return range.Where(x => x > 0).Median();
             return 0;
         }
 
         private double CalculateAvgLoss(List<double> range) {
             if (range.Any(x => x < 0))
-                return range.Where(x => x < 0).Average();
+                return range.Where(x => x < 0).Median();
             return 0;
         }
 
