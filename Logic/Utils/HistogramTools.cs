@@ -32,9 +32,10 @@ namespace Logic.Utils
 
 
         public static void CategoriseItem(Dictionary<double, int> myBins, double item) {
+            var keys = myBins.Keys.ToList();
             for (int j = 0; j < myBins.Count; j++)
-                if (item < myBins.Keys.ToList()[j]) {
-                    myBins[myBins.Keys.ToList()[j]]++;
+                if (item < keys[j]) {
+                    myBins[keys[j]]++;
                     break;
                 }
         }
@@ -49,30 +50,26 @@ namespace Logic.Utils
             if (bin > keys[^2]) myBins[keys[^1]].Add(item);
         }
 
-        public static List<List<double>> GenerateHistorgramsFromCategories(Dictionary<double, List<double>> CategorisedLists, Dictionary<double, int> bins ) {
+        public static List<List<double>> GenerateHistorgramsFromCategories(Dictionary<double, List<double>> CategorisedLists, BinDescriptor bins) {
             List<List<double>> results = new List<List<double>>();
             var categoryKeys = CategorisedLists.Keys.ToList();
-            for (int i = 0; i < categoryKeys.Count; i++) 
-                CrosslinkCategories(CategorisedLists, bins, categoryKeys, i, results);
-
+            for (int i = 0; i < categoryKeys.Count; i++)
+                results.Add(MakeCumulative(CrosslinkCategories(CategorisedLists[categoryKeys[i]], BinGenerator(bins))));
             return results;
         }
-        public static Dictionary<double, List<double>> CollateCategories(List<Dictionary<double, List<double>>> ListOfCategorisedLists, BinDescriptor bin)
-        {
-            var retVal = CategoryGenerator(bin);
+        private static List<double> CrosslinkCategories(List<double> values, Dictionary<double, int> bins)        {
+            for (int j = 0; j < values.Count; j++)
+                CategoriseItem(bins, values[j]);
+            return GenerateHistogram(bins);
+        }
 
+        public static Dictionary<double, List<double>> CollateCategories(List<Dictionary<double, List<double>>> ListOfCategorisedLists, BinDescriptor bin) {
+            var retVal = CategoryGenerator(bin);
             for (int i = 0; i < ListOfCategorisedLists.Count; i++)
                 foreach (var item in ListOfCategorisedLists[i])
                     retVal[item.Key].AddRange(item.Value);
 
             return retVal;
-        }
-
-        private static void CrosslinkCategories(Dictionary<double, List<double>> CategorisedLists, Dictionary<double, int> bins, List<double> categoryKeys, int i, List<List<double>> results) {
-            var values = CategorisedLists[categoryKeys[i]].ToList();
-            for (int j = 0; j < CategorisedLists[categoryKeys[i]].Count; j++)
-                CategoriseItem(bins, values[j]);
-            results.Add(MakeCumulative(GenerateHistogram(bins)));
         }
 
         public static List<double> GenerateHistogram(Dictionary<double, int> myBins) {

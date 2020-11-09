@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Reflection;
 using Xunit;
 
 namespace Logic.Tests
@@ -36,6 +37,22 @@ namespace Logic.Tests
             new List<double>() {0.5, 0.5, 0.5, 0.5, 1.0, 1},
             new List<double>() {0, 0, 1, 1, 1, 1},
             new List<double>() {1, 1, 1, 1, 1, 1},
+        };
+
+        private List<Dictionary<double, List<double>>> CollationInput = new List<Dictionary<double, List<double>>>()
+        {
+            new Dictionary<double, List<double>>(){ {0.0, new List<double>() { } },{1.5, new List<double>() {96,2000 } },{3.0, new List<double>() {1 } } },
+            new Dictionary<double, List<double>>(){ {0.0, new List<double>() {5,6 } },{1.5, new List<double>() { -78,0.0} },{ 3.0, new List<double>() { -1} } },
+            new Dictionary<double, List<double>>(){ {0.0, new List<double>() {-1,23 } },{1.5, new List<double>() {-1 } },{ 3.0, new List<double>() { } } },
+            new Dictionary<double, List<double>>(){ {0.0, new List<double>() { 0,0} },{1.5, new List<double>() { 10,-23} },{ 3.0, new List<double>() {0.8 } } },
+            new Dictionary<double, List<double>>(){ {0.0, new List<double>() { } },{1.5, new List<double>() {4 } },{ 3.0, new List<double>() { } } },
+        };
+
+
+
+        private Dictionary<double, List<double>> CollationResults = new Dictionary<double, List<double>>()
+        {
+            {0.0, new List<double>() { 5,6,-1,23,0,0} },{1.5, new List<double>() {96,2000,-78,0.0,-1,10,-23,4 } },{3.0, new List<double>() {1,-1,0.8 } } ,{double.PositiveInfinity, new List<double>() {} }
         };
 
 
@@ -147,7 +164,7 @@ namespace Logic.Tests
         {
             var categoriseDrawdown = HistogramTools.CategoryGenerator(new BinDescriptor(-20, 20, 5));
             foreach (var t in ReturnsAndDrawdown) HistogramTools.CategoriseItem(categoriseDrawdown, t.Item2, t.Item1);
-            var results = HistogramTools.GenerateHistorgramsFromCategories(categoriseDrawdown, HistogramTools.BinGenerator(new BinDescriptor(-20, 0, 5)));
+            var results = HistogramTools.GenerateHistorgramsFromCategories(categoriseDrawdown, new BinDescriptor(-20, 0, 5));
 
             for (int i = 0; i < RanDResults.Count; i++)
             for (int j = 0; j < RanDResults[i].Count; j++)
@@ -159,6 +176,13 @@ namespace Logic.Tests
 
             Assert.Equal(results, RanDResults);
 
+        }
+
+        [Fact]
+        public void ShouldCollateCategorisedLists()
+        {
+            var categorisedList = HistogramTools.CollateCategories(CollationInput, new BinDescriptor(0,3,1.5));
+            Assert.Equal(CollationResults, categorisedList);
         }
     }
 }

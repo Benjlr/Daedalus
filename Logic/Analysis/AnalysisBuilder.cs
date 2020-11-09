@@ -61,7 +61,7 @@ namespace Logic.Analysis
         private void AddCategorisedAndBoundedStats() {
             ReturnByDrawdown = HistogramTools.GenerateHistorgramsFromCategories(
                 HistogramTools.CollateCategories(_analyses.Select(x=>x._histoStats.DrawdownByReturn).ToList(), _binSizing),
-                HistogramTools.BinGenerator(_binSizing));
+                _binSizing);
         }
 
         private void InitialiseAndSortPublicLists(){
@@ -71,6 +71,7 @@ namespace Logic.Analysis
             WinPercentage = _analyses.Select(x => x.WinPercentage).ToList();
             ReturnByTest = _analyses.Select(x => x._histoStats.ResultHistogram).ToList();
             DrawdownByTest = _analyses.Select(x => x._histoStats.DrawddownHistogram).ToList();
+            RollingExpectancy = _analyses.Select(x => x.RollingExpectancy).ToList();
         }
     }
 
@@ -102,8 +103,6 @@ namespace Logic.Analysis
             RollingExpectancy = (EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 100));
         }
     }
-
-
 
     public class HistogramStatistics
     {
