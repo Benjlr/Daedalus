@@ -7,6 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Utils\LocalData\asx200cash" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Utils\LocalData\asx200cash">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="OxyPlot.Wpf" Version="2.0.0" />
     <PackageReference Include="PriceSeriesCore" Version="1.0.3" />
   </ItemGroup>

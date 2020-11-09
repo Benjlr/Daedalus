@@ -9,20 +9,20 @@ namespace Logic.Analysis.Metrics.EntryTests.TestsDrillDown
     public class EntryTestDrilldown
     {
 
-        public static List<double> GetRollingExpectancy(List<double> resultList, int lookbackPeriod)
+        public static List<DrillDownStats> GetRollingExpectancy(List<double> resultList, int lookbackPeriod)
         {
             return RunThroughResultSet(resultList, lookbackPeriod);            
         }
 
-        public static List<double> GetExpectancyByEpoch(List<double> resultList, int divisions)
+        public static List<DrillDownStats> GetExpectancyByEpoch(List<double> resultList, int divisions)
         {
             return IterateThroughEpochs(EpochGenerator.SplitListIntoEpochs(resultList,divisions).EpochContainer);
         }
 
 
-        private static List<double> IterateThroughEpochs(List<List<double>> epochs)
+        private static List<DrillDownStats> IterateThroughEpochs(List<List<double>> epochs)
         {
-            var retval = new List<double>();
+            var retval = new List<DrillDownStats>();
             foreach (var epoch in epochs) {
                 var vals = epoch.Where(x => x != 0).ToList();
                 retval.Add(IterateExpectancy(vals));
@@ -30,14 +30,14 @@ namespace Logic.Analysis.Metrics.EntryTests.TestsDrillDown
             return retval;
         }
 
-        private static List<double> AddOnes(int initPeriod) {
-            var myList = new List<double>();
+        private static List<DrillDownStats> AddOnes(int initPeriod) {
+            var myList = new List<DrillDownStats>();
             for (int i = 0; i < initPeriod; i++)
-                myList.Add(1);
+                myList.Add(new DrillDownStats(new List<double>()));
             return myList;
         }
 
-        private static List<double> RunThroughResultSet(List<double> resultList, int lookbackPeriod)
+        private static List<DrillDownStats> RunThroughResultSet(List<double> resultList, int lookbackPeriod)
         {
             var indexThresh = ListTools.GetIndexAtThresholdNonZeroes(lookbackPeriod, resultList);
             var retVal = AddOnes(indexThresh);
@@ -59,48 +59,54 @@ namespace Logic.Analysis.Metrics.EntryTests.TestsDrillDown
             return retVal;
         }
 
-        private static double IterateExpectancy(List<double> resultsList) {
-            if (resultsList.Count == 0) return 1;
-            return new DrillDownStats(resultsList).Expectancy;
+        private static DrillDownStats IterateExpectancy(List<double> resultsList) {
+            if (resultsList.Count == 0) return new DrillDownStats(new List<double>());
+            return new DrillDownStats(resultsList);
         }
     }
 
     public class DrillDownStats
     {
-        public double WinPercent { get; }
-        public double AvgGain { get; }
-        public double AvgLoss { get; }
-        public double Expectancy { get; }
+        public double WinPercent { get; private set; }
+        public double AvgGain { get; private set; }
+        public double AvgLoss { get; private set; }
+        public double MedianGain { get; private set; }
+        public double MedianLoss { get; private set; }
+        public double AverageExpectancy { get; private set; } = 1;
+        public double MedianExpectancy { get; private set; } = 1;
 
         public DrillDownStats(List<double> range) {
-            AvgGain = CalculateAvgGain(range);
-            AvgLoss = CalculateAvgLoss(range);
-            WinPercent = CalculateWinPercent(range);
-            Expectancy = CalculateExpectancy();
+            CalculateGain(range);
+            CalculateLoss(range);
+            CalculateWinPercent(range);
+            if(range.Count > 0)CalculateExpectancy();
         }
 
-        private double CalculateAvgGain(List<double> range) {
-            if (range.Any(x => x > 0))
-                return range.Where(x => x > 0).Median();
-            return 0;
+        private void CalculateGain(List<double> range) {
+            if (range.Any(x => x > 0)) {
+                MedianGain = range.Where(x => x > 0).Median();
+                AvgGain = range.Where(x => x > 0).Average();
+            }
         }
 
-        private double CalculateAvgLoss(List<double> range) {
-            if (range.Any(x => x < 0))
-                return range.Where(x => x < 0).Median();
-            return 0;
+        private void CalculateLoss(List<double> range) {
+            if (range.Any(x => x < 0)) {
+                MedianLoss = range.Where(x => x < 0).Median();
+                AvgLoss = range.Where(x => x < 0).Average();
+            }
         }
 
-        private double CalculateWinPercent(List<double> range) {
+        private void CalculateWinPercent(List<double> range) {
             var numerator = range.Count(x => x > 0);
             var denominator = (double) range.Count(x => Math.Abs(x) > 0);
-            return  numerator / denominator;
+            WinPercent = numerator / denominator;
         }
 
-        private double CalculateExpectancy() {
-            var expectancy = this.AvgGain * this.WinPercent/ (-this.AvgLoss * (1 - this.WinPercent));
-            if (expectancy > 3 || double.IsInfinity(expectancy)) expectancy = 3.0;
-            return expectancy;
+        private void CalculateExpectancy() {
+            AverageExpectancy = this.AvgGain * this.WinPercent/ (-this.AvgLoss * (1 - this.WinPercent));
+            if (AverageExpectancy > 3 || double.IsInfinity(AverageExpectancy)) AverageExpectancy = 3.0;
+            MedianExpectancy = this.MedianGain * this.WinPercent / (-this.MedianLoss * (1 - this.WinPercent));
+            if (MedianExpectancy > 3 || double.IsInfinity(MedianExpectancy)) MedianExpectancy = 3.0;
         }
     }
 
@@ -147,13 +153,5 @@ namespace Logic.Analysis.Metrics.EntryTests.TestsDrillDown
             }
         }
 
-    }
-
-    public class ReturnDictionary
-    {
-        public int MyIndex { get; set; }
-        public int ResultIndex { get; set; }
-        public double Result { get; set; }
-        public List<double> ResultList { get; set; }
     }
 }

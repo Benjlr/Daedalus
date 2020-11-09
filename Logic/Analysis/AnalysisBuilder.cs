@@ -26,7 +26,7 @@ namespace Logic.Analysis
         private List<AnalysisState> _analyses { get; set; }
         private System.Action UpdateOnProgress { get; set; }
 
-        private static BinDescriptor _binSizing = new BinDescriptor(-0.02, 0.02, 1.0 / 1000);
+        private static readonly BinDescriptor _binSizing = new BinDescriptor(-0.02, 0.02, 1.0 / 1000);
 
         public AnalysisBuilder(System.Action subscriber) {
             UpdateOnProgress = subscriber;
@@ -52,9 +52,9 @@ namespace Logic.Analysis
             X_label_categorised = new List<string>();
             Y_label_categorised = new List<string>();
 
-            //for (double i = _lowerBound; i <= _upperBound; i += _width) X_label.Add($"<{i:0.0%}");
-            //for (double i = _lowerBound; i <= _width; i += _width) X_label_categorised.Add($"<{i:0.0%}");
-            //for (double i = _lowerBound; i <= _upperBound; i += _width) Y_label_categorised.Add($"<{i:0.0%}");
+            for (double i = _binSizing.LowerBound; i <= _binSizing.UpperBound; i += _binSizing.Width) X_label.Add($"<{i:0.0%}");
+            for (double i = _binSizing.LowerBound; i <= _binSizing.Width; i += _binSizing.Width) X_label_categorised.Add($"<{i:0.0%}");
+            for (double i = _binSizing.LowerBound; i <= _binSizing.UpperBound; i += _binSizing.Width) Y_label_categorised.Add($"<{i:0.0%}");
         }
 
 
@@ -71,7 +71,7 @@ namespace Logic.Analysis
             WinPercentage = _analyses.Select(x => x.WinPercentage).ToList();
             ReturnByTest = _analyses.Select(x => x._histoStats.ResultHistogram).ToList();
             DrawdownByTest = _analyses.Select(x => x._histoStats.DrawddownHistogram).ToList();
-            RollingExpectancy = _analyses.Select(x => x.RollingExpectancy).ToList();
+            RollingExpectancy = _analyses.OrderByDescending(x=>x.ExpectancyMedian).Take(50).Select(x => x.RollingExpectancy).ToList();
         }
     }
 
@@ -100,7 +100,7 @@ namespace Logic.Analysis
             ExpectancyAverage = results.ExpectancyAverage;
             ExpectancyMedian = results.ExpectancyMedian;
             WinPercentage = (results.WinPercentage);
-            RollingExpectancy = (EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 200));
+            RollingExpectancy = EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 200).Select(x=>x.MedianExpectancy).ToList();
         }
     }
 

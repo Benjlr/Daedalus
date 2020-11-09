@@ -14,7 +14,7 @@ namespace Logic.Analysis.StrategyRunners
 
         public bool GoodToEnter(DrillDownStats stats, MarketData data)
         {
-            var boolOne = ExpectancyCutOff == -1 || stats.Expectancy > ExpectancyCutOff; 
+            var boolOne = ExpectancyCutOff == -1 || stats.MedianExpectancy > ExpectancyCutOff; 
             var boolTwo = WinPercentCutOff == -1 ||  stats.WinPercent > WinPercentCutOff; 
             var boolThree = SpreadCutOff == -1 || SpreadCutOff > data.Open_Ask - data.Open_Bid;
             var boolFour = NoTradePeriods == null || NoTradePeriods.All(x => WithinTradeablePeriod(new DateBoundary(data.Time), x));

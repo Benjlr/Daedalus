@@ -28,47 +28,72 @@ namespace Logic.Tests
         }
 
         [Fact]
-        private void ShouldGenerateRollingExpectancyOverSmallPeriod() {
-            var resultsLong = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpResults.txt");
+        private void ShouldGenerateRollingExpectancyOverSmallPeriodAvg() {
+            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpResults.txt",2);
             var TestData = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpData.txt");
             var ten = EntryTestDrilldown.GetRollingExpectancy(TestData, 10);
-            Assert.Equal(resultsLong.Select(TestUtils._round), ten.Select(TestUtils._round));
+            Assert.Equal(resultsLong[0].Select(TestUtils._round), ten.Select(x => TestUtils._round(x.AverageExpectancy)));
         }
 
         [Fact]
-        private void ShouldGenerateRollingExpectancyOverLongPeriod() {
-            var resultsLong = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpResults.txt");
+        private void ShouldGenerateRollingExpectancyOverSmallPeriodMed()
+        {
+            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpResults.txt", 2);
+            var TestData = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpData.txt");
+            var ten = EntryTestDrilldown.GetRollingExpectancy(TestData, 10);
+            Assert.Equal(resultsLong[1].Select(TestUtils._round), ten.Select(x => TestUtils._round(x.MedianExpectancy)));
+        }
+
+
+        [Fact]
+        private void ShouldGenerateRollingExpectancyOverLongPeriodAvg() {
+            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpResults.txt",2);
             var TestData = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpData.txt"); 
              var thirteen = EntryTestDrilldown.GetRollingExpectancy(TestData, 13);
+             var temp = thirteen.Select(x => x.MedianExpectancy).ToList();
 
-             resultsLong = resultsLong.Select(TestUtils._round).ToList();
-             thirteen = thirteen.Select(TestUtils._round).ToList();
+            Assert.Equal(resultsLong[0].Select(TestUtils._round), thirteen.Select(x => TestUtils._round(x.AverageExpectancy)));
+        }
+        [Fact]
+        private void ShouldGenerateRollingExpectancyOverLongPeriodMed()
+        {
+            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpResults.txt",2);
+            var TestData = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpData.txt");
+            var thirteen = EntryTestDrilldown.GetRollingExpectancy(TestData, 13);
 
-             for (int i = 0; i < thirteen.Count; i++)
-             {
-
-                 Assert.Equal(resultsLong[i], thirteen[i]);
-             }
-
-            Assert.Equal(resultsLong.Select(TestUtils._round), thirteen.Select(TestUtils._round));
+            Assert.Equal(resultsLong[1].Select(TestUtils._round), thirteen.Select(x => TestUtils._round(x.MedianExpectancy)));
         }
 
         [Fact]
-        private void ShouldGenerateExpectancyOverSmallEpochSplit()        {
-            var resultsThreePeriod = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\30PeriodExp.txt");
+        private void ShouldGenerateExpectancyOverSmallEpochSplitAvg()        {
+            var resultsThreePeriod = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\30PeriodExp.txt",2);
             var ThreeEpoch = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 3);
-            Assert.Equal(ThreeEpoch.Select(TestUtils._round), resultsThreePeriod.Select(TestUtils._round));
+            Assert.Equal(ThreeEpoch.Select(x => TestUtils._round(x.AverageExpectancy)), resultsThreePeriod[0].Select(TestUtils._round));
         }
 
         [Fact]
-        private void ShouldGenerateExpectancyOverLargerEpochSplit()        {
-            var resultsTenPeriod = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\10PeriodExp.txt");
+        private void ShouldGenerateExpectancyOverSmallEpochSplitMed() {
+            var resultsThreePeriod = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\30PeriodExp.txt",2);
+            var ThreeEpoch = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 3);
+            Assert.Equal(ThreeEpoch.Select(x => TestUtils._round(x.MedianExpectancy)), resultsThreePeriod[1].Select(TestUtils._round));
+        }
+
+        [Fact]
+        private void ShouldGenerateExpectancyOverLargerEpochSplitAvg() {
+            var resultsTenPeriod = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\10PeriodExp.txt",2);
             var tenEpoch = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 10);
-            Assert.Equal(resultsTenPeriod.Select(TestUtils._round), tenEpoch.Select(TestUtils._round));
+            Assert.Equal(resultsTenPeriod[0].Select(TestUtils._round), tenEpoch.Select(x=>TestUtils._round(x.AverageExpectancy)));
         }
 
         [Fact]
-        private void GeneratesBoundedStats()        {
+        private void ShouldGenerateExpectancyOverLargerEpochSplitMed() {
+            var resultsTenPeriod = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\10PeriodExp.txt",2);
+            var tenEpoch = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 10);
+            Assert.Equal(resultsTenPeriod[1].Select(TestUtils._round), tenEpoch.Select(x => TestUtils._round(x.MedianExpectancy)));
+        }
+
+        [Fact]
+        private void GeneratesBoundedStats() {
             var myLIst = new List<double>();
             for (int i = 0; i <= 100; i++) myLIst.Add(i);
             var myStat = new BoundedStat(myLIst, 0.8);
@@ -134,6 +159,66 @@ namespace Logic.Tests
             Assert.Equal(myListThree.Count / (29 - 1), epochFour.EpochContainer[21].Count);
             Assert.Equal(myListThree.Count / (29 - 1), epochFour.EpochContainer[3].Count);
             Assert.Equal(12345, epochFour.EpochContainer.Sum(x => x.Count));
+        }
+
+        private List<double> _testList = new List<double>(){-1,-1,-1,-0.5,-0.5,-0.5,0,0,0,0.5,0.5,0.5,1,1,1};
+        private List<double> _testList2 = new List<double>(){1,1,1,0.5,0.5,0.5,0,0,0,0.5,0.5,0.5,1,1,1};
+        private List<double> _testList3 = new List<double>() {123, -45, 0.02, 12, 99, -89, 123, 122.4, -450.55, 450, -0.002, 0.003, 0.05, 12, 3, -42};
+
+        [Fact]
+        private void ShouldGenerateCorrectAverageGain()
+        {
+            Assert.Equal(0.75, new DrillDownStats(_testList).AvgGain);
+            Assert.Equal(0.75, new DrillDownStats(_testList2).AvgGain);
+            Assert.Equal(85.86118181818182, new DrillDownStats(_testList3).AvgGain);
+        }
+
+        [Fact]
+        private void ShouldGenerateCorrectMedianGain()
+        {
+            Assert.Equal(0.75, new DrillDownStats(_testList).MedianGain);
+            Assert.Equal(0.75, new DrillDownStats(_testList2).MedianGain);
+            Assert.Equal(12, new DrillDownStats(_testList3).MedianGain);
+        }
+
+        [Fact]
+        private void ShouldGenerateCorrectAverageLoss()
+        {
+            Assert.Equal(-0.75, new DrillDownStats(_testList).AvgLoss);
+            Assert.Equal(0, new DrillDownStats(_testList2).AvgLoss);
+            Assert.Equal(-125.31039999999999, new DrillDownStats(_testList3).AvgLoss);
+        }
+
+        [Fact]
+        private void ShouldGenerateCorrectMedianLoss()
+        {
+            Assert.Equal(-0.75, new DrillDownStats(_testList).MedianLoss);
+            Assert.Equal(0, new DrillDownStats(_testList2).MedianLoss);
+            Assert.Equal(-45, new DrillDownStats(_testList3).MedianLoss);
+        }
+
+        [Fact]
+        private void ShouldGenerateCorrectWinPercentage()
+        {
+            Assert.Equal(0.5, new DrillDownStats(_testList).WinPercent);
+            Assert.Equal(1, new DrillDownStats(_testList2).WinPercent);
+            Assert.Equal(0.6875, new DrillDownStats(_testList3).WinPercent);
+        }
+
+        [Fact]
+        private void ShouldGenerateCorrectExpectancyAverage()
+        {
+            Assert.Equal(1, new DrillDownStats(_testList).AverageExpectancy);
+            Assert.Equal(3, new DrillDownStats(_testList2).AverageExpectancy);
+            Assert.Equal(1.507413590571892, new DrillDownStats(_testList3).AverageExpectancy);
+        }
+
+        [Fact]
+        private void ShouldGenerateCorrectExpectancyMedian()
+        {
+            Assert.Equal(1, new DrillDownStats(_testList).MedianExpectancy);
+            Assert.Equal(3, new DrillDownStats(_testList2).MedianExpectancy);
+            Assert.Equal(0.5866666666666667, new DrillDownStats(_testList3).MedianExpectancy);
         }
     }
 }

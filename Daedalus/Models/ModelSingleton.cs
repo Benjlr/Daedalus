@@ -17,61 +17,60 @@ namespace Daedalus.Models
     public class ModelSingleton
     {
 
-        public static ModelSingleton Instance => _instance ?? (_instance = new ModelSingleton());
+        public static ModelSingleton Instance => _instance ??= new ModelSingleton();
         private static ModelSingleton _instance { get; set; }
         public Market Mymarket { get; set; }
         public Strategy MyStrategy { get; set; }
-
+        private object _lock = new object() ;
 
         private ModelSingleton()
         {
-
-            try
+            lock (_lock)
             {
-                Mymarket = MarketBuilder.CreateMarket(Markets.ASX200_Cash_5_Min);
-
-            }
-            catch
-            {
-                OpenFileDialog t = new OpenFileDialog();
-                t.ShowDialog();
-                string getData = t.FileName;
-                Mymarket = MarketBuilder.CreateMarket(getData);
-            }
+                try {
+                    Mymarket = MarketBuilder.CreateMarket(Markets.ASX200_Cash_5_Min);
+                }
+                catch {
+                    var marketData = Directory.GetCurrentDirectory() + "\\Utils\\LocalData\\asx200cash";
+                    Mymarket = MarketBuilder.CreateMarket(marketData);
+                }
 
 
-            
-            
-            MyStrategy = StrategyBuilder.CreateStrategy(new IRuleSet[]
-            {
-                //new MAViolation(), 
-                new ThreeLowerLows(),
-                //new ThreeHigherHighs(), 
 
-                //new BullishMATag(),
-                //new PriceContractionFromLow(),
-                //new KeltnerOverSold(),
-                //new KeltnerOverBought(),
+
+                MyStrategy = StrategyBuilder.CreateStrategy(new IRuleSet[]
+                {
+                    //new MAViolation(), 
+                    new ThreeLowerLows(),
+                    //new ThreeHigherHighs(), 
+
+                    //new BullishMATag(),
+                    //new PriceContractionFromLow(),
+                    //new KeltnerOverSold(),
+                    //new KeltnerOverBought(),
                 
-                //new Sigma(), 
-                //new PivotExit(), 
+                    //new Sigma(), 
+                    //new PivotExit(), 
 
-                //new TrendDay(),
+                    //new TrendDay(),
 
-                new ATRContraction(),
-                //new ATRExpansion(),
+                    new ATRContraction(),
+                    //new ATRExpansion(),
 
-                //new PriceContraction(),
-                //new InvestorBotEntry(),
+                    //new PriceContraction(),
+                    //new InvestorBotEntry(),
 
-                //new BearishMATage(), 
+                    //new BearishMATage(), 
 
-                //new FiftyFiftyEntry(), 
-                //new FiftyFiftyExit(), 
+                    //new FiftyFiftyEntry(), 
+                    //new FiftyFiftyExit(), 
 
-                //new CrossoverTag(),
+                    //new CrossoverTag(),
 
-            }, Mymarket);
+                }, Mymarket);
+
+            }
+
 
         }
 

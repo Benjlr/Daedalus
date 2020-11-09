@@ -33,7 +33,7 @@ namespace Daedalus.ViewModels
         public PlotModel ShortDrawdowns { get; set; }
         protected BackgroundWorker _backGroundWorker { get; set; }
 
-        public EntryTestViewModel()
+        protected EntryTestViewModel()
         {
             LoadStatus = new InitTestViewModel();
             LoadWindowVisibility = Visibility.Visible;
@@ -42,13 +42,6 @@ namespace Daedalus.ViewModels
             NotifyPropertyChanged($"ChartVisibility");
 
             ThreadPool.QueueUserWorkItem(new WaitCallback(bg_DoWork));
-
-
-            //_backGroundWorker = new BackgroundWorker();
-            //_backGroundWorker.DoWork += new DoWorkEventHandler(bg_DoWork);
-
-            //_backGroundWorker.RunWorkerAsync();
-            //_backGroundWorker.RunWorkerCompleted += finished_work;
         }
         private void bg_DoWork(object callback)
         {
@@ -60,19 +53,17 @@ namespace Daedalus.ViewModels
             PlotModelDrawdownShort = HeatMap.GenerateHeatMap(myTestsShort.ReturnByDrawdown, myTestsShort.X_label_categorised, myTestsShort.Y_label_categorised);
             PlotModelReturnsLong = HeatMap.GenerateHeatMap(myTestsLong.ReturnByTest, myTestsLong.X_label, myTestsLong.Y_label);
             PlotModelReturnsShort = HeatMap.GenerateHeatMap(myTestsShort.ReturnByTest, myTestsShort.X_label, myTestsShort.Y_label);
-            PlotModelDDsLong = HeatMap.GenerateHeatMap(myTestsLong.DrawdownByTest, myTestsLong.X_label_categorised, myTestsLong.Y_label);
-            PlotModelDDsShort = HeatMap.GenerateHeatMap(myTestsShort.DrawdownByTest, myTestsShort.X_label_categorised, myTestsShort.Y_label);
+            //PlotModelDDsLong = HeatMap.GenerateHeatMap(myTestsLong.DrawdownByTest, myTestsLong.X_label_categorised, myTestsLong.Y_label);
+            //PlotModelDDsShort = HeatMap.GenerateHeatMap(myTestsShort.DrawdownByTest, myTestsShort.X_label_categorised, myTestsShort.Y_label);
             ExpectancyLong = Series.GenerateExpectanySeries(myTestsLong.ExpectancyMedian, myTestsLong.ExpectancyAverage);
             ExpectancyShort = Series.GenerateExpectanySeries(myTestsShort.ExpectancyMedian, myTestsShort.ExpectancyAverage);
             LongRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.RollingExpectancy));
             ShortRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.RollingExpectancy));
             LongDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.DrawdownByTest));
             ShortDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.DrawdownByTest));
+            
 
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                finished_work();
-            });
+            Application.Current.Dispatcher.Invoke(finished_work);
         }
         private void finished_work()
         {
@@ -86,8 +77,8 @@ namespace Daedalus.ViewModels
             PlotModelDrawdownShort.InvalidatePlot(false);
             PlotModelReturnsLong.InvalidatePlot(false);
             PlotModelReturnsShort.InvalidatePlot(false);
-            PlotModelDDsLong.InvalidatePlot(false);
-            PlotModelDDsShort.InvalidatePlot(false);
+            //PlotModelDDsLong.InvalidatePlot(false);
+            //PlotModelDDsShort.InvalidatePlot(false);
             ExpectancyLong.InvalidatePlot(false);
             ExpectancyShort.InvalidatePlot(false);
             LongRollingExp.InvalidatePlot(false);
@@ -129,7 +120,7 @@ namespace Daedalus.ViewModels
     public class FixedBarExitViewmodel : EntryTestViewModel
     {
         protected override List<ITest[]> GenerateEntryTests() {
-            var fixedBarExitOptions = new FixedBarExitTestOptions(5, 220, 1);
+            var fixedBarExitOptions = new FixedBarExitTestOptions(25, 220, 1);
             LoadStatus.UpdateNameAndTotal($"Generating Long Fixed Bar Exit Tests", 
                 (fixedBarExitOptions.MaximumExitPeriod - fixedBarExitOptions.MinimumExitPeriod) / fixedBarExitOptions.Increment);
             return TestFactory.GenerateFixedBarExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, fixedBarExitOptions, LoadStatus.UpdateCount);
@@ -149,12 +140,11 @@ namespace Daedalus.ViewModels
     public class StopTargetExitViewmodel : EntryTestViewModel
     {
         protected override List<ITest[]> GenerateEntryTests()        {
-            var stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.04 / 10.0, 0.04 / 10.0, 0.008, 500);
-            LoadStatus.UpdateNameAndTotal($"Generating Stop Target Exit Tests", stopTargetExitOptions.Divisions);
+            var stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.02 / 10.0, 0.02 / 10.0, 0.01, 12);
+            LoadStatus.UpdateNameAndTotal($"Generating Stop Target Exit Tests", stopTargetExitOptions.Divisions * stopTargetExitOptions.Divisions);
             return TestFactory.GenerateFixedStopTargetExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, 
                 stopTargetExitOptions, LoadStatus.UpdateCount);
         }
 
     }
-
 }

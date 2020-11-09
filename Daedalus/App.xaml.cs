@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Daedalus.Models;
 
 namespace Daedalus
 {
@@ -14,5 +15,9 @@ namespace Daedalus
     /// </summary>
     public partial class App : Application
     {
+        private void App_OnStartup(object sender, StartupEventArgs e)
+        {
+            var t  = ModelSingleton.Instance.Mymarket;
+        }
     }
 }

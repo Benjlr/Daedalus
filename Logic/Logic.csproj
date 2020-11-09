@@ -11,16 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Utils\LocalData\asx200cash" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Utils\LocalData\asx200cash">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="LinqStatistics" Version="2.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="PriceSeriesCore" Version="1.0.3" />

@@ -103,11 +103,11 @@ namespace Logic.Analysis.Metrics
             return myTest;
         }
 
-        private static ITest[] StopTargetTestArrayInitiliser(FixedStopTargetExitTestOptions options, int i) {
+        private static ITest[] StopTargetTestArrayInitiliser(FixedStopTargetExitTestOptions options, int i,int j) {
             ITest[] myTest = new ITest[2]
             {
-                new LongFixedStopTargetExitTest(i * options.Increment + options.MinimumTarget, options.MinimumStop + i * options.Increment), 
-                new ShortFixedStopTargetExitTest(i * options.Increment + options.MinimumTarget, options.MinimumStop + i * options.Increment)
+                new LongFixedStopTargetExitTest(j * options.Increment + options.MinimumTarget, options.MinimumStop + i * options.Increment), 
+                new ShortFixedStopTargetExitTest(j * options.Increment + options.MinimumTarget, options.MinimumStop + i * options.Increment)
             };
             return myTest;
         }
@@ -124,7 +124,8 @@ namespace Logic.Analysis.Metrics
         private static Dictionary<int, ITest[]> StopTargetTestsToDictionary(FixedStopTargetExitTestOptions options) {
             Dictionary<int, ITest[]> retval = new Dictionary<int, ITest[]>();
             for (int i = 0; i <= options.Range / options.Increment; i++)
-                retval.Add(i, StopTargetTestArrayInitiliser(options, i));
+            for (int j = 0; j <= options.Range / options.Increment; j++)
+                retval.Add(j + i * ((int)(options.Range / options.Increment)+1), StopTargetTestArrayInitiliser(options, i,j));
             return retval;
         }
         private static Dictionary<int, ITest[]> RandomExitTestsToDictionary(int testCount, int maxLength) {

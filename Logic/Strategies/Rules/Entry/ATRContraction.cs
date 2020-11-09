@@ -69,7 +69,7 @@ namespace Logic.Rules.Entry
             for (int i =22; i < data.Count; i++)
             {
                 var myVOl = ListTools.GetActionitionRange(volavg.GetRange(i - 20, 20), volavg[i]);
-                if ( atrPC[i] == 0.0 && myVOl < 0.15) Satisfied[i] = true;
+                if ( atrPC[i] == 0.0 && myVOl < 0.1) Satisfied[i] = true;
 
                 //////var xxx = ListTools.GetActionitionRange(ListTools.GetNewList(data, i - 25, i), data[i].Close);
                 //var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);

@@ -24,31 +24,6 @@
             <TabItem Header="1">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="27*"/>
-                        <ColumnDefinition Width="27*"/>
-                        <ColumnDefinition Width="27*"/>
-                        <ColumnDefinition Width="20*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="25*"/>
-                        <RowDefinition Height="25*"/>
-                    </Grid.RowDefinitions>
-
-                    <oxy:PlotView Grid.Column="0" Grid.Row="0" Model="{Binding PlotModelDrawdownLong}"  />
-                    <oxy:PlotView Grid.Column="0" Grid.Row="1" Model="{Binding PlotModelDrawdownShort}"  />
-                    <oxy:PlotView Grid.Column="1" Grid.Row="0" Model="{Binding PlotModelDDsLong}"  />
-                    <oxy:PlotView Grid.Column="1" Grid.Row="1" Model="{Binding PlotModelDDsShort}"  />
-                    <oxy:PlotView Grid.Column="2" Grid.Row="0" Model="{Binding PlotModelReturnsLong}"  />
-                    <oxy:PlotView Grid.Column="2" Grid.Row="1" Model="{Binding PlotModelReturnsShort}"  />
-                    <oxy:PlotView Grid.Column="3" Grid.Row="0" Model="{Binding ExpectancyLong}"  />
-                    <oxy:PlotView Grid.Column="3" Grid.Row="1" Model="{Binding ExpectancyShort}"  />
-
-
-                </Grid>
-            </TabItem>
-            <TabItem Header="2">
-                <Grid>
-                    <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50*"/>
                         <ColumnDefinition Width="0*"/>
                     </Grid.ColumnDefinitions>
@@ -73,6 +48,33 @@
                     </Grid>
                 </Grid>
             </TabItem>
+
+            <TabItem Header="2">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="0*"/>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="20*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25*"/>
+                        <RowDefinition Height="25*"/>
+                    </Grid.RowDefinitions>
+
+                    <oxy:PlotView Grid.Column="0" Grid.Row="0" Model="{Binding PlotModelDrawdownLong}"  />
+                    <oxy:PlotView Grid.Column="0" Grid.Row="1" Model="{Binding PlotModelDrawdownShort}"  />
+                    <!--<oxy:PlotView Grid.Column="1" Grid.Row="0" Model="{Binding PlotModelDDsLong}"  />
+                    <oxy:PlotView Grid.Column="1" Grid.Row="1" Model="{Binding PlotModelDDsShort}"  />-->
+                    <oxy:PlotView Grid.Column="2" Grid.Row="0" Model="{Binding PlotModelReturnsLong}"  />
+                    <oxy:PlotView Grid.Column="2" Grid.Row="1" Model="{Binding PlotModelReturnsShort}"  />
+                    <oxy:PlotView Grid.Column="3" Grid.Row="0" Model="{Binding ExpectancyLong}"  />
+                    <oxy:PlotView Grid.Column="3" Grid.Row="1" Model="{Binding ExpectancyShort}"  />
+
+
+                </Grid>
+            </TabItem>
+         
             <TabItem Header="3">
                 <Grid>
                     <Grid.ColumnDefinitions>

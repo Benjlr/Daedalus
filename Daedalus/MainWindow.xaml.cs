@@ -1,12 +1,8 @@
-﻿using System.Linq;
-using System.Windows;
-using Daedalus.Models;
-using LinqStatistics;
-using OxyPlot;
+﻿using System.Windows;
 
 namespace Daedalus
 {
-    
+
     public partial class MainWindow : Window
     {
         public MainWindow()
