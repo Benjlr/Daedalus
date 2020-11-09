@@ -1,7 +1,9 @@
-﻿using Logic.Utils.Calculations;
+﻿using Logic.Utils;
+using Logic.Utils.Calculations;
 using PriceSeriesCore.FinancialSeries;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace Logic.Rules.Entry
@@ -58,14 +60,16 @@ namespace Logic.Rules.Entry
             var fissy = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 50);
             var tenMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 10);
             var SixMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 6);
+            var volavg = MovingAverage.SimpleMovingAverage(data.Select(x=>x.Volume).ToList(), 40);
+            
 
             Satisfied = new bool[data.Count];
             var coun = 0;
 
-            for (int i =2; i < data.Count; i++)
+            for (int i =22; i < data.Count; i++)
             {
-
-                if ( atrPC[i] == 0.0) Satisfied[i] = true;
+                var myVOl = ListTools.GetActionitionRange(volavg.GetRange(i - 20, 20), volavg[i]);
+                if ( atrPC[i] == 0.0 && myVOl < 0.15) Satisfied[i] = true;
 
                 //////var xxx = ListTools.GetActionitionRange(ListTools.GetNewList(data, i - 25, i), data[i].Close);
                 //var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);

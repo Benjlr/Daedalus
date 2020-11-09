@@ -16,25 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\DetailedRandomExit.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\DetailedStopExit.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\DetailedFBETests.xaml.cs">
+    <Compile Update="Views\EntryTestView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Views\DetailedRandomExit.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\DetailedStopExit.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\DetailedFBETests.xaml">
+    <Page Update="Views\EntryTestView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

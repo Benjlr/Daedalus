@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Logic.Metrics;
 
 namespace Logic.Analysis.Metrics.EntryTests
@@ -13,11 +14,12 @@ namespace Logic.Analysis.Metrics.EntryTests
             _maxLength = maxLength;
         }
 
-        protected void GenerateExit(int i) {
+        protected void GenerateExit(int i, int maxCount) {
             _endIndex = _randomGenerator.Next(0,_maxLength) + i;
+            if (_endIndex > maxCount) _endIndex = 0;
         }
         protected void SetDuration(int i) {
-            Durations[i] = _endIndex;
+            Durations[i] = _endIndex-i;
             _endIndex = 0;
         }
     }
@@ -25,24 +27,18 @@ namespace Logic.Analysis.Metrics.EntryTests
     public class LongRandomExitTest : RandomExitTest
     {
         protected override void SetResult(MarketData[] data, int i) {
-            GenerateExit(i);
-            if (_endIndex+i < data.Length - 1) 
-                FBEResults[i] = (data[i + _endIndex].Open_Bid - data[i].Open_Ask) / data[i].Open_Ask;
+            GenerateExit(i, data.Length -1);
+            if (_endIndex != 0) 
+                FBEResults[i] = (data[_endIndex].Open_Bid - data[i].Open_Ask) / data[i].Open_Ask;
         }
 
         protected override void IterateTime(MarketData[] data, int i) {
-            for (int j = i; j < i + _endIndex; j++)
+            for (int j = i; j < _endIndex; j++)
                 if ((data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask < FBEDrawdown[i])
                     FBEDrawdown[i] = (data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask;
-            SetDuration(i);
+            SetDuration(_endIndex);
         }
         
-        private void SetDuration(int i)
-        {
-            Durations[i] = _endIndex;
-            _endIndex = 0;
-        }
-
         public LongRandomExitTest(int maxLength) : base(maxLength)
         {
         }
@@ -51,22 +47,17 @@ namespace Logic.Analysis.Metrics.EntryTests
     public class ShortRandomExitTest : RandomExitTest
     {
         protected override void SetResult(MarketData[] data, int i) {
-            GenerateExit(i);
-            if (_endIndex < data.Length - 1)
-                FBEResults[i] = (data[i].Open_Bid - data[i + _endIndex].Open_Ask) / data[i].Open_Bid;
+            GenerateExit(i, data.Length - 1);
+            if (_endIndex != 0)
+                FBEResults[i] = (data[i].Open_Bid - data[_endIndex].Open_Ask) / data[i].Open_Bid;
         }
 
         protected override void IterateTime(MarketData[] data, int i) {
-            if (_endIndex + i > data.Length) FBEDrawdown[i] = 0;
-            else IterateDrawdown(data, i);
-            SetDuration(i);
-        }
-        private void IterateDrawdown(MarketData[] data, int i) {
-            for (int j = i; j < i + _endIndex; j++)
+            for (int j = i; j < _endIndex; j++)
                 if ((data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid < FBEDrawdown[i])
                     FBEDrawdown[i] = (data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid;
+            SetDuration(i);
         }
-
 
         public ShortRandomExitTest(int maxLength) : base(maxLength)
         {

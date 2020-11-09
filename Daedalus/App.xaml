@@ -7,9 +7,9 @@
              >
 
     <Application.Resources>
-        <ViewModels:DetailedFixBarExits x:Key="DetailedFixBar" />
-        <ViewModels:DetailedFixStopExits x:Key="DetailedStopBar" />
-        <ViewModels:DetailedRandomExits x:Key="DetailedRandoms" />
+        <ViewModels:FixedBarExitViewmodel x:Key="FixedBarExitViewmodel" />
+        <ViewModels:StopTargetExitViewmodel x:Key="StopTargetExitViewmodel" />
+        <ViewModels:RandomExitViewmodel x:Key="RandomExitViewmodel" />
         <ViewModels:InitTestViewModel x:Key="TestProgress" />
     </Application.Resources>
 </Application>

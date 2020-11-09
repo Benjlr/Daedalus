@@ -11,13 +11,15 @@
     <Grid>
         <TabControl>
             <TabItem Header="Fixed Bar Exits">
-                <views:DetailedFBETests Grid.Row="0"></views:DetailedFBETests>
+                <views:EntryTestView DataContext="{StaticResource FixedBarExitViewmodel}" Grid.Row="0"></views:EntryTestView>
             </TabItem>
             <TabItem Header="Stop Target Exits">
-                <views:DetailedStopExit Grid.Row="0"></views:DetailedStopExit>
+                <views:EntryTestView DataContext="{StaticResource StopTargetExitViewmodel}" Grid.Row="0"></views:EntryTestView>
+
             </TabItem>
             <TabItem Header="Random Exits">
-                <!--<views:DetailedRandomExit Grid.Row="0"></views:DetailedRandomExit>-->
+                <views:EntryTestView DataContext="{StaticResource RandomExitViewmodel}" Grid.Row="0"></views:EntryTestView>
+
             </TabItem>
         </TabControl>
 

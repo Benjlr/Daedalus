@@ -155,5 +155,119 @@ namespace Daedalus.Charts
 
             return retval;
         }
+
+        public static PlotModel GenerateBoundedSeries(List<BoundedStat> valuesLong, List<BoundedStat> valuesShort)
+        {
+            var retval = new PlotModel();
+            retval.Axes.Add(new LinearAxis()
+            {
+                Position = AxisPosition.Bottom,
+            });
+            retval.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Left,
+                IsPanEnabled = false,
+                IsZoomEnabled = false
+            });
+
+            var lowerSeriesValues = valuesLong.Select(x => x.Lower).ToList();
+            var lowerSeries = new LineSeries()
+            {
+                Color = OxyColors.LightBlue,
+                LineStyle = LineStyle.Solid,
+                InterpolationAlgorithm = InterpolationAlgorithms.UniformCatmullRomSpline
+
+            };
+            for (int i = 0; i < lowerSeriesValues.Count; i++) lowerSeries.Points.Add(new DataPoint(i + 1, lowerSeriesValues[i]));
+            retval.Series.Add(lowerSeries);
+
+            var miedianSeriesValues = valuesLong.Select(x => x.Median).ToList();
+            var medianSeries = new LineSeries()
+            {
+                Color = OxyColors.Blue,
+                LineStyle = LineStyle.Dot,
+                //InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+                InterpolationAlgorithm = InterpolationAlgorithms.UniformCatmullRomSpline
+
+            };
+            for (int i = 0; i < miedianSeriesValues.Count; i++) medianSeries.Points.Add(new DataPoint(i + 1, miedianSeriesValues[i]));
+            retval.Series.Add(medianSeries);
+
+            var avgSeriesValues = valuesLong.Select(x => x.Average).ToList();
+            var avgSeries = new LineSeries()
+            {
+                Color = OxyColors.Blue,
+                LineStyle = LineStyle.Dash,
+                //InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+                InterpolationAlgorithm = InterpolationAlgorithms.UniformCatmullRomSpline
+
+            };
+            for (int i = 0; i < avgSeriesValues.Count; i++) avgSeries.Points.Add(new DataPoint(i + 1, avgSeriesValues[i]));
+            retval.Series.Add(avgSeries);
+
+            var upperSeriesValues = valuesLong.Select(x => x.Upper).ToList();
+            var upperSeries = new LineSeries()
+            {
+                Color = OxyColors.LightBlue,
+                LineStyle = LineStyle.Solid,
+                //InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+                InterpolationAlgorithm = InterpolationAlgorithms.UniformCatmullRomSpline
+
+            };
+            for (int i = 0; i < upperSeriesValues.Count; i++) upperSeries.Points.Add(new DataPoint(i + 1, upperSeriesValues[i]));
+            retval.Series.Add(upperSeries);
+
+
+            lowerSeriesValues = valuesShort.Select(x => x.Lower).ToList();
+            var lowerSeriesShort = new LineSeries()
+            {
+                Color = OxyColors.Red,
+                LineStyle = LineStyle.Solid,
+                InterpolationAlgorithm = InterpolationAlgorithms.UniformCatmullRomSpline
+
+            };
+            for (int i = 0; i < lowerSeriesValues.Count; i++) lowerSeriesShort.Points.Add(new DataPoint(i + 1, lowerSeriesValues[i]));
+            retval.Series.Add(lowerSeriesShort);
+
+            miedianSeriesValues = valuesShort.Select(x => x.Median).ToList();
+            var medianSeriesShort = new LineSeries()
+            {
+                Color = OxyColors.DarkRed,
+                LineStyle = LineStyle.Dot,
+                //InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+                InterpolationAlgorithm = InterpolationAlgorithms.UniformCatmullRomSpline
+
+            };
+            for (int i = 0; i < miedianSeriesValues.Count; i++) medianSeriesShort.Points.Add(new DataPoint(i + 1, miedianSeriesValues[i]));
+            retval.Series.Add(medianSeriesShort);
+
+            avgSeriesValues = valuesShort.Select(x => x.Average).ToList();
+            var avgSeriesShort = new LineSeries()
+            {
+                Color = OxyColors.DarkRed,
+                LineStyle = LineStyle.Dash,
+                //InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+                InterpolationAlgorithm = InterpolationAlgorithms.UniformCatmullRomSpline
+
+            };
+            for (int i = 0; i < avgSeriesValues.Count; i++) avgSeriesShort.Points.Add(new DataPoint(i + 1, avgSeriesValues[i]));
+            retval.Series.Add(avgSeriesShort);
+
+            upperSeriesValues = valuesShort.Select(x => x.Upper).ToList();
+            var upperSeriesShort = new LineSeries()
+            {
+                Color = OxyColors.Red,
+                LineStyle = LineStyle.Solid,
+                //InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+                InterpolationAlgorithm = InterpolationAlgorithms.UniformCatmullRomSpline
+
+            };
+            for (int i = 0; i < upperSeriesValues.Count; i++) upperSeriesShort.Points.Add(new DataPoint(i + 1, upperSeriesValues[i]));
+            retval.Series.Add(upperSeriesShort);
+
+
+
+            return retval;
+        }
     }
 }

@@ -3,9 +3,9 @@
 namespace Daedalus.Views
 {
 
-    public partial class DetailedFBETests : UserControl
+    public partial class EntryTestView : UserControl
     {
-        public DetailedFBETests()
+        public EntryTestView()
         {
             InitializeComponent();
 
