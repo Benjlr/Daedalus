@@ -8,10 +8,18 @@
 
   <ItemGroup>
     <None Remove="Utils\LocalData\asx200cash" />
+    <None Remove="Utils\LocalData\AUDUSD" />
+    <None Remove="Utils\LocalData\sp500cash" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Utils\LocalData\asx200cash">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Utils\LocalData\AUDUSD">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Utils\LocalData\sp500cash">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

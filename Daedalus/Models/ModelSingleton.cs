@@ -1,16 +1,9 @@
 ﻿using Logic;
 using Logic.Rules;
 using Logic.Rules.Entry;
-using Logic.Utils;
-using Logic.Utils.Calculations;
-using PriceSeriesCore.FinancialSeries;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Daedalus.Utils;
 using Logic.Rules.Exit;
-using Microsoft.Win32;
+using Logic.Utils;
+using System.IO;
 
 namespace Daedalus.Models
 {
@@ -31,7 +24,7 @@ namespace Daedalus.Models
                     Mymarket = MarketBuilder.CreateMarket(Markets.ASX200_Cash_5_Min);
                 }
                 catch {
-                    var marketData = Directory.GetCurrentDirectory() + "\\Utils\\LocalData\\asx200cash";
+                    var marketData = Directory.GetCurrentDirectory() + "\\Utils\\LocalData\\sp500cash";
                     Mymarket = MarketBuilder.CreateMarket(marketData);
                 }
 
