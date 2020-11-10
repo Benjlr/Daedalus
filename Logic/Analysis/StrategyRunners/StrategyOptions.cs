@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Logic.Analysis.Metrics.EntryTests.TestsDrillDown;
+using Logic.Utils;
 
 namespace Logic.Analysis.StrategyRunners
 {

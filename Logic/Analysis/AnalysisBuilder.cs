@@ -1,5 +1,4 @@
-﻿using Logic.Analysis.Metrics.EntryTests.TestsDrillDown;
-using Logic.Metrics;
+﻿using Logic.Metrics;
 using Logic.Utils;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -100,7 +99,7 @@ namespace Logic.Analysis
             ExpectancyAverage = results.ExpectancyAverage;
             ExpectancyMedian = results.ExpectancyMedian;
             WinPercentage = (results.WinPercentage);
-            RollingExpectancy = EntryTestDrilldown.GetRollingExpectancy(results.FBEResults.ToList(), 200).Select(x=>x.MedianExpectancy).ToList();
+            RollingExpectancy = ExpectancyTools.GetRollingExpectancy(results.FBEResults.ToList(), 200).Select(x=>x.MedianExpectancy).ToList();
         }
     }
 

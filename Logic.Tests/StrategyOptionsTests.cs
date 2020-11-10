@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Logic.Analysis.Metrics.EntryTests.TestsDrillDown;
 using Xunit;
+using Logic.Utils;
 
 namespace Logic.Tests
 {

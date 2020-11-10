@@ -39,7 +39,7 @@ namespace Logic.Analysis.Metrics
             MinimumTarget = minTarget;
             Range = range;
             Divisions = intervals;
-            Increment = range / (intervals-1);
+            Increment = range / (intervals);
         }
     }
 
