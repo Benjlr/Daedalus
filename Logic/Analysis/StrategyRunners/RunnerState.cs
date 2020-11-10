@@ -13,11 +13,11 @@ namespace Logic.Analysis.StrategyRunners
 
     public class StrategyState
     {
-        public TradeState InvestedState { get; set; }
-        public DrillDownStats Stats { get; set; }
-        public List<double> Returns { get; set; }
+        public TradeState InvestedState { get; private set; }
+        public DrillDownStats Stats { get; private set; }
+        public List<double> Returns { get; private set; }
 
-        public StrategyState BuildNextState(MarketData data, bool isEntry)
+        public StrategyState BuildNextState(MarketData data, StrategyOptions options, bool isEntry)
         {
             if (InvestedState.Invested)
                 return LastStateWasInvested(data);
