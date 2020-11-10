@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using Logic.Analysis.Metrics;
-using Logic.Analysis.Metrics.EntryTests.TestsDrillDown;
 using Logic.Metrics;
 using Logic.Rules.Entry;
 using Logic.Utils;
@@ -31,7 +30,7 @@ namespace Logic.Tests
         private void ShouldGenerateRollingExpectancyOverSmallPeriodAvg() {
             var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpResults.txt",2);
             var TestData = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpData.txt");
-            var ten = EntryTestDrilldown.GetRollingExpectancy(TestData, 10);
+            var ten = ExpectancyTools.GetRollingExpectancy(TestData, 10);
             Assert.Equal(resultsLong[0].Select(TestUtils._round), ten.Select(x => TestUtils._round(x.AverageExpectancy)));
         }
 
@@ -40,7 +39,7 @@ namespace Logic.Tests
         {
             var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpResults.txt", 2);
             var TestData = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpData.txt");
-            var ten = EntryTestDrilldown.GetRollingExpectancy(TestData, 10);
+            var ten = ExpectancyTools.GetRollingExpectancy(TestData, 10);
             Assert.Equal(resultsLong[1].Select(TestUtils._round), ten.Select(x => TestUtils._round(x.MedianExpectancy)));
         }
 
@@ -49,7 +48,7 @@ namespace Logic.Tests
         private void ShouldGenerateRollingExpectancyOverLongPeriodAvg() {
             var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpResults.txt",2);
             var TestData = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpData.txt"); 
-             var thirteen = EntryTestDrilldown.GetRollingExpectancy(TestData, 13);
+             var thirteen = ExpectancyTools.GetRollingExpectancy(TestData, 13);
              var temp = thirteen.Select(x => x.MedianExpectancy).ToList();
 
             Assert.Equal(resultsLong[0].Select(TestUtils._round), thirteen.Select(x => TestUtils._round(x.AverageExpectancy)));
@@ -59,7 +58,7 @@ namespace Logic.Tests
         {
             var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpResults.txt",2);
             var TestData = TestUtils.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpData.txt");
-            var thirteen = EntryTestDrilldown.GetRollingExpectancy(TestData, 13);
+            var thirteen = ExpectancyTools.GetRollingExpectancy(TestData, 13);
 
             Assert.Equal(resultsLong[1].Select(TestUtils._round), thirteen.Select(x => TestUtils._round(x.MedianExpectancy)));
         }
@@ -67,28 +66,28 @@ namespace Logic.Tests
         [Fact]
         private void ShouldGenerateExpectancyOverSmallEpochSplitAvg()        {
             var resultsThreePeriod = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\30PeriodExp.txt",2);
-            var ThreeEpoch = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 3);
+            var ThreeEpoch = ExpectancyTools.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 3);
             Assert.Equal(ThreeEpoch.Select(x => TestUtils._round(x.AverageExpectancy)), resultsThreePeriod[0].Select(TestUtils._round));
         }
 
         [Fact]
         private void ShouldGenerateExpectancyOverSmallEpochSplitMed() {
             var resultsThreePeriod = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\30PeriodExp.txt",2);
-            var ThreeEpoch = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 3);
+            var ThreeEpoch = ExpectancyTools.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 3);
             Assert.Equal(ThreeEpoch.Select(x => TestUtils._round(x.MedianExpectancy)), resultsThreePeriod[1].Select(TestUtils._round));
         }
 
         [Fact]
         private void ShouldGenerateExpectancyOverLargerEpochSplitAvg() {
             var resultsTenPeriod = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\10PeriodExp.txt",2);
-            var tenEpoch = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 10);
+            var tenEpoch = ExpectancyTools.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 10);
             Assert.Equal(resultsTenPeriod[0].Select(TestUtils._round), tenEpoch.Select(x=>TestUtils._round(x.AverageExpectancy)));
         }
 
         [Fact]
         private void ShouldGenerateExpectancyOverLargerEpochSplitMed() {
             var resultsTenPeriod = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\10PeriodExp.txt",2);
-            var tenEpoch = EntryTestDrilldown.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 10);
+            var tenEpoch = ExpectancyTools.GetExpectancyByEpoch(myTests[0][0].FBEResults.ToList(), 10);
             Assert.Equal(resultsTenPeriod[1].Select(TestUtils._round), tenEpoch.Select(x => TestUtils._round(x.MedianExpectancy)));
         }
 
