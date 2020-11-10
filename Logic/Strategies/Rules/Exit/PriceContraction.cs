@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Logic.Strategies.Rules;
 using Logic.Utils.Calculations;
 using PriceSeriesCore.FinancialSeries;
 using PriceSeriesCore.Indicators.Derived;

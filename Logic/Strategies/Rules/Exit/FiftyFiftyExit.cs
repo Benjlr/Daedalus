@@ -1,6 +1,7 @@
 ﻿using PriceSeriesCore.FinancialSeries;
 using System;
 using System.Collections.Generic;
+using Logic.Strategies.Rules;
 
 namespace Logic.Rules.Exit
 {

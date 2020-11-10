@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Logic.Analysis.Metrics;
+using Logic.Strategies;
 using Xunit;
 
 namespace Logic.Tests

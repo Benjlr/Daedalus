@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Logic.Analysis.Metrics.CoreTests;
 using Logic.Analysis.Metrics.EntryTests;
 using Logic.Metrics;
 using Logic.Metrics.CoreTests;

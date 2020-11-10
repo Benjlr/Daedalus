@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using Daedalus.Utils;
 using Logic.Rules.Exit;
+using Logic.Strategies;
 using Microsoft.Win32;
 
 namespace Daedalus.Models
@@ -28,7 +29,7 @@ namespace Daedalus.Models
             lock (_lock)
             {
                 try {
-                    Mymarket = MarketBuilder.CreateMarket(Markets.ASX200_Cash_5_Min);
+                    Mymarket = MarketBuilder.CreateMarket(Markets.Bitcoin);
                 }
                 catch {
                     var marketData = Directory.GetCurrentDirectory() + "\\Utils\\LocalData\\asx200cash";

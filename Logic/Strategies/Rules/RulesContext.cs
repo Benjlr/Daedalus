@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Logic.Utils.Calculations;
-using PriceSeriesCore.FinancialSeries;
-
-namespace Logic.Rules
+﻿namespace Logic.Strategies.Rules
 {
     public class RulesContext
     {

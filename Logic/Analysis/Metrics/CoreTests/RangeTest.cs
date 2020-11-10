@@ -1,9 +1,9 @@
-﻿using LinqStatistics;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using LinqStatistics;
 
-namespace Logic.Metrics.CoreTests
+namespace Logic.Analysis.Metrics.CoreTests
 {
     public class RangeTest
     {

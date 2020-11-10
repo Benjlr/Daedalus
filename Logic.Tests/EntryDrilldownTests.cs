@@ -5,6 +5,7 @@ using Logic.Analysis.Metrics;
 using Logic.Analysis.Metrics.EntryTests.TestsDrillDown;
 using Logic.Metrics;
 using Logic.Rules.Entry;
+using Logic.Strategies;
 using Logic.Utils;
 using Xunit;
 

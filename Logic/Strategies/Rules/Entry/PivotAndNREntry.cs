@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Logic.Strategies.Rules;
 using Logic.Utils;
 using Logic.Utils.Calculations;
 using PriceSeriesCore;

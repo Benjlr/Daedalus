@@ -1,7 +1,7 @@
-﻿using Logic.Rules;
-using System.Linq;
+﻿using System.Linq;
+using Logic.Rules;
 
-namespace Logic
+namespace Logic.Strategies
 {
     public class StrategyBuilder
     {

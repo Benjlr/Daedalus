@@ -1,7 +1,8 @@
-﻿using PriceSeriesCore.FinancialSeries;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Logic.Rules;
+using PriceSeriesCore.FinancialSeries;
 
-namespace Logic.Rules
+namespace Logic.Strategies.Rules
 {
     public abstract class RuleBase : IRuleSet
     {
