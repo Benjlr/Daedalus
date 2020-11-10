@@ -140,7 +140,7 @@ namespace Daedalus.ViewModels
     public class StopTargetExitViewmodel : EntryTestViewModel
     {
         protected override List<ITest[]> GenerateEntryTests()        {
-            var stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.02 / 10.0, 0.02 / 10.0, 0.01, 12);
+            var stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.01 / 10.0, 0.01 / 10.0, 0.005, 30);
             LoadStatus.UpdateNameAndTotal($"Generating Stop Target Exit Tests", stopTargetExitOptions.Divisions * stopTargetExitOptions.Divisions);
             return TestFactory.GenerateFixedStopTargetExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, 
                 stopTargetExitOptions, LoadStatus.UpdateCount);

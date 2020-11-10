@@ -4,6 +4,7 @@ using Logic.Rules.Entry;
 using Logic.Rules.Exit;
 using Logic.Utils;
 using System.IO;
+using Logic.Strategies;
 
 namespace Daedalus.Models
 {
@@ -21,7 +22,7 @@ namespace Daedalus.Models
             lock (_lock)
             {
                 try {
-                    Mymarket = MarketBuilder.CreateMarket(Markets.Bitcoin);
+                    Mymarket = MarketBuilder.CreateMarket(Markets.AUD_USD_5_Min);
                 }
                 catch {
                     var marketData = Directory.GetCurrentDirectory() + "\\Utils\\LocalData\\sp500cash";

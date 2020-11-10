@@ -33,11 +33,9 @@ namespace Logic.Analysis.StrategyRunners
 
             for (int i = 1; i < _market.RawData.Length; i++)
             {
-                StrategyState portfolioState = new StrategyState();
-                StrategyState marketState = new StrategyState();
+                var marketState = StrategyState.GenerateState(runner[i - 1].Market, _market.RawData[i - 1] , _strategy.Entries[i - 1]);
 
-
-                if (_strategy.Entries[i - 1])
+                if ()
                 {
                     if (!runner[i - 1].Portfolio.InvestedState.Invested)
                     {

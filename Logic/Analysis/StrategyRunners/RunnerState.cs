@@ -16,26 +16,28 @@ namespace Logic.Analysis.StrategyRunners
         public TradeState InvestedState { get; set; }
         public DrillDownStats Stats { get; set; }
         public List<double> Returns { get; set; }
-        public double RollingExpectancy { get; set; }
 
-        public static StrategyState GenerateState(StrategyState prevState, MarketData data)
+        public StrategyState BuildNextState(MarketData data, bool isEntry)
         {
-            if (prevState.InvestedState.Invested)
-                return LastStateWasInvested(prevState, data);
+            if (InvestedState.Invested)
+                return LastStateWasInvested(data);
             else
-                return LastStateWasNotInvested(prevState, data);
-
+                return LastStateWasNotInvested(data,isEntry);
         }
 
-        private static StrategyState LastStateWasInvested(StrategyState prevState, MarketData data)
+        private StrategyState LastStateWasInvested( MarketData data)
         {
-            if(prevState)
+            return new StrategyState();
+            //if (prevState)
         }
-        private static StrategyState LastStateWasNotInvested(StrategyState prevState, MarketData data)
+        private StrategyState LastStateWasNotInvested( MarketData data, bool isEntry)
         {
-            if (prevState)
+            return new StrategyState();
+
+            //if (prevState)
         }
     }
+
 
     public class TradeState
     {
