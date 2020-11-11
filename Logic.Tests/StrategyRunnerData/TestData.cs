@@ -28,8 +28,8 @@ namespace Logic.Tests.StrategyRunnerData
     vol: 29);
 
         public MarketData data3 = new MarketData(time: new DateTime(),
-    o_a: 1006,
-    o_b: 1006,
+    o_a: 1004,
+    o_b: 1004,
     h_a: 1010,
     h_b: 1010,
     l_a: 1004,

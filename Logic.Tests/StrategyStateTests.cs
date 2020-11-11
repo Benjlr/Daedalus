@@ -19,14 +19,43 @@ namespace Logic.Tests
         }
 
         [Fact]
-        private void ShouldExitLong() {
+        private void ShouldExitLongStop() {
             var testData = new TestData();
             var newState = _factory.BuildNextState(testData.data, new DrillDownStats(new List<double>()), true);
             newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), true);
             newState = _factory.BuildNextState(testData.data4, new DrillDownStats(new List<double>()), true);
             Assert.False(newState.InvestedState.Invested);
             Assert.Equal(newState.Returns, new List<double>() { -0.005 });
+        }
 
+        [Fact]
+        private void ShouldExitLongTarget() {
+            var testData = new TestData();
+            var newState = _factory.BuildNextState(testData.data, new DrillDownStats(new List<double>()), true);
+            newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), true);
+            newState = _factory.BuildNextState(testData.data4, new DrillDownStats(new List<double>()), true);
+            Assert.False(newState.InvestedState.Invested);
+            Assert.Equal(newState.Returns, new List<double>() { -0.005 });
+        }
+
+        [Fact]
+        private void ShouldExitLongOpenBelowStop() {
+            var testData = new TestData();
+            var newState = _factory.BuildNextState(testData.data, new DrillDownStats(new List<double>()), true);
+            newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), true);
+            newState = _factory.BuildNextState(testData.data4, new DrillDownStats(new List<double>()), true);
+            Assert.False(newState.InvestedState.Invested);
+            Assert.Equal(newState.Returns, new List<double>() { -0.005 });
+        }
+
+        [Fact]
+        private void ShouldExitLongOpenAboveTarget() {
+            var testData = new TestData();
+            var newState = _factory.BuildNextState(testData.data, new DrillDownStats(new List<double>()), true);
+            newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), true);
+            newState = _factory.BuildNextState(testData.data4, new DrillDownStats(new List<double>()), true);
+            Assert.False(newState.InvestedState.Invested);
+            Assert.Equal(newState.Returns, new List<double>() { -0.005 });
         }
 
         [Fact]
@@ -43,7 +72,7 @@ namespace Logic.Tests
             var testData = new TestData();
             var newState = _factory.BuildNextState(testData.data, new DrillDownStats(new List<double>()), true);
             newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), true);
-            newState = _factory.BuildNextState(testData.data4, new DrillDownStats(new List<double>()), true);
+            newState = _factory.BuildNextState(testData.data3, new DrillDownStats(new List<double>()), true);
             Assert.False(newState.InvestedState.Invested);
             Assert.Equal(newState.Returns, new List<double>() { -0.005 });
         }
