@@ -1,16 +1,17 @@
 ﻿using Daedalus.Models;
 using Daedalus.Utils;
-using Logic;
-using Logic.Utils.Calculations;
 using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using RuleSets;
+using RuleSets.Calculations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using AverageTrueRange = Logic.Utils.Calculations.AverageTrueRange;
+using Action = RuleSets.Action;
+using AverageTrueRange = RuleSets.Calculations.AverageTrueRange;
 using LineAnnotation = OxyPlot.Annotations.LineAnnotation;
 using LinearAxis = OxyPlot.Axes.LinearAxis;
 
@@ -95,7 +96,7 @@ namespace Daedalus.ViewModels
                 MinimumX = entryPoint - 3,
                 MaximumX = entryPoint + 3,
                 Type = LineAnnotationType.Horizontal,
-                Y = ModelSingleton.Instance.MyStrategy.Rules.First(x=>x.Order.Equals(Logic.Action.Entry)).Dir == MarketSide.Bull ? 
+                Y = ModelSingleton.Instance.MyStrategy.Rules.First(x=>x.Order.Equals(Action.Entry)).Dir == MarketSide.Bull ? 
                     ModelSingleton.Instance.Mymarket.RawData[EntryPoints[x]].Open_Ask: ModelSingleton.Instance.Mymarket.RawData[EntryPoints[x]].Open_Bid,
             });
 
@@ -114,7 +115,7 @@ namespace Daedalus.ViewModels
                     MinimumX = exitPnt -3,
                     MaximumX= exitPnt +3,
                     Type = LineAnnotationType.Horizontal,
-                    Y = ModelSingleton.Instance.MyStrategy.Rules.First(x => x.Order.Equals(Logic.Action.Exit)).Dir == MarketSide.Bull ?
+                    Y = ModelSingleton.Instance.MyStrategy.Rules.First(x => x.Order.Equals(Action.Exit)).Dir == MarketSide.Bull ?
                         ModelSingleton.Instance.Mymarket.RawData[exitPnt].Open_Bid : ModelSingleton.Instance.Mymarket.RawData[exitPnt].Open_Ask,
                 });
                 graphEnd = exitPnt + 50;

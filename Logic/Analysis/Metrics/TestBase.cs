@@ -1,5 +1,6 @@
 ﻿using LinqStatistics;
 using PriceSeriesCore.FinancialSeries;
+using RuleSets;
 using System;
 using System.Collections.Generic;
 using System.Linq;

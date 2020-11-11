@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 using Logic.Utils;
+using System.Reflection;
+using RuleSets;
 
 namespace Logic.Tests
 {
@@ -157,6 +159,21 @@ namespace Logic.Tests
             Assert.True(stratOpt.GoodToEnter(0, 0, 1, new DateTime()));
             Assert.True(stratOpt.GoodToEnter(0, 0, 2, new DateTime()));
         }
+
+        [Fact]
+        public void ShouldInitDateBoundary()
+        {
+            var dateBoundary = new DateBoundary(new DateTime(2020, 11, 11, 11, 11, 11, 11));
+            var dateBoundary2 = new DateBoundary(new DateTime(2020, 11, 11, 23, 23, 23, 23));
+            Assert.Equal(DayOfWeek.Wednesday, dateBoundary.DayStart);
+            Assert.Equal(11, dateBoundary.HourStart);
+            Assert.Equal(11, dateBoundary.MinuteStart);
+
+            Assert.Equal(DayOfWeek.Wednesday, dateBoundary2.DayStart);
+            Assert.Equal(23, dateBoundary2.HourStart);
+            Assert.Equal(23, dateBoundary2.MinuteStart);
+        }
+
 
     }
 }

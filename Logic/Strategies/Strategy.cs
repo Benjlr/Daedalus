@@ -1,4 +1,5 @@
-﻿using Logic.Rules;
+﻿
+using RuleSets;
 
 namespace Logic
 {

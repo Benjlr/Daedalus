@@ -1,4 +1,5 @@
 ﻿using PriceSeriesCore.FinancialSeries;
+using RuleSets;
 using System;
 using System.IO;
 using System.Linq;

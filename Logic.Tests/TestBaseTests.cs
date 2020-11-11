@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Logic.Analysis.Metrics;
 using Logic.Metrics;
-using Logic.Rules.Entry;
-using System.IO;
-using Logic.Analysis.Metrics;
 using Logic.Strategies;
-using Xunit;
 using RuleSets;
+using RuleSets.Entry;
+using System.Collections.Generic;
+using System.IO;
+using Xunit;
 
 namespace Logic.Tests
 {

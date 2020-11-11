@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Logic
+namespace RuleSets
 {
     public struct MarketData
     {

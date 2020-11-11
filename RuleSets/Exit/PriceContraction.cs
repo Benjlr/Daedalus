@@ -1,9 +1,8 @@
-﻿using Logic.Utils.Calculations;
-using PriceSeriesCore.FinancialSeries;
+﻿using PriceSeriesCore.FinancialSeries;
 using PriceSeriesCore.Indicators.Derived;
+using RuleSets.Calculations;
 using System.Collections.Generic;
 using System.Linq;
-using AverageTrueRange = Logic.Utils.Calculations.AverageTrueRange;
 
 namespace RuleSets.Exit
 {
@@ -18,7 +17,7 @@ namespace RuleSets.Exit
 
         public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
         {
-            var atrs = AverageTrueRange.Calculate(data, 3);
+            var atrs = Calculations.AverageTrueRange.Calculate(data, 3);
             var ten = SimpleMovingAverage.Calculate(data.Select(x => x.Close).ToList(), 10);
             var twety = ExponentialMovingAverage.Calculate(data.Select(x => x.Close).ToList(), 20);
             var fissy = ExponentialMovingAverage.Calculate(data.Select(x => x.Close).ToList(), 50);

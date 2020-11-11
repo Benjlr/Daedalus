@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Logic.Rules;
+﻿using RuleSets;
+using System.Linq;
 
 namespace Logic.Strategies
 {

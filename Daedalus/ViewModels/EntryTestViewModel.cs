@@ -98,7 +98,6 @@ namespace Daedalus.ViewModels
             NotifyPropertyChanged($"ShortRollingExp");
             NotifyPropertyChanged($"LongDrawdowns");
             NotifyPropertyChanged($"ShortDrawdowns");
-
         }
 
         protected abstract List<ITest[]> GenerateEntryTests();

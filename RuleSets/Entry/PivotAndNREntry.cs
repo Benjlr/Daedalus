@@ -1,6 +1,6 @@
-﻿using Logic.Utils.Calculations;
-using PriceSeriesCore;
+﻿using PriceSeriesCore;
 using PriceSeriesCore.FinancialSeries;
+using RuleSets.Calculations;
 using System;
 using System.Collections.Generic;
 using System.Linq;

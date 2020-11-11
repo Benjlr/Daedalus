@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Logic.Utils;
+using RuleSets;
 
 namespace Logic.Analysis.StrategyRunners
 {
@@ -62,9 +63,9 @@ namespace Logic.Analysis.StrategyRunners
         }
 
         public bool ShouldExit(StrategyState investedState, TradeState previousState, MarketData data)        {
-            if(!NoTradePeriods.All(x => WithinTradeablePeriod(new DateBoundary(data.Time), x)))
-                investedState.Returns.Add((data.Open_Bid - previousState.EntryPrice) / previousState.EntryPrice);
-            
+            if(!NoTradePeriods?.All(x => WithinTradeablePeriod(new DateBoundary(data.Time), x)) ?? false) 
+                //investedState.Returns.Add((data.Open_Bid - previousState.EntryPrice) / previousState.EntryPrice);           
+                return false;
             return false;
         }
     }

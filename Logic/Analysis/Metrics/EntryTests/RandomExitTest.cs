@@ -1,6 +1,6 @@
-﻿using System;
-using System.Linq;
-using Logic.Metrics;
+﻿using Logic.Metrics;
+using RuleSets;
+using System;
 
 namespace Logic.Analysis.Metrics.EntryTests
 {

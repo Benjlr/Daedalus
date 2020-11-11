@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Logic.Utils;
+using RuleSets;
 
 namespace Logic.Analysis.StrategyRunners
 {
@@ -9,18 +10,23 @@ namespace Logic.Analysis.StrategyRunners
         public DrillDownStats Stats { get; private set; }
         public List<double> Returns { get; private set; }
 
+        public StrategyState() {
+            Returns = new List<double>();
+            InvestedState = new TradeState();
+            Stats = new DrillDownStats(Returns);
+        }
 
         private StrategyState LastStateWasInvested( MarketData data, StrategyOptions options)
         {
             var state = new StrategyState();
-            state.Returns = new List<double>(this.Returns);
+            state.Returns = new List<double>(Returns);
 
-            if (options.ShouldExit(state,this.InvestedState, data))
-                state.InvestedState = TradeState.DoNothing();
-            else if (state.CheckStopsAndTargets(data, this.InvestedState))
-                state.InvestedState = TradeState.ContinueLong(data, this.InvestedState);
+            if (options.ShouldExit(state,InvestedState, data))
+                state.InvestedState = InvestedState.DoNothing();
+            else if (state.CheckStopsAndTargets(data, InvestedState))
+                state.InvestedState = InvestedState.ContinueLong(data);
             else
-                state.InvestedState = TradeState.DoNothing();
+                state.InvestedState = InvestedState.DoNothing();
 
             state.Stats = new DrillDownStats(Returns);
             return state;
@@ -52,11 +58,11 @@ namespace Logic.Analysis.StrategyRunners
         private StrategyState LastStateWasNotInvested(MarketData data, bool isEntry)
         {
             var state = new StrategyState();
-            state.Returns = new List<double>(this.Returns);
+            state.Returns = new List<double>(Returns);
             if (isEntry )
-                state.InvestedState = TradeState.InvestLong(data);
+                state.InvestedState = InvestedState.InvestLong(data);
             else
-                state.InvestedState = TradeState.DoNothing();
+                state.InvestedState = InvestedState.DoNothing();
 
             state.Stats = new DrillDownStats(Returns);
             return state;
@@ -71,7 +77,7 @@ namespace Logic.Analysis.StrategyRunners
             public StrategyStateFactory(StrategyOptions options)
             {
                 _options = options;
-                _previousState = new StrategyState();
+                _previousState = new StrategyState() { };
             }
 
             public StrategyState BuildNextState(MarketData data, DrillDownStats benchmark, bool isEntry)

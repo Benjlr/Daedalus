@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using LinqStatistics;
+using RuleSets;
 
 namespace Logic.Analysis.Metrics.CoreTests
 {

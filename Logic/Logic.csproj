@@ -16,4 +16,8 @@
     <PackageReference Include="PriceSeriesCore" Version="1.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RuleSets\RuleSets.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,10 +1,10 @@
 ﻿using Logic;
-using Logic.Rules;
-using Logic.Rules.Entry;
-using Logic.Rules.Exit;
-using Logic.Utils;
-using System.IO;
 using Logic.Strategies;
+using Logic.Utils;
+using RuleSets;
+using RuleSets.Entry;
+using RuleSets.Exit;
+using System.IO;
 
 namespace Daedalus.Models
 {

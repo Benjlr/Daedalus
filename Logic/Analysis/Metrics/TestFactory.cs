@@ -47,8 +47,6 @@ namespace Logic.Analysis.Metrics
     {
         public static List<ITest[]> GenerateFixedBarExitTest(Strategy strat, Market market, FixedBarExitTestOptions options, System.Action progress = null)
         {
-            IntialisationInformation.ChangeStage($"Executing Fixed Bar Tests");
-
             if (options.MinimumExitPeriod > options.MaximumExitPeriod)
                 throw new Exception();
 
@@ -59,8 +57,6 @@ namespace Logic.Analysis.Metrics
 
         public static List<ITest[]> GenerateFixedStopTargetExitTest(Strategy strat, Market market, FixedStopTargetExitTestOptions options, System.Action progress = null)
         {
-            IntialisationInformation.ChangeStage($"Executing Stop Target Tests");
-
             var threadSafeDict = new ConcurrentDictionary<int, ITest[]>(StopTargetTestsToDictionary(options));
             ExecuteTests(strat, market, threadSafeDict, progress);
             return threadSafeDict.Values.ToList();
@@ -76,7 +72,6 @@ namespace Logic.Analysis.Metrics
 
         private static void ExecuteTests(Strategy strat, Market market, ConcurrentDictionary<int, ITest[]> threadSafeDict, System.Action progress)
         {
-            IntialisationInformation.ChangeTotalCount(threadSafeDict.Count); 
             Parallel.For(0, threadSafeDict.Count, (i) =>
             {
                 threadSafeDict.TryGetValue(i, out ITest[] myTests);

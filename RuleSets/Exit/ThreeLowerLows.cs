@@ -3,7 +3,8 @@ using PriceSeriesCore.Indicators.Derived;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RuleSets.Exit
+namespace RuleSets.Exit 
+{ 
     public class ThreeLowerLows : RuleBase
     {
         public ThreeLowerLows()

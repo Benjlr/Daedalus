@@ -1,4 +1,5 @@
 ﻿using PriceSeriesCore.FinancialSeries;
+using RuleSets;
 using System.Collections.Generic;
 
 namespace Logic.Metrics

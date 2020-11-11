@@ -1,4 +1,5 @@
 ﻿using Logic.Metrics;
+using RuleSets;
 
 namespace Logic.Analysis.Metrics.EntryTests
 {

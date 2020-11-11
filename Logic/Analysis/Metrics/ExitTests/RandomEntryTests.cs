@@ -1,5 +1,6 @@
 ﻿using System;
 using Logic.Utils;
+using RuleSets;
 
 namespace Logic.Metrics.ExitTests
 {
