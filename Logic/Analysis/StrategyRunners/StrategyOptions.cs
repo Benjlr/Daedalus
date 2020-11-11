@@ -16,7 +16,7 @@ namespace Logic.Analysis.StrategyRunners
         {
             var boolOne = ExpectancyCutOff == -1 || stats.MedianExpectancy > ExpectancyCutOff; 
             var boolTwo = WinPercentCutOff == -1 ||  stats.WinPercent > WinPercentCutOff; 
-            var boolThree = SpreadCutOff == -1 || SpreadCutOff > data.Open_Ask - data.Open_Bid;
+            var boolThree = SpreadCutOff == -1 || SpreadCutOff >= data.Open_Ask - data.Open_Bid;
             var boolFour = NoTradePeriods == null || NoTradePeriods.All(x => WithinTradeablePeriod(new DateBoundary(data.Time), x));
             return boolOne && boolTwo && boolThree && boolFour;
         }
@@ -61,8 +61,10 @@ namespace Logic.Analysis.StrategyRunners
             return false;
         }
 
-        public bool ShouldExit()
-        {
+        public bool ShouldExit(StrategyState investedState, TradeState previousState, MarketData data)        {
+            if(!NoTradePeriods.All(x => WithinTradeablePeriod(new DateBoundary(data.Time), x)))
+                investedState.Returns.Add((data.Open_Bid - previousState.EntryPrice) / previousState.EntryPrice);
+            
             return false;
         }
     }

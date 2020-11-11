@@ -6,6 +6,7 @@ using Logic.Metrics;
 using Logic.Rules.Entry;
 using Logic.Strategies;
 using Logic.Utils;
+using RuleSets;
 using Xunit;
 
 namespace Logic.Tests
@@ -19,7 +20,7 @@ namespace Logic.Tests
         public EntryDrilldownTests()
         {
             var market = MarketBuilder.CreateMarket(marketData);
-            var strat = StrategyBuilder.CreateStrategy(new Rules.IRuleSet[]
+            var strat = StrategyBuilder.CreateStrategy(new IRuleSet[]
             {
                 new DummyEntries(1, 98)
             }, market);

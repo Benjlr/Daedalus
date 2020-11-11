@@ -117,6 +117,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Logic\Logic.csproj" />
+    <ProjectReference Include="..\RuleSets\RuleSets.csproj" />
   </ItemGroup>
 
   <ItemGroup>

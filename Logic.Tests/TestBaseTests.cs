@@ -5,6 +5,7 @@ using System.IO;
 using Logic.Analysis.Metrics;
 using Logic.Strategies;
 using Xunit;
+using RuleSets;
 
 namespace Logic.Tests
 {
@@ -17,12 +18,12 @@ namespace Logic.Tests
         public TestBaseTests()
         {
             var market = MarketBuilder.CreateMarket(marketData);
-            var invalidstrat = StrategyBuilder.CreateStrategy(new Rules.IRuleSet[] {
+            var invalidstrat = StrategyBuilder.CreateStrategy(new IRuleSet[] {
                 new DummyEntries(65, 98)
             }, market);
             myInvalidTests = TestFactory.GenerateFixedBarExitTest(invalidstrat, market, new FixedBarExitTestOptions(10, 14, 1))[0][0];
             
-            var strat = StrategyBuilder.CreateStrategy(new Rules.IRuleSet[] {
+            var strat = StrategyBuilder.CreateStrategy(new IRuleSet[] {
                 new DummyEntries(1, 98)
             }, market);
 

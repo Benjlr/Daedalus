@@ -6,6 +6,7 @@ using System.Linq;
 using Logic.Analysis.Metrics;
 using Logic.Strategies;
 using Xunit;
+using RuleSets;
 
 namespace Logic.Tests
 {
@@ -19,7 +20,7 @@ namespace Logic.Tests
         public FixedBarExitTests()
         {
             var market = MarketBuilder.CreateMarket(marketData);
-            var strat = StrategyBuilder.CreateStrategy(new Rules.IRuleSet[]
+            var strat = StrategyBuilder.CreateStrategy(new IRuleSet[]
             {
                 new DummyEntries(1, 98)
             }, market);
