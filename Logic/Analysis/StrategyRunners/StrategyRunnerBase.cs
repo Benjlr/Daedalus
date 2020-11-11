@@ -9,6 +9,7 @@ namespace Logic.Analysis.StrategyRunners
     {
         protected Market _market { get; set; }
         protected Strategy _strategy { get; set; }
+        public List<RunnerState> Runner { get; protected set; }
 
         public StrategyRunnerBase(Market market, Strategy strat)
         {
@@ -16,7 +17,7 @@ namespace Logic.Analysis.StrategyRunners
             _strategy = strat;
         }
 
-        public abstract void ExecuteRunner(bool[] marketEntries, bool[] portfolioEntries);
+        public abstract void ExecuteRunner();
 
 
 
@@ -28,9 +29,9 @@ namespace Logic.Analysis.StrategyRunners
         {
         }
 
-        public override void ExecuteRunner(bool[] marketEntries, bool[] portfolioEntries)
+        public override void ExecuteRunner()
         {
-            List<RunnerState> runner = new List<RunnerState>() { new RunnerState() };
+            Runner = new List<RunnerState>() { new RunnerState() };
             StrategyOptions marketOptions = new StrategyOptions();
             StrategyOptions portfolioOptions = new StrategyOptions()
             {
@@ -44,15 +45,16 @@ namespace Logic.Analysis.StrategyRunners
 
             for (int i = 1; i < _market.RawData.Length; i++)
             {
-                var marketExps = ExpectancyTools.GetRollingExpectancy(runner.Select(x => x.Market.Stats.MedianExpectancy).ToList(), 200);
+                var marketExps = ExpectancyTools.GetRollingExpectancy(Runner.Last().Market.Returns, 200);
+                var last = marketExps.Count>0?marketExps.Last():new DrillDownStats(new List<double>());
 
                 var newState = new RunnerState()
                 {
-                    Market = marketStrategyStateBuilder.BuildNextState(_market.RawData[i], marketExps.Last(), marketEntries[i - 1]),
-                    Portfolio = portfolioStrategyStateBuilder.BuildNextState(_market.RawData[i], marketExps.Last(), marketEntries[i - 1])
+                    Market = marketStrategyStateBuilder.BuildNextState(_market.RawData[i], last, _strategy.Entries[i - 1]),
+                    Portfolio = portfolioStrategyStateBuilder.BuildNextState(_market.RawData[i], last, _strategy.Entries[i - 1])
                 };
 
-
+                Runner.Add(newState);
             }
 
         }

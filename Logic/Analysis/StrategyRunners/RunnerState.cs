@@ -4,6 +4,12 @@
     {
         public StrategyState Portfolio { get; set; }
         public StrategyState Market { get; set; }
+
+        public RunnerState()
+        {
+            Portfolio = new StrategyState();
+            Market = new StrategyState();
+        }
     }
 
     public interface StopGenerator

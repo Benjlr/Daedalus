@@ -1,5 +1,5 @@
 ﻿using Logic.Analysis.StrategyRunners;
-using RuleSets;
+using PriceSeriesCore;
 using System;
 using Xunit;
 

@@ -33,9 +33,9 @@ namespace Logic.Tests
             var testData = new TestData();
             var newState = _factory.BuildNextState(testData.data, new DrillDownStats(new List<double>()), true);
             newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), true);
-            newState = _factory.BuildNextState(testData.data4, new DrillDownStats(new List<double>()), true);
+            newState = _factory.BuildNextState(testData.data3, new DrillDownStats(new List<double>()), true);
             Assert.False(newState.InvestedState.Invested);
-            Assert.Equal(newState.Returns, new List<double>() { -0.005 });
+            Assert.Equal(newState.Returns, new List<double>() { 0.0049999999999998865 });
         }
 
         [Fact]
@@ -43,9 +43,9 @@ namespace Logic.Tests
             var testData = new TestData();
             var newState = _factory.BuildNextState(testData.data, new DrillDownStats(new List<double>()), true);
             newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), true);
-            newState = _factory.BuildNextState(testData.data4, new DrillDownStats(new List<double>()), true);
+            newState = _factory.BuildNextState(testData.data7, new DrillDownStats(new List<double>()), true);
             Assert.False(newState.InvestedState.Invested);
-            Assert.Equal(newState.Returns, new List<double>() { -0.005 });
+            Assert.Equal(newState.Returns, new List<double>() { -0.02 });
         }
 
         [Fact]
@@ -53,9 +53,25 @@ namespace Logic.Tests
             var testData = new TestData();
             var newState = _factory.BuildNextState(testData.data, new DrillDownStats(new List<double>()), true);
             newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), true);
-            newState = _factory.BuildNextState(testData.data4, new DrillDownStats(new List<double>()), true);
+            newState = _factory.BuildNextState(testData.data6, new DrillDownStats(new List<double>()), true);
             Assert.False(newState.InvestedState.Invested);
-            Assert.Equal(newState.Returns, new List<double>() { -0.005 });
+            Assert.Equal(newState.Returns, new List<double>() { 0.01 });
+        }
+
+        [Fact]
+        private void ShouldNotInvestLongIfUnderExpectancy()
+        {
+            StrategyState.StrategyStateFactory myFactory = 
+                new StrategyState.StrategyStateFactory(new StrategyOptions()
+                {
+                    ExpectancyCutOff = 1
+                });
+
+            var testData = new TestData();
+            var newState = myFactory.BuildNextState(testData.data, new DrillDownStats(new List<double>(){-0.5,0.2,0.3,-3}), true);
+            newState = myFactory.BuildNextState(testData.data, new DrillDownStats(new List<double>(){-0.5,0.2,0.3,-3}), false);
+            Assert.False(newState.InvestedState.Invested);
+            Assert.Equal(0, newState.InvestedState.Return);
         }
 
         [Fact]
@@ -79,18 +95,23 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldRemainInCash() {
-
-
-            Assert.Equal(true, false);
+            var testData = new TestData();
+            var newState = _factory.BuildNextState(testData.data, new DrillDownStats(new List<double>()), false);
+            newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), false);
+            newState = _factory.BuildNextState(testData.data7, new DrillDownStats(new List<double>()), false);
+            Assert.False(newState.InvestedState.Invested);
+            Assert.Equal(newState.Returns, new List<double>() {  });
 
         }
 
         [Fact]
         private void ShouldRemainInvested() {
-
-
-            Assert.Equal(true, false);
-
+            var testData = new TestData();
+            var newState = _factory.BuildNextState(testData.data, new DrillDownStats(new List<double>()), true);
+            newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), false);
+            newState = _factory.BuildNextState(testData.data, new DrillDownStats(new List<double>()), false);
+            Assert.True(newState.InvestedState.Invested);
+            Assert.Equal(newState.Returns, new List<double>() {  });
         }
 
 

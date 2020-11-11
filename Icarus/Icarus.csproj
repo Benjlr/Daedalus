@@ -6,4 +6,14 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ViewCommon\ViewCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="OxyPlot.Wpf">
+      <HintPath>..\..\..\..\.nuget\packages\oxyplot.wpf\2.0.0\lib\netcoreapp3.0\OxyPlot.Wpf.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

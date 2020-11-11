@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Logic.Utils;
+using PriceSeriesCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Logic.Utils;
-using RuleSets;
 
 namespace Logic.Analysis.StrategyRunners
 {

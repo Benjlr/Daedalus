@@ -1,17 +1,16 @@
-﻿using Daedalus.Models;
-using Daedalus.Utils;
-using OxyPlot;
+﻿using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using PriceSeriesCore.Calculations;
 using RuleSets;
-using RuleSets.Calculations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using ViewCommon.Models;
+using ViewCommon.Utils;
 using Action = RuleSets.Action;
-using AverageTrueRange = RuleSets.Calculations.AverageTrueRange;
 using LineAnnotation = OxyPlot.Annotations.LineAnnotation;
 using LinearAxis = OxyPlot.Axes.LinearAxis;
 

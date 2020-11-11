@@ -1,9 +1,9 @@
-﻿using Daedalus.Models;
-using Logic.Analysis.Metrics;
+﻿using Logic.Analysis.Metrics;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using System.Collections.Generic;
+using ViewCommon.Models;
 
 namespace Daedalus.ViewModels
 {

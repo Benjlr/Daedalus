@@ -1,8 +1,7 @@
-﻿using PriceSeriesCore.FinancialSeries;
-using RuleSets;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using PriceSeriesCore;
 
-namespace Logic.Metrics
+namespace Logic.Analysis.Metrics
 {
     public interface ITest
     {

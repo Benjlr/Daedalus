@@ -1,11 +1,9 @@
 ﻿using Logic.Analysis.StrategyRunners;
+using Logic.Utils;
+using PriceSeriesCore;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
-using Logic.Utils;
-using System.Reflection;
-using RuleSets;
 
 namespace Logic.Tests
 {

@@ -1,14 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Data;
-using Daedalus.Models;
-using LinqStatistics;
-using Logic.Analysis.Metrics;
-using Logic.Metrics;
+﻿using Logic.Analysis.Metrics;
 using OxyPlot;
-using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using System.Collections.Generic;
+using ViewCommon.Models;
 
 namespace Daedalus.ViewModels
 {

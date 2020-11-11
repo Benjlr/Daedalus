@@ -1,5 +1,4 @@
-﻿using PriceSeriesCore.FinancialSeries;
-using RuleSets;
+﻿using PriceSeriesCore;
 
 namespace Logic
 {

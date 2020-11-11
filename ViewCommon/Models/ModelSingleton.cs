@@ -1,12 +1,12 @@
-﻿using Logic;
+﻿using System.IO;
+using Logic;
 using Logic.Strategies;
 using Logic.Utils;
 using RuleSets;
 using RuleSets.Entry;
 using RuleSets.Exit;
-using System.IO;
 
-namespace Daedalus.Models
+namespace ViewCommon.Models
 {
     public class ModelSingleton
     {
@@ -22,7 +22,7 @@ namespace Daedalus.Models
             lock (_lock)
             {
                 try {
-                    Mymarket = MarketBuilder.CreateMarket(Markets.AUD_USD_5_Min);
+                    Mymarket = MarketBuilder.CreateMarket(Markets.ASX200_Cash_5_Min);
                 }
                 catch {
                     var marketData = Directory.GetCurrentDirectory() + "\\Utils\\LocalData\\sp500cash";

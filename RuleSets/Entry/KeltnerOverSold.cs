@@ -1,10 +1,10 @@
-﻿using PriceSeriesCore.FinancialSeries;
-using RuleSets.Calculations;
+﻿using PriceSeriesCore;
+using PriceSeriesCore.Calculations;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RuleSets.Entry
-{ 
+{
     public class KeltnerOverSold : RuleBase
     {
         public KeltnerOverSold()

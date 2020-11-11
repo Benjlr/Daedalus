@@ -1,6 +1,7 @@
 ﻿using Logic.Metrics;
 using RuleSets;
 using System;
+using PriceSeriesCore;
 
 namespace Logic.Analysis.Metrics.EntryTests
 {

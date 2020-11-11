@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Daedalus.Utils
+namespace ViewCommon.Utils
 {
     public class ViewModelBase : INotifyPropertyChanged
     {

@@ -1,10 +1,10 @@
-﻿using PriceSeriesCore.FinancialSeries;
-using PriceSeriesCore.Indicators.Derived;
+﻿using PriceSeriesCore;
 using System.Collections.Generic;
 using System.Linq;
+using PriceSeriesCore.Calculations;
 
-namespace RuleSets.Exit 
-{ 
+namespace RuleSets.Exit
+{
     public class ThreeLowerLows : RuleBase
     {
         public ThreeLowerLows()
@@ -35,7 +35,7 @@ namespace RuleSets.Exit
 
         public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
         {
-            var twentyMA = ExponentialMovingAverage.Calculate(data.Select(x => x.Close).ToList(), 20);
+            var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
             Satisfied = new bool[data.Count];
 
             for (int i = 25; i < data.Count; i++)

@@ -1,12 +1,12 @@
-﻿using Logic.Utils;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Logic.Utils;
 using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Daedalus.Charts
+namespace ViewCommon.Charts
 {
     public class Series
     {

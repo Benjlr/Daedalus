@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Logic.Utils;
-using RuleSets;
+﻿using Logic.Utils;
+using PriceSeriesCore;
+using System.Collections.Generic;
 
 namespace Logic.Analysis.StrategyRunners
 {
@@ -19,7 +19,7 @@ namespace Logic.Analysis.StrategyRunners
         private StrategyState LastStateWasInvested( MarketData data, StrategyOptions options)
         {
             var state = new StrategyState();
-            state.Returns = new List<double>(Returns);
+            state.Returns = Returns;
 
             if (options.ShouldExit(state,InvestedState, data))
                 state.InvestedState = InvestedState.DoNothing();
@@ -58,7 +58,7 @@ namespace Logic.Analysis.StrategyRunners
         private StrategyState LastStateWasNotInvested(MarketData data, bool isEntry)
         {
             var state = new StrategyState();
-            state.Returns = new List<double>(Returns);
+            state.Returns = Returns;
             if (isEntry )
                 state.InvestedState = InvestedState.InvestLong(data);
             else

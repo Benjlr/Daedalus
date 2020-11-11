@@ -1,8 +1,8 @@
-﻿using System;
+﻿using LinqStatistics;
+using PriceSeriesCore;
+using System;
 using System.Diagnostics;
 using System.Linq;
-using LinqStatistics;
-using RuleSets;
 
 namespace Logic.Analysis.Metrics.CoreTests
 {

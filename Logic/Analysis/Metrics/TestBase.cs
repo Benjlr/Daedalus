@@ -1,11 +1,10 @@
-﻿using LinqStatistics;
-using PriceSeriesCore.FinancialSeries;
-using RuleSets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LinqStatistics;
+using PriceSeriesCore;
 
-namespace Logic.Metrics
+namespace Logic.Analysis.Metrics
 {
     public abstract class TestBase : ITest
     {

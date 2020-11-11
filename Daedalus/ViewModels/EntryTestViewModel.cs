@@ -1,9 +1,5 @@
-﻿using Daedalus.Charts;
-using Daedalus.Models;
-using Daedalus.Utils;
-using Logic.Analysis;
+﻿using Logic.Analysis;
 using Logic.Analysis.Metrics;
-using Logic.Metrics;
 using Logic.Utils;
 using OxyPlot;
 using System.Collections.Generic;
@@ -11,6 +7,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using ViewCommon.Charts;
+using ViewCommon.Models;
+using ViewCommon.Utils;
 
 namespace Daedalus.ViewModels
 {

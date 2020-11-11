@@ -1,5 +1,6 @@
 ﻿using RuleSets;
 using System;
+using PriceSeriesCore;
 
 namespace Logic.Tests.StrategyRunnerData
 {
@@ -61,14 +62,14 @@ namespace Logic.Tests.StrategyRunnerData
     vol: 29);
 
         public MarketData data6 = new MarketData(time: new DateTime(),
-    o_a: 1110,
-    o_b: 1110,
-    h_a: 1112,
-    h_b: 1112,
+    o_a: 1010,
+    o_b: 1010,
+    h_a: 1012,
+    h_b: 1012,
     l_a: 1009,
     l_b: 1009,
-    c_a: 1110,
-    c_b: 1110,
+    c_a: 1010,
+    c_b: 1010,
     vol: 29);
 
         public MarketData data7 = new MarketData(time: new DateTime(),

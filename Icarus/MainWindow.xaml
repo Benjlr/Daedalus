@@ -4,9 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Icarus"
+        xmlns:views="clr-namespace:Icarus.Views"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <views:StrategyView DataContext="{StaticResource StrategyViewModel}" Grid.Row="0"></views:StrategyView>
 
     </Grid>
 </Window>

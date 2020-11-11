@@ -1,4 +1,4 @@
-﻿using RuleSets;
+﻿using PriceSeriesCore;
 
 namespace Logic.Analysis.StrategyRunners
 {

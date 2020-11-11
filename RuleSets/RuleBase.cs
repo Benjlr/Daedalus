@@ -1,4 +1,4 @@
-﻿using PriceSeriesCore.FinancialSeries;
+﻿using PriceSeriesCore;
 using System.Collections.Generic;
 
 namespace RuleSets

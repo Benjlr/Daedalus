@@ -1,5 +1,5 @@
-﻿using PriceSeriesCore.FinancialSeries;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using PriceSeriesCore;
 
 namespace RuleSets
 {

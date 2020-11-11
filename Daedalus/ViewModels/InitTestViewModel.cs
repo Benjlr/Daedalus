@@ -1,4 +1,4 @@
-﻿using Daedalus.Utils;
+﻿using ViewCommon.Utils;
 
 namespace Daedalus.ViewModels
 {

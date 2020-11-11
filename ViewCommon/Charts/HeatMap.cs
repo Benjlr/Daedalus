@@ -1,10 +1,10 @@
-﻿using OxyPlot.Series;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
+using OxyPlot.Series;
 
-namespace Daedalus.Charts
+namespace ViewCommon.Charts
 {
     public class HeatMap
     {

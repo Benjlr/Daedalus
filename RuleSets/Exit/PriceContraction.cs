@@ -1,6 +1,5 @@
-﻿using PriceSeriesCore.FinancialSeries;
-using PriceSeriesCore.Indicators.Derived;
-using RuleSets.Calculations;
+﻿using PriceSeriesCore;
+using PriceSeriesCore.Calculations;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,10 +16,10 @@ namespace RuleSets.Exit
 
         public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
         {
-            var atrs = Calculations.AverageTrueRange.Calculate(data, 3);
-            var ten = SimpleMovingAverage.Calculate(data.Select(x => x.Close).ToList(), 10);
-            var twety = ExponentialMovingAverage.Calculate(data.Select(x => x.Close).ToList(), 20);
-            var fissy = ExponentialMovingAverage.Calculate(data.Select(x => x.Close).ToList(), 50);
+            var atrs = AverageTrueRange.Calculate(data, 3);
+            var ten = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 10);
+            var twety = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
+            var fissy = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 50);
             Satisfied = new bool[data.Count];
             var nrwRs = NRWRBars.Calculate(data);
             int lookback = 40;

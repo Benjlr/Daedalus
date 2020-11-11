@@ -1,5 +1,4 @@
-﻿using PriceSeriesCore.FinancialSeries;
-using RuleSets;
+﻿using PriceSeriesCore;
 using System;
 using System.IO;
 using System.Linq;
@@ -108,23 +107,18 @@ namespace Logic
         {
            var costanzaData = new Session[rawData.Length];
 
-            for (int i = 0; i < rawData.Length; i++)
-            {
-                costanzaData[i] = new Session(
-                   rawData[i].Time, 
-                   rawData[i].volume, 
-                   rawData[i].Open_Bid, 
-                   rawData[i].Open_Ask, 
-                   rawData[i].High_Bid, 
-                   rawData[i].High_Ask, 
-                   rawData[i].Low_Bid, 
-                   rawData[i].Low_Ask,
-                   rawData[i].Close_Bid, 
-                   rawData[i].Close_Ask);
-                if(i > 1) costanzaData[i].ReturnSeries = costanzaData[i].Close / costanzaData[i - 1].Close - 1;
-            }
+           for (int i = 0; i < rawData.Length; i++)
+           {
+               costanzaData[i] = new Session(
+                   rawData[i].Time,
+                   rawData[i].volume,
+                   (rawData[i].Open_Bid + rawData[i].Open_Ask) / 2.0,
+                   (rawData[i].High_Bid + rawData[i].High_Ask) / 2.0,
+                   (rawData[i].Low_Bid + rawData[i].Low_Ask) / 2.0,
+                   (rawData[i].Close_Bid + rawData[i].Close_Ask) / 2.0);
+           }
 
-            return costanzaData;
+           return costanzaData;
         }
 
     }

@@ -1,8 +1,9 @@
 ﻿using System;
+using Logic.Metrics;
 using Logic.Utils;
-using RuleSets;
+using PriceSeriesCore;
 
-namespace Logic.Metrics.ExitTests
+namespace Logic.Analysis.Metrics.ExitTests
 {
     public class RandomEntryTests : TestBase
     {
