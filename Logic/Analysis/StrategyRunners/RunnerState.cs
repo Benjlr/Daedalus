@@ -5,8 +5,7 @@
         public StrategyState Portfolio { get; set; }
         public StrategyState Market { get; set; }
 
-        public RunnerState()
-        {
+        public RunnerState() {
             Portfolio = new StrategyState();
             Market = new StrategyState();
         }

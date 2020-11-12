@@ -47,6 +47,40 @@ namespace ViewCommon.Charts
             retval.Annotations.Add(new LineAnnotation() {Type = LineAnnotationType.Vertical, X = 1.0});
             retval.Annotations.Add(new LineAnnotation() {Type = LineAnnotationType.Vertical, X = 1.5});
 
+            return retval;
+        }
+        public static PlotModel GenerateExpectanySeriesHorizontal(List<double> values, List<double> values2) {
+
+            var retval = new PlotModel();
+            retval.Axes.Add(new LinearAxis() {
+                Position = AxisPosition.Left,
+
+                Maximum = 3,
+                Minimum = 0
+            });
+            retval.Axes.Add(new LinearAxis {
+                Position = AxisPosition.Bottom,
+            });
+            var series = new LineSeries() {
+                Color = OxyColors.Blue,
+                LineStyle = LineStyle.Solid,
+                InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+
+            };
+            var series2 = new LineSeries() {
+                Color = OxyColors.Blue,
+                LineStyle = LineStyle.Dash,
+                InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+
+            };
+            for (int i = 0; i < values.Count; i++) series.Points.Add(new DataPoint(i + 1 ,values[i] ));
+            for (int i = 0; i < values2.Count; i++) series2.Points.Add(new DataPoint(i + 1,values2[i]));
+
+            retval.Series.Add(series);
+            retval.Series.Add(series2);
+            retval.Annotations.Add(new LineAnnotation() { Type = LineAnnotationType.Horizontal, X = 1.0 });
+            retval.Annotations.Add(new LineAnnotation() { Type = LineAnnotationType.Horizontal, X = 1.5 });
+
 
 
             return retval;

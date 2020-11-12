@@ -46,7 +46,11 @@ namespace RuleSets.Entry
             //    if (atrPC[i - 1] == 0.0 && atrPC[i] != 0.0 && twentyMa[i] > fissy[i] ) Satisfied[i] = true;
             //}
         }
-
+        public double GetPositionInRange(List<double> myInput, double value) {
+            var Min = myInput.Min();
+            var Max = myInput.Max();
+            return (value - Min) / (Max - Min);
+        }
 
 
         public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
@@ -66,8 +70,8 @@ namespace RuleSets.Entry
 
             for (int i = 22; i < data.Count; i++)
             {
-                //var myVOl = ListTools.GetActionitionRange(volavg.GetRange(i - 20, 20), volavg[i]);
-                if (atrPC[i] == 0.0 /*&& myVOl < 0.1*/) 
+                var myVOl = GetPositionInRange(volavg.GetRange(i - 20, 20), volavg[i]);
+                if (atrPC[i] == 0.0 && myVOl < 0.1) 
                     Satisfied[i] = true;
 
                 //////var xxx = ListTools.GetActionitionRange(ListTools.GetNewList(data, i - 25, i), data[i].Close);

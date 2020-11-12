@@ -7,20 +7,18 @@ namespace Logic.Analysis.StrategyRunners
     public class StrategyState
     {
         public TradeState InvestedState { get; private set; }
-        public DrillDownStats Stats { get; private set; }
-        public List<double> Returns { get; private set; }
+        //public DrillDownStats Stats { get; private set; }
+        public double Return { get; private set; }
 
         public StrategyState() {
-            Returns = new List<double>();
+            Return = 0;
             InvestedState = new TradeState();
-            Stats = new DrillDownStats(Returns);
+            //Stats = new DrillDownStats(Returns);
         }
 
         private StrategyState LastStateWasInvested( MarketData data, StrategyOptions options)
         {
             var state = new StrategyState();
-            state.Returns = Returns;
-
             if (options.ShouldExit(state,InvestedState, data))
                 state.InvestedState = InvestedState.DoNothing();
             else if (state.CheckStopsAndTargets(data, InvestedState))
@@ -28,43 +26,38 @@ namespace Logic.Analysis.StrategyRunners
             else
                 state.InvestedState = InvestedState.DoNothing();
 
-            state.Stats = new DrillDownStats(Returns);
+            //state.Stats = new DrillDownStats(Returns);
             return state;
         }
 
         private bool CheckStopsAndTargets(MarketData data, TradeState tradeData)
         {
-            var returns = this.Returns;
             if (data.Low_Bid < tradeData.StopPrice)
             {
                 if (data.Open_Bid < tradeData.StopPrice)
-                    returns.Add((data.Open_Bid - tradeData.EntryPrice) / tradeData.EntryPrice);
+                    Return = (data.Open_Bid - tradeData.EntryPrice) / tradeData.EntryPrice;
                 else
-                    returns.Add((tradeData.StopPrice - tradeData.EntryPrice) / tradeData.EntryPrice);
+                    Return = (tradeData.StopPrice - tradeData.EntryPrice) / tradeData.EntryPrice;
                 return false;
 
             }
             else if (data.High_Bid > tradeData.TargetPrice)
             {
                 if (data.Open_Bid > tradeData.TargetPrice)
-                    returns.Add((data.Open_Bid - tradeData.EntryPrice) / tradeData.EntryPrice);
+                    Return = (data.Open_Bid - tradeData.EntryPrice) / tradeData.EntryPrice;
                 else
-                    returns.Add((tradeData.TargetPrice - tradeData.EntryPrice) / tradeData.EntryPrice);
+                    Return = (tradeData.TargetPrice - tradeData.EntryPrice) / tradeData.EntryPrice;
                 return false;
             }
             return true;
         }
 
-        private StrategyState LastStateWasNotInvested(MarketData data, bool isEntry)
-        {
+        private StrategyState LastStateWasNotInvested(MarketData data, bool isEntry) {
             var state = new StrategyState();
-            state.Returns = Returns;
-            if (isEntry )
+            if (isEntry)
                 state.InvestedState = InvestedState.InvestLong(data);
             else
                 state.InvestedState = InvestedState.DoNothing();
-
-            state.Stats = new DrillDownStats(Returns);
             return state;
         }
 

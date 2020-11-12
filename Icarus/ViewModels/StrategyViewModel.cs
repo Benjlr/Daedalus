@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using Logic.Analysis.StrategyRunners;
+﻿using Logic.Analysis.StrategyRunners;
 using Logic.Utils;
 using OxyPlot;
-using OxyPlot.Axes;
+using System.Linq;
 using ViewCommon.Charts;
 using ViewCommon.Models;
 using ViewCommon.Utils;
@@ -15,13 +14,18 @@ namespace Icarus.ViewModels
 
         public StrategyViewModel()
         {
-            FixedStopTargetExitStrategyRunner runner = new FixedStopTargetExitStrategyRunner(ModelSingleton.Instance.Mymarket, ModelSingleton.Instance.MyStrategy);
+            var runner = new FixedStopTargetExitStrategyRunner(ModelSingleton.Instance.Mymarket, ModelSingleton.Instance.MyStrategy);
             runner.ExecuteRunner();
 
-            var resultsm = ExpectancyTools.GetRollingExpectancy(runner.Runner.Last().Market.Returns, 200).Select(x=>x.MedianExpectancy).ToList();
-            var resultsp = runner.Runner.Select(x=>x.Portfolio.Stats.MedianExpectancy).ToList();
+            var portfolioRet = runner.Runner.Select(x => x.Portfolio.Return).ToList();
+            var marketRet = runner.Runner.Select(x => x.Market.Return).ToList();
 
-            var series1 = Series.GenerateExpectanySeries(resultsm, resultsp);
+
+            var resultsm = ExpectancyTools.GetRollingExpectancy(marketRet, 10)
+                .Select(x=>x.MedianExpectancy).ToList();
+            var resultsp = HistogramTools.MakeCumulative(portfolioRet);
+
+            var series1 = Series.GenerateExpectanySeriesHorizontal(resultsm, resultsp);
             MyResults = series1;
         }
     }

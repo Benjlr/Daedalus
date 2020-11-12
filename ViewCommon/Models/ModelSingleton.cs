@@ -25,7 +25,7 @@ namespace ViewCommon.Models
                     Mymarket = MarketBuilder.CreateMarket(Markets.ASX200_Cash_5_Min);
                 }
                 catch {
-                    var marketData = Directory.GetCurrentDirectory() + "\\Utils\\LocalData\\sp500cash";
+                    var marketData = Directory.GetCurrentDirectory() + "\\Utils\\LocalData\\asx200cash";
                     Mymarket = MarketBuilder.CreateMarket(marketData);
                 }
 

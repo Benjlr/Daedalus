@@ -116,13 +116,13 @@ namespace Logic.Utils
             return Hourly.IndexOf(Hourly.First(x => x.CloseDate.Hour == FiveMinute.OpenDate.AddHours(-1).Hour));
         }
 
-       public static double GetActionitionRange(List<Session> myInput, double value) {
+       public static double GetPositionInRange(List<Session> myInput, double value) {
             var Min = myInput.Min(x => x.Low);
             var Max = myInput.Max(x => x.High);
             return (value - Min) / (Max - Min);
         }
 
-       public static double GetActionitionRange(List<double> myInput, double value) {
+       public static double GetPositionInRange(List<double> myInput, double value) {
            var Min = myInput.Min();
            var Max = myInput.Max();
            return (value - Min) / (Max - Min);

@@ -31,6 +31,7 @@
     <None Remove="StopTarget\longResults.txt" />
     <None Remove="StopTarget\shortResults.txt" />
     <None Remove="StopTarget\TestMarketData.txt" />
+    <None Remove="StrategyRunnerData\ReturnItems.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -104,6 +105,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="StopTarget\TestMarketData.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="StrategyRunnerData\ReturnItems.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -25,7 +25,7 @@ namespace Logic.Tests
             newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), true);
             newState = _factory.BuildNextState(testData.data4, new DrillDownStats(new List<double>()), true);
             Assert.False(newState.InvestedState.Invested);
-            Assert.Equal(newState.Returns, new List<double>() { -0.005 });
+            Assert.Equal(newState.Return, -0.005 );
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace Logic.Tests
             newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), true);
             newState = _factory.BuildNextState(testData.data3, new DrillDownStats(new List<double>()), true);
             Assert.False(newState.InvestedState.Invested);
-            Assert.Equal(newState.Returns, new List<double>() { 0.0049999999999998865 });
+            Assert.Equal(newState.Return,  0.0049999999999998865 );
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace Logic.Tests
             newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), true);
             newState = _factory.BuildNextState(testData.data7, new DrillDownStats(new List<double>()), true);
             Assert.False(newState.InvestedState.Invested);
-            Assert.Equal(newState.Returns, new List<double>() { -0.02 });
+            Assert.Equal(newState.Return,  -0.02 );
         }
 
         [Fact]
@@ -55,7 +55,7 @@ namespace Logic.Tests
             newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), true);
             newState = _factory.BuildNextState(testData.data6, new DrillDownStats(new List<double>()), true);
             Assert.False(newState.InvestedState.Invested);
-            Assert.Equal(newState.Returns, new List<double>() { 0.01 });
+            Assert.Equal(newState.Return, 0.01);
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace Logic.Tests
             newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), true);
             newState = _factory.BuildNextState(testData.data3, new DrillDownStats(new List<double>()), true);
             Assert.False(newState.InvestedState.Invested);
-            Assert.Equal(newState.Returns, new List<double>() { -0.005 });
+            Assert.Equal(newState.Return, -0.005);
         }
 
         [Fact]
@@ -100,7 +100,7 @@ namespace Logic.Tests
             newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), false);
             newState = _factory.BuildNextState(testData.data7, new DrillDownStats(new List<double>()), false);
             Assert.False(newState.InvestedState.Invested);
-            Assert.Equal(newState.Returns, new List<double>() {  });
+            Assert.Equal(newState.Return, 0);
 
         }
 
@@ -111,16 +111,9 @@ namespace Logic.Tests
             newState = _factory.BuildNextState(testData.data2, new DrillDownStats(new List<double>()), false);
             newState = _factory.BuildNextState(testData.data, new DrillDownStats(new List<double>()), false);
             Assert.True(newState.InvestedState.Invested);
-            Assert.Equal(newState.Returns, new List<double>() {  });
+            Assert.Equal(newState.Return, 0);
         }
 
 
-        [Fact]
-        private void ShouldCalculateReturns() {
-
-
-            Assert.Equal(true, false);
-
-        }
     }
 }

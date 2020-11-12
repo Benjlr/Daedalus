@@ -2,8 +2,11 @@
 
 namespace Logic.Analysis.StrategyRunners
 {
+
     public class TradeState
     {
+        private const double _dist = 0.005;
+
         public bool Invested { get; set; } = false;
         public double EntryPrice { get; set; }
         public double StopPrice { get; set; }
@@ -14,18 +17,18 @@ namespace Logic.Analysis.StrategyRunners
             return new TradeState() {
                 Invested = true,
                 EntryPrice = data.Open_Ask,
-                StopPrice = data.Open_Ask * (1 - 0.005),
-                TargetPrice = data.Open_Ask * (1 + 0.005),
+                StopPrice = data.Open_Ask * (1 - _dist),
+                TargetPrice = data.Open_Ask * (1 + _dist),
                 Return = (data.Close_Bid - data.Open_Ask) / data.Open_Ask,
             };
         }
         public TradeState ContinueLong(MarketData data) {
             return new TradeState() {
                 Invested = true,
-                EntryPrice = EntryPrice,
-                StopPrice = StopPrice,
-                TargetPrice = TargetPrice,
-                Return = (data.Close_Bid - EntryPrice) / EntryPrice,
+                EntryPrice = this.EntryPrice,
+                StopPrice = this.StopPrice,
+                TargetPrice = this.TargetPrice,
+                Return = (data.Close_Bid - this.EntryPrice) / this.EntryPrice,
             };
         }
 
@@ -33,8 +36,8 @@ namespace Logic.Analysis.StrategyRunners
             return new TradeState() {
                 Invested = true,
                 EntryPrice = data.Open_Bid,
-                StopPrice = data.Open_Bid * (1 + 0.005),
-                TargetPrice = data.Open_Bid * (1 - 0.005),
+                StopPrice = data.Open_Bid * (1 + _dist),
+                TargetPrice = data.Open_Bid * (1 - _dist),
                 Return = (data.Open_Bid - data.Close_Ask) / data.Open_Bid,
             };
         }
@@ -42,10 +45,10 @@ namespace Logic.Analysis.StrategyRunners
         public TradeState ContinueShort(MarketData data) {
             return new TradeState() {
                 Invested = true,
-                EntryPrice = EntryPrice,
-                StopPrice = StopPrice,
-                TargetPrice = TargetPrice,
-                Return = (EntryPrice - data.Close_Ask) / EntryPrice,
+                EntryPrice = this.EntryPrice,
+                StopPrice = this.StopPrice,
+                TargetPrice = this.TargetPrice,
+                Return = (this.EntryPrice - data.Close_Ask) / this.EntryPrice,
             };
         }
 
