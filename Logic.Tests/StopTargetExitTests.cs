@@ -1,6 +1,5 @@
 ﻿using Logic.Analysis.Metrics;
 using Logic.Metrics;
-using Logic.Strategies;
 using RuleSets;
 using RuleSets.Entry;
 using System.Collections.Generic;
@@ -17,13 +16,17 @@ namespace Logic.Tests
 
         public StopTargetExitTests()
         {
-            var market = MarketBuilder.CreateMarket(marketData);
-            var strat = StrategyBuilder.CreateStrategy(new IRuleSet[] {
+            var market = Market.MarketBuilder.CreateMarket(marketData);
+            var strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[] {
                 new DummyEntries(1, 265)
             }, market);
 
-            myTests = TestFactory.GenerateFixedStopTargetExitTest(strat, market, 
-                new FixedStopTargetExitTestOptions(0.0015, 0.0015,0.0015,1));
+            var longSide = TestFactory.GenerateFixedStopTargetExitTest(strat, market, new FixedStopTargetExitTestOptions(0.0015, 0.0015,0.0015,1, MarketSide.Bull));
+            var shortSide = TestFactory.GenerateFixedStopTargetExitTest(strat, market, new FixedStopTargetExitTestOptions(0.0015, 0.0015,0.0015,1, MarketSide.Bear));
+
+            myTests = new List<ITest[]>();
+            for (int i = 0; i < longSide.Count; i++)
+                myTests.Add(new[] { longSide[i], shortSide[i] });
         }
 
         [Fact]

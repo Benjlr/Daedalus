@@ -1,6 +1,5 @@
 ﻿using Logic.Analysis.Metrics;
 using Logic.Metrics;
-using Logic.Strategies;
 using Logic.Utils;
 using RuleSets;
 using RuleSets.Entry;
@@ -19,13 +18,20 @@ namespace Logic.Tests
 
         public EntryDrilldownTests()
         {
-            var market = MarketBuilder.CreateMarket(marketData);
-            var strat = StrategyBuilder.CreateStrategy(new IRuleSet[]
+            var market = Market.MarketBuilder.CreateMarket(marketData);
+            var strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[]
             {
                 new DummyEntries(1, 98)
             }, market);
 
-            myTests = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(10, 14, 1));
+            var longSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(10, 14, 1, MarketSide.Bull));
+            var shortSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(10, 14, 1, MarketSide.Bear));
+
+
+            myTests = new List<ITest[]>();
+            for (int i = 0; i < longSide.Count; i++)
+                myTests.Add(new[] { longSide[i], shortSide[i] });
+
         }
 
         [Fact]

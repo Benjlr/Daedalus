@@ -1,11 +1,9 @@
 ﻿using Logic.Analysis.StrategyRunners;
-using Logic.Strategies;
 using RuleSets;
 using RuleSets.Entry;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Logic.Markets;
 using Xunit;
 
 namespace Logic.Tests
@@ -18,8 +16,8 @@ namespace Logic.Tests
         private Strategy myStrategy { get; set; }
 
         public StrategyRunnerTests() {
-            myMarket = MarketBuilder.CreateMarket(marketData);
-            myStrategy = StrategyBuilder.CreateStrategy(new IRuleSet[] {
+            myMarket = Market.MarketBuilder.CreateMarket(marketData);
+            myStrategy = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[] {
                 new DummyEntries(3, 100)
             }, myMarket);
         }

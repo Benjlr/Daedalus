@@ -1,19 +1,28 @@
-﻿using Logic.Metrics;
+﻿using System;
+using System.ComponentModel;
+using Logic.Metrics;
 using PriceSeriesCore;
+using RuleSets;
 
 namespace Logic.Analysis.Metrics.EntryTests
 {
-    public abstract class FixedBarExitTest : TestBase
+    abstract class FixedBarExitTest : TestBase
     {
         protected FixedBarExitTest(int bars_to_wait) {
             _endIndex = bars_to_wait;
         }
+
+        public static FixedBarExitTest PrepareTest(MarketSide longShort, int waitBars) {
+            switch (longShort) {
+                case MarketSide.Bull: return new LongFixedBarExitTest(waitBars);
+                case MarketSide.Bear: return new ShortFixedBarExitTest(waitBars);
+                default: throw new InvalidEnumArgumentException();
+            }
+        }
     }
 
-    public class LongFixedBarExitTest : FixedBarExitTest
+    class LongFixedBarExitTest : FixedBarExitTest
     {
-        public LongFixedBarExitTest(int bars_to_wait) : base(bars_to_wait) {
-        }
 
         protected override void SetResult(MarketData[] data, int i) {
             FBEResults[i] = (data[i + _endIndex].Open_Bid - data[i].Open_Ask) / data[i].Open_Ask;
@@ -25,12 +34,14 @@ namespace Logic.Analysis.Metrics.EntryTests
                     FBEDrawdown[i] = (data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask;
             Durations[i] = _endIndex;
         }
+
+        public LongFixedBarExitTest(int bars_to_wait) : base(bars_to_wait)
+        {
+        }
     }
 
-    public class ShortFixedBarExitTest : FixedBarExitTest
+    class ShortFixedBarExitTest : FixedBarExitTest
     {
-        public ShortFixedBarExitTest(int bars_to_wait) : base(bars_to_wait) {
-        }
 
         protected override void SetResult(MarketData[] data, int i) {
             FBEResults[i] = (data[i].Open_Bid - data[i + _endIndex].Open_Ask) / data[i].Open_Bid;
@@ -44,6 +55,9 @@ namespace Logic.Analysis.Metrics.EntryTests
             Durations[i] = _endIndex;
         }
 
+        public ShortFixedBarExitTest(int bars_to_wait) : base(bars_to_wait)
+        {
+        }
     }
 
 }

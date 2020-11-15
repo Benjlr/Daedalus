@@ -4,9 +4,9 @@ using Logic.Utils;
 using OxyPlot;
 using System.Linq;
 using LinqStatistics;
+using Logic;
 using Logic.Analysis;
 using Logic.Analysis.Metrics;
-using Logic.Strategies;
 using PriceSeriesCore.Calculations;
 using RuleSets;
 using RuleSets.Entry;
@@ -22,12 +22,12 @@ namespace Icarus.ViewModels
 
         public StrategyViewModel()
         {
-            var stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.0015, 0.0045, 0.003, 10);
+            var stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.0015, 0.0045, 0.003, 10, MarketSide.Bull);
 
-            var ashj = StrategyBuilder.CreateStrategy(new IRuleSet[] { new ATRContraction() }, ModelSingleton.Instance.Mymarket);
+            var ashj = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[] { new ATRContraction() }, ModelSingleton.Instance.Mymarket);
             var tttyy = TestFactory.GenerateFixedStopTargetExitTest(ashj, ModelSingleton.Instance.Mymarket, stopTargetExitOptions);
             var myTestsLong22 = new AnalysisBuilder(null);
-            myTestsLong22.GenerateFixedBarResults(tttyy.Select(x => x[0]).ToList());
+            myTestsLong22.GenerateFixedBarResults(tttyy);
 
 
             var runner = new FixedStopTargetExitStrategyRunner(ModelSingleton.Instance.Mymarket, ModelSingleton.Instance.MyStrategy);
@@ -35,10 +35,10 @@ namespace Icarus.ViewModels
 
             var portfolioRet = runner.Runner.Select(x => x.Return*10).ToList();
 
-            var aaaaaaa = StrategyBuilder.CreateStrategy(new IRuleSet[] { new ATRContraction() }, ModelSingleton.Instance.Mymarket);
+            var aaaaaaa = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[] { new ATRContraction() }, ModelSingleton.Instance.Mymarket);
             var tt = TestFactory.GenerateFixedStopTargetExitTest(aaaaaaa, ModelSingleton.Instance.Mymarket, stopTargetExitOptions);
             var myTestsLong = new AnalysisBuilder(null);
-            myTestsLong.GenerateFixedBarResults(tt.Select(x => x[0]).ToList());
+            myTestsLong.GenerateFixedBarResults(tt);
 
             var resultsm = GenerateBoundedStats.Generate(myTestsLong.RollingExpectancy).Select(x => x.Minimum).ToList();
             var resultsp = HistogramTools.MakeCumulative(portfolioRet);

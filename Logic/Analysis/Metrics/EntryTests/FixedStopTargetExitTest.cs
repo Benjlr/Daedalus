@@ -1,5 +1,7 @@
-﻿using Logic.Metrics;
+﻿using System.ComponentModel;
+using Logic.Metrics;
 using PriceSeriesCore;
+using RuleSets;
 
 namespace Logic.Analysis.Metrics.EntryTests
 {
@@ -10,28 +12,36 @@ namespace Logic.Analysis.Metrics.EntryTests
         protected double _stopPrice { get; set; }
         protected double _targetPrice { get; set; }
 
-        protected FixedStopTargetExitTest(double target_distance, double stop_distance) {
+        protected FixedStopTargetExitTest(double target_distance, double stop_distance)
+        {
             TargetDistance = target_distance;
             StopDistance = stop_distance;
         }
-        protected override void SetResult(MarketData[] data, int i) {
+
+        protected override void SetResult(MarketData[] data, int i)
+        {
             _endIndex = I(data, i, SetStopAndTarget(data, i));
         }
 
-        private int I(MarketData[] data, int i, int x) {
-            while (x < data.Length) {
+        private int I(MarketData[] data, int i, int x)
+        {
+            while (x < data.Length)
+            {
                 if (ParseConditionals(data, i, x)) break;
                 x++;
             }
+
             return x < data.Length ? x + 1 - i : 0;
         }
 
-        private bool ParseConditionals(MarketData[] data, int i, int x) {
+        private bool ParseConditionals(MarketData[] data, int i, int x)
+        {
             return OpenExceedsStop(data, i, x) ||
                    OpenExceedsTarget(data, i, x) ||
                    StopHit(data, i, x) ||
                    TargetHit(data, i, x);
         }
+
         protected abstract bool OpenExceedsStop(MarketData[] data, int openIndex, int currentIndex);
         protected abstract bool OpenExceedsTarget(MarketData[] data, int openIndex, int currentIndex);
         protected abstract bool StopHit(MarketData[] data, int openIndex, int currentIndex);
@@ -53,6 +63,15 @@ namespace Logic.Analysis.Metrics.EntryTests
             _endIndex = 0;
         }
 
+        public static FixedStopTargetExitTest PrepareTest(MarketSide longShort, double target_distance, double stop_distance)
+        {
+            switch (longShort)
+            {
+                case MarketSide.Bull: return new LongFixedStopTargetExitTest(target_distance, stop_distance);
+                case MarketSide.Bear: return new ShortFixedStopTargetExitTest(target_distance, stop_distance);
+                default: throw new InvalidEnumArgumentException();
+            }
+        }
     }
 
     public class LongFixedStopTargetExitTest : FixedStopTargetExitTest

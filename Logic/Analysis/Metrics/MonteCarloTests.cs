@@ -1,16 +1,12 @@
-﻿using System;
+﻿using LinqStatistics;
+using Logic.Utils;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using LinqStatistics;
-using Logic.Markets;
-using Logic.Utils;
 
-
-namespace Logic.Metrics
+namespace Logic.Analysis.Metrics
 {
     public class MonteCarloTest
     {

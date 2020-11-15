@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Logic.Analysis.Metrics;
-using Logic.Markets;
-using Logic.Strategies;
 using PriceSeriesCore.Calculations;
 using RuleSets;
 using RuleSets.Entry;

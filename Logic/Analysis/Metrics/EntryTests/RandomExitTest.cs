@@ -1,6 +1,7 @@
 ﻿using Logic.Metrics;
 using RuleSets;
 using System;
+using System.ComponentModel;
 using PriceSeriesCore;
 
 namespace Logic.Analysis.Metrics.EntryTests
@@ -22,6 +23,13 @@ namespace Logic.Analysis.Metrics.EntryTests
         protected void SetDuration(int i) {
             Durations[i] = _endIndex-i;
             _endIndex = 0;
+        }
+        public static RandomExitTest PrepareTest(MarketSide longShort, int maxLength) {
+            switch (longShort) {
+                case MarketSide.Bull: return new LongRandomExitTest(maxLength);
+                case MarketSide.Bear: return new ShortRandomExitTest(maxLength);
+                default: throw new InvalidEnumArgumentException();
+            }
         }
     }
 

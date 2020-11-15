@@ -1,6 +1,5 @@
 ﻿using Logic.Analysis.Metrics;
 using Logic.Metrics;
-using Logic.Strategies;
 using RuleSets;
 using RuleSets.Entry;
 using System.Collections.Generic;
@@ -17,17 +16,23 @@ namespace Logic.Tests
 
         public TestBaseTests()
         {
-            var market = MarketBuilder.CreateMarket(marketData);
-            var invalidstrat = StrategyBuilder.CreateStrategy(new IRuleSet[] {
+            var market = Market.MarketBuilder.CreateMarket(marketData);
+            var invalidstrat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[] {
                 new DummyEntries(65, 98)
             }, market);
-            myInvalidTests = TestFactory.GenerateFixedBarExitTest(invalidstrat, market, new FixedBarExitTestOptions(10, 14, 1))[0][0];
+            myInvalidTests = TestFactory.GenerateFixedBarExitTest(invalidstrat, market, new FixedBarExitTestOptions(10, 14, 1, MarketSide.Bull))[0];
             
-            var strat = StrategyBuilder.CreateStrategy(new IRuleSet[] {
+            var strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[] {
                 new DummyEntries(1, 98)
             }, market);
 
-            myTests = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(10, 14, 1));
+            var longSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(10, 14, 1, MarketSide.Bull));
+            var shortSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(10, 14, 1, MarketSide.Bear));
+
+
+            myTests = new List<ITest[]>();
+            for (int i = 0; i < longSide.Count; i++)
+                myTests.Add(new[] { longSide[i], shortSide[i] });
         }
 
         [Fact]

@@ -1,11 +1,9 @@
 ﻿using Logic;
-using Logic.Strategies;
 using Logic.Utils;
 using RuleSets;
 using RuleSets.Entry;
 using RuleSets.Exit;
 using System.IO;
-using Logic.Markets;
 
 namespace ViewCommon.Models
 {
@@ -23,17 +21,17 @@ namespace ViewCommon.Models
             lock (_lock)
             {
                 try {
-                    Mymarket = MarketBuilder.CreateMarket(Markets.SP500_Cash_5_Min);
+                    Mymarket = Market.MarketBuilder.CreateMarket(Markets.SP500_Cash_5_Min);
                 }
                 catch {
                     var marketData = Directory.GetCurrentDirectory() + "\\Utils\\LocalData\\asx200cash";
-                    Mymarket = MarketBuilder.CreateMarket(marketData);
+                    Mymarket = Market.MarketBuilder.CreateMarket(marketData);
                 }
 
 
 
 
-                MyStrategy = StrategyBuilder.CreateStrategy(new IRuleSet[]
+                MyStrategy = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[]
                 {
                     //new MAViolation(), 
                     new ThreeLowerLows(),
