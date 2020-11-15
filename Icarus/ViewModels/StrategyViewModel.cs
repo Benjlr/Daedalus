@@ -23,13 +23,6 @@ namespace Icarus.ViewModels
         public StrategyViewModel()
         {
             var stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.0015, 0.0045, 0.003, 10, MarketSide.Bull);
-
-            var ashj = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[] { new ATRContraction() }, ModelSingleton.Instance.Mymarket);
-            var tttyy = TestFactory.GenerateFixedStopTargetExitTest(ashj, ModelSingleton.Instance.Mymarket, stopTargetExitOptions);
-            var myTestsLong22 = new AnalysisBuilder(null);
-            myTestsLong22.GenerateFixedBarResults(tttyy);
-
-
             var runner = new FixedStopTargetExitStrategyRunner(ModelSingleton.Instance.Mymarket, ModelSingleton.Instance.MyStrategy);
             runner.ExecuteRunner();
 
@@ -44,7 +37,8 @@ namespace Icarus.ViewModels
             var resultsp = HistogramTools.MakeCumulative(portfolioRet);
             var tenMa = MovingAverage.ExponentialMovingAverage(resultsm, 5000);
             //var sharpes = ExpectancyTools.GetRollingExpectancy(runner.Runner.Select(x => x.Portfolio.Return ).ToList(), 500).Select(x=>x.SharpeRatio).ToList();
-
+            var resno0 = runner.Runner.Select(x => x.Return).Where(x => x != 0).ToList();
+            
 
             var series1 = Series.GenerateSeriesHorizontal(new List<List<double>>(){resultsp, resultsp, resultsp});
             MyResults = series1;

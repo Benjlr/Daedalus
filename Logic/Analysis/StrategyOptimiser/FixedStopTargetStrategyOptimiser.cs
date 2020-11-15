@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Logic.Analysis.Metrics;
+using Logic.Analysis.Metrics.EntryTests;
 using Logic.Utils;
+using PriceSeriesCore.Calculations;
 using RuleSets;
 
 namespace Logic.Analysis.StrategyOptimiser
@@ -12,9 +14,9 @@ namespace Logic.Analysis.StrategyOptimiser
     public class FixedStopTargetStrategyOptimiser
     {
         public List<ITest> _myTests { get; set; }
-        private  Market _baseMarket { get; set; }
-        private  Strategy _baseStrategy { get; set; }
-        private  MarketSide _side { get; set; }
+        private Market _baseMarket { get; set; }
+        private Strategy _baseStrategy { get; set; }
+        private MarketSide _side { get; set; }
 
         private FixedStopTargetExitTestOptions _options { get; set; }
 
@@ -22,29 +24,47 @@ namespace Logic.Analysis.StrategyOptimiser
         {
             _baseMarket = market;
             _baseStrategy = strat;
-            _options = new FixedStopTargetExitTestOptions(0.001,0.001, 0.01, 20, MarketSide.Bull);
+            _options = new FixedStopTargetExitTestOptions(0.001, 0.001, 0.005, 30, MarketSide.Bull);
         }
 
         private int count = 1;
+
         public void UpdateConsole()
         {
             Debug.WriteLine(count++);
         }
 
-        public void Optimise(int lastKnownData, int lookBack)
+        public FixedStopTargetExitOptimisation Optimise(int lastKnownData, int lookBack)
         {
-            var slicedMarket = _baseMarket.Slice(lastKnownData - lookBack, lastKnownData);
-            var slicedStrat = _baseStrategy.Slice(lastKnownData - lookBack, lastKnownData);
+            var slicedMarket = _baseMarket.Slice(lastKnownData - lookBack+1, lastKnownData);
+            var slicedStrat = _baseStrategy.Slice(lastKnownData - lookBack+1, lastKnownData);
 
-            count = 0;
             _myTests = TestFactory.GenerateFixedStopTargetExitTest(slicedStrat, slicedMarket, _options, UpdateConsole);
-            var topTests = _myTests.OrderByDescending(x => x.Stats.AverageExpectancy).Take(_myTests.Count / 10).ToList();
+            var topTests = _myTests.Select(x => (FixedStopTargetExitTest) x).OrderByDescending(x => x.Stats.MedianExpectancy).Take(_myTests.Count / 20).ToList();
 
-            ExpectancyTools.GetRollingExpectancy()
+            List<double> stops = topTests.Select(x => x.StopDistance).ToList();
+            List<double> targets = topTests.Select(x => x.TargetDistance).ToList();
+            
+            var myExps = new List<List<double>>();
+            foreach (var test in topTests.Select(x => x.FBEResults).ToList())
+                myExps.Add(ExpectancyTools.GetRollingExpectancy(test.ToList(), 5).Select(x => x.MedianExpectancy).ToList());
 
+            var bouned = GenerateBoundedStats.Generate(myExps);
 
-
+            return new FixedStopTargetExitOptimisation()
+            {
+                StopDist = stops[0],
+                TargetDist = targets[0],
+                Expectancy = bouned,
+            };
         }
+    }
 
+
+    public struct FixedStopTargetExitOptimisation
+    {
+        public double StopDist { get; set; }
+        public double TargetDist { get; set; }
+        public List<BoundedStat> Expectancy { get; set; }
     }
 }

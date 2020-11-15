@@ -7,7 +7,7 @@ namespace Logic.Utils
     public class ExpectancyTools
     {
 
-        public static List<TradeStatistics> GetRollingExpectancy(List<double> resultList, int lookbackPeriod)
+         public static List<TradeStatistics> GetRollingExpectancy(List<double> resultList, int lookbackPeriod)
         {
             return RunThroughResultSet(resultList, lookbackPeriod);
         }

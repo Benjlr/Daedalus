@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Logic.Analysis.Metrics;
+using Logic.Analysis.StrategyOptimiser;
 using PriceSeriesCore.Calculations;
 using RuleSets;
 using RuleSets.Entry;
@@ -40,17 +41,17 @@ namespace Logic.Analysis.StrategyRunners
                 WinPercentCutOff = 0,
             };
 
-            var portfolioStrategyStateBuilder = new StrategyState.StrategyStateFactory(portfolioOptions);
-            Runner = new List<StrategyState>() { portfolioStrategyStateBuilder.BuildNextState(_market.RawData[0],false, false) };
+            var stateBuilder = new StrategyState.StrategyStateFactory(portfolioOptions);
+            var optimiser = new FixedStopTargetStrategyOptimiser(_market, _strategy);
+
+            var results = optimiser.Optimise(_market.RawData.Length-1, _market.RawData.Length);
+            stateBuilder.stop = 1-results.StopDist;
+            stateBuilder.target = results.TargetDist+1;
+
+            Runner = new List<StrategyState>() { stateBuilder.BuildNextState(_market.RawData[0], false, false) };
 
             for (int i = 1; i < _market.RawData.Length; i++)
-            {
-                portfolioStrategyStateBuilder.stop = 1-0.005;
-                portfolioStrategyStateBuilder.target= 1 + 0.005;
-
-                Runner.Add(portfolioStrategyStateBuilder.BuildNextState(_market.RawData[i], _strategy.Entries[i - 1], false));
-            }
-
+                Runner.Add(stateBuilder.BuildNextState(_market.RawData[i], _strategy.Entries[i - 1] && results.Expectancy[i-1].Median > 0, false));
         }
     }
 }
