@@ -1,6 +1,7 @@
-﻿using PriceSeriesCore;
+﻿using System.Linq;
+using PriceSeriesCore;
 
-namespace Logic
+namespace Logic.Markets
 {
     public class Market
     {
@@ -11,6 +12,14 @@ namespace Logic
         {
             RawData = data;
             CostanzaData = costanza;
+        }
+
+        public Market ChopMarket(int max)
+        {
+            var myRaws = this.RawData.ToList().GetRange(0, max);
+            var mySess = this.CostanzaData.ToList().GetRange(0, max);
+
+            return new Market(myRaws.ToArray(),mySess.ToArray());
         }
     }
 }

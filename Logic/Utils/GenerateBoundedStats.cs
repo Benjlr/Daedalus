@@ -10,7 +10,7 @@ namespace Logic.Utils
         {
             var retVal = new List<BoundedStat>();
             for (int i = 0; i < tests[0].Count; i++) 
-                retVal.Add(new BoundedStat(tests.Select(x => x[i] ).ToList(),0.9));
+                retVal.Add(new BoundedStat(tests.Select(x => x[i] ).ToList(),0.75));
 
             return retVal;
         }

@@ -5,19 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="clr-namespace:Daedalus.Views"
         mc:Ignorable="d"
-        WindowState="Maximized"
+        Background="Black" Foreground="White"
+        WindowState="Maximized" 
         Title="MainWindow" Height="1200" Width="1900">
 
     <Grid>
-        <TabControl>
-            <TabItem Header="Fixed Bar Exits">
+        <TabControl Background="Black" Foreground="White">
+            <TabItem Background="Black" Foreground="White" Header="Fixed Bar Exits">
                 <views:EntryTestView DataContext="{StaticResource FixedBarExitViewmodel}" Grid.Row="0"></views:EntryTestView>
             </TabItem>
-            <TabItem Header="Stop Target Exits">
+            <TabItem Header="Stop Target Exits" Background="Black" Foreground="White">
                 <views:EntryTestView DataContext="{StaticResource StopTargetExitViewmodel}" Grid.Row="0"></views:EntryTestView>
 
             </TabItem>
-            <TabItem Header="Random Exits">
+            <TabItem Header="Random Exits" Background="Black" Foreground="White" >
                 <views:EntryTestView DataContext="{StaticResource RandomExitViewmodel}" Grid.Row="0"></views:EntryTestView>
 
             </TabItem>

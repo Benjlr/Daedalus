@@ -1,5 +1,6 @@
 ﻿using RuleSets;
 using System.Linq;
+using Logic.Markets;
 
 namespace Logic.Strategies
 {
@@ -17,8 +18,6 @@ namespace Logic.Strategies
             bool[] entries = new bool[myMarket.RawData.Length];
             bool[] exits = new bool[myMarket.RawData.Length];
 
-            int[] durations = new int[myMarket.RawData.Length];
-
 
             for (int i = 0; i < myMarket.RawData.Length-2; i++)
             {
@@ -27,22 +26,6 @@ namespace Logic.Strategies
                 //if (entryRules.Any(x => x.Satisfied[i])) exits[i+10] = true;
             }
 
-            for (int i = 0; i < entries.Length; i++)
-            {
-                if (entries[i])
-                {
-                    int counter = 1;
-                    for (int x = i+1; x < exits.Length; x++)
-                    {
-                        if (exits[x])
-                        {
-                            durations[i] = counter;
-                            break;
-                        }
-                        counter++;
-                    }
-                }
-            }
 
             return new Strategy(myRules, entries, exits);
         }

@@ -2,7 +2,9 @@
 using Logic.Utils;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Logic.Analysis.Metrics;
 
@@ -60,18 +62,22 @@ namespace Logic.Analysis
 
         private void AddCategorisedAndBoundedStats() {
             ReturnByDrawdown = HistogramTools.GenerateHistorgramsFromCategories(
-                HistogramTools.CollateCategories(_analyses.Select(x=>x._histoStats.DrawdownByReturn).ToList(), _binSizing),
+                HistogramTools.CollateCategories(_analyses.Select(x=>x?._histoStats?.DrawdownByReturn).ToList(), _binSizing),
                 _binSizing);
         }
 
         private void InitialiseAndSortPublicLists(){
             _analyses = _analyses.OrderBy(x => x.Position).ToList();
+            //var onesIwant = _analyses.OrderByDescending(x => x.ExpectancyAverage).Take(50).ToList();
+            //onesIwant = onesIwant.OrderBy(x => x.Position).ToList();
+
             ExpectancyAverage = _analyses.Select(x => x.ExpectancyAverage).ToList();
             ExpectancyMedian = _analyses.Select(x => x.ExpectancyMedian).ToList();
             WinPercentage = _analyses.Select(x => x.WinPercentage).ToList();
             ReturnByTest = _analyses.Select(x => x._histoStats.ResultHistogram).ToList();
             DrawdownByTest = _analyses.Select(x => x._histoStats.DrawddownHistogram).ToList();
-            RollingExpectancy = _analyses.OrderByDescending(x=>x.ExpectancyMedian).Take(50).Select(x => x.RollingExpectancy).ToList();
+            RollingExpectancy = _analyses.Select(x => x.RollingExpectancy).ToList();
+
         }
     }
 
@@ -97,10 +103,10 @@ namespace Logic.Analysis
 
         private void AddGeneralStats(ITest results)
         {
-            ExpectancyAverage = results.ExpectancyAverage;
-            ExpectancyMedian = results.ExpectancyMedian;
-            WinPercentage = (results.WinPercentage);
-            RollingExpectancy = ExpectancyTools.GetRollingExpectancy(results.FBEResults.ToList(), 200).Select(x=>x.MedianExpectancy).ToList();
+            ExpectancyAverage = results.Stats.AverageExpectancy;
+            ExpectancyMedian = results.Stats.MedianExpectancy;
+            WinPercentage = (results.Stats.WinPercent);
+            RollingExpectancy = ExpectancyTools.GetRollingExpectancy(results.FBEResults.ToList(),20).Select(x=>x.MedianExpectancy).ToList();
         }
     }
 

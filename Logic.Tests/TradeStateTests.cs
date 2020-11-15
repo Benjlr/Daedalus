@@ -7,7 +7,7 @@ namespace Logic.Tests
 {
     public class TradeStateTests
     {
-        MarketData data = new MarketData(time: new DateTime(),
+        readonly MarketData data = new MarketData(time: new DateTime(),
     o_a: 5,
     o_b: 4.5,
     h_a: 7,
@@ -18,7 +18,7 @@ namespace Logic.Tests
     c_b: 6,
     vol: 45);
 
-        MarketData data2 = new MarketData(time: new DateTime(),
+        readonly MarketData data2 = new MarketData(time: new DateTime(),
     o_a: 10,
     o_b: 9.5,
     h_a: 12,
@@ -29,11 +29,39 @@ namespace Logic.Tests
     c_b: 8.5,
     vol: 29);
 
-        TradeState stateOne = new TradeState();
+        readonly TradeState stateOne = new TradeState();
+
+
+        [Fact]
+        private void ShouldInvestWithNoStop() {
+            var state = stateOne.Invest(data, ExitPrices.NoStop(1.1), true);
+            state = state.Continue(data2);
+
+            Assert.Equal(double.NaN, state.StopPrice);
+            Assert.Equal(1.1*data.Open_Ask, state.TargetPrice);
+        }
+
+        [Fact]
+        private void ShouldInvestWithNoTarget() {
+            var state = stateOne.Invest(data, ExitPrices.NoTarget(1.1), false);
+            state = state.Continue(data2);
+
+            Assert.Equal(double.NaN, state.TargetPrice);
+            Assert.Equal(1.1 * data.Open_Bid, state.StopPrice);
+        }
+
+        [Fact]
+        private void ShouldInvestWithNoTargetOrStop() {
+            var state = stateOne.Invest(data, ExitPrices.NoStopTarget(), true);
+            state = state.Continue(data2);
+
+            Assert.Equal(double.NaN, state.StopPrice);
+            Assert.Equal(double.NaN, state.TargetPrice);
+        }
 
         [Fact]
         private void ShouldInvestLong() {
-            var state = stateOne.InvestLong(data);
+            var state = stateOne.Invest(data, new ExitPrices(0.995, 1.005), true );
 
             Assert.Equal(5, state.EntryPrice);
             Assert.True(state.Invested);
@@ -44,8 +72,8 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldContinueLong() {
-            var state = stateOne.InvestLong(data);
-            var nextState = state.ContinueLong(data2);
+            var state = stateOne.Invest(data, new ExitPrices(0.995, 1.005), true);
+            var nextState = state.Continue(data2);
 
             Assert.Equal(5, nextState.EntryPrice);
             Assert.True(nextState.Invested);
@@ -57,7 +85,7 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldInvestShort() {
-            var state = stateOne.InvestShort(data);
+            var state = stateOne.Invest(data, new ExitPrices(1.005, 0.995), false);
 
             Assert.Equal(4.5, state.EntryPrice);
             Assert.True(state.Invested);
@@ -68,8 +96,8 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldContinueShort() {
-            var state = stateOne.InvestShort(data);
-            var nextState = state.ContinueShort(data2);
+            var state = stateOne.Invest(data, new ExitPrices(1.005,0.995), false);
+            var nextState = state.Continue(data2);
 
             Assert.Equal(4.5, nextState.EntryPrice);
             Assert.True(nextState.Invested);
@@ -88,5 +116,21 @@ namespace Logic.Tests
             Assert.Equal(0, state.StopPrice);
             Assert.Equal(0, state.TargetPrice);
         }
+
+        [Fact]
+        private void ShouldChangeStopAndTargets() {
+            var longstate = stateOne.Invest(data, ExitPrices.NoStopTarget(), true);
+            longstate = longstate.ContinueUpdateExits(data2, new ExitPrices(0.995, 1.005));
+
+            var shortstate = stateOne.Invest(data, ExitPrices.NoStopTarget(), false);
+            shortstate = shortstate.ContinueUpdateExits(data2, new ExitPrices(1.005, 0.995));
+
+            Assert.Equal(5 * 0.995, longstate.StopPrice);
+            Assert.Equal(5 * 1.005, longstate.TargetPrice); 
+            Assert.Equal(4.5 * 1.005, shortstate.StopPrice);
+            Assert.Equal(4.5 * 0.995, shortstate.TargetPrice);
+        }
+
+  
     }
 }

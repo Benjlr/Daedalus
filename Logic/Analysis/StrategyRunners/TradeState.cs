@@ -5,56 +5,82 @@ namespace Logic.Analysis.StrategyRunners
 
     public class TradeState
     {
-        private const double _dist = 0.005;
-
-        public bool Invested { get; set; } = false;
+        public bool Invested { get; set; } 
         public double EntryPrice { get; set; }
         public double StopPrice { get; set; }
         public double TargetPrice { get; set; }
         public double Return { get; set; }
+        private bool _isLong { get; set; }
 
-        public TradeState InvestLong(MarketData data) {
-            return new TradeState() {
+        public TradeState Invest(MarketData data, ExitPrices stopTarget, bool isLong) {
+            return new TradeState()
+            {
                 Invested = true,
-                EntryPrice = data.Open_Ask,
-                StopPrice = data.Open_Ask * (1 - _dist),
-                TargetPrice = data.Open_Ask * (1 + _dist),
-                Return = (data.Close_Bid - data.Open_Ask) / data.Open_Ask,
+                EntryPrice = isLong ? data.Open_Ask : data.Open_Bid,
+                StopPrice = isLong ? data.Open_Ask * stopTarget.StopPercentage : data.Open_Bid * stopTarget.StopPercentage,
+                TargetPrice = isLong ? data.Open_Ask * stopTarget.TargetPercentage : data.Open_Bid * stopTarget.TargetPercentage,
+                Return = isLong ? CalculateReturnLong(data.Close_Bid, data.Open_Ask) : CalculateReturnShort(data.Close_Ask, data.Open_Bid),
+                _isLong = isLong
             };
         }
-        public TradeState ContinueLong(MarketData data) {
-            return new TradeState() {
+        public TradeState Continue(MarketData data) {
+            return new TradeState()
+            {
                 Invested = true,
                 EntryPrice = this.EntryPrice,
                 StopPrice = this.StopPrice,
                 TargetPrice = this.TargetPrice,
-                Return = (data.Close_Bid - this.EntryPrice) / this.EntryPrice,
+                Return = _isLong ? CalculateReturnLong(data.Close_Bid, this.EntryPrice) : 
+                    CalculateReturnShort(data.Close_Ask, this.EntryPrice),
+
             };
         }
-
-        public TradeState InvestShort(MarketData data) {
-            return new TradeState() {
-                Invested = true,
-                EntryPrice = data.Open_Bid,
-                StopPrice = data.Open_Bid * (1 + _dist),
-                TargetPrice = data.Open_Bid * (1 - _dist),
-                Return = (data.Open_Bid - data.Close_Ask) / data.Open_Bid,
-            };
-        }
-
-        public TradeState ContinueShort(MarketData data) {
-            return new TradeState() {
+        public TradeState ContinueUpdateExits(MarketData data, ExitPrices exitPrices) {
+            return new TradeState()
+            {
                 Invested = true,
                 EntryPrice = this.EntryPrice,
-                StopPrice = this.StopPrice,
-                TargetPrice = this.TargetPrice,
-                Return = (this.EntryPrice - data.Close_Ask) / this.EntryPrice,
+                StopPrice = this.EntryPrice * exitPrices.StopPercentage,
+                TargetPrice = this.EntryPrice * exitPrices.TargetPercentage,
+                Return = _isLong ? CalculateReturnLong(data.Close_Bid, this.EntryPrice) : 
+                    CalculateReturnShort(data.Close_Ask, this.EntryPrice),
+
             };
+        }
+        private double CalculateReturnLong(double current, double entry) {
+            return (current - entry) / entry;
+        }
+
+        private double CalculateReturnShort(double current, double entry) {
+            return (entry - current) / entry;
         }
 
         public TradeState DoNothing() {
             return new TradeState();
         }
 
+    }
+
+    public struct ExitPrices
+    {
+        public double StopPercentage { get; set; }
+        public double TargetPercentage { get; set; }
+
+        public ExitPrices(double stop, double target) {
+            StopPercentage = stop;
+            TargetPercentage = target;
+        }
+
+        public static ExitPrices NoTarget(double stop)
+        {
+            return new ExitPrices(stop, double.NaN);
+        }
+
+        public static ExitPrices NoStop(double target) {
+            return new ExitPrices(double.NaN, target);
+        }
+        public static ExitPrices NoStopTarget() {
+            return new ExitPrices(double.NaN, double.NaN);
+        }
     }
 }

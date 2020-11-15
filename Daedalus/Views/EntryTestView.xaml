@@ -4,7 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"                          
+             mc:Ignorable="d"        Background="Black" Foreground="White"                   
              d:DesignHeight="450" d:DesignWidth="800">
 
     <Grid>
@@ -14,14 +14,14 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Visibility="{Binding  LoadWindowVisibility}" VerticalAlignment="Center">
-            <Label Name="Title" Content="{Binding  LoadStatus.Name}" HorizontalAlignment="Center" FontFamily="Roboto" FontSize="24" />
+            <Label Foreground="White" Name="Title" Content="{Binding  LoadStatus.Name}" HorizontalAlignment="Center" FontFamily="Roboto" FontSize="24" />
             <ProgressBar x:Name="myProgress" IsIndeterminate="False"  Value="{Binding LoadStatus.Count}"  
                          Maximum="{Binding LoadStatus.TotalCount}" Width="1200" Height="40"/>
-            <Label Name="Numbers" Content="{Binding  LoadStatus.Amounts}" HorizontalAlignment="Center" FontFamily="Roboto" FontSize="24" />
+            <Label Foreground="White" Name="Numbers" Content="{Binding  LoadStatus.Amounts}" HorizontalAlignment="Center" FontFamily="Roboto" FontSize="24" />
 
         </StackPanel>
-        <TabControl Grid.Row="1" Visibility="{Binding ChartVisibility}" >
-            <TabItem Header="1">
+        <TabControl Grid.Row="1" Visibility="{Binding ChartVisibility}" Background="DarkGray"  >
+            <TabItem Header="1" Background="DarkGray" >
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50*"/>
@@ -41,15 +41,13 @@
                             <RowDefinition Height="25*"/>
                             <RowDefinition Height="25*"/>
                         </Grid.RowDefinitions>
-                        <!--<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="0" >-->
-                        <oxy:PlotView Grid.Row="0" Model="{Binding LongRollingExp}"  />
-                        <oxy:PlotView Grid.Row="1" Model="{Binding ShortRollingExp}"  />
-                        <!--</StackPanel>-->
+                        <oxy:PlotView Background="DarkGray"  Grid.Row="0" Model="{Binding LongRollingExp}"  />
+                        <oxy:PlotView Background="DarkGray"  Grid.Row="1" Model="{Binding ShortRollingExp}"  />
                     </Grid>
                 </Grid>
             </TabItem>
 
-            <TabItem Header="2">
+            <TabItem Header="2" Background="DarkGray" Foreground="White">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="30*"/>
@@ -62,20 +60,20 @@
                         <RowDefinition Height="25*"/>
                     </Grid.RowDefinitions>
 
-                    <oxy:PlotView Grid.Column="0" Grid.Row="0" Model="{Binding PlotModelDrawdownLong}"  />
-                    <oxy:PlotView Grid.Column="0" Grid.Row="1" Model="{Binding PlotModelDrawdownShort}"  />
-                    <!--<oxy:PlotView Grid.Column="1" Grid.Row="0" Model="{Binding PlotModelDDsLong}"  />
-                    <oxy:PlotView Grid.Column="1" Grid.Row="1" Model="{Binding PlotModelDDsShort}"  />-->
-                    <oxy:PlotView Grid.Column="2" Grid.Row="0" Model="{Binding PlotModelReturnsLong}"  />
-                    <oxy:PlotView Grid.Column="2" Grid.Row="1" Model="{Binding PlotModelReturnsShort}"  />
-                    <oxy:PlotView Grid.Column="3" Grid.Row="0" Model="{Binding ExpectancyLong}"  />
-                    <oxy:PlotView Grid.Column="3" Grid.Row="1" Model="{Binding ExpectancyShort}"  />
+                    <oxy:PlotView Background="DarkGray"  Grid.Column="0" Grid.Row="0" Model="{Binding PlotModelDrawdownLong}"  />
+                    <oxy:PlotView Background="DarkGray"  Grid.Column="0" Grid.Row="1" Model="{Binding PlotModelDrawdownShort}"  />
+                    <oxy:PlotView Background="DarkGray"  Grid.Column="1" Grid.Row="0" Model="{Binding PlotModelDDsLong}"  />
+                    <oxy:PlotView Background="DarkGray"  Grid.Column="1" Grid.Row="1" Model="{Binding PlotModelDDsShort}"  />
+                    <oxy:PlotView Background="DarkGray"    Grid.Column="2" Grid.Row="0" Model="{Binding PlotModelReturnsLong}"  />
+                    <oxy:PlotView Background="DarkGray"  Grid.Column="2" Grid.Row="1" Model="{Binding PlotModelReturnsShort}"  />
+                    <oxy:PlotView Background="DarkGray"  Grid.Column="3" Grid.Row="0" Model="{Binding ExpectancyLong}"  />
+                    <oxy:PlotView  Background="DarkGray"   Grid.Column="3" Grid.Row="1" Model="{Binding ExpectancyShort}"  />
 
 
                 </Grid>
             </TabItem>
-         
-            <TabItem Header="3">
+
+            <TabItem Header="3" Background="DarkGray"   >
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50*"/>
@@ -95,10 +93,8 @@
                             <RowDefinition Height="25*"/>
                             <RowDefinition Height="25*"/>
                         </Grid.RowDefinitions>
-                        <!--<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="0" >-->
-                        <oxy:PlotView Grid.Row="0" Model="{Binding LongDrawdowns}"  />
-                        <oxy:PlotView Grid.Row="1" Model="{Binding ShortDrawdowns}"  />
-                        <!--</StackPanel>-->
+                        <oxy:PlotView Background="DarkGray"   Grid.Row="0" Model="{Binding LongDrawdowns}"  />
+                        <oxy:PlotView Background="DarkGray"   Grid.Row="1" Model="{Binding ShortDrawdowns}"  />
                     </Grid>
 
                 </Grid>

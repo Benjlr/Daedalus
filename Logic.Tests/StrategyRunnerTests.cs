@@ -5,6 +5,7 @@ using RuleSets.Entry;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Logic.Markets;
 using Xunit;
 
 namespace Logic.Tests
@@ -25,12 +26,13 @@ namespace Logic.Tests
 
 
         [Fact]
-        private void ShouldGenerateReturns() {
+        private void ShouldGenerateReturns()
+        {
             var fste = new FixedStopTargetExitStrategyRunner(myMarket, myStrategy);
-        fste.ExecuteRunner();
-            var results = fste.Runner.Select(x => x.Market.Return).ToList();
-
-            Assert.Equal(TestUtils.LoadDataSingleColumn(returnItemData), results);
-               }
+            fste.ExecuteRunner();
+            var results = fste.Runner.Select(x => x.Return).ToList();
+            var loadResults = TestUtils.LoadDataSingleColumn(returnItemData);
+            Assert.Equal(loadResults, results);
+        }
     }
 }

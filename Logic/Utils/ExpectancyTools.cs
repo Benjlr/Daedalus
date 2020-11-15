@@ -1,26 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using LinqStatistics;
+using PriceSeriesCore.Calculations;
 
 namespace Logic.Utils
 {
     public class ExpectancyTools
     {
 
-        public static List<DrillDownStats> GetRollingExpectancy(List<double> resultList, int lookbackPeriod)
+        public static List<TradeStatistics> GetRollingExpectancy(List<double> resultList, int lookbackPeriod)
         {
             return RunThroughResultSet(resultList, lookbackPeriod);
         }
 
-        public static List<DrillDownStats> GetExpectancyByEpoch(List<double> resultList, int divisions)
+        public static List<TradeStatistics> GetExpectancyByEpoch(List<double> resultList, int divisions)
         {
             return IterateThroughEpochs(EpochGenerator.SplitListIntoEpochs(resultList, divisions).EpochContainer);
         }
 
-        private static List<DrillDownStats> IterateThroughEpochs(List<List<double>> epochs)
+        private static List<TradeStatistics> IterateThroughEpochs(List<List<double>> epochs)
         {
-            var retval = new List<DrillDownStats>();
+            var retval = new List<TradeStatistics>();
             foreach (var epoch in epochs)
             {
                 var vals = epoch.Where(x => x != 0).ToList();
@@ -29,15 +28,15 @@ namespace Logic.Utils
             return retval;
         }
 
-        private static List<DrillDownStats> AddOnes(int initPeriod)
+        private static List<TradeStatistics> AddOnes(int initPeriod)
         {
-            var myList = new List<DrillDownStats>();
+            var myList = new List<TradeStatistics>();
             for (int i = 0; i < initPeriod; i++)
-                myList.Add(new DrillDownStats(new List<double>()));
+                myList.Add(new TradeStatistics(new List<double>()));
             return myList;
         }
 
-        private static List<DrillDownStats> RunThroughResultSet(List<double> resultList, int lookbackPeriod)
+        private static List<TradeStatistics> RunThroughResultSet(List<double> resultList, int lookbackPeriod)
         {
             var indexThresh = ListTools.GetIndexAtThresholdNonZeroes(lookbackPeriod, resultList);
             var retVal = AddOnes(indexThresh);
@@ -59,62 +58,10 @@ namespace Logic.Utils
             return retVal;
         }
 
-        private static DrillDownStats IterateExpectancy(List<double> resultsList)
+        private static TradeStatistics IterateExpectancy(List<double> resultsList)
         {
-            if (resultsList.Count == 0) return new DrillDownStats(new List<double>());
-            return new DrillDownStats(resultsList);
-        }
-    }
-
-    public class DrillDownStats
-    {
-        public double WinPercent { get; private set; }
-        public double AvgGain { get; private set; }
-        public double AvgLoss { get; private set; }
-        public double MedianGain { get; private set; }
-        public double MedianLoss { get; private set; }
-        public double AverageExpectancy { get; private set; } = 1;
-        public double MedianExpectancy { get; private set; } = 1;
-
-        public DrillDownStats(List<double> range)
-        {
-            CalculateGain(range);
-            CalculateLoss(range);
-            CalculateWinPercent(range);
-            if (range.Count > 0) CalculateExpectancy();
-        }
-
-        private void CalculateGain(List<double> range)
-        {
-            if (range.Any(x => x > 0))
-            {
-                MedianGain = range.Where(x => x > 0).Median();
-                AvgGain = range.Where(x => x > 0).Average();
-            }
-        }
-
-        private void CalculateLoss(List<double> range)
-        {
-            if (range.Any(x => x < 0))
-            {
-                MedianLoss = range.Where(x => x < 0).Median();
-                AvgLoss = range.Where(x => x < 0).Average();
-            }
-        }
-
-        private void CalculateWinPercent(List<double> range)
-        {
-            var numerator = range.Count(x => x > 0);
-            var denominator = (double)range.Count(x => Math.Abs(x) > 0);
-            WinPercent = numerator / denominator;
-        }
-
-        private void CalculateExpectancy()
-        {
-            AverageExpectancy = AvgGain * WinPercent / (-AvgLoss * (1 - WinPercent));
-            if (AverageExpectancy > 3 || double.IsInfinity(AverageExpectancy)) AverageExpectancy = 3.0;
-            MedianExpectancy = MedianGain * WinPercent / (-MedianLoss * (1 - WinPercent));
-            if (MedianExpectancy > 3 || double.IsInfinity(MedianExpectancy)) MedianExpectancy = 3.0;
+            if (resultsList.Count == 0) return new TradeStatistics(new List<double>());
+            return new TradeStatistics(resultsList);
         }
     }
 

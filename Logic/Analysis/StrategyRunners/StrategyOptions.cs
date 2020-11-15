@@ -13,11 +13,11 @@ namespace Logic.Analysis.StrategyRunners
         public double SpreadCutOff { get; set; } = -1;
         public CashPeriods[] NoTradePeriods { get; set; }
 
-        public bool GoodToEnter(DrillDownStats stats, MarketData data)
+        public bool GoodToEnter(TradeStatistics stats, MarketData data)
         {
             var boolOne = ExpectancyCutOff == -1 || stats.MedianExpectancy > ExpectancyCutOff; 
             var boolTwo = WinPercentCutOff == -1 ||  stats.WinPercent > WinPercentCutOff; 
-            var boolThree = SpreadCutOff == -1 || SpreadCutOff >= data.Open_Ask - data.Open_Bid;
+            var boolThree = SpreadCutOff == -1 || data.Open_Ask - data.Open_Bid <= SpreadCutOff ;
             var boolFour = NoTradePeriods == null || NoTradePeriods.All(x => WithinTradeablePeriod(new DateBoundary(data.Time), x));
             return boolOne && boolTwo && boolThree && boolFour;
         }

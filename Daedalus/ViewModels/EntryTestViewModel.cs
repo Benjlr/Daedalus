@@ -48,14 +48,14 @@ namespace Daedalus.ViewModels
             var myTestsLong = LongAnalysis(allTests.Select(x=>x[0]).ToList());
             var myTestsShort = ShortAnalysis(allTests.Select(x => x[1]).ToList());
 
-            PlotModelDrawdownLong = HeatMap.GenerateHeatMap(myTestsLong.ReturnByDrawdown, myTestsLong.X_label_categorised, myTestsLong.Y_label_categorised);
-            PlotModelDrawdownShort = HeatMap.GenerateHeatMap(myTestsShort.ReturnByDrawdown, myTestsShort.X_label_categorised, myTestsShort.Y_label_categorised);
-            PlotModelReturnsLong = HeatMap.GenerateHeatMap(myTestsLong.ReturnByTest, myTestsLong.X_label, myTestsLong.Y_label);
-            PlotModelReturnsShort = HeatMap.GenerateHeatMap(myTestsShort.ReturnByTest, myTestsShort.X_label, myTestsShort.Y_label);
-            //PlotModelDDsLong = HeatMap.GenerateHeatMap(myTestsLong.DrawdownByTest, myTestsLong.X_label_categorised, myTestsLong.Y_label);
-            //PlotModelDDsShort = HeatMap.GenerateHeatMap(myTestsShort.DrawdownByTest, myTestsShort.X_label_categorised, myTestsShort.Y_label);
-            ExpectancyLong = Series.GenerateExpectanySeries(myTestsLong.ExpectancyMedian, myTestsLong.ExpectancyAverage);
-            ExpectancyShort = Series.GenerateExpectanySeries(myTestsShort.ExpectancyMedian, myTestsShort.ExpectancyAverage);
+            PlotModelDrawdownLong = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsLong.ReturnByDrawdown), myTestsLong.X_label_categorised, myTestsLong.Y_label_categorised);
+            PlotModelDrawdownShort = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsShort.ReturnByDrawdown), myTestsShort.X_label_categorised, myTestsShort.Y_label_categorised);
+            PlotModelReturnsLong = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsLong.ReturnByTest), myTestsLong.X_label, myTestsLong.Y_label);
+            PlotModelReturnsShort = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsShort.ReturnByTest), myTestsShort.X_label, myTestsShort.Y_label);
+            PlotModelDDsLong = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsLong.DrawdownByTest), myTestsLong.X_label_categorised, myTestsLong.Y_label);
+            PlotModelDDsShort = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsShort.DrawdownByTest), myTestsShort.X_label_categorised, myTestsShort.Y_label);
+            ExpectancyLong = Series.GenerateSeriesVertical(new List<List<double>>(){myTestsLong.ExpectancyMedian, myTestsLong.ExpectancyAverage});
+            ExpectancyShort = Series.GenerateSeriesVertical(new List<List<double>>(){ myTestsShort.ExpectancyMedian, myTestsShort.ExpectancyAverage });
             LongRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.RollingExpectancy));
             ShortRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.RollingExpectancy));
             LongDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.DrawdownByTest));
@@ -138,7 +138,8 @@ namespace Daedalus.ViewModels
     public class StopTargetExitViewmodel : EntryTestViewModel
     {
         protected override List<ITest[]> GenerateEntryTests()        {
-            var stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.01 / 10.0, 0.01 / 10.0, 0.005, 30);
+            var stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.001, 0.001, 0.01, 12);
+            //var stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.003, 0.002, 0.002, 5);
             LoadStatus.UpdateNameAndTotal($"Generating Stop Target Exit Tests", stopTargetExitOptions.Divisions * stopTargetExitOptions.Divisions);
             return TestFactory.GenerateFixedStopTargetExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, 
                 stopTargetExitOptions, LoadStatus.UpdateCount);

@@ -21,7 +21,7 @@ namespace Logic.Tests
                 }
             };
 
-            DrillDownStats myStats = new DrillDownStats(new List<double>());
+            TradeStatistics myStats = new TradeStatistics(new List<double>());
             MarketData market = new MarketData(new DateTime(2020, 11, 5, 16, 34, 0),0,0,0,0,0,0,0,0,0);
             MarketData marketTwo = new MarketData(new DateTime(2020, 11, 2, 11, 6, 0), 0,0,0,0,0,0,0,0,0);
             MarketData marketThree = new MarketData(new DateTime(2020, 11, 4, 12, 0, 0), 0,0,0,0,0,0,0,0,0);
@@ -44,7 +44,7 @@ namespace Logic.Tests
                 }
             };
 
-            DrillDownStats myStats = new DrillDownStats(new List<double>());
+            TradeStatistics myStats = new TradeStatistics(new List<double>());
             MarketData market = new MarketData(new DateTime(2020, 11, 4, 12, 46, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
             MarketData marketTwo = new MarketData(new DateTime(2020, 11, 6, 17, 36, 5), 0, 0, 0, 0, 0, 0, 0, 0, 0);
             MarketData marketThree = new MarketData(new DateTime(2020, 11, 10, 3, 3, 1), 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -66,7 +66,7 @@ namespace Logic.Tests
                 }
             };
 
-            DrillDownStats myStats = new DrillDownStats(new List<double>());
+            TradeStatistics myStats = new TradeStatistics(new List<double>());
             MarketData market = new MarketData(new DateTime(2020, 11, 2, 16, 36, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
             MarketData marketTwo = new MarketData(new DateTime(2020, 11, 9, 16, 40, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
             MarketData marketThree = new MarketData(new DateTime(2020, 11, 16, 16, 47, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -88,7 +88,7 @@ namespace Logic.Tests
                 }
             };
 
-            DrillDownStats myStats = new DrillDownStats(new List<double>());
+            TradeStatistics myStats = new TradeStatistics(new List<double>());
             MarketData market = new MarketData(new DateTime(2020, 11, 4, 16, 36, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
             MarketData marketTwo = new MarketData(new DateTime(2020, 11, 11, 16, 40, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
             MarketData marketThree = new MarketData(new DateTime(2020, 11, 18, 16, 47, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);

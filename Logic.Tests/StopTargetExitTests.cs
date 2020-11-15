@@ -55,21 +55,6 @@ namespace Logic.Tests
         }
 
         [Fact]
-        public void ShouldGenerateDrawDownLongWinnersResults() {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DrawdownLongWinners.txt", 4);
-            for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][0].FBEDrawdownWinners.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
-        }
-
-        [Fact]
-        public void ShouldGenerateDrawDownShortWinnersResults() {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DrawdownShortWinners.txt", 4);
-            for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][1].FBEDrawdownWinners.Select(TestUtils._round),
-                    resultsLong[i].Select(TestUtils._round));
-        }
-
-        [Fact]
         public void ShouldGenerateLongDurations() {
             var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DurationLong.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)

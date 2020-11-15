@@ -39,10 +39,10 @@ namespace Logic.Tests
             var avgddLongWinners = new List<double>() { -0.0020590124, -0.0023014395, -0.0022003207, -0.0023539033 };
             for (var i = 0; i < myTests.Count; i++)
             {
-                Assert.Equal(TestUtils._round(myTests[i][0].AverageGain), TestUtils._round(avgGainsLong[i]));
-                Assert.Equal(TestUtils._round(myTests[i][0].AverageLoss), TestUtils._round(avgLossLong[i]));
-                Assert.Equal(TestUtils._round(myTests[i][0].AverageDrawdown), TestUtils._round(avgddLong[i]));
-                Assert.Equal(TestUtils._round(myTests[i][0].AverageDrawdownWinners), TestUtils._round(avgddLongWinners[i]));
+                Assert.Equal(TestUtils._round(myTests[i][0].Stats.AvgGain), TestUtils._round(avgGainsLong[i]));
+                Assert.Equal(TestUtils._round(myTests[i][0].Stats.AvgLoss), TestUtils._round(avgLossLong[i]));
+                Assert.Equal(TestUtils._round(myTests[i][0].Stats.AverageDrawdown), TestUtils._round(avgddLong[i]));
+                Assert.Equal(TestUtils._round(myTests[i][0].Stats.AverageDrawdownWinners), TestUtils._round(avgddLongWinners[i]));
             }
         }
 
@@ -55,10 +55,10 @@ namespace Logic.Tests
             var medianddLongWinners = new List<double>() { -0.0019952839, -0.0019974602, -0.0019996364, -0.0020903390 };
             for (var i = 0; i < myTests.Count; i++)
             {
-                Assert.Equal(TestUtils._round(myTests[i][0].MedianGain), TestUtils._round(medianGainsLong[i]));
-                Assert.Equal(TestUtils._round(myTests[i][0].MedianLoss), TestUtils._round(medianLossLong[i]));
-                Assert.Equal(TestUtils._round(myTests[i][0].MedianDrawDown), TestUtils._round(medianddLong[i]));
-                Assert.Equal(TestUtils._round(myTests[i][0].MedianDrawDownWinners), TestUtils._round(medianddLongWinners[i]));
+                Assert.Equal(TestUtils._round(myTests[i][0].Stats.MedianGain), TestUtils._round(medianGainsLong[i]));
+                Assert.Equal(TestUtils._round(myTests[i][0].Stats.MedianLoss), TestUtils._round(medianLossLong[i]));
+                Assert.Equal(TestUtils._round(myTests[i][0].Stats.MedianDrawDown), TestUtils._round(medianddLong[i]));
+                Assert.Equal(TestUtils._round(myTests[i][0].Stats.MedianDrawDownWinners), TestUtils._round(medianddLongWinners[i]));
             }
         }
 
@@ -71,10 +71,10 @@ namespace Logic.Tests
             var avgddShortWinners = new List<double>() { -0.0021220591, -0.0020364951, -0.0019552167, -0.0019802343 };
             for (var i = 0; i < myTests.Count; i++)
             {
-                Assert.Equal(TestUtils._round(myTests[i][1].AverageGain), TestUtils._round(avgGainsShort[i]));
-                Assert.Equal(TestUtils._round(myTests[i][1].AverageLoss), TestUtils._round(avgLossShort[i]));
-                Assert.Equal(TestUtils._round(myTests[i][1].AverageDrawdown), TestUtils._round(avgddShort[i]));
-                Assert.Equal(TestUtils._round(myTests[i][1].AverageDrawdownWinners), TestUtils._round(avgddShortWinners[i]));
+                Assert.Equal(TestUtils._round(myTests[i][1].Stats.AvgGain), TestUtils._round(avgGainsShort[i]));
+                Assert.Equal(TestUtils._round(myTests[i][1].Stats.AvgLoss), TestUtils._round(avgLossShort[i]));
+                Assert.Equal(TestUtils._round(myTests[i][1].Stats.AverageDrawdown), TestUtils._round(avgddShort[i]));
+                Assert.Equal(TestUtils._round(myTests[i][1].Stats.AverageDrawdownWinners), TestUtils._round(avgddShortWinners[i]));
             }
         }
 
@@ -87,10 +87,10 @@ namespace Logic.Tests
             var medianddShortWinners = new List<double>() { -0.0013752420, -0.0013752420, -0.0012938823, -0.0013027666 };
             for (var i = 0; i < myTests.Count; i++)
             {
-                Assert.Equal(TestUtils._round(myTests[i][1].MedianGain), TestUtils._round(medianGainsShort[i]));
-                Assert.Equal(TestUtils._round(myTests[i][1].MedianLoss), TestUtils._round(medianLossShort[i]));
-                Assert.Equal(TestUtils._round(myTests[i][1].MedianDrawDown), TestUtils._round(medianddShort[i]));
-                Assert.Equal(TestUtils._round(myTests[i][1].MedianDrawDownWinners), TestUtils._round(medianddShortWinners[i]));
+                Assert.Equal(TestUtils._round(myTests[i][1].Stats.MedianGain), TestUtils._round(medianGainsShort[i]));
+                Assert.Equal(TestUtils._round(myTests[i][1].Stats.MedianLoss), TestUtils._round(medianLossShort[i]));
+                Assert.Equal(TestUtils._round(myTests[i][1].Stats.MedianDrawDown), TestUtils._round(medianddShort[i]));
+                Assert.Equal(TestUtils._round(myTests[i][1].Stats.MedianDrawDownWinners), TestUtils._round(medianddShortWinners[i]));
             }
         }
 
@@ -101,83 +101,33 @@ namespace Logic.Tests
             var shortRatios = new List<double>() { 0.2783505155, 0.2783505155, 0.2886597938, 0.2989690722 };
             for (var i = 0; i < myTests.Count; i++)
             {
-                Assert.Equal(TestUtils._round(myTests[i][0].WinPercentage), TestUtils._round(longRatios[i]));
-                Assert.Equal(TestUtils._round(myTests[i][1].WinPercentage), TestUtils._round(shortRatios[i]));
+                Assert.Equal(TestUtils._round(myTests[i][0].Stats.WinPercent), TestUtils._round(longRatios[i]));
+                Assert.Equal(TestUtils._round(myTests[i][1].Stats.WinPercent), TestUtils._round(shortRatios[i]));
             }
         }
 
         [Fact]
         public void ShouldGenerateExpectancyLong()
         {
-            var medianExp = new List<double>() { 1.0928730468, 1.2078656525, 0.9750818373, 1.2488081700 };
-            var avgExp = new List<double>() { 0.6124975585, 0.6506340453, 0.6931852388, 0.7400161033 };
+            var medianExp = new List<double>() { 8.41E-05, 0.00017817438559199759, -2.6999325042901656E-05, 0.00024097881739007813 };
+            var avgExp = new List<double>() { -0.0006452, -0.00059812204818292442, -0.00053475188670347213, -0.00045439571143216948 };
             for (var i = 0; i < myTests.Count; i++)
             {
-                Assert.Equal(TestUtils._round(myTests[i][0].ExpectancyAverage), TestUtils._round(avgExp[i]));
-                Assert.Equal(TestUtils._round(myTests[i][0].ExpectancyMedian), TestUtils._round(medianExp[i]));
+                Assert.Equal(TestUtils._round(myTests[i][0].Stats.AverageExpectancy), TestUtils._round(avgExp[i]));
+                Assert.Equal(TestUtils._round(myTests[i][0].Stats.MedianExpectancy), TestUtils._round(medianExp[i]));
             }
         }
 
         [Fact]
         public void ShouldGenerateExpectancyShort()
         {
-            var medianExp = new List<double>() { 0.2884356869, 0.2984395950, 0.3001773677, 0.2075125104 };
-            var avgExp = new List<double>() { 0.5228605260, 0.5211797687, 0.5190220998, 0.4978635718 };
+            var medianExp = new List<double>() { -0.00099133364372274639, -0.0011956851957476914, -0.0013581629016643712, -0.0016138226998664166 };
+            var avgExp = new List<double>() { -0.00089034903436090314, -0.00094596128657641423, -0.0010112385859428084, -0.0010981977179557619 };
             for (var i = 0; i < myTests.Count; i++)
             {
-                Assert.Equal(TestUtils._round(myTests[i][1].ExpectancyAverage), TestUtils._round(avgExp[i]));
-                Assert.Equal(TestUtils._round(myTests[i][1].ExpectancyMedian), TestUtils._round(medianExp[i]));
+                Assert.Equal(TestUtils._round(myTests[i][1].Stats.AverageExpectancy), TestUtils._round(avgExp[i]));
+                Assert.Equal(TestUtils._round(myTests[i][1].Stats.MedianExpectancy), TestUtils._round(medianExp[i]));
             }
-        }
-
-
-        [Fact]
-        public void ShouldNotGenerateExpectancies()
-        {
-            Assert.Equal(0, myInvalidTests.ExpectancyAverage);
-            Assert.Equal(0, myInvalidTests.ExpectancyMedian);
-        }
-
-        [Fact]
-        private void ShouldNotGenerateRatios()
-        {
-            Assert.Equal(0, myInvalidTests.WinPercentage);
-        }
-
-        [Fact]
-        private void ShouldNotGenerateAveragesLong()
-        {
-            Assert.Equal(0, myInvalidTests.AverageGain);
-            Assert.Equal(0, myInvalidTests.AverageLoss);
-            Assert.Equal(0, myInvalidTests.AverageDrawdown);
-            Assert.Equal(0, myInvalidTests.AverageDrawdownWinners);
-        }
-
-        [Fact]
-        private void ShouldNotGenerateMediansLong()
-        {
-            Assert.Equal(0, myInvalidTests.MedianGain);
-            Assert.Equal(0, myInvalidTests.MedianLoss);
-            Assert.Equal(0, myInvalidTests.MedianDrawDown);
-            Assert.Equal(0, myInvalidTests.MedianDrawDownWinners);
-        }
-
-        [Fact]
-        private void ShouldNotGenerateAveragesShort()
-        {
-            Assert.Equal(0, myInvalidTests.AverageGain);
-            Assert.Equal(0, myInvalidTests.AverageLoss);
-            Assert.Equal(0, myInvalidTests.AverageDrawdown);
-            Assert.Equal(0, myInvalidTests.AverageDrawdownWinners);
-        }
-
-        [Fact]
-        private void ShouldNotGenerateMediansShort()
-        {
-            Assert.Equal(0, myInvalidTests.MedianGain);
-            Assert.Equal(0, myInvalidTests.MedianLoss);
-            Assert.Equal(0, myInvalidTests.MedianDrawDown);
-            Assert.Equal(0, myInvalidTests.MedianDrawDownWinners);
         }
     }
 }

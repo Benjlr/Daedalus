@@ -53,42 +53,17 @@ namespace RuleSets.Entry
         }
 
 
+
+
         public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
         {
 
-            var atrPC = AverageTrueRange.CalculateATRPC(data);
-            var atr = AverageTrueRange.Calculate(data, 20);
-            var twentyMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
-            var fissy = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 50);
-            var tenMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 10);
-            var SixMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 6);
-            var volavg = MovingAverage.SimpleMovingAverage(data.Select(x => x.Volume).ToList(), 40);
-
-
+            var atrPC = AverageTrueRange.CalculateATRPC(data,2,55);
             Satisfied = new bool[data.Count];
-            var coun = 0;
 
-            for (int i = 22; i < data.Count; i++)
-            {
-                var myVOl = GetPositionInRange(volavg.GetRange(i - 20, 20), volavg[i]);
-                if (atrPC[i] == 0.0 && myVOl < 0.1) 
-                    Satisfied[i] = true;
-
-                //////var xxx = ListTools.GetActionitionRange(ListTools.GetNewList(data, i - 25, i), data[i].Close);
-                //var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);
-
-                //if (sixtoTen < atr[i] * 0.5
-                //) {
-                //    coun++;
-                //    if (coun > 9 && twentyMa[i] > fissy[i] && atrPC[i - 1] == 0.0 && atrPC[i] == 0.0) {
-                //        //var newIndex = i + Satisfied.Length / 2;
-                //        //if (newIndex > Satisfied.Length) newIndex -= Satisfied.Length;
-                //        //Satisfied[newIndex] = true;
-                //        Satisfied[i] = true;
-                //    }
-                //}
-                //else coun = 0;
-            }
+            for (int i = 1; i < data.Count; i++) {
+                if (atrPC[i] == 0.0) 
+                    Satisfied[i] = true; }
 
         }
     }
