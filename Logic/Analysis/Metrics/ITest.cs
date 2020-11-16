@@ -8,9 +8,10 @@ namespace Logic.Analysis.Metrics
     {
         public double[] FBEResults { get;  }
         public double[] FBEDrawdown { get;  }
-        public double[] Durations { get; }
+        public int[] Durations { get; }
         public ExtendedStats Stats { get; }
 
         void Run(MarketData[] data, bool[] entries, List<Session> myInputs = null);
+        void RemoveLeakage();
     }
 }

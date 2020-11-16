@@ -1,4 +1,5 @@
-﻿using Logic.Utils;
+﻿using System;
+using Logic.Utils;
 using PriceSeriesCore;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -77,9 +78,9 @@ namespace Logic.Analysis.StrategyRunners
             return true;
         }
 
-        private StrategyState LastStateWasNotInvested(MarketData data,double stop, double target, bool isLongEntry, bool isShortEntry) {
+        private StrategyState LastStateWasNotInvested(MarketData data, double stop, double target, bool isLongEntry, bool isShortEntry, bool isGood) {
             var state = new StrategyState();
-            if (isLongEntry || isShortEntry)
+            if ((isLongEntry || isShortEntry) && isGood)
                 state.InvestedState = InvestedState.Invest(data, new ExitPrices(stop,target), isLongEntry);
             else
                 state.InvestedState = InvestedState.DoNothing();
@@ -106,7 +107,7 @@ namespace Logic.Analysis.StrategyRunners
                 if (_previousState.InvestedState.Invested)
                     _previousState = _previousState.LastStateWasInvested(data, _options, LongShort);
                 else 
-                    _previousState = _previousState.LastStateWasNotInvested(data, stop, target, isEntryLong, isEntryShort);
+                    _previousState = _previousState.LastStateWasNotInvested(data, stop, target, isEntryLong, isEntryShort, _options.GoodToEnter(12,100, (int)(data.Open_Ask - data.Open_Bid), DateTime.Now));
                 return _previousState;
             }
 

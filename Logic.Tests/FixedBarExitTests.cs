@@ -71,7 +71,7 @@ namespace Logic.Tests
         {
             var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DurationLong.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][0].Durations, resultsLong[i]);
+                Assert.Equal(myTests[i][0].Durations, resultsLong[i].Select(x=>(int)x));
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace Logic.Tests
         {
             var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DurationShort.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][1].Durations, resultsLong[i]);
+                Assert.Equal(myTests[i][1].Durations, resultsLong[i].Select(x => (int)x));
         }
     }
 }

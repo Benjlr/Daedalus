@@ -69,7 +69,7 @@ namespace Logic.Tests
         public void ShouldGenerateShortDurations()        {
             var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DurationShort.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][1].Durations, resultsLong[i].ToArray());
+                Assert.Equal(myTests[i][1].Durations, resultsLong[i].Select(x => (int)x).ToArray());
         }
     }
 }

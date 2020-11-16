@@ -3,45 +3,73 @@ using Logic.Analysis.StrategyRunners;
 using Logic.Utils;
 using OxyPlot;
 using System.Linq;
+using System.Net.Mime;
+using System.Threading;
+using System.Windows;
+using System.Windows.Input;
 using LinqStatistics;
 using Logic;
 using Logic.Analysis;
 using Logic.Analysis.Metrics;
+using OxyPlot.Annotations;
+using OxyPlot.Axes;
+using OxyPlot.Series;
 using PriceSeriesCore.Calculations;
 using RuleSets;
 using RuleSets.Entry;
-using ViewCommon.Charts;
 using ViewCommon.Models;
 using ViewCommon.Utils;
+using Series = ViewCommon.Charts.Series;
 
 namespace Icarus.ViewModels
 {
     public class StrategyViewModel : ViewModelBase
     {
+        public LineSeries mySeries { get; set; }
         public PlotModel MyResults { get; set; }
+        private ICommand _clickCommand;
+        public ICommand ClickCommand => _clickCommand ??= new Commandler(Start, () => CanExecute);
+        public bool CanExecute => true;
 
         public StrategyViewModel()
         {
-            var stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.0015, 0.0045, 0.003, 10, MarketSide.Bull);
+            MyResults = new PlotModel();
+            MyResults.Axes.Add(new LinearAxis()
+            {
+                Position = AxisPosition.Bottom,
+
+            });
+            MyResults.Axes.Add(new LinearAxis
+            {
+                Position = AxisPosition.Left,
+            });
+            mySeries = new LineSeries()
+            {
+                Color = OxyColors.Red,
+                LineStyle = LineStyle.Solid,
+                InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+            };
+            MyResults.Series.Add(mySeries);
+            MyResults.Annotations.Add(new LineAnnotation() { Type = LineAnnotationType.Vertical, X = 0 });
+        }
+
+        public void Update(ResultsContainer container) {
+            Application.Current.Dispatcher.Invoke(() => {
+                var resultsp = HistogramTools.MakeCumulative(container.Returns);
+                for (int i = mySeries.Points.Count; i < resultsp.Count; i++) 
+                    mySeries.Points.Add(new DataPoint(mySeries.Points.Count+1, resultsp[i]));
+                MyResults.InvalidatePlot(true);
+                NotifyPropertyChanged($"MyResults");
+            });
+        }
+
+        public void Start() {
+            ThreadPool.QueueUserWorkItem(new WaitCallback(Dowork));
+        }
+
+        private void Dowork(object callback) {
             var runner = new FixedStopTargetExitStrategyRunner(ModelSingleton.Instance.Mymarket, ModelSingleton.Instance.MyStrategy);
-            runner.ExecuteRunner();
-
-            var portfolioRet = runner.Runner.Select(x => x.Return*10).ToList();
-
-            var aaaaaaa = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[] { new ATRContraction() }, ModelSingleton.Instance.Mymarket);
-            var tt = TestFactory.GenerateFixedStopTargetExitTest(aaaaaaa, ModelSingleton.Instance.Mymarket, stopTargetExitOptions);
-            var myTestsLong = new AnalysisBuilder(null);
-            myTestsLong.GenerateFixedBarResults(tt);
-
-            var resultsm = GenerateBoundedStats.Generate(myTestsLong.RollingExpectancy).Select(x => x.Minimum).ToList();
-            var resultsp = HistogramTools.MakeCumulative(portfolioRet);
-            var tenMa = MovingAverage.ExponentialMovingAverage(resultsm, 5000);
-            //var sharpes = ExpectancyTools.GetRollingExpectancy(runner.Runner.Select(x => x.Portfolio.Return ).ToList(), 500).Select(x=>x.SharpeRatio).ToList();
-            var resno0 = runner.Runner.Select(x => x.Return).Where(x => x != 0).ToList();
-            
-
-            var series1 = Series.GenerateSeriesHorizontal(new List<List<double>>(){resultsp, resultsp, resultsp});
-            MyResults = series1;
+            runner.ExecuteRunner(Update);
         }
 
     }

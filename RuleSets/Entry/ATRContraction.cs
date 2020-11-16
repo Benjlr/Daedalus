@@ -14,7 +14,7 @@ namespace RuleSets.Entry
             Order = Action.Entry;
         }
 
-        public void Calc(List<Session> data, MarketData[] rawData)
+        public  void aasass(List<Session> data, MarketData[] rawData)
         {
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             var atr = AverageTrueRange.Calculate(data, 20);
@@ -30,11 +30,9 @@ namespace RuleSets.Entry
             {
                 var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);
 
-                if (sixtoTen < atr[i] * 0.5
-                )
-                {
+                if (sixtoTen < atr[i] * 0.5) {
                     coun++;
-                    if (coun > 7 && twentyMa[i] > fissy[i] && atrPC[i - 1] == 0.0 && atrPC[i] != 0.0) Satisfied[i] = true;
+                    if (coun > 7 && twentyMa[i] > fissy[i] && atrPC[i - 1] == 0.0 && atrPC[i] != 0.0 && rawData[i].Open_Ask - rawData[i].Open_Bid <= 3) Satisfied[i] = true;
                 }
                 else coun = 0;
             }
@@ -58,14 +56,16 @@ namespace RuleSets.Entry
         public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
         {
 
-            var atrPC = AverageTrueRange.CalculateATRPC(data,2,55);
+            var atrPC = AverageTrueRange.CalculateATRPC(data);
             Satisfied = new bool[data.Count];
-
-            for (int i = 1; i < data.Count; i++) {
-                if (atrPC[i] == 0.0) 
+            var volavg = rawData.Select(x => x.volume).ToList();
+            for (int i = 30; i < data.Count; i++) {
+                var myVOl = GetPositionInRange(volavg.GetRange(i - 20, 20), volavg[i]);
+                if (atrPC[i] == 0.0 /*&& myVOl < 0.1*/ && rawData[i].Open_Ask - rawData[i].Open_Bid <= 3 ) 
                     Satisfied[i] = true; }
 
         }
+
     }
 
     public class ATRExpansion : RuleBase

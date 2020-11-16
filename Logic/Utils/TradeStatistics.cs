@@ -15,6 +15,7 @@ namespace Logic.Utils
         public double MedianLoss { get; private set; }
         public double AverageExpectancy { get; private set; }
         public double MedianExpectancy { get; private set; } 
+        public double SharpeRatio { get; private set; }
 
 
         public TradeStatistics(List<double> range)
@@ -23,6 +24,7 @@ namespace Logic.Utils
             CalculateLoss(range);
             CalculateWinPercent(range);
             if (range.Count > 0) CalculateExpectancy();
+            if (range.Any(x => x != 0)) CalculateSharpeRatio(range.Where(x=>x!=0).ToList());
         }
 
         private void CalculateGain(List<double> range) {
@@ -48,6 +50,10 @@ namespace Logic.Utils
         private void CalculateExpectancy() {
             AverageExpectancy = AvgGain * WinPercent + (AvgLoss * (1 - WinPercent));
             MedianExpectancy = MedianGain * WinPercent + (MedianLoss * (1 - WinPercent));
+        }
+
+        private void CalculateSharpeRatio(List<double> range) {
+            SharpeRatio = range.Sum() / range.StandardDeviation();
         }
 
     }

@@ -21,7 +21,7 @@ namespace ViewCommon.Models
             lock (_lock)
             {
                 try {
-                    Mymarket = Market.MarketBuilder.CreateMarket(Markets.SP500_Cash_5_Min);
+                    Mymarket = Market.MarketBuilder.CreateMarket(Markets.ASX200_Cash_5_Min);
                 }
                 catch {
                     var marketData = Directory.GetCurrentDirectory() + "\\Utils\\LocalData\\asx200cash";
