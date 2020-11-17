@@ -37,6 +37,8 @@ namespace Icarus.ViewModels
             MyResults.Axes.Add(new LinearAxis()
             {
                 Position = AxisPosition.Bottom,
+                Minimum = 0,
+                Maximum = 45000
 
             });
             MyResults.Axes.Add(new LinearAxis

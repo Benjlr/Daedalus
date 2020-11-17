@@ -43,30 +43,12 @@ namespace Logic.Analysis.Metrics
 
         protected void FindDrawdown(MarketData[] data, int i) {
             IterateTime(data, i);
-            if (FBEResults[i] < FBEDrawdown[i])
-                FBEDrawdown[i] = FBEResults[i];
         }
 
         protected abstract void IterateTime(MarketData[] data, int i);
 
         private void GenerateStats() {
             Stats = new ExtendedStats(FBEResults.ToList(), FBEDrawdown.ToList());
-        }
-
-        public void RemoveLeakage() {
-            var testCopy = (double[])FBEResults.Clone();
-            var drawdwonCopy = (double[])FBEDrawdown.Clone();
-            for (int i = 0; i < FBEResults.Length; i++) {
-                FBEResults[i] = 0;
-                FBEDrawdown[i] = 0;
-            }
-            for (int i = 0; i < FBEResults.Length; i++)
-                if (testCopy[i] != 0 && Durations[i] + i < FBEResults.Length) {
-                    FBEResults[i + Durations[i]] += testCopy[i];
-                    FBEDrawdown[i + Durations[i]] += drawdwonCopy[i];
-                }
-
-            GenerateStats();
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Logic.Analysis.StrategyOptimiser
         {
             _baseMarket = market;
             _baseStrategy = strat;
-            _options = new FixedStopTargetExitTestOptions(0.001, 0.001, 0.008, 30, MarketSide.Bull);
+            _options = new FixedStopTargetExitTestOptions(0.001, 0.001, 0.006, 8, MarketSide.Bull);
         }
 
         private int count = 1;
@@ -35,17 +35,15 @@ namespace Logic.Analysis.StrategyOptimiser
             var slicedStrat = _baseStrategy.Slice(lastKnownData - lookBack+1, lastKnownData);
 
             _myTests = TestFactory.GenerateFixedStopTargetExitTest(slicedStrat, slicedMarket, _options);
-            _myTests.ForEach(x => x.RemoveLeakage());
 
-
-            var topTests = _myTests.Select(x => (FixedStopTargetExitTest) x).OrderByDescending(x => x.Stats.SharpeRatio).Take(_myTests.Count / 20).ToList();
+            var topTests = _myTests.Select(x => (FixedStopTargetExitTest) x).OrderByDescending(x => x.Stats.AverageExpectancy).Take((int)(_myTests.Count * 0.05)).ToList();
 
             List<double> stops = topTests.Select(x => x.StopDistance).ToList();
             List<double> targets = topTests.Select(x => x.TargetDistance).ToList();
             
             var myExps = new List<List<double>>();
             foreach (var test in topTests.Select(x => x.FBEResults).ToList())
-                myExps.Add(ExpectancyTools.GetRollingExpectancy(test.ToList(), 10).Select(x => x.SharpeRatio).ToList());
+                myExps.Add(ExpectancyTools.GetRollingExpectancy(test.ToList(), 6).Select(x => x.AverageExpectancy).ToList());
 
             var bouned = GenerateBoundedStats.Generate(myExps);
 

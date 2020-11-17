@@ -143,16 +143,6 @@ namespace Logic.Tests
             }
         }
 
-        [Fact]
-        public void ShouldRemoveLeakage() {
 
-
-            foreach (var leaked in myUnLeakedTests) {
-                leaked[0].RemoveLeakage();
-            }
-
-            Assert.Equal(-0.00454008898574412, myUnLeakedTests[0][0].FBEResults[11]);
-            Assert.Equal(-0.006356124580041768, myUnLeakedTests[1][0].FBEDrawdown[12]);
-        }
     }
 }

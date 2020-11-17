@@ -52,18 +52,18 @@ namespace Logic.Analysis.StrategyRunners
             stateBuilder.stop = 1 - results.StopDist;
             stateBuilder.target = results.TargetDist + 1;
 
-            var tenMa = MovingAverage.ExponentialMovingAverage(results.Expectancy.Select(x=>x.Median).ToList(), 10);
+            var tenMa = MovingAverage.ExponentialMovingAverage(results.Expectancy.Select(x=>x.Lower).ToList(), 10);
 
             Runner = new List<StrategyState>() { stateBuilder.BuildNextState(_market.RawData[0], false, false) };
 
             for (int i = 1; i < _market.RawData.Length; i++)
             {
-                //var results = new FixedStopTargetExitOptimisation(){Expectancy =  new List<BoundedStat>()};
-                //if(_strategy.Entries[i - 1]) results = optimiser.Optimise(i - 1, i);
-                //stateBuilder.stop = 1 - 0.006;
-                //stateBuilder.target = 0.0045 + 1;
+                //var results = new FixedStopTargetExitOptimisation() { Expectancy = new List<BoundedStat>() };
+                //if (_strategy.Entries[i - 1]) results = optimiser.Optimise(i - 1, i);
+                //stateBuilder.stop = 1 - results.StopDist;
+                //stateBuilder.target = results.TargetDist + 1;
                 //Runner.Add(stateBuilder.BuildNextState(_market.RawData[i], _strategy.Entries[i - 1] && results.Expectancy.Last().Average > 0, false));
-                Runner.Add(stateBuilder.BuildNextState(_market.RawData[i], _strategy.Entries[i - 1] && results.Expectancy[i - 1].Median > 0,false ));
+                Runner.Add(stateBuilder.BuildNextState(_market.RawData[i], _strategy.Entries[i - 1] && results.Expectancy[i - 1].Average > 0, false ));
 
                 if(i%500 == 0)update?.Invoke(new ResultsContainer(Runner.Select(x=>x.Return).ToList(), results.Expectancy[i - 1].Average));
                 Trace.WriteLine($"{i} -- {Runner.Sum(x=>x.Return)} -- {results.Expectancy?.LastOrDefault()?.Median ?? 0} -- {Runner.Last().InvestedState.Invested} -- " +

@@ -51,8 +51,8 @@ namespace Daedalus.ViewModels
 
             PlotModelDrawdownLong = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsLong.ReturnByDrawdown), myTestsLong.X_label_categorised, myTestsLong.Y_label_categorised);
             PlotModelDrawdownShort = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsShort.ReturnByDrawdown), myTestsShort.X_label_categorised, myTestsShort.Y_label_categorised);
-            PlotModelReturnsLong = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsLong.ReturnByTest), myTestsLong.X_label, myTestsLong.Y_label);
-            PlotModelReturnsShort = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsShort.ReturnByTest), myTestsShort.X_label, myTestsShort.Y_label);
+            PlotModelReturnsLong = HeatMap.GenerateHeatMap((myTestsLong.ReturnByTest), myTestsLong.X_label, myTestsLong.Y_label);
+            PlotModelReturnsShort = HeatMap.GenerateHeatMap((myTestsShort.ReturnByTest), myTestsShort.X_label, myTestsShort.Y_label);
             PlotModelDDsLong = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsLong.DrawdownByTest), myTestsLong.X_label_categorised, myTestsLong.Y_label);
             PlotModelDDsShort = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsShort.DrawdownByTest), myTestsShort.X_label_categorised, myTestsShort.Y_label);
             ExpectancyLong = Series.GenerateSeriesVertical(new List<List<double>>(){myTestsLong.ExpectancyMedian, myTestsLong.ExpectancyAverage});

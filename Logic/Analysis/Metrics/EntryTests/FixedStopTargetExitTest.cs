@@ -18,30 +18,28 @@ namespace Logic.Analysis.Metrics.EntryTests
             StopDistance = stop_distance;
         }
 
-        protected override void SetResult(MarketData[] data, int i)
-        {
+        protected override void SetResult(MarketData[] data, int i) {
             _endIndex = I(data, i, SetStopAndTarget(data, i));
         }
 
-        private int I(MarketData[] data, int i, int x)
-        {
-            while (x < data.Length)
-            {
+        private int I(MarketData[] data, int i, int x){
+            while (x < data.Length) {
                 if (ParseConditionals(data, i, x)) break;
                 x++;
             }
-
-            return x < data.Length ? x + 1 - i : 0;
+            return  x + 1 - i;
         }
 
         private bool ParseConditionals(MarketData[] data, int i, int x)
         {
+            CalculateReturn(data,i,x);
             return OpenExceedsStop(data, i, x) ||
                    OpenExceedsTarget(data, i, x) ||
                    StopHit(data, i, x) ||
                    TargetHit(data, i, x);
         }
 
+        protected abstract void CalculateReturn(MarketData[] data, int i, int x);
         protected abstract bool OpenExceedsStop(MarketData[] data, int openIndex, int currentIndex);
         protected abstract bool OpenExceedsTarget(MarketData[] data, int openIndex, int currentIndex);
         protected abstract bool StopHit(MarketData[] data, int openIndex, int currentIndex);
@@ -49,24 +47,21 @@ namespace Logic.Analysis.Metrics.EntryTests
         protected abstract int SetStopAndTarget(MarketData[] data, int i);
         protected abstract void IterateDrawdown(MarketData[] data, int i);
 
-        protected override void IterateTime(MarketData[] data, int i)
-        {
+        protected override void IterateTime(MarketData[] data, int i) {
             if (_endIndex + i > data.Length) FBEDrawdown[i] = 0;
             else if (FBEResults[i] < 0) FBEDrawdown[i] = FBEResults[i];
             else IterateDrawdown(data, i);
             SetDuration(i);
         }
 
-        protected void SetDuration(int i)
-        {
+        protected void SetDuration(int i) {
             Durations[i] = _endIndex;
             _endIndex = 0;
         }
 
         public static FixedStopTargetExitTest PrepareTest(MarketSide longShort, double target_distance, double stop_distance)
         {
-            switch (longShort)
-            {
+            switch (longShort) {
                 case MarketSide.Bull: return new LongFixedStopTargetExitTest(target_distance, stop_distance);
                 case MarketSide.Bear: return new ShortFixedStopTargetExitTest(target_distance, stop_distance);
                 default: throw new InvalidEnumArgumentException();
@@ -84,27 +79,31 @@ namespace Logic.Analysis.Metrics.EntryTests
             _targetPrice = data[i].Open_Ask + data[i].Open_Ask * TargetDistance;
             return i;
         }
+
+        protected override void CalculateReturn(MarketData[] data, int i, int x) {
+                FBEResults[x] += (data[x].Open_Bid - data[i].Open_Ask) / data[i].Open_Ask;
+        }
         protected override bool OpenExceedsStop(MarketData[] data, int openIndex, int currentIndex) {
             if(data[currentIndex].Open_Bid < _stopPrice) 
-                FBEResults[openIndex] = (data[currentIndex].Open_Bid - data[openIndex].Open_Ask) / data[openIndex].Open_Ask;
+                FBEResults[currentIndex] = (data[currentIndex].Open_Bid - data[openIndex].Open_Ask) / data[openIndex].Open_Ask;
             return data[currentIndex].Open_Bid < _stopPrice;
         }
 
         protected override bool OpenExceedsTarget(MarketData[] data, int openIndex, int currentIndex) {
             if(data[currentIndex].Open_Bid > _targetPrice) 
-                FBEResults[openIndex] = (data[currentIndex].Open_Bid - data[openIndex].Open_Ask) / data[openIndex].Open_Ask;
+                FBEResults[currentIndex] = (data[currentIndex].Open_Bid - data[openIndex].Open_Ask) / data[openIndex].Open_Ask;
             return data[currentIndex].Open_Bid > _targetPrice;
         }
 
         protected override bool StopHit(MarketData[] data, int openIndex, int currentIndex) {
             if(data[currentIndex].Low_Bid < _stopPrice)
-                FBEResults[openIndex] = (_stopPrice - data[openIndex].Open_Ask) / data[openIndex].Open_Ask;
+                FBEResults[currentIndex] = (_stopPrice - data[openIndex].Open_Ask) / data[openIndex].Open_Ask;
             return data[currentIndex].Low_Bid < _stopPrice;
         }
 
         protected override bool TargetHit(MarketData[] data, int openIndex, int currentIndex) {
             if(data[currentIndex].High_Bid > _targetPrice)
-                FBEResults[openIndex] = (_targetPrice - data[openIndex].Open_Ask) / data[openIndex].Open_Ask;
+                FBEResults[currentIndex] = (_targetPrice - data[openIndex].Open_Ask) / data[openIndex].Open_Ask;
             return data[currentIndex].High_Bid > _targetPrice;
         }
 
@@ -126,27 +125,31 @@ namespace Logic.Analysis.Metrics.EntryTests
             return i;
         }
 
+        protected override void CalculateReturn(MarketData[] data, int i, int x) {
+            FBEResults[x] += (data[i].Open_Bid - data[x].Open_Ask) / data[i].Open_Bid;
+        }
+
         protected override bool OpenExceedsStop(MarketData[] data, int openIndex, int currentIndex) {
             if(data[currentIndex].Open_Ask > _stopPrice) 
-                FBEResults[openIndex] = (data[openIndex].Open_Bid - data[currentIndex].Open_Ask) / data[openIndex].Open_Bid;
+                FBEResults[currentIndex] = (data[openIndex].Open_Bid - data[currentIndex].Open_Ask) / data[openIndex].Open_Bid;
             return data[currentIndex].Open_Ask > _stopPrice;
         }
 
         protected override bool OpenExceedsTarget(MarketData[] data, int openIndex, int currentIndex) {
             if(data[currentIndex].Open_Ask < _targetPrice) 
-                FBEResults[openIndex] = (data[openIndex].Open_Bid - data[currentIndex].Open_Ask) / data[openIndex].Open_Bid;
+                FBEResults[currentIndex] = (data[openIndex].Open_Bid - data[currentIndex].Open_Ask) / data[openIndex].Open_Bid;
             return data[currentIndex].Open_Ask < _targetPrice;
         }
 
         protected override bool StopHit(MarketData[] data, int openIndex, int currentIndex) {
             if(data[currentIndex].High_Ask > _stopPrice) 
-                FBEResults[openIndex] = (data[openIndex].Open_Bid - _stopPrice) / data[openIndex].Open_Bid;
+                FBEResults[currentIndex] = (data[openIndex].Open_Bid - _stopPrice) / data[openIndex].Open_Bid;
             return data[currentIndex].High_Ask > _stopPrice;
         }
 
         protected override bool TargetHit(MarketData[] data, int openIndex, int currentIndex) {
             if(data[currentIndex].Low_Ask < _targetPrice) 
-                FBEResults[openIndex] = (data[openIndex].Open_Bid - _targetPrice) / data[openIndex].Open_Bid;
+                FBEResults[currentIndex] = (data[openIndex].Open_Bid - _targetPrice) / data[openIndex].Open_Bid;
             return data[currentIndex].Low_Ask < _targetPrice;
         }
         protected override void IterateDrawdown(MarketData[] data, int i) {

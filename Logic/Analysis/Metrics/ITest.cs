@@ -12,6 +12,5 @@ namespace Logic.Analysis.Metrics
         public ExtendedStats Stats { get; }
 
         void Run(MarketData[] data, bool[] entries, List<Session> myInputs = null);
-        void RemoveLeakage();
     }
 }
