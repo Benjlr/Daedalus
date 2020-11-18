@@ -37,7 +37,7 @@ namespace Logic
                 bool[] exits = new bool[myMarket.RawData.Length];
 
 
-                for (int i = 0; i < myMarket.RawData.Length - 2; i++) {
+                for (int i = 0; i < myMarket.RawData.Length; i++) {
                     if (entryRules.Any(x => x.Satisfied[i])) entries[i] = true;
                     //if (exitRules.Any(x => x.Satisfied[i]) || RulesContext.CloseActionitions(myMarket.RawData[i])) exits[i] = true;
                     //if (entryRules.Any(x => x.Satisfied[i])) exits[i+10] = true;

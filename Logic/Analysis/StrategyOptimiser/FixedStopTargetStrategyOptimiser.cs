@@ -20,11 +20,11 @@ namespace Logic.Analysis.StrategyOptimiser
 
         private FixedStopTargetExitTestOptions _options { get; set; }
 
-        public FixedStopTargetStrategyOptimiser(Market market, Strategy strat)
+        public FixedStopTargetStrategyOptimiser(Market market, Strategy strat, MarketSide side)
         {
             _baseMarket = market;
             _baseStrategy = strat;
-            _options = new FixedStopTargetExitTestOptions(0.001, 0.001, 0.006, 8, MarketSide.Bull);
+            _options = new FixedStopTargetExitTestOptions(0.001, 0.001, 0.007, 12, side);
         }
 
         private int count = 1;

@@ -28,7 +28,11 @@ namespace Logic
             public static Market CreateMarket(string data_path) {
                 return LoadData(data_path);
             }
-            
+
+            public static Market CreateMarket(MarketData[] data) {
+                return new Market(data,ConvertDataToSession(data));
+            }
+
             private static Market LoadData(string data_path) {
                 var data = File.ReadAllLines(data_path);
                 MarketData[] myBidAskData;

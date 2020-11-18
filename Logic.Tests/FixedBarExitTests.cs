@@ -4,6 +4,7 @@ using RuleSets.Entry;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Logic.Tests.FBEData;
 using Xunit;
 
 namespace Logic.Tests
@@ -12,19 +13,19 @@ namespace Logic.Tests
     {
 
         private List<ITest[]> myTests { get; set; }
-        private string marketData => Directory.GetCurrentDirectory() + "\\FBEData\\TestMarketData.txt";
+        //private string marketData => Directory.GetCurrentDirectory() + "\\FBEData\\TestMarketData.txt";
 
 
         public FixedBarExitTests() 
         {
-            var market = Market.MarketBuilder.CreateMarket(marketData);
+            var market = Market.MarketBuilder.CreateMarket(TestBars.DataLong);
             var strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[]
             {
-                new DummyEntries(1, 98)
+                new DummyEntries(2, TestBars.DataLong.Length)
             }, market);
 
-            var longSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(10, 14, 1, MarketSide.Bull));
-            var shortSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(10, 14, 1, MarketSide.Bear));
+            var longSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(2, 4, 2, MarketSide.Bull));
+            var shortSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(2, 4, 2, MarketSide.Bear));
 
 
             myTests = new List<ITest[]>();
@@ -35,11 +36,23 @@ namespace Logic.Tests
 
 
         [Fact]
-        public void ShouldGenerateLongResults()
-        {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\LongData.txt", 4);
-            for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][0].FBEResults.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
+        public void ShouldGenerateLongResults() {
+            var arrayOne = new double[]
+            {
+                0,
+                0,
+                (12 - 9) / 9.0,
+                (13 - 9) / 9.0,
+                (15 - 13) / 13.0,
+                (7.0 - 15.0) / 15.0,
+                (6 - 15.0) / 15.0,
+                (9 - 6) / 6.0,
+                (13 - 6) / 6.0,
+                (14.0 - 13.0) / 13.0
+            };
+
+            Assert.Equal(arrayOne, myTests[0][0].FBEResults);
+            Assert.Equal(new double[] { }, myTests[1][0].FBEResults);
         }
 
         [Fact]

@@ -70,7 +70,9 @@ namespace Icarus.ViewModels
         }
 
         private void Dowork(object callback) {
-            var runner = new FixedStopTargetExitStrategyRunner(ModelSingleton.Instance.Mymarket, ModelSingleton.Instance.MyStrategy);
+            var stratOne = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[] {new ATRContraction()}, ModelSingleton.Instance.Mymarket);
+
+            var runner = new FixedStopTargetExitStrategyRunner(ModelSingleton.Instance.Mymarket, new List<Strategy>(){stratOne});
             runner.ExecuteRunner(Update);
         }
 

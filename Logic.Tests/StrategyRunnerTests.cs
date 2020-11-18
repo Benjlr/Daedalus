@@ -26,7 +26,7 @@ namespace Logic.Tests
         [Fact]
         private void ShouldGenerateReturns()
         {
-            var fste = new FixedStopTargetExitStrategyRunner(myMarket, myStrategy);
+            var fste = new FixedStopTargetExitStrategyRunner(myMarket, new List<Strategy>(){myStrategy});
             fste.ExecuteRunner();
             var results = fste.Runner.Select(x => x.Return).ToList();
             var loadResults = TestUtils.LoadDataSingleColumn(returnItemData);

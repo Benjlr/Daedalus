@@ -68,6 +68,55 @@ namespace RuleSets.Entry
 
     }
 
+    public class ATRContractionLong : RuleBase
+    {
+        public ATRContractionLong() {
+            Dir = MarketSide.Bull;
+            Order = Action.Entry;
+        }
+
+        public double GetPositionInRange(List<double> myInput, double value) {
+            var Min = myInput.Min();
+            var Max = myInput.Max();
+            return (value - Min) / (Max - Min);
+        }
+        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData) {
+            var atrPC = AverageTrueRange.CalculateATRPC(data);
+            Satisfied = new bool[data.Count];
+            //var sma = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 200);
+            var volavg = rawData.Select(x => x.volume).ToList();
+            for (int i = 30; i < data.Count; i++) {
+                var myVOl = GetPositionInRange(volavg.GetRange(i - 20, 20), volavg[i]);
+                if (/*sma[i - 1] < data[i - 1].Close &&*/ atrPC[i] == 0.0 && myVOl < 0.1 && rawData[i].Open_Ask - rawData[i].Open_Bid <= 4)
+                    Satisfied[i] = true;
+            }
+        }
+    }
+    public class ATRContractionShort : RuleBase
+    {
+        public ATRContractionShort() {
+            Dir = MarketSide.Bear;
+            Order = Action.Entry;
+        }
+
+        public double GetPositionInRange(List<double> myInput, double value) {
+            var Min = myInput.Min();
+            var Max = myInput.Max();
+            return (value - Min) / (Max - Min);
+        }
+        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData) {
+            var atrPC = AverageTrueRange.CalculateATRPC(data);
+            var sma = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
+            Satisfied = new bool[data.Count];
+            var volavg = rawData.Select(x => x.volume).ToList();
+            for (int i = 201; i < data.Count; i++) {
+                var myVOl = GetPositionInRange(volavg.GetRange(i - 20, 20), volavg[i]);
+                if (sma[i-1] > data[i-1].Close && atrPC[i] == 0.0 && myVOl < 0.1 && rawData[i].Open_Ask - rawData[i].Open_Bid <= 4)
+                    Satisfied[i] = true;
+            }
+        }
+    }
+
     public class ATRExpansion : RuleBase
     {
         public ATRExpansion()
