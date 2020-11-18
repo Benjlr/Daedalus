@@ -41,32 +41,49 @@ namespace Logic.Analysis.StrategyRunners
             base.ExecuteRunner(update);
             StrategyOptions portfolioOptions = new StrategyOptions() {
                 ExpectancyCutOff = 0,
-                SpreadCutOff = 3,
+                SpreadCutOff = 2,
                 WinPercentCutOff = 0,
             };
 
             var stateBuilder = new StrategyState.StrategyStateFactory(portfolioOptions);
             var optimiserLong = new FixedStopTargetStrategyOptimiser(_market, _strategy[0], MarketSide.Bull);
+            var optimiserShort = new FixedStopTargetStrategyOptimiser(_market, _strategy[0], MarketSide.Bear);
 
             var resultsLong = optimiserLong.Optimise(_market.RawData.Length - 1, _market.RawData.Length);
+            var resultsShort = optimiserShort.Optimise(_market.RawData.Length - 1, _market.RawData.Length);
             stateBuilder.stop = 1 - resultsLong.StopDist;
             stateBuilder.target = resultsLong.TargetDist + 1;
 
             Runner = new List<StrategyState>() { stateBuilder.BuildNextState(_market.RawData[0], false, false) };
-            var lb = 2000;
+
             for (int i = 1; i < _market.RawData.Length; i++)
             {
-                //var results = new FixedStopTargetExitOptimisation() { Expectancy = new List<BoundedStat>() };
-                //if (_strategy.Entries[i - 1] && i > lb) {
-                //    results = optimiser.Optimise(i - 1, lb);
+                //if (_strategy[0].Entries[i - 1]) {
+                //    var results = optimiserLong.Optimise(i - 1, i > 5000 ? 5000 : i);
+                //    var resultsS = optimiserShort.Optimise(i - 1, i > 5000 ? 5000 : i);
                 //    stateBuilder.stop = 1 - results.StopDist;
                 //    stateBuilder.target = results.TargetDist + 1;
-                //    Runner.Add(stateBuilder.BuildNextState(_market.RawData[i], _strategy.Entries[i - 1] && results.Expectancy.Last().Average > 0, _strategy.Entries[i - 1] && results.Expectancy.Last().Average > 0));
+
+
+                //    Runner.Add(stateBuilder.BuildNextState(
+                //        _market.RawData[i], 
+                //        _strategy[0].Entries[i - 1] && results.Expectancy.Last().Average > 0 && resultsS.Expectancy.Last().Median < 0, false));
+
                 //}
-                //else 
+                //else
                 //    Runner.Add(stateBuilder.BuildNextState(_market.RawData[i], false, false));
-                 Runner.Add(stateBuilder.BuildNextState(_market.RawData[i], _strategy[0].Entries[i - 1] && resultsLong.Expectancy[i - 1].Average > 0, false));
-                
+
+
+
+                var boolOne = _strategy[0].Entries[i - 1];
+                var boolTwo = resultsLong.Expectancy[i - 1].Average > 0;
+                var boolThree = resultsShort.Expectancy[i - 1].Median < 0;
+                var combined = boolOne && boolTwo && boolThree;
+
+
+                Runner.Add(stateBuilder.BuildNextState(_market.RawData[i], combined, false));
+
+
 
 
                 Trace.WriteLine($"{i} -- {Runner.Sum(x=>x.Return)} -- {Runner.Last().InvestedState.Invested} -- " +

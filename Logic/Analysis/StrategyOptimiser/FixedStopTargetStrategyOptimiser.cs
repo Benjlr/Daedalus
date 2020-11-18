@@ -27,8 +27,6 @@ namespace Logic.Analysis.StrategyOptimiser
             _options = new FixedStopTargetExitTestOptions(0.001, 0.001, 0.007, 12, side);
         }
 
-        private int count = 1;
-
         public FixedStopTargetExitOptimisation Optimise(int lastKnownData, int lookBack)
         {
             var slicedMarket = _baseMarket.Slice(lastKnownData - lookBack+1, lastKnownData);

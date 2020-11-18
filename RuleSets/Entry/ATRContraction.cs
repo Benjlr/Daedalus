@@ -61,7 +61,7 @@ namespace RuleSets.Entry
             var volavg = rawData.Select(x => x.volume).ToList();
             for (int i = 30; i < data.Count; i++) {
                 var myVOl = GetPositionInRange(volavg.GetRange(i - 20, 20), volavg[i]);
-                if (atrPC[i] == 0.0 && myVOl < 0.1 && rawData[i].Open_Ask - rawData[i].Open_Bid <= 4 ) 
+                if (atrPC[i] == 0.0 && myVOl < 0.1  ) 
                     Satisfied[i] = true; }
 
         }

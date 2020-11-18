@@ -47,12 +47,9 @@ namespace Logic.Analysis.Metrics
 
     public class TestFactory
     {
-        public static List<ITest> GenerateFixedBarExitTest(Strategy strat, Market market, FixedBarExitTestOptions options, System.Action progress = null)
-        {
-
+        public static List<ITest> GenerateFixedBarExitTest(Strategy strat, Market market, FixedBarExitTestOptions options, System.Action progress = null){
             if (options.MinimumExitPeriod > options.MaximumExitPeriod)
                 throw new Exception();
-
             var threadSafeDict = new ConcurrentDictionary<int, ITest>(FixedBarTestsToDictionary(options));
             ExecuteTests(strat, market, threadSafeDict, progress);
             return threadSafeDict.Values.ToList();
@@ -83,11 +80,10 @@ namespace Logic.Analysis.Metrics
             });
         }
 
-        private static Dictionary<int, ITest> FixedBarTestsToDictionary(FixedBarExitTestOptions options)
-        {
+        private static Dictionary<int, ITest> FixedBarTestsToDictionary(FixedBarExitTestOptions options) {
             Dictionary<int, ITest> retval = new Dictionary<int, ITest>();
-            for (int i = options.MinimumExitPeriod; i < options.MaximumExitPeriod; i++) 
-                retval.Add(i - options.MinimumExitPeriod, FixedBarExitTest.PrepareTest(options.LongShort, i));
+            for (int i = options.MinimumExitPeriod; i <= options.MaximumExitPeriod; i+= options.Increment) 
+                retval.Add(retval.Count, FixedBarExitTest.PrepareTest(options.LongShort, i));
             return retval;
         }
 
@@ -104,7 +100,7 @@ namespace Logic.Analysis.Metrics
             Dictionary<int, ITest> retval = new Dictionary<int, ITest>();
             for (int i = 0; i <= options.Range / options.Increment; i++)
             for (int j = 0; j <= options.Range / options.Increment; j++)
-                retval.Add(j + i * ((int)(options.Range / options.Increment)+1),
+                retval.Add(retval.Count,
                     FixedStopTargetExitTest.PrepareTest(options.LongShort, 
                         j * options.Increment + options.MinimumTarget, 
                         options.MinimumStop + i * options.Increment));

@@ -16,83 +16,155 @@ namespace Logic.Tests
         //private string marketData => Directory.GetCurrentDirectory() + "\\FBEData\\TestMarketData.txt";
 
 
-        public FixedBarExitTests() 
-        {
+        public FixedBarExitTests() {
             var market = Market.MarketBuilder.CreateMarket(TestBars.DataLong);
             var strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[]
             {
                 new DummyEntries(2, TestBars.DataLong.Length)
             }, market);
 
-            var longSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(2, 4, 2, MarketSide.Bull));
-            var shortSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(2, 4, 2, MarketSide.Bear));
-
-
-            myTests = new List<ITest[]>();
-            for (int i = 0; i < longSide.Count; i++)
-                myTests.Add(new[] { longSide[i], shortSide[i] });
+            PrepareTests(strat, market);
         }
 
+        private void PrepareTests(Strategy strat, Market market) {
+            var longSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(2, 4, 2, MarketSide.Bull));
+            var shortSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(2, 4, 2, MarketSide.Bear));
+            myTests = new List<ITest[]>();
+            for (int i = 0; i < longSide.Count; i++)
+                myTests.Add(new[] {longSide[i], shortSide[i]});
+        }
 
 
         [Fact]
         public void ShouldGenerateLongResults() {
-            var arrayOne = new double[]
+            var arrayOne = new double[,]
             {
-                0,
-                0,
-                (12 - 9) / 9.0,
-                (13 - 9) / 9.0,
-                (15 - 13) / 13.0,
-                (7.0 - 15.0) / 15.0,
-                (6 - 15.0) / 15.0,
-                (9 - 6) / 6.0,
-                (13 - 6) / 6.0,
-                (14.0 - 13.0) / 13.0
+                {0, 0},
+                {0, 0},
+                {(12 - 9) / 9.0, (12 - 9) / 9.0},
+                {(13 - 9) / 9.0, (13 - 9) / 9.0 + 0},
+                {(15 - 13) / 13.0, (15 - 13) / 13.0 + (15 - 9) / 9.0},
+                {(7.0 - 13) / 13.0, (7 - 9) / 9.0 + (7 - 13) / 13.0},
+                {(6 - 7) / 7.0, (6 - 13) / 13.0 + (6 - 7) / 7.0},
+                {(9 - 7) / 7.0, (9 - 13) / 13.0 + (9 - 7) / 7.0 + 0},
+                {(13 - 9) / 9.0, (13 - 9) / 9.0 + (13 - 7) / 7.0},
+                {(14 - 9) / 9.0, (14 - 7) / 7.0 + (14 - 9) / 9.0}
             };
 
-            Assert.Equal(arrayOne, myTests[0][0].FBEResults);
-            Assert.Equal(new double[] { }, myTests[1][0].FBEResults);
+            for (int i = 0; i < arrayOne.GetLength(0); i++) {
+                Assert.Equal(arrayOne[i, 0], myTests[0][0].FBEResults[i]);
+                Assert.Equal(arrayOne[i, 1], myTests[1][0].FBEResults[i]);
+            }
         }
 
         [Fact]
-        public void ShouldGenerateShortResults()
-        {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\ShortData.txt", 4);
-            for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][1].FBEResults.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
+        public void ShouldGenerateShortResults() {
+            var arrayOne = new double[,]
+            {
+                {0, 0},
+                {0, 0},
+                {(9 - 12) / 9.0, (9 - 12) / 9.0},
+                {(9 - 13) / 9.0, (9 - 13) / 9.0 + 0},
+                {(13 - 15) / 13.0, (13 - 15) / 13.0 + (9 - 15) / 9.0},
+                {(13 - 7) / 13.0, (9 - 7) / 9.0 + (13 - 7) / 13.0},
+                {(7 - 6) / 7.0, (13 - 6) / 13.0 + (7 - 6) / 7.0},
+                {(7 - 9) / 7.0, (13 - 9) / 13.0 + (7 - 9) / 7.0 + 0},
+                {(9 - 13) / 9.0, (9 - 13) / 9.0 + (7 - 13) / 7.0},
+                {(9 - 14) / 9.0, (7 - 14) / 7.0 + (9 - 14) / 9.0}
+            };
+
+            for (int i = 0; i < arrayOne.GetLength(0); i++) {
+                Assert.Equal(arrayOne[i, 0], myTests[0][1].FBEResults[i]);
+                Assert.Equal(arrayOne[i, 1], myTests[1][1].FBEResults[i]);
+            }
         }
 
         [Fact]
-        public void ShouldGenerateDrawDownLongResults()
-        {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownData.txt", 4);
-            for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][0].FBEDrawdown.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
+        public void ShouldGenerateDrawDownLongResults() {
+            var arrayOne = new double[,]
+            {
+                {0, 0},
+                {(8 - 9) / 9.0, (8 - 9) / 9.0},
+                {0, 0},
+                {0, 0},
+                {(9 - 13) / 13.0, (9 - 13) / 13.0},
+                {(6 - 13) / 13.0 + (6 - 7) / 7.0, (6 - 9) / 9.0 + (6 - 13) / 13.0 + (6 - 7) / 7.0},
+                {(4 - 7) / 7.0, (4 - 13) / 13.0 + (4 - 7) / 7.0},
+                {(8 - 9) / 9.0, (8 - 13) / 13.0 + (8 - 9) / 9.0},
+                {0, 0},
+                {(13 - 14) / 14.0, (13 - 14) / 14.0}
+            };
+
+            for (int i = 0; i < arrayOne.GetLength(0); i++) {
+                Assert.Equal(arrayOne[i, 0], myTests[0][0].FBEDrawdown[i]);
+                Assert.Equal(arrayOne[i, 1], myTests[1][0].FBEDrawdown[i]);
+            }
         }
 
         [Fact]
-        public void ShouldGenerateDrawDownShortResults()
-        {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DrawdownShort.txt", 4);
-            for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][1].FBEDrawdown.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
+        public void ShouldGenerateDrawDownShortResults() {
+            var arrayOne = new double[,]
+            {
+                {0, 0},
+                {(9 - 11) / 9.0, (9 - 11) / 9.0},
+                {(9 - 14) / 9.0, (9 - 14) / 9.0},
+                {(9 - 14) / 9.0 + (13 - 14) / 13.0, (9 - 14) / 9.0 + (13 - 14) / 13.0},
+                {(13 - 18) / 13.0, (13 - 18) / 13.0 + (9 - 18) / 9.0},
+                {(7 - 9) / 7.0, (7 - 9) / 7.0},
+                {0, 0},
+                {(7 - 10) / 7.0 + (9 - 10) / 9.0, (7 - 10) / 7.0 + (9 - 10) / 9.0},
+                {(9 - 14) / 9.0, (9 - 14) / 9.0 + (7 - 14) / 7.0},
+                {(9 - 16) / 9.0 + (14 - 16) / 14.0, (7 - 16) / 7.0 + (9 - 16) / 9.0 + (14 - 16) / 14.0}
+            };
+
+            for (int i = 0; i < arrayOne.GetLength(0); i++) {
+                Assert.Equal(arrayOne[i, 0], myTests[0][1].FBEDrawdown[i]);
+                Assert.Equal(arrayOne[i, 1], myTests[1][1].FBEDrawdown[i]);
+            }
         }
 
         [Fact]
-        public void ShouldGenerateLongDurations()
-        {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DurationLong.txt", 4);
-            for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][0].Durations, resultsLong[i].Select(x=>(int)x));
+        public void ShouldGenerateLongDurations() {
+            var arrayOne = new double[,]
+            {
+                {0, 0},
+                {2, 4},
+                {0, 0},
+                {2, 4},
+                {0, 0},
+                {2, 4},
+                {0, 0},
+                {2, 4},
+                {0, 0},
+                {2, 4}
+            };
+
+            for (int i = 0; i < arrayOne.GetLength(0); i++) {
+                Assert.Equal(arrayOne[i, 0], myTests[0][1].Durations[i]);
+                Assert.Equal(arrayOne[i, 1], myTests[1][1].Durations[i]);
+            }
         }
 
         [Fact]
-        public void ShouldGenerateShortDurations()
-        {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\FBEData\\DurationShort.txt", 4);
-            for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][1].Durations, resultsLong[i].Select(x => (int)x));
+        public void ShouldGenerateShortDurations() {
+            var arrayOne = new double[,]
+            {
+                {0, 0},
+                {2, 4},
+                {0, 0},
+                {2, 4},
+                {0, 0},
+                {2, 4},
+                {0, 0},
+                {2, 4},
+                {0, 0},
+                {2, 4}
+            };
+
+            for (int i = 0; i < arrayOne.GetLength(0); i++) {
+                Assert.Equal(arrayOne[i, 0], myTests[0][1].Durations[i]);
+                Assert.Equal(arrayOne[i, 1], myTests[1][1].Durations[i]);
+            }
         }
     }
 }

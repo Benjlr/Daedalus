@@ -9,9 +9,7 @@ namespace Logic.Analysis.Metrics
 {
     public abstract class TestBase : ITest
     {
-        public double[] FBEResults { get; protected set; }
-        public double[] FBEDrawdown { get; protected set; }
-        public int[] Durations { get; protected set; }
+        public List<Trade> Trades { get; protected set; }
         public ExtendedStats Stats { get; protected set; }
 
         protected int _endIndex { get; set; }
@@ -23,9 +21,7 @@ namespace Logic.Analysis.Metrics
         }
 
         protected void initLists(int length) {
-            FBEResults = new double[length];
-            FBEDrawdown = new double[length];
-            Durations = new int[length];
+            Trades=new List<Trade>();
         }
 
         protected void IterateEntries(MarketData[] data, bool[] entries) {
@@ -48,7 +44,7 @@ namespace Logic.Analysis.Metrics
         protected abstract void IterateTime(MarketData[] data, int i);
 
         private void GenerateStats() {
-            Stats = new ExtendedStats(FBEResults.ToList(), FBEDrawdown.ToList());
+            Stats = new ExtendedStats(Trades);
         }
     }
 }
