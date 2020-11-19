@@ -1,5 +1,5 @@
-﻿using PriceSeriesCore;
-using PriceSeriesCore.Calculations;
+﻿using DataStructures;
+using DataStructures.PriceAlgorithms;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +13,7 @@ namespace RuleSets.Exit
             Order = Action.Exit;
         }
 
-        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
+        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
         {
             var dailys = SessionCollate.CollateTo24HrDaily(data);
             Satisfied = new bool[data.Count];

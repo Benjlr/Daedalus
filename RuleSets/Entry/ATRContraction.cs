@@ -1,5 +1,5 @@
-﻿using PriceSeriesCore;
-using PriceSeriesCore.Calculations;
+﻿using DataStructures;
+using DataStructures.PriceAlgorithms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace RuleSets.Entry
             Order = Action.Entry;
         }
 
-        public  void aasass(List<Session> data, MarketData[] rawData)
+        public  void aasass(List<SessionData> data, BidAskData[] rawData)
         {
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             var atr = AverageTrueRange.Calculate(data, 20);
@@ -53,7 +53,7 @@ namespace RuleSets.Entry
 
 
 
-        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
+        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
         {
 
             var atrPC = AverageTrueRange.CalculateATRPC(data);
@@ -80,7 +80,7 @@ namespace RuleSets.Entry
             var Max = myInput.Max();
             return (value - Min) / (Max - Min);
         }
-        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData) {
+        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData) {
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             Satisfied = new bool[data.Count];
             //var sma = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 200);
@@ -104,7 +104,7 @@ namespace RuleSets.Entry
             var Max = myInput.Max();
             return (value - Min) / (Max - Min);
         }
-        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData) {
+        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData) {
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             var sma = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
             Satisfied = new bool[data.Count];
@@ -126,7 +126,7 @@ namespace RuleSets.Entry
         }
 
 
-        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
+        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
         {
 
 

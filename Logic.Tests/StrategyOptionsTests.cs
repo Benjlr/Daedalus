@@ -1,8 +1,8 @@
-﻿using Logic.Analysis.StrategyRunners;
-using Logic.Utils;
-using PriceSeriesCore;
+﻿using DataStructures;
+using Logic.StrategyRunners;
 using System;
 using System.Collections.Generic;
+using DataStructures.StatsTools;
 using Xunit;
 
 namespace Logic.Tests
@@ -21,10 +21,10 @@ namespace Logic.Tests
                 }
             };
 
-            TradeStatistics myStats = new TradeStatistics(new List<double>());
-            MarketData market = new MarketData(new DateTime(2020, 11, 5, 16, 34, 0),0,0,0,0,0,0,0,0,0);
-            MarketData marketTwo = new MarketData(new DateTime(2020, 11, 2, 11, 6, 0), 0,0,0,0,0,0,0,0,0);
-            MarketData marketThree = new MarketData(new DateTime(2020, 11, 4, 12, 0, 0), 0,0,0,0,0,0,0,0,0);
+            TradeStatistics myStats = new TradeStatistics(new List<Trade>());
+            BidAskData market = new BidAskData(new DateTime(2020, 11, 5, 16, 34, 0),0,0,0,0,0,0,0,0,0);
+            BidAskData marketTwo = new BidAskData(new DateTime(2020, 11, 2, 11, 6, 0), 0,0,0,0,0,0,0,0,0);
+            BidAskData marketThree = new BidAskData(new DateTime(2020, 11, 4, 12, 0, 0), 0,0,0,0,0,0,0,0,0);
 
             Assert.True(stratOpt.GoodToEnter(myStats, market));
             Assert.True(stratOpt.GoodToEnter(myStats, marketTwo));
@@ -44,10 +44,10 @@ namespace Logic.Tests
                 }
             };
 
-            TradeStatistics myStats = new TradeStatistics(new List<double>());
-            MarketData market = new MarketData(new DateTime(2020, 11, 4, 12, 46, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            MarketData marketTwo = new MarketData(new DateTime(2020, 11, 6, 17, 36, 5), 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            MarketData marketThree = new MarketData(new DateTime(2020, 11, 10, 3, 3, 1), 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            TradeStatistics myStats = new TradeStatistics(new List<Trade>());
+            BidAskData market = new BidAskData(new DateTime(2020, 11, 4, 12, 46, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            BidAskData marketTwo = new BidAskData(new DateTime(2020, 11, 6, 17, 36, 5), 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            BidAskData marketThree = new BidAskData(new DateTime(2020, 11, 10, 3, 3, 1), 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
             Assert.False(stratOpt.GoodToEnter(myStats, market));
             Assert.False(stratOpt.GoodToEnter(myStats, marketTwo));
@@ -66,10 +66,10 @@ namespace Logic.Tests
                 }
             };
 
-            TradeStatistics myStats = new TradeStatistics(new List<double>());
-            MarketData market = new MarketData(new DateTime(2020, 11, 2, 16, 36, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            MarketData marketTwo = new MarketData(new DateTime(2020, 11, 9, 16, 40, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            MarketData marketThree = new MarketData(new DateTime(2020, 11, 16, 16, 47, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            TradeStatistics myStats = new TradeStatistics(new List<Trade>());
+            BidAskData market = new BidAskData(new DateTime(2020, 11, 2, 16, 36, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            BidAskData marketTwo = new BidAskData(new DateTime(2020, 11, 9, 16, 40, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            BidAskData marketThree = new BidAskData(new DateTime(2020, 11, 16, 16, 47, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
             Assert.True(stratOpt.GoodToEnter(myStats, market));
             Assert.True(stratOpt.GoodToEnter(myStats, marketTwo));
@@ -88,10 +88,10 @@ namespace Logic.Tests
                 }
             };
 
-            TradeStatistics myStats = new TradeStatistics(new List<double>());
-            MarketData market = new MarketData(new DateTime(2020, 11, 4, 16, 36, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            MarketData marketTwo = new MarketData(new DateTime(2020, 11, 11, 16, 40, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
-            MarketData marketThree = new MarketData(new DateTime(2020, 11, 18, 16, 47, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            TradeStatistics myStats = new TradeStatistics(new List<Trade>());
+            BidAskData market = new BidAskData(new DateTime(2020, 11, 4, 16, 36, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            BidAskData marketTwo = new BidAskData(new DateTime(2020, 11, 11, 16, 40, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
+            BidAskData marketThree = new BidAskData(new DateTime(2020, 11, 18, 16, 47, 0), 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
             Assert.False(stratOpt.GoodToEnter(myStats, market));
             Assert.False(stratOpt.GoodToEnter(myStats, marketTwo));

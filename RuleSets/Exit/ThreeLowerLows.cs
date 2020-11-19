@@ -1,7 +1,7 @@
-﻿using PriceSeriesCore;
+﻿using DataStructures;
+using DataStructures.PriceAlgorithms;
 using System.Collections.Generic;
 using System.Linq;
-using PriceSeriesCore.Calculations;
 
 namespace RuleSets.Exit
 {
@@ -13,7 +13,7 @@ namespace RuleSets.Exit
             Order = Action.Exit;
         }
 
-        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
+        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
         {
             Satisfied = new bool[data.Count];
 
@@ -33,7 +33,7 @@ namespace RuleSets.Exit
             Order = Action.Exit;
         }
 
-        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
+        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
         {
             var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
             Satisfied = new bool[data.Count];

@@ -1,5 +1,5 @@
-﻿using PriceSeriesCore;
-using PriceSeriesCore.Calculations;
+﻿using DataStructures;
+using DataStructures.PriceAlgorithms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace RuleSets.Entry
             Order = Action.Entry;
         }
 
-        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
+        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
         {
             Satisfied = new bool[data.Count];
             var pivots = Pivots.Calculate(data, 1);

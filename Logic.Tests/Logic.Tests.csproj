@@ -9,19 +9,6 @@
   <ItemGroup>
     <None Remove="DrilldownData\10RollingExpData.txt" />
     <None Remove="DrilldownData\13RollingExpData.txt" />
-    <None Remove="FBEData\10PeriodExp.txt" />
-    <None Remove="FBEData\30PeriodExp.txt" />
-    <None Remove="FBEData\DrawdownData.txt" />
-    <None Remove="FBEData\DrawdownDataWinners.txt" />
-    <None Remove="FBEData\DrawdownShort.txt" />
-    <None Remove="FBEData\DrawdownShortWinners.txt" />
-    <None Remove="FBEData\DurationLong.txt" />
-    <None Remove="FBEData\DurationShort.txt" />
-    <None Remove="FBEData\LongData.txt" />
-    <None Remove="FBEData\Rolling18Exp.txt" />
-    <None Remove="FBEData\Rolling8Exp.txt" />
-    <None Remove="FBEData\ShortData.txt" />
-    <None Remove="FBEData\TestMarketData.txt" />
     <None Remove="StopTarget\DrawdownLong.txt" />
     <None Remove="StopTarget\DrawdownLongWinners.txt" />
     <None Remove="StopTarget\DrawdownShort.txt" />
@@ -31,7 +18,6 @@
     <None Remove="StopTarget\longResults.txt" />
     <None Remove="StopTarget\shortResults.txt" />
     <None Remove="StopTarget\TestMarketData.txt" />
-    <None Remove="StrategyRunnerData\ReturnItems.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,27 +30,6 @@
     <Content Include="DrilldownData\10RollingExpData.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="FBEData\DrawdownDataWinners.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FBEData\DrawdownData.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FBEData\DrawdownShortWinners.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FBEData\DurationShort.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FBEData\DurationLong.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FBEData\LongData.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FBEData\DrawdownShort.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="DrilldownData\10RollingExpResults.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -72,12 +37,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DrilldownData\13RollingExpResults.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FBEData\ShortData.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="FBEData\TestMarketData.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="StopTarget\DrawdownShortWinners.txt">
@@ -107,9 +66,6 @@
     <Content Include="StopTarget\TestMarketData.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="StrategyRunnerData\ReturnItems.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -127,13 +83,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Logic\Logic.csproj" />
+    <ProjectReference Include="..\PriceDataStructures\DataStructures.csproj" />
     <ProjectReference Include="..\RuleSets\RuleSets.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="PriceSeriesCore">
-      <HintPath>..\..\Costanza\PriceSeriesCore\bin\Release\netcoreapp3.1\PriceSeriesCore.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\TestUtils\TestUtils.csproj" />
   </ItemGroup>
 
 </Project>

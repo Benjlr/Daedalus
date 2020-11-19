@@ -1,10 +1,10 @@
-using Logic.Analysis.Metrics;
 using RuleSets;
 using RuleSets.Entry;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Logic.Tests.FBEData;
+using DataStructures;
+using Logic.Metrics;
 using Xunit;
 
 namespace Logic.Tests
@@ -17,10 +17,10 @@ namespace Logic.Tests
 
 
         public FixedBarExitTests() {
-            var market = Market.MarketBuilder.CreateMarket(TestBars.DataLong);
+            var market = Market.MarketBuilder.CreateMarket(FBETestBars.DataLong);
             var strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[]
             {
-                new DummyEntries(2, TestBars.DataLong.Length)
+                new DummyEntries(2, FBETestBars.DataLong.Length)
             }, market);
 
             PrepareTests(strat, market);
@@ -52,8 +52,10 @@ namespace Logic.Tests
             };
 
             for (int i = 0; i < arrayOne.GetLength(0); i++) {
-                Assert.Equal(arrayOne[i, 0], myTests[0][0].FBEResults[i]);
-                Assert.Equal(arrayOne[i, 1], myTests[1][0].FBEResults[i]);
+                //Assert.Equal(arrayOne[i, 0], myTests[0][0].FBEResults[i]);
+                //Assert.Equal(arrayOne[i, 1], myTests[1][0].FBEResults[i]);
+                Assert.False(true);
+
             }
         }
 
@@ -74,8 +76,10 @@ namespace Logic.Tests
             };
 
             for (int i = 0; i < arrayOne.GetLength(0); i++) {
-                Assert.Equal(arrayOne[i, 0], myTests[0][1].FBEResults[i]);
-                Assert.Equal(arrayOne[i, 1], myTests[1][1].FBEResults[i]);
+                //Assert.Equal(arrayOne[i, 0], myTests[0][1].FBEResults[i]);
+                //Assert.Equal(arrayOne[i, 1], myTests[1][1].FBEResults[i]);
+                Assert.False(true);
+
             }
         }
 
@@ -96,8 +100,10 @@ namespace Logic.Tests
             };
 
             for (int i = 0; i < arrayOne.GetLength(0); i++) {
-                Assert.Equal(arrayOne[i, 0], myTests[0][0].FBEDrawdown[i]);
-                Assert.Equal(arrayOne[i, 1], myTests[1][0].FBEDrawdown[i]);
+                //Assert.Equal(arrayOne[i, 0], myTests[0][0].FBEDrawdown[i]);
+                //Assert.Equal(arrayOne[i, 1], myTests[1][0].FBEDrawdown[i]);
+                Assert.False(true);
+
             }
         }
 
@@ -118,8 +124,9 @@ namespace Logic.Tests
             };
 
             for (int i = 0; i < arrayOne.GetLength(0); i++) {
-                Assert.Equal(arrayOne[i, 0], myTests[0][1].FBEDrawdown[i]);
-                Assert.Equal(arrayOne[i, 1], myTests[1][1].FBEDrawdown[i]);
+                //Assert.Equal(arrayOne[i, 0], myTests[0][1].FBEDrawdown[i]);
+                //Assert.Equal(arrayOne[i, 1], myTests[1][1].FBEDrawdown[i]);
+                Assert.False(true);
             }
         }
 
@@ -140,8 +147,8 @@ namespace Logic.Tests
             };
 
             for (int i = 0; i < arrayOne.GetLength(0); i++) {
-                Assert.Equal(arrayOne[i, 0], myTests[0][1].Durations[i]);
-                Assert.Equal(arrayOne[i, 1], myTests[1][1].Durations[i]);
+                Assert.Equal(arrayOne[i, 0], myTests[0][1].Trades[i].Results.Length );
+                Assert.Equal(arrayOne[i, 1], myTests[1][1].Trades[i].Results.Length);
             }
         }
 
@@ -162,8 +169,8 @@ namespace Logic.Tests
             };
 
             for (int i = 0; i < arrayOne.GetLength(0); i++) {
-                Assert.Equal(arrayOne[i, 0], myTests[0][1].Durations[i]);
-                Assert.Equal(arrayOne[i, 1], myTests[1][1].Durations[i]);
+                Assert.Equal(arrayOne[i, 0], myTests[0][1].Trades[i].Results.Length);
+                Assert.Equal(arrayOne[i, 1], myTests[1][1].Trades[i].Results.Length);
             }
         }
     }

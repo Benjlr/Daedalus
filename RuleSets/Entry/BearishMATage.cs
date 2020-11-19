@@ -1,5 +1,5 @@
-﻿using PriceSeriesCore;
-using PriceSeriesCore.Calculations;
+﻿using DataStructures;
+using DataStructures.PriceAlgorithms;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,8 +14,7 @@ namespace RuleSets.Entry
         }
 
 
-        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
-        {
+        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData) {
             var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
             var fiftyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 50);
 

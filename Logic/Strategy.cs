@@ -1,6 +1,7 @@
-﻿using System.Linq;
-using Logic.Utils;
+﻿using DataStructures;
 using RuleSets;
+using System.Linq;
+using DataStructures.StatsTools;
 
 namespace Logic
 {

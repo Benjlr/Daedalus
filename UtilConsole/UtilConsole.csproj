@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Logic\Logic.csproj" />
+    <ProjectReference Include="..\PriceDataStructures\DataStructures.csproj" />
   </ItemGroup>
 
   <ItemGroup>

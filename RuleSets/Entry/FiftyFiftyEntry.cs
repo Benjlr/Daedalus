@@ -1,4 +1,4 @@
-﻿using PriceSeriesCore;
+﻿using DataStructures;
 using System;
 using System.Collections.Generic;
 
@@ -12,7 +12,7 @@ namespace RuleSets.Entry
             Order = Action.Entry;
         }
 
-        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
+        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
         {
             Satisfied = new bool[data.Count];
             Random rand = new Random();

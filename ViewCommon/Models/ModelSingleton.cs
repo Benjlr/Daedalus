@@ -1,9 +1,10 @@
-﻿using Logic;
-using Logic.Utils;
+﻿using DataStructures;
+using Logic;
 using RuleSets;
 using RuleSets.Entry;
 using RuleSets.Exit;
 using System.IO;
+using DataStructures.StatsTools;
 
 namespace ViewCommon.Models
 {

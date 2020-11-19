@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using PriceSeriesCore;
+﻿using DataStructures;
+using System.Collections.Generic;
 
 namespace RuleSets
 {
@@ -8,6 +8,6 @@ namespace RuleSets
         MarketSide Dir { get; }
         Action Order { get; }
         bool[] Satisfied { get; }
-        void CalculateBackSeries(List<Session> data, MarketData[] rawData);
+        void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData);
     }
 }

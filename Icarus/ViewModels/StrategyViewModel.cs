@@ -1,25 +1,19 @@
-﻿using System.Collections.Generic;
-using Logic.Analysis.StrategyRunners;
-using Logic.Utils;
+﻿using Logic;
+using Logic.StrategyRunners;
 using OxyPlot;
-using System.Linq;
-using System.Net.Mime;
-using System.Threading;
-using System.Windows;
-using System.Windows.Input;
-using LinqStatistics;
-using Logic;
-using Logic.Analysis;
-using Logic.Analysis.Metrics;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
-using PriceSeriesCore.Calculations;
 using RuleSets;
 using RuleSets.Entry;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Windows;
+using System.Windows.Input;
+using DataStructures.StatsTools;
 using ViewCommon.Models;
 using ViewCommon.Utils;
-using Series = ViewCommon.Charts.Series;
 
 namespace Icarus.ViewModels
 {

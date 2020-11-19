@@ -1,9 +1,11 @@
-﻿using Logic.Analysis.StrategyRunners;
+﻿using DataStructures;
+using Logic.StrategyRunners;
 using RuleSets;
 using RuleSets.Entry;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TestUtils;
 using Xunit;
 
 namespace Logic.Tests
@@ -29,7 +31,7 @@ namespace Logic.Tests
             var fste = new FixedStopTargetExitStrategyRunner(myMarket, new List<Strategy>(){myStrategy});
             fste.ExecuteRunner();
             var results = fste.Runner.Select(x => x.Return).ToList();
-            var loadResults = TestUtils.LoadDataSingleColumn(returnItemData);
+            var loadResults = Loaders.LoadDataSingleColumn(returnItemData);
             Assert.Equal(loadResults, results);
         }
     }

@@ -1,8 +1,6 @@
-﻿using Logic.Utils;
+﻿using DataStructures.StatsTools;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Reflection;
 using Xunit;
 
 namespace Logic.Tests

@@ -1,13 +1,12 @@
-﻿using Logic.Analysis;
-using Logic.Analysis.Metrics;
-using Logic.Utils;
+﻿using Logic;
+using Logic.Metrics;
 using OxyPlot;
+using RuleSets;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using RuleSets;
 using ViewCommon.Charts;
 using ViewCommon.Models;
 using ViewCommon.Utils;
@@ -49,18 +48,18 @@ namespace Daedalus.ViewModels
             var myTestsLong = LongAnalysis(allTests.Select(x=>x[0]).ToList());
             var myTestsShort = ShortAnalysis(allTests.Select(x => x[1]).ToList());
 
-            PlotModelDrawdownLong = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsLong.ReturnByDrawdown), myTestsLong.X_label_categorised, myTestsLong.Y_label_categorised);
-            PlotModelDrawdownShort = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsShort.ReturnByDrawdown), myTestsShort.X_label_categorised, myTestsShort.Y_label_categorised);
-            PlotModelReturnsLong = HeatMap.GenerateHeatMap((myTestsLong.ReturnByTest), myTestsLong.X_label, myTestsLong.Y_label);
-            PlotModelReturnsShort = HeatMap.GenerateHeatMap((myTestsShort.ReturnByTest), myTestsShort.X_label, myTestsShort.Y_label);
-            PlotModelDDsLong = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsLong.DrawdownByTest), myTestsLong.X_label_categorised, myTestsLong.Y_label);
-            PlotModelDDsShort = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsShort.DrawdownByTest), myTestsShort.X_label_categorised, myTestsShort.Y_label);
-            ExpectancyLong = Series.GenerateSeriesVertical(new List<List<double>>(){myTestsLong.ExpectancyMedian, myTestsLong.ExpectancyAverage});
-            ExpectancyShort = Series.GenerateSeriesVertical(new List<List<double>>(){ myTestsShort.ExpectancyMedian, myTestsShort.ExpectancyAverage });
-            LongRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.RollingExpectancy));
-            ShortRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.RollingExpectancy));
-            LongDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.DrawdownByTest));
-            ShortDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.DrawdownByTest));
+            //PlotModelDrawdownLong = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsLong.ReturnByDrawdown), myTestsLong.X_label_categorised, myTestsLong.Y_label_categorised);
+            //PlotModelDrawdownShort = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsShort.ReturnByDrawdown), myTestsShort.X_label_categorised, myTestsShort.Y_label_categorised);
+            //PlotModelReturnsLong = HeatMap.GenerateHeatMap((myTestsLong.ReturnByTest), myTestsLong.X_label, myTestsLong.Y_label);
+            //PlotModelReturnsShort = HeatMap.GenerateHeatMap((myTestsShort.ReturnByTest), myTestsShort.X_label, myTestsShort.Y_label);
+            //PlotModelDDsLong = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsLong.DrawdownByTest), myTestsLong.X_label_categorised, myTestsLong.Y_label);
+            //PlotModelDDsShort = Series.GenerateHistogramSeries(GenerateBoundedStats.Generate(myTestsShort.DrawdownByTest), myTestsShort.X_label_categorised, myTestsShort.Y_label);
+            //ExpectancyLong = Series.GenerateSeriesVertical(new List<List<double>>(){myTestsLong.ExpectancyMedian, myTestsLong.ExpectancyAverage});
+            //ExpectancyShort = Series.GenerateSeriesVertical(new List<List<double>>(){ myTestsShort.ExpectancyMedian, myTestsShort.ExpectancyAverage });
+            //LongRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.RollingExpectancy));
+            //ShortRollingExp = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.RollingExpectancy));
+            //LongDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsLong.DrawdownByTest));
+            //ShortDrawdowns = Series.GenerateBoundedSeries(GenerateBoundedStats.Generate(myTestsShort.DrawdownByTest));
             
 
             Application.Current.Dispatcher.Invoke(finished_work);

@@ -1,4 +1,4 @@
-﻿using PriceSeriesCore;
+﻿using DataStructures;
 using System.Collections.Generic;
 
 namespace RuleSets
@@ -9,7 +9,7 @@ namespace RuleSets
         public Action Order { get; protected set; }
         public bool[] Satisfied { get; protected set; }
 
-        public virtual void CalculateBackSeries(List<Session> data, MarketData[] rawData)
+        public virtual void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
         {
         }
     }

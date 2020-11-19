@@ -59,14 +59,14 @@
         //    //new Tuple<DateTime, DateTime>(new DateTime(01, 01, 01, 23, 30, 0), new DateTime(01, 01, 01, 0, 0, 0)),
         //};
 
-        //private static List<Session> _broaderMarket { get; set; }
-        //public static void InitBroaderMarketContext(List<Session> input)
+        //private static List<SessionData> _broaderMarket { get; set; }
+        //public static void InitBroaderMarketContext(List<SessionData> input)
         //{
-        //    _broaderMarket = SessionCollate.CollateToDaily(input);
+        //    _broaderMarket = SessionDataCollate.CollateToDaily(input);
 
         //}
 
-        //public static bool IsValid(MarketData entryPoint)
+        //public static bool IsValid(BidAskData entryPoint)
         //{
         //    var timeCheck = okToTrade.Any(x => entryPoint.Time.TimeOfDay > x.Item1.TimeOfDay && entryPoint.Time.TimeOfDay < x.Item2.TimeOfDay);
         //    var maxSpread = (entryPoint.Close_Ask - entryPoint.Close_Bid) <= MaxSpread;
@@ -74,7 +74,7 @@
         //    return  maxSpread ;
         //}
 
-        //public static bool CloseActionitions(MarketData exitPoint) => (exitPoint.Time.DayOfWeek == DayOfWeek.Saturday && exitPoint.Time.Hour > ExitActionition.Hour);
-        //public static bool CloseActionitions(MarketData exitPoint) => false;
+        //public static bool CloseActionitions(BidAskData exitPoint) => (exitPoint.Time.DayOfWeek == DayOfWeek.Saturday && exitPoint.Time.Hour > ExitActionition.Hour);
+        //public static bool CloseActionitions(BidAskData exitPoint) => false;
     }
 }

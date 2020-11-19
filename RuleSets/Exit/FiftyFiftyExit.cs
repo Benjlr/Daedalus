@@ -1,4 +1,4 @@
-﻿using PriceSeriesCore;
+﻿using DataStructures;
 using System;
 using System.Collections.Generic;
 
@@ -12,7 +12,7 @@ namespace RuleSets.Exit
             Order = Action.Exit;
         }
 
-        public override void CalculateBackSeries(List<Session> data, MarketData[] rawData)
+        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
         {
             Satisfied = new bool[data.Count];
 

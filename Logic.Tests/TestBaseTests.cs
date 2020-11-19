@@ -1,4 +1,4 @@
-﻿using Logic.Analysis.Metrics;
+﻿using DataStructures;
 using Logic.Metrics;
 using RuleSets;
 using RuleSets.Entry;

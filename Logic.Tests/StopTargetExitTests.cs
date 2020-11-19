@@ -1,10 +1,11 @@
-﻿using Logic.Analysis.Metrics;
-using Logic.Metrics;
+﻿using Logic.Metrics;
 using RuleSets;
 using RuleSets.Entry;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DataStructures;
+using TestUtils;
 using Xunit;
 
 namespace Logic.Tests
@@ -31,35 +32,35 @@ namespace Logic.Tests
 
         [Fact]
         public void ShouldGenerateLongResults() {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\longResults.txt", 4);
+            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\longResults.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
-                    Assert.Equal(myTests[i][0].FBEResults.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
+                    Assert.Equal(myTests[i][0].FBEResults, resultsLong[i]);
         }
 
         [Fact]
         public void ShouldGenerateShortResults() {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\shortResults.txt", 4);
+            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\shortResults.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][1].FBEResults.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
+                Assert.Equal(myTests[i][1].FBEResults, resultsLong[i]);
         }
 
         [Fact]
         public void ShouldGenerateDrawDownLongResults() {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DrawdownLong.txt", 4);
+            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DrawdownLong.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][0].FBEDrawdown.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
+                Assert.Equal(myTests[i][0].FBEDrawdown, resultsLong[i]);
         }
 
         [Fact]
         public void ShouldGenerateDrawDownShortResults() {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DrawdownShort.txt", 4);
+            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DrawdownShort.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][1].FBEDrawdown.Select(TestUtils._round), resultsLong[i].Select(TestUtils._round));
+                Assert.Equal(myTests[i][1].FBEDrawdown, resultsLong[i]);
         }
 
         [Fact]
         public void ShouldGenerateLongDurations() {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DurationLong.txt", 4);
+            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DurationLong.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
             for (int j = 0; j < resultsLong[i].Count; j++)
                 Assert.Equal(myTests[i][0].Durations[j], resultsLong[i].ToArray()[j]);
@@ -67,7 +68,7 @@ namespace Logic.Tests
 
         [Fact]
         public void ShouldGenerateShortDurations()        {
-            var resultsLong = TestUtils.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DurationShort.txt", 4);
+            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DurationShort.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
                 Assert.Equal(myTests[i][1].Durations, resultsLong[i].Select(x => (int)x).ToArray());
         }

@@ -1,8 +1,6 @@
-﻿using Logic.Analysis.StrategyRunners;
-using Logic.Tests.StrategyRunnerData;
-using Logic.Utils;
-using System.Collections.Generic;
+﻿using Logic.StrategyRunners;
 using RuleSets;
+using TestUtils;
 using Xunit;
 
 namespace Logic.Tests
@@ -14,7 +12,7 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldInvestLong() {
-            var testData = new TestData();
+            var testData = new StratRunnerTestData();
             var newState = _longfactory.BuildNextState(testData.data,  true, false);
             Assert.True(newState.InvestedState.Invested);
             Assert.Equal(0,newState.InvestedState.Return);
@@ -22,7 +20,7 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldExitLongStop() {
-            var testData = new TestData();
+            var testData = new StratRunnerTestData();
             var newState = _longfactory.BuildNextState(testData.data, true, false);
             newState = _longfactory.BuildNextState(testData.data2, true, false);
             newState = _longfactory.BuildNextState(testData.data4, false, true);
@@ -32,7 +30,7 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldExitLongTarget() {
-            var testData = new TestData();
+            var testData = new StratRunnerTestData();
             var newState = _longfactory.BuildNextState(testData.data, true, true);
             newState = _longfactory.BuildNextState(testData.data2, true, true);
             newState = _longfactory.BuildNextState(testData.data3, true, true);
@@ -42,7 +40,7 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldExitLongOpenBelowStop() {
-            var testData = new TestData();
+            var testData = new StratRunnerTestData();
             var newState = _longfactory.BuildNextState(testData.data, true, true);
             newState = _longfactory.BuildNextState(testData.data2, false, false);
             newState = _longfactory.BuildNextState(testData.data7, false, false);
@@ -52,7 +50,7 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldExitLongOpenAboveTarget() {
-            var testData = new TestData();
+            var testData = new StratRunnerTestData();
             var newState = _longfactory.BuildNextState(testData.data, true, true);
             newState = _longfactory.BuildNextState(testData.data2, false, false);
             newState = _longfactory.BuildNextState(testData.data6, false, false);
@@ -69,7 +67,7 @@ namespace Logic.Tests
                     ExpectancyCutOff = 1
                 });
 
-            var testData = new TestData();
+            var testData = new StratRunnerTestData();
             var newState = myFactory.BuildNextState(testData.data, true, true);
             newState = myFactory.BuildNextState(testData.data, false, false);
             Assert.False(newState.InvestedState.Invested);
@@ -78,7 +76,7 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldInvestShort() {
-            var testData = new TestData();
+            var testData = new StratRunnerTestData();
             var newState = _shortfactory.BuildNextState(testData.data, false, true);
             newState = _shortfactory.BuildNextState(testData.data2, false, false);
             Assert.True(newState.InvestedState.Invested);
@@ -87,7 +85,7 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldExitShortStop() {
-            var testData = new TestData();
+            var testData = new StratRunnerTestData();
             var newState = _shortfactory.BuildNextState(testData.data, false, true);
             newState = _shortfactory.BuildNextState(testData.data2, false, false);
             newState = _shortfactory.BuildNextState(testData.data8, false, false);
@@ -97,7 +95,7 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldExitShortTarget() {
-            var testData = new TestData();
+            var testData = new StratRunnerTestData();
             var newState = _shortfactory.BuildNextState(testData.data, false, true);
             newState = _shortfactory.BuildNextState(testData.data2, false, false);
             newState = _shortfactory.BuildNextState(testData.data4, false, false);
@@ -107,7 +105,7 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldExitShortOpenAboveStop() {
-            var testData = new TestData();
+            var testData = new StratRunnerTestData();
             var newState = _shortfactory.BuildNextState(testData.data, false, true);
             newState = _shortfactory.BuildNextState(testData.data2, false, false);
             newState = _shortfactory.BuildNextState(testData.data6, false, false);
@@ -117,7 +115,7 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldExitShortOpenBelowTarget() {
-            var testData = new TestData();
+            var testData = new StratRunnerTestData();
             var newState = _shortfactory.BuildNextState(testData.data, false, true);
             newState = _shortfactory.BuildNextState(testData.data2, false, false);
             newState = _shortfactory.BuildNextState(testData.data7, false, false);
@@ -127,7 +125,7 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldRemainInCash() {
-            var testData = new TestData();
+            var testData = new StratRunnerTestData();
             var newState = _shortfactory.BuildNextState(testData.data, false, false);
             newState = _shortfactory.BuildNextState(testData.data2, false, false);
             newState = _shortfactory.BuildNextState(testData.data7, false, false);
@@ -138,7 +136,7 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldRemainInvested() {
-            var testData = new TestData();
+            var testData = new StratRunnerTestData();
             var newState = _longfactory.BuildNextState(testData.data, true, true);
             newState = _longfactory.BuildNextState(testData.data2, true, true);
             newState = _longfactory.BuildNextState(testData.data, true, true);
