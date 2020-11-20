@@ -22,13 +22,16 @@ namespace DataStructures
 
         public class MarketBuilder
         {
-
             public static Market CreateMarket(string data_path) {
                 return LoadData(data_path);
             }
 
             public static Market CreateMarket(BidAskData[] data) {
                 return new Market(data, ConvertDataToSession(data));
+            }
+
+            public static Market CreateMarket(SessionData[] data) {
+                return new Market(ConvertDatatoBidAsk(data), data);
             }
 
             private static Market LoadData(string data_path) {
@@ -42,13 +45,13 @@ namespace DataStructures
                 }
                 else {
                     myConsolidatedData = LoadConsolidatedData(data_path);
-                    myBidAskData = BuildFromCoszData(myConsolidatedData);
+                    myBidAskData = ConvertDatatoBidAsk(myConsolidatedData);
                 }
 
                 return new Market(myBidAskData, myConsolidatedData);
             }
 
-            private static BidAskData[] BuildFromCoszData(SessionData[] data) {
+            private static BidAskData[] ConvertDatatoBidAsk(SessionData[] data) {
                 var myArray = new BidAskData[data.Length];
 
                 for (int i = 0; i < data.Length; i++) {
@@ -70,12 +73,12 @@ namespace DataStructures
 
             private static SessionData[] LoadConsolidatedData(string location) {
                 var fs = File.ReadAllLines(location);
-                var myArray = new SessionData[fs.Length - 1];
+                var myArray = new SessionData[fs.Length];
 
-                for (int i = 1; i < fs.Length; i++) {
+                for (int i = 0; i < fs.Length; i++) {
                     var myLine = fs[i].Split(',');
 
-                    myArray[i - 1] = new SessionData(
+                    myArray[i] = new SessionData(
                         cd: DateTime.ParseExact(myLine[0], "yyyy/MM/dd", null),
                         v: double.Parse(myLine[5]),
                         o: double.Parse(myLine[1]),
@@ -84,7 +87,7 @@ namespace DataStructures
                         c: double.Parse(myLine[4]));
                 }
 
-                return myArray.Where(x => x.CloseDate > new DateTime(2018, 06, 01)).ToArray();
+                return myArray;
 
             }
 

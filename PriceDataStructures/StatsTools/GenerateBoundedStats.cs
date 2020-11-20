@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using LinqStatistics;
 
@@ -48,11 +49,13 @@ namespace DataStructures.StatsTools
         }
 
         private void GenerateBounds(List<double> input, double breadth) {
-            int lowerIndex = (int)(input.Count * ((1 - breadth)/2.0));
-            int upperIndex = (int)(input.Count * (breadth + ((1 - breadth) / 2.0)));
+            double count = (int)Math.Ceiling(input.Count * breadth);
+            double middle = (input.Count - 1) / 2.0;
+            int lowerIndex = (int)Math.Round(middle - count/2, MidpointRounding.AwayFromZero);
+            int upperIndex = (int)Math.Round(middle+count/2,MidpointRounding.ToZero);
 
-            Lower = input[lowerIndex];
-            Upper = input[upperIndex];
+            Lower = input[lowerIndex < 0 ? 0: lowerIndex];
+            Upper = input[upperIndex > input.Count-1 ? input.Count - 1: upperIndex];
         }
     }
 }

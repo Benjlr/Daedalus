@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DataStructures.StatsTools;
 using TestUtils;
@@ -8,87 +9,206 @@ namespace DataStructures.Tests.Stats
 {
     public class RollingStatsGeneratorTests
     {
-        //private List<ITest[]> myTests { get; set; }
-        private string marketData => Directory.GetCurrentDirectory() + "\\FBEData\\TestMarketData.txt";
+        private List<double> GenerateList(int length) {
+            var retval = new List<double>();
+            for (int i = 0; i < length/2; i++)
+            for (int x = 0; x < 10; x++)
+                retval.Add(-0.6+x*0.1);
 
+            for (int i = 0; i < length / 2; i++)
+            for (int x = 0; x < 10; x++)
+                retval.Add(-0.3 + x * 0.1);
 
-        public RollingStatsGeneratorTests()
-        {
-            //var market = Market.MarketBuilder.CreateMarket(marketData);
-            //var strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[]
-            //{
-            //    new DummyEntries(1, 98)
-            //}, market);
-
-            //var longSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(10, 14, 1, MarketSide.Bull));
-            //var shortSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(10, 14, 1, MarketSide.Bear));
-
-
-            //myTests = new List<ITest[]>();
-            //for (int i = 0; i < longSide.Count; i++)
-            //    myTests.Add(new[] { longSide[i], shortSide[i] });
-
+            return retval;
         }
 
         [Fact]
-        private void ShouldGenerateRollingStatsOverSmallPeriodAvg() {
-            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpResults.txt",2);
-            var TestData = Loaders.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpData.txt");
-            var ten = RollingStatsGenerator.GetRollingStats(TestData, 10);
-            Assert.Equal(resultsLong[0], ten.Select(x => x.AverageExpectancy));
+        private void ShouldGenerateRollingStatsOverSmallPeriodAvgExp() {
+            var ten = RollingStatsGenerator.GetRollingStats(GenerateList(10), 10);
+            Assert.Equal(new List<double>(){}, ten.Select(x => x.AverageExpectancy));
         }
 
         [Fact]
-        private void ShouldGenerateRollingStatsOverSmallPeriodMed() {
-            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpResults.txt", 2);
-            var TestData = Loaders.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\10RollingExpData.txt");
-            var ten = RollingStatsGenerator.GetRollingStats(TestData, 10);
-            Assert.Equal(resultsLong[1], ten.Select(x => x.MedianExpectancy));
-        }
-
-
-        [Fact]
-        private void ShouldGenerateRollingStatsOverLongPeriodAvg() {
-            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpResults.txt",2);
-            var TestData = Loaders.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpData.txt"); 
-             var thirteen = RollingStatsGenerator.GetRollingStats(TestData, 13);
-             Assert.Equal(resultsLong[0], thirteen.Select(x => x.AverageExpectancy));
-        }
-        [Fact]
-        private void ShouldGenerateRollingStatsOverLongPeriodMed() {
-            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpResults.txt",2);
-            var TestData = Loaders.LoadDataSingleColumn(Directory.GetCurrentDirectory() + "\\DrilldownData\\13RollingExpData.txt");
-            var thirteen = RollingStatsGenerator.GetRollingStats(TestData, 13);
-            Assert.Equal(resultsLong[1], thirteen.Select(x => x.MedianExpectancy));
+        private void ShouldGenerateRollingStatsOverSmallPeriodMedExp() {
+            var ten = RollingStatsGenerator.GetRollingStats(GenerateList(10), 10);
+            Assert.Equal(new List<double>() { }, ten.Select(x => x.MedianExpectancy));
         }
 
         [Fact]
-        private void ShouldGenerateStatsOverSmallEpochSplitAvg() {
-            var resultsThreePeriod = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\30PeriodExp.txt",2);
-            var ThreeEpoch = RollingStatsGenerator.GetStatsByEpoch(myTests[0][0].FBEResults.ToList(), 3);
-            Assert.Equal(ThreeEpoch.Select(x => x.AverageExpectancy), resultsThreePeriod[0]);
+        private void ShouldGenerateRollingStatsOverSmallPeriodAvgGain() {
+            var ten = RollingStatsGenerator.GetRollingStats(GenerateList(10), 10);
+            Assert.Equal(new List<double>() { }, ten.Select(x => x.AvgGain));
         }
 
         [Fact]
-        private void ShouldGenerateStatsOverSmallEpochSplitMed() {
-            var resultsThreePeriod = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\30PeriodExp.txt",2);
-            var ThreeEpoch = RollingStatsGenerator.GetStatsByEpoch(myTests[0][0].FBEResults.ToList(), 3);
-            Assert.Equal(ThreeEpoch.Select(x => x.MedianExpectancy), resultsThreePeriod[1]);
+        private void ShouldGenerateRollingStatsOverSmallPeriodAvgLoss() {
+            var ten = RollingStatsGenerator.GetRollingStats(GenerateList(10), 10);
+            Assert.Equal(new List<double>() { }, ten.Select(x => x.AvgLoss));
         }
 
         [Fact]
-        private void ShouldGenerateStatsOverLargerEpochSplitAvg() {
-            var resultsTenPeriod = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\10PeriodExp.txt",2);
-            var tenEpoch = RollingStatsGenerator.GetStatsByEpoch(myTests[0][0].FBEResults.ToList(), 10);
-            Assert.Equal(resultsTenPeriod[0], tenEpoch.Select(x=>x.AverageExpectancy));
+        private void ShouldGenerateRollingStatsOverSmallPeriodMedGain() {
+            var ten = RollingStatsGenerator.GetRollingStats(GenerateList(10), 10);
+            Assert.Equal(new List<double>() { }, ten.Select(x => x.MedianGain));
         }
 
         [Fact]
-        private void ShouldGenerateStatsOverLargerEpochSplitMed() {
-            var resultsTenPeriod = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\DrilldownData\\10PeriodExp.txt",2);
-            var tenEpoch = RollingStatsGenerator.GetStatsByEpoch(myTests[0][0].FBEResults.ToList(), 10);
-            Assert.Equal(resultsTenPeriod[1], tenEpoch.Select(x => x.MedianExpectancy));
+        private void ShouldGenerateRollingStatsOverSmallPeriodMedLoss() {
+            var ten = RollingStatsGenerator.GetRollingStats(GenerateList(10), 10);
+            Assert.Equal(new List<double>() { }, ten.Select(x => x.MedianLoss));
         }
+
+        [Fact]
+        private void ShouldGenerateRollingStatsOverSmallPeriodWin() {
+            var ten = RollingStatsGenerator.GetRollingStats(GenerateList(10), 10);
+            Assert.Equal(new List<double>() { }, ten.Select(x => x.WinPercent));
+        }
+
+        [Fact]
+        private void ShouldGenerateRollingStatsOverSmallPeriodSortino() {
+            var ten = RollingStatsGenerator.GetRollingStats(GenerateList(10), 10);
+            Assert.Equal(new List<double>() { }, ten.Select(x => x.Sortino));
+        }
+
+
+
+
+
+        [Fact]
+        private void ShouldGenerateRollingStatsOverLongPeriodAvgExp() {
+             var thirteen = RollingStatsGenerator.GetRollingStats(GenerateList(55), 30);
+             Assert.Equal(new List<double>() { }, thirteen.Select(x => x.AverageExpectancy));
+        }
+        [Fact]
+        private void ShouldGenerateRollingStatsOverLongPeriodMedExp() {
+            var thirteen = RollingStatsGenerator.GetRollingStats(GenerateList(55), 30);
+            Assert.Equal(new List<double>() { }, thirteen.Select(x => x.MedianExpectancy));
+        }
+        [Fact]
+        private void ShouldGenerateRollingStatsOverLongPeriodAvgGain() {
+            var thirteen = RollingStatsGenerator.GetRollingStats(GenerateList(55), 30);
+            Assert.Equal(new List<double>() { }, thirteen.Select(x => x.AvgGain));
+        }
+        [Fact]
+        private void ShouldGenerateRollingStatsOverLongPeriodAvgLoss() {
+            var thirteen = RollingStatsGenerator.GetRollingStats(GenerateList(55), 30);
+            Assert.Equal(new List<double>() { }, thirteen.Select(x => x.AvgLoss));
+        }
+        [Fact]
+        private void ShouldGenerateRollingStatsOverLongPeriodMedGain() {
+            var thirteen = RollingStatsGenerator.GetRollingStats(GenerateList(55), 30);
+            Assert.Equal(new List<double>() { }, thirteen.Select(x => x.MedianGain));
+        }
+        [Fact]
+        private void ShouldGenerateRollingStatsOverLongPeriodMedLoss() {
+            var thirteen = RollingStatsGenerator.GetRollingStats(GenerateList(55), 30);
+            Assert.Equal(new List<double>() { }, thirteen.Select(x => x.MedianLoss));
+        }
+        [Fact]
+        private void ShouldGenerateRollingStatsOverLongPeriodWin() {
+            var thirteen = RollingStatsGenerator.GetRollingStats(GenerateList(55), 30);
+            Assert.Equal(new List<double>() { }, thirteen.Select(x => x.WinPercent));
+        }
+        [Fact]
+        private void ShouldGenerateRollingStatsOverLongPeriodSortino() {
+            var thirteen = RollingStatsGenerator.GetRollingStats(GenerateList(55), 30);
+            Assert.Equal(new List<double>() { }, thirteen.Select(x => x.Sortino));
+        }
+
+
+
+
+
+
+        [Fact]
+        private void ShouldGenerateStatsOverFewEpochAvgExp() {
+            var ThreeEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(15), 3);
+            Assert.Equal(new List<double>() { },ThreeEpoch.Select(x => x.AverageExpectancy));
+        }
+
+        [Fact]
+        private void ShouldGenerateStatsOverFewEpochMedExp() {
+            var ThreeEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(15), 3);
+            Assert.Equal(new List<double>() { }, ThreeEpoch.Select(x => x.MedianExpectancy));
+        }
+        [Fact]
+        private void ShouldGenerateStatsOverFewEpochAvgGain() {
+            var ThreeEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(15), 3);
+            Assert.Equal(new List<double>() { }, ThreeEpoch.Select(x => x.AvgGain));
+        }
+        [Fact]
+        private void ShouldGenerateStatsOverFewEpochMedGain() {
+            var ThreeEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(15), 3);
+            Assert.Equal(new List<double>() { }, ThreeEpoch.Select(x => x.MedianGain));
+        }
+
+        [Fact]
+        private void ShouldGenerateStatsOverFewEpochAvgLoss() {
+            var ThreeEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(15), 3);
+            Assert.Equal(new List<double>() { }, ThreeEpoch.Select(x => x.AvgLoss));
+        }
+        [Fact]
+        private void ShouldGenerateStatsOverFewEpochMedLoss() {
+            var ThreeEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(15), 3);
+            Assert.Equal(new List<double>() { }, ThreeEpoch.Select(x => x.MedianLoss));
+        }
+
+        [Fact]
+        private void ShouldGenerateStatsOverFewEpochWin() {
+            var ThreeEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(15), 3);
+            Assert.Equal(new List<double>() { }, ThreeEpoch.Select(x => x.WinPercent));
+        }
+        [Fact]
+        private void ShouldGenerateStatsOverFewEpochSortino() {
+            var ThreeEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(15), 3);
+            Assert.Equal(new List<double>() { }, ThreeEpoch.Select(x => x.Sortino));
+        }
+
+
+
+
+
+        [Fact]
+        private void ShouldGenerateStatsOverManyEpochAvgExp() {
+            var tenEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(20), 12);
+            Assert.Equal(new List<double>() { }, tenEpoch.Select(x=>x.AverageExpectancy));
+        }
+        [Fact]
+        private void ShouldGenerateStatsOverManyEpochMedExp() {
+            var tenEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(20), 12);
+            Assert.Equal(new List<double>() { }, tenEpoch.Select(x => x.MedianExpectancy));
+        }
+        [Fact]
+        private void ShouldGenerateStatsOverManyEpochAvgGain() {
+            var tenEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(20), 12);
+            Assert.Equal(new List<double>() { }, tenEpoch.Select(x => x.AvgGain));
+        }
+        [Fact]
+        private void ShouldGenerateStatsOverManyEpochMedGain() {
+            var tenEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(20), 12);
+            Assert.Equal(new List<double>() { }, tenEpoch.Select(x => x.MedianGain));
+        }
+        [Fact]
+        private void ShouldGenerateStatsOverManyEpochAvgLoss() {
+            var tenEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(20), 12);
+            Assert.Equal(new List<double>() { }, tenEpoch.Select(x => x.AvgLoss));
+        }
+        [Fact]
+        private void ShouldGenerateStatsOverManyEpochMedLoss() {
+            var tenEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(20), 12);
+            Assert.Equal(new List<double>() { }, tenEpoch.Select(x => x.MedianLoss));
+        }
+        [Fact]
+        private void ShouldGenerateStatsOverManyEpochWin() {
+            var tenEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(20), 12);
+            Assert.Equal(new List<double>() { }, tenEpoch.Select(x => x.WinPercent));
+        }
+        [Fact]
+        private void ShouldGenerateStatsOverManyEpochSortino() {
+            var tenEpoch = RollingStatsGenerator.GetStatsByEpoch(GenerateList(20), 12);
+            Assert.Equal(new List<double>() { }, tenEpoch.Select(x => x.Sortino));
+        }
+
     }
 }
 

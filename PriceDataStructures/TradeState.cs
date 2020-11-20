@@ -1,62 +1,71 @@
 ﻿
+
 namespace DataStructures
 {
-    public class TradeState
+    public struct TradeState
     {
-        public bool Invested { get; set; } 
         public double EntryPrice { get; set; }
         public double StopPrice { get; set; }
         public double TargetPrice { get; set; }
         public double Return { get; set; }
-        private bool _isLong { get; set; }
+    }
 
-        public TradeState Invest(BidAskData data, ExitPrices stopTarget, bool isLong) {
-            return new TradeState()
-            {
-                Invested = true,
-                EntryPrice = isLong ? data.Open_Ask : data.Open_Bid,
-                StopPrice = isLong ? data.Open_Ask * stopTarget.StopPercentage : data.Open_Bid * stopTarget.StopPercentage,
-                TargetPrice = isLong ? data.Open_Ask * stopTarget.TargetPercentage : data.Open_Bid * stopTarget.TargetPercentage,
-                Return = isLong ? CalculateReturnLong(data.Close_Bid, data.Open_Ask) : CalculateReturnShort(data.Close_Ask, data.Open_Bid),
-                _isLong = isLong
+    public class TradeStateGenerator
+    {
+        private TradeTimeLineBuilder _tradeBuilder { get; set; }
+        private MarketSide _isLong { get; set; }
+        public TradeState CurrentState { get; private set; }
+        
+        private TradeStateGenerator(MarketSide longShort, int marketIndex) {
+            _isLong = longShort;
+            _tradeBuilder = new TradeTimeLineBuilder();
+            _tradeBuilder.Init(marketIndex);
+
+        }
+
+        public static TradeStateGenerator Invest( ExitPrices stopTarget, MarketSide longShort, int marketIndex, double entryPrice, double closePrice) {
+            TradeStateGenerator generator = new TradeStateGenerator(longShort, marketIndex);
+            generator.CurrentState = new TradeState() {
+                EntryPrice = entryPrice,
+                StopPrice = entryPrice * stopTarget.StopPercentage,
+                TargetPrice = entryPrice * stopTarget.TargetPercentage,
+                Return = generator.CalculateReturn(closePrice, entryPrice)
             };
+            generator._tradeBuilder.AddResult(generator.CurrentState.Return);
+            return generator;
         }
-        public TradeState Continue(BidAskData data) {
-            return new TradeState()
-            {
-                Invested = true,
-                EntryPrice = this.EntryPrice,
-                StopPrice = this.StopPrice,
-                TargetPrice = this.TargetPrice,
-                Return = _isLong ? CalculateReturnLong(data.Close_Bid, this.EntryPrice) : 
-                    CalculateReturnShort(data.Close_Ask, this.EntryPrice),
 
+        public void Continue(double closeData) {
+            CurrentState = new TradeState() {
+                EntryPrice = CurrentState.EntryPrice,
+                StopPrice = CurrentState.StopPrice,
+                TargetPrice = CurrentState.TargetPrice,
+                Return = CalculateReturn(closeData, CurrentState.EntryPrice)
             };
+            _tradeBuilder.AddResult(CurrentState.Return);
         }
-        public TradeState ContinueUpdateExits(BidAskData data, ExitPrices exitPrices) {
-            return new TradeState()
+
+        public void ContinueUpdateExits(double closeData, ExitPrices exitPrices) {
+            CurrentState = new TradeState()
             {
-                Invested = true,
-                EntryPrice = this.EntryPrice,
-                StopPrice = this.EntryPrice * exitPrices.StopPercentage,
-                TargetPrice = this.EntryPrice * exitPrices.TargetPercentage,
-                Return = _isLong ? CalculateReturnLong(data.Close_Bid, this.EntryPrice) : 
-                    CalculateReturnShort(data.Close_Ask, this.EntryPrice),
-
+                EntryPrice = CurrentState.EntryPrice,
+                StopPrice = CurrentState.EntryPrice * exitPrices.StopPercentage,
+                TargetPrice = CurrentState.EntryPrice * exitPrices.TargetPercentage,
+                Return = CalculateReturn(closeData, CurrentState.EntryPrice)
             };
-        }
-        private double CalculateReturnLong(double current, double entry) {
-            return (current - entry) / entry;
+            _tradeBuilder.AddResult(CurrentState.Return);
         }
 
-        private double CalculateReturnShort(double current, double entry) {
-            return (entry - current) / entry;
+        public Trade Exit(double exitPrice) {
+            _tradeBuilder.AddResult(CalculateReturn(exitPrice, CurrentState.EntryPrice));
+            return _tradeBuilder.CompileTrade();
         }
 
-        public TradeState DoNothing() {
-            return new TradeState();
-        }
+        private double CalculateReturn(double current, double entry) {
+            if (_isLong.Equals(MarketSide.Bull)) return (current - entry) / entry;
+            else return -(current - entry) / entry;
 
+        }
     }
 
     public struct ExitPrices

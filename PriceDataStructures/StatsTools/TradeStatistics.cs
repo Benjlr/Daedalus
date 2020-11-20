@@ -17,13 +17,12 @@ namespace DataStructures.StatsTools
         public double Sortino { get; private set; }
 
 
-        public TradeStatistics(List<Trade> trades) {
-            var results = trades.Select(x => x.Results.Last()).ToList();
-            CalculateGain(results.Where(x=>x>0).ToList());
-            CalculateLoss(results.Where(x => x < 0).ToList());
-            CalculateWinPercent(results);
+        public TradeStatistics(List<double> trades) {
+            CalculateGain(trades.Where(x=>x>0).ToList());
+            CalculateLoss(trades.Where(x => x < 0).ToList());
+            CalculateWinPercent(trades);
             if (trades.Count > 0) CalculateExpectancy();
-            if (results.Count(x => x < 0) > 2) CalculateSharpeRatio(results);
+            if (trades.Count(x => x < 0) > 2) CalculateSharpeRatio(trades);
         }
 
         private void CalculateGain(List<double> results) {
@@ -64,9 +63,9 @@ namespace DataStructures.StatsTools
         public double MedianDrawDown { get; private set; }
         public double MedianDrawDownWinners { get; private set; }
 
-        public ExtendedStats(List<Trade> trades) : base(trades)
+        public ExtendedStats(List<Trade> trades) : base(trades.Select(x=>x.Result).ToList())
         {
-            var results = trades.SelectMany(x => x.Results).ToList();
+            var results = trades.Select(x => x.Drawdown).ToList();
             results = results.Where(x => x < 0).ToList();
             CalculateDrawdown(results);
             CalculateDrawdownWinners(trades);
@@ -90,7 +89,7 @@ namespace DataStructures.StatsTools
         private List<double> GetWinningTradeDrawdowns(List<Trade> trades) {
             var drawdowns = new List<double>();
             foreach (var t in trades)
-                if (t.Results.Last() > 0) drawdowns.AddRange(t.Results.Where(x=>x<0));
+                if (t.Result > 0) drawdowns.Add(t.Drawdown);
             return drawdowns;
         }
     }

@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using DataStructures;
 using ViewCommon.Charts;
 using ViewCommon.Models;
 using ViewCommon.Utils;

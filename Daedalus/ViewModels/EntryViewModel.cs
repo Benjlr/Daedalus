@@ -8,9 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using DataStructures;
 using ViewCommon.Models;
 using ViewCommon.Utils;
-using Action = RuleSets.Action;
+using Action = DataStructures.Action;
 using LineAnnotation = OxyPlot.Annotations.LineAnnotation;
 using LinearAxis = OxyPlot.Axes.LinearAxis;
 

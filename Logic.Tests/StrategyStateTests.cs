@@ -1,4 +1,5 @@
-﻿using Logic.StrategyRunners;
+﻿using DataStructures;
+using Logic.StrategyRunners;
 using RuleSets;
 using TestUtils;
 using Xunit;
@@ -14,8 +15,8 @@ namespace Logic.Tests
         private void ShouldInvestLong() {
             var testData = new StratRunnerTestData();
             var newState = _longfactory.BuildNextState(testData.data,  true, false);
-            Assert.True(newState.InvestedState.Invested);
-            Assert.Equal(0,newState.InvestedState.Return);
+            Assert.True(newState.InvestedState.TradeState.Invested);
+            Assert.Equal(0,newState.InvestedState.TradeState.Return);
         }
 
         [Fact]
@@ -24,7 +25,7 @@ namespace Logic.Tests
             var newState = _longfactory.BuildNextState(testData.data, true, false);
             newState = _longfactory.BuildNextState(testData.data2, true, false);
             newState = _longfactory.BuildNextState(testData.data4, false, true);
-            Assert.False(newState.InvestedState.Invested);
+            Assert.False(newState.InvestedState.TradeState.Invested);
             Assert.Equal(-0.005, newState.Return);
         }
 
@@ -34,7 +35,7 @@ namespace Logic.Tests
             var newState = _longfactory.BuildNextState(testData.data, true, true);
             newState = _longfactory.BuildNextState(testData.data2, true, true);
             newState = _longfactory.BuildNextState(testData.data3, true, true);
-            Assert.False(newState.InvestedState.Invested);
+            Assert.False(newState.InvestedState.TradeState.Invested);
             Assert.Equal(0.0049999999999998865 ,  newState.Return);
         }
 
@@ -44,7 +45,7 @@ namespace Logic.Tests
             var newState = _longfactory.BuildNextState(testData.data, true, true);
             newState = _longfactory.BuildNextState(testData.data2, false, false);
             newState = _longfactory.BuildNextState(testData.data7, false, false);
-            Assert.False(newState.InvestedState.Invested);
+            Assert.False(newState.InvestedState.TradeState.Invested);
             Assert.Equal(newState.Return,  -0.02 );
         }
 
@@ -54,7 +55,7 @@ namespace Logic.Tests
             var newState = _longfactory.BuildNextState(testData.data, true, true);
             newState = _longfactory.BuildNextState(testData.data2, false, false);
             newState = _longfactory.BuildNextState(testData.data6, false, false);
-            Assert.False(newState.InvestedState.Invested);
+            Assert.False(newState.InvestedState.TradeState.Invested);
             Assert.Equal(0.01, newState.Return);
         }
 
@@ -70,8 +71,8 @@ namespace Logic.Tests
             var testData = new StratRunnerTestData();
             var newState = myFactory.BuildNextState(testData.data, true, true);
             newState = myFactory.BuildNextState(testData.data, false, false);
-            Assert.False(newState.InvestedState.Invested);
-            Assert.Equal(0, newState.InvestedState.Return);
+            Assert.False(newState.InvestedState.TradeState.Invested);
+            Assert.Equal(0, newState.InvestedState.TradeState.Return);
         }
 
         [Fact]
@@ -79,8 +80,8 @@ namespace Logic.Tests
             var testData = new StratRunnerTestData();
             var newState = _shortfactory.BuildNextState(testData.data, false, true);
             newState = _shortfactory.BuildNextState(testData.data2, false, false);
-            Assert.True(newState.InvestedState.Invested);
-            Assert.Equal(-0.002, newState.InvestedState.Return);
+            Assert.True(newState.InvestedState.TradeState.Invested);
+            Assert.Equal(-0.002, newState.InvestedState.TradeState.Return);
         }
 
         [Fact]
@@ -89,7 +90,7 @@ namespace Logic.Tests
             var newState = _shortfactory.BuildNextState(testData.data, false, true);
             newState = _shortfactory.BuildNextState(testData.data2, false, false);
             newState = _shortfactory.BuildNextState(testData.data8, false, false);
-            Assert.False(newState.InvestedState.Invested);
+            Assert.False(newState.InvestedState.TradeState.Invested);
             Assert.Equal(-0.0049999999999998865, newState.Return);
         }
 
@@ -99,7 +100,7 @@ namespace Logic.Tests
             var newState = _shortfactory.BuildNextState(testData.data, false, true);
             newState = _shortfactory.BuildNextState(testData.data2, false, false);
             newState = _shortfactory.BuildNextState(testData.data4, false, false);
-            Assert.False(newState.InvestedState.Invested);
+            Assert.False(newState.InvestedState.TradeState.Invested);
             Assert.Equal(0.005, newState.Return);
         }
 
@@ -109,7 +110,7 @@ namespace Logic.Tests
             var newState = _shortfactory.BuildNextState(testData.data, false, true);
             newState = _shortfactory.BuildNextState(testData.data2, false, false);
             newState = _shortfactory.BuildNextState(testData.data6, false, false);
-            Assert.False(newState.InvestedState.Invested);
+            Assert.False(newState.InvestedState.TradeState.Invested);
             Assert.Equal(-0.01, newState.Return);
         }
 
@@ -119,7 +120,7 @@ namespace Logic.Tests
             var newState = _shortfactory.BuildNextState(testData.data, false, true);
             newState = _shortfactory.BuildNextState(testData.data2, false, false);
             newState = _shortfactory.BuildNextState(testData.data7, false, false);
-            Assert.False(newState.InvestedState.Invested);
+            Assert.False(newState.InvestedState.TradeState.Invested);
             Assert.Equal(0.02, newState.Return);
         }
 
@@ -129,7 +130,7 @@ namespace Logic.Tests
             var newState = _shortfactory.BuildNextState(testData.data, false, false);
             newState = _shortfactory.BuildNextState(testData.data2, false, false);
             newState = _shortfactory.BuildNextState(testData.data7, false, false);
-            Assert.False(newState.InvestedState.Invested);
+            Assert.False(newState.InvestedState.TradeState.Invested);
             Assert.Equal(0, newState.Return);
 
         }
@@ -140,7 +141,7 @@ namespace Logic.Tests
             var newState = _longfactory.BuildNextState(testData.data, true, true);
             newState = _longfactory.BuildNextState(testData.data2, true, true);
             newState = _longfactory.BuildNextState(testData.data, true, true);
-            Assert.True(newState.InvestedState.Invested);
+            Assert.True(newState.InvestedState.TradeState.Invested);
             Assert.Equal(0, newState.Return);
         }
 

@@ -26,7 +26,7 @@ namespace DataStructures.StatsTools
         private static List<TradeStatistics> AddOnes(int initPeriod) {
             var myList = new List<TradeStatistics>();
             for (int i = 0; i < initPeriod; i++)
-                myList.Add(new TradeStatistics(new List<Trade>()));
+                myList.Add(new TradeStatistics(new List<double>()));
             return myList;
         }
 
@@ -43,16 +43,15 @@ namespace DataStructures.StatsTools
                 else {
                     if (validResults.Count >= lookbackPeriod) validResults.RemoveAt(0);
                     validResults.Add(resultList[i]);
-                    //retVal.Add(IterateExpectancy(validResults));
+                    retVal.Add(IterateStats(validResults));
                 }
             return retVal;
         }
 
-        private static TradeStatistics IterateStats(List<TradeStatistics> resultsList)
+        private static TradeStatistics IterateStats(List<double> resultsList)
         {
-            //if (resultsList.Count == 0) return new TradeStatistics(new List<TradeStatistics>());
-            //return new TradeStatistics(resultsList);
-            return new TradeStatistics(new List<Trade>());
+            if (resultsList.Count == 0) return new TradeStatistics(new List<double>());
+            return new TradeStatistics(resultsList);
         }
     }
 }

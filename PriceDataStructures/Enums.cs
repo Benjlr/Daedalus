@@ -1,4 +1,4 @@
-﻿namespace RuleSets
+﻿namespace DataStructures
 {
     public enum MarketSide
     {

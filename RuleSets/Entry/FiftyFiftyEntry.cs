@@ -1,6 +1,7 @@
 ﻿using DataStructures;
 using System;
 using System.Collections.Generic;
+using Action = DataStructures.Action;
 
 namespace RuleSets.Entry
 {

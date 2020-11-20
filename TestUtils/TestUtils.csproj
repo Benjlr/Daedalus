@@ -6,14 +6,18 @@
 
   <ItemGroup>
     <None Remove="ReturnItems.txt" />
-    <None Remove="TestMarketData.txt" />
+    <None Remove="TestMarketBidask.txt" />
+    <None Remove="TestMarketBidSession.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="ReturnItems.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestMarketData.txt">
+    <Content Include="TestMarketBidSession.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestMarketBidask.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

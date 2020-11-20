@@ -7,83 +7,10 @@ namespace DataStructures.Tests.Stats
 {
     public class TradeStatsTests
     {
-        //private List<ITest[]> myTests { get; set; }
-        private string marketData => Directory.GetCurrentDirectory() + "\\FBEData\\TestMarketData.txt";
-        
-        public TradeStatsTests()
-        {
-            //var market = Market.MarketBuilder.CreateMarket(marketData);
-            //var strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[]
-            //{
-            //    new DummyEntries(1, 98)
-            //}, market);
+        private List<double> _testList = new List<double>() { -1, -1, -1, -0.5, -0.5, -0.5, 0, 0, 0, 0.5, 0.5, 0.5, 1, 1, 1 };
+        private List<double> _testList2 = new List<double>() { 1, 1, 1, 0.5, 0.5, 0.5, 0, 0, 0, 0.5, 0.5, 0.5, 1, 1, 1 };
+        private List<double> _testList3 = new List<double>() { 123, -45, 0.02, 12, 99, -89, 123, 122.4, -450.55, 450, -0.002, 0.003, 0.05, 12, 3, -42 };
 
-            //var longSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(10, 14, 1, MarketSide.Bull));
-            //var shortSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(10, 14, 1, MarketSide.Bear));
-
-
-            //myTests = new List<ITest[]>();
-            //for (int i = 0; i < longSide.Count; i++)
-            //    myTests.Add(new[] { longSide[i], shortSide[i] });
-
-        }
-
-        private List<Trade> _testList = new List<Trade>()
-        {
-            new Trade(new double[]{5,6,3,-1},8),
-            new Trade(new double[]{7,6,3,-1},780),
-            new Trade(new double[]{5,67,6,3,-1},5),
-            new Trade(new double[]{5,87,3,-0.5},567),
-            new Trade(new double[]{87,6,7,-0.5},8),
-            new Trade(new double[]{5,6,3,-0.5},9),
-            new Trade(new double[]{58,6,63,0},0),
-            new Trade(new double[]{5,6,63,0},0),
-            new Trade(new double[]{58,6,63,0},0),
-            new Trade(new double[]{58,6,63,0.5},0),
-            new Trade(new double[]{6,456,63,0.5},65),
-            new Trade(new double[]{58,6,63,0.5},0),
-            new Trade(new double[]{7,6,63,0},51),
-            new Trade(new double[]{58,6,63,0},756),
-            new Trade(new double[]{56,6,63,0},1)
-        };
-
-        private List<Trade> _testList2 = new List<Trade>()
-        {
-            new Trade(new double[]{5,6,3,1},8),
-            new Trade(new double[]{7,6,3,1},780),
-            new Trade(new double[]{5,67,6,3,1},5),
-            new Trade(new double[]{5,87,3,0.5},567),
-            new Trade(new double[]{87,6,7,0.5},8),
-            new Trade(new double[]{5,6,3,0.5},9),
-            new Trade(new double[]{87,6,3,0},2),
-            new Trade(new double[]{58,6,63,0},0),
-            new Trade(new double[]{58,6,63,0},0),
-            new Trade(new double[]{58,6,63,0.5},0),
-            new Trade(new double[]{5,6,63,0.5},0),
-            new Trade(new double[]{58,6,63,0.5},0),
-            new Trade(new double[]{58,6,63,1},0),
-            new Trade(new double[]{6,456,63,1},65),
-            new Trade(new double[]{58,6,63,1},0)
-        };
-
-        private List<Trade> _testList3 = new List<Trade>()
-        {
-            new Trade(new double[]{5,6,3,123},8),
-            new Trade(new double[]{7,6,3,-45},780),
-            new Trade(new double[]{5,67,6,3,0.02},5),
-            new Trade(new double[]{5,87,3,12},567),
-            new Trade(new double[]{87,6,7,99},8),
-            new Trade(new double[]{5,6,3,-89},9),
-            new Trade(new double[]{87,6,3,122.4},2),
-            new Trade(new double[]{58,6,63,-450.55},0),
-            new Trade(new double[]{58,6,63,450},0),
-            new Trade(new double[]{58,6,63, -0.002},0),
-            new Trade(new double[]{5,6,63,0.003},0),
-            new Trade(new double[]{58,6,63,0.05},0),
-            new Trade(new double[]{58,6,63,12},0),
-            new Trade(new double[]{6,456,63,3},65),
-            new Trade(new double[]{58,6,63,-42},0)
-        };
 
         [Fact]
         private void ShouldGenerateCorrectAverageGain() {

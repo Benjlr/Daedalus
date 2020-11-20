@@ -6,13 +6,12 @@ namespace Logic.StrategyRunners
 {
     public class StrategyState
     {
-        public TradeState InvestedState { get; private set; }
+        public TradeStateGenerator InvestedState { get; private set; }
         
         public double Return { get; private set; }
 
         public StrategyState() {
             Return = 0;
-            InvestedState = new TradeState();
         }
 
         private StrategyState LastStateWasInvested(BidAskData data, StrategyOptions options, MarketSide side)
@@ -28,47 +27,47 @@ namespace Logic.StrategyRunners
             return state;
         }
 
-        private bool CheckStopsAndTargets(BidAskData data, TradeState tradeData, MarketSide longShort)
+        private bool CheckStopsAndTargets(BidAskData data, TradeStateGenerator tradeData, MarketSide longShort)
         {
             return longShort.Equals(MarketSide.Bull) ? 
                 LongCheck(data, tradeData) : ShortCheck(data, tradeData);
         }
 
-        private bool LongCheck(BidAskData data, TradeState tradeData)
+        private bool LongCheck(BidAskData data, TradeStateGenerator tradeData)
         {
-            if (data.Low_Bid < tradeData.StopPrice)
+            if (data.Low_Bid < tradeData.TradeState.StopPrice)
             {
-                if (data.Open_Bid < tradeData.StopPrice)
-                    Return = (data.Open_Bid - tradeData.EntryPrice) / tradeData.EntryPrice;
+                if (data.Open_Bid < tradeData.TradeState.StopPrice)
+                    Return = (data.Open_Bid - tradeData.TradeState.EntryPrice) / tradeData.TradeState.EntryPrice;
                 else
-                    Return = (tradeData.StopPrice - tradeData.EntryPrice) / tradeData.EntryPrice;
+                    Return = (tradeData.TradeState.StopPrice - tradeData.TradeState.EntryPrice) / tradeData.TradeState.EntryPrice;
                 return false;
             }
-            else if (data.High_Bid > tradeData.TargetPrice)
+            else if (data.High_Bid > tradeData.TradeState.TargetPrice)
             {
-                if (data.Open_Bid > tradeData.TargetPrice)
-                    Return = (data.Open_Bid - tradeData.EntryPrice) / tradeData.EntryPrice;
+                if (data.Open_Bid > tradeData.TradeState.TargetPrice)
+                    Return = (data.Open_Bid - tradeData.TradeState.EntryPrice) / tradeData.TradeState.EntryPrice;
                 else
-                    Return = (tradeData.TargetPrice - tradeData.EntryPrice) / tradeData.EntryPrice;
+                    Return = (tradeData.TradeState.TargetPrice - tradeData.TradeState.EntryPrice) / tradeData.TradeState.EntryPrice;
                 return false;
             }
 
             return true;
         }
 
-        private bool ShortCheck(BidAskData data, TradeState tradeData) {
-            if (data.Low_Ask < tradeData.TargetPrice) {
-                if (data.Open_Ask < tradeData.TargetPrice)
-                    Return = (tradeData.EntryPrice - data.Open_Ask) / tradeData.EntryPrice;
+        private bool ShortCheck(BidAskData data, TradeStateGenerator tradeData) {
+            if (data.Low_Ask < tradeData.TradeState.TargetPrice) {
+                if (data.Open_Ask < tradeData.TradeState.TargetPrice)
+                    Return = (tradeData.TradeState.EntryPrice - data.Open_Ask) / tradeData.TradeState.EntryPrice;
                 else
-                    Return = (tradeData.EntryPrice - tradeData.TargetPrice) / tradeData.EntryPrice;
+                    Return = (tradeData.TradeState.EntryPrice - tradeData.TradeState.TargetPrice) / tradeData.TradeState.EntryPrice;
                 return false;
             }
-            else if (data.High_Ask > tradeData.StopPrice) {
-                if (data.Open_Ask > tradeData.StopPrice)
-                    Return = (tradeData.EntryPrice - data.Open_Ask) / tradeData.EntryPrice;
+            else if (data.High_Ask > tradeData.TradeState.StopPrice) {
+                if (data.Open_Ask > tradeData.TradeState.StopPrice)
+                    Return = (tradeData.TradeState.EntryPrice - data.Open_Ask) / tradeData.TradeState.EntryPrice;
                 else
-                    Return = (tradeData.EntryPrice - tradeData.StopPrice) / tradeData.EntryPrice;
+                    Return = (tradeData.TradeState.EntryPrice - tradeData.TradeState.StopPrice) / tradeData.TradeState.EntryPrice;
                 return false;
             }
 
@@ -101,7 +100,7 @@ namespace Logic.StrategyRunners
 
             public StrategyState BuildNextState(BidAskData data, bool isEntryLong, bool isEntryShort)
             {
-                if (_previousState.InvestedState.Invested)
+                if (_previousState.InvestedState.TradeState.Invested)
                     _previousState = _previousState.LastStateWasInvested(data, _options, LongShort);
                 else 
                     _previousState = _previousState.LastStateWasNotInvested(data, stop, target, isEntryLong, isEntryShort, _options.GoodToEnter(12,100, (int)(data.Open_Ask - data.Open_Bid), DateTime.Now));

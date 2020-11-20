@@ -3,6 +3,7 @@ using DataStructures.PriceAlgorithms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Action = DataStructures.Action;
 
 namespace RuleSets.Entry
 {

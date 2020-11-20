@@ -6,6 +6,7 @@ namespace TestUtils
 {
     public class Loaders
     {
+        
         public static List<List<double>> LoadData(string path, int listDepth) {
             var myLists = InitList(listDepth);
             var files = File.ReadAllLines(path);

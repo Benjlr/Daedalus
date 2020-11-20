@@ -1,16 +1,17 @@
-﻿using DataStructures.StatsTools;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Text;
+using DataStructures.StatsTools;
 using Xunit;
 
-namespace Logic.Tests
+namespace DataStructures.Tests
 {
-    public class AnalysisTests
+    public class HistogramTests
     {
-        private List<double> numbers = new List<double>() { -15.4, -45, -25.2, -22.5, -19.1, 35.78, 5.6, 0, 2.78, 3.6, 12,  -6.4, -8.8, 1, 5.41, 16.20, 17.1, -13, -7, 3, 22, 6.2, 0.2, -2, -1.3, -4.6, -0.2 };
-        private List<double> result = new List<double>() {0.111111111  ,  0.074074074 ,0.037037037, 0.111111111, 0.148148148 ,0.222222222 ,0.111111111 ,0.037037037, 0.074074074 ,0.074074074};
-        private List<double> resultCumulative = new List<double>() { 0.111111111, 0.185185185, 0.222222222, 0.333333333, 0.481481481, 0.703703704, 0.814814815, 0.851851852, 0.925925926 ,1};
-        private List<Tuple<double,double>> ReturnsAndDrawdown = new List<Tuple<double, double>>()
+        private List<double> numbers = new List<double>() { -15.4, -45, -25.2, -22.5, -19.1, 35.78, 5.6, 0, 2.78, 3.6, 12, -6.4, -8.8, 1, 5.41, 16.20, 17.1, -13, -7, 3, 22, 6.2, 0.2, -2, -1.3, -4.6, -0.2 };
+        private List<double> result = new List<double>() { 0.111111111, 0.074074074, 0.037037037, 0.111111111, 0.148148148, 0.222222222, 0.111111111, 0.037037037, 0.074074074, 0.074074074 };
+        private List<double> resultCumulative = new List<double>() { 0.111111111, 0.185185185, 0.222222222, 0.333333333, 0.481481481, 0.703703704, 0.814814815, 0.851851852, 0.925925926, 1 };
+        private List<Tuple<double, double>> ReturnsAndDrawdown = new List<Tuple<double, double>>()
         {
             new Tuple<double,double>(12.2, -2.8),
             new Tuple<double,double>(-5.2, -77),
@@ -59,8 +60,7 @@ namespace Logic.Tests
         private int _precision = 6;
 
         [Fact]
-        public void ShouldInitHistogram()
-        {
+        public void ShouldInitHistogram() {
             var myhistogram = HistogramTools.BinGenerator(new BinDescriptor(-100, 100, 25));
             var expected = new Dictionary<double, int>()
             {
@@ -75,13 +75,12 @@ namespace Logic.Tests
                 {100,0 },
                 {Double.PositiveInfinity, 0 },
             };
-            
+
             Assert.Equal(expected, myhistogram);
         }
 
         [Fact]
-        public void ShouldInitCategories()
-        {
+        public void ShouldInitCategories() {
             var myhistogram = HistogramTools.CategoryGenerator(new BinDescriptor(-66, 33, 11));
             var expected = new Dictionary<double, List<double>>()
             {
@@ -102,8 +101,7 @@ namespace Logic.Tests
         }
 
         [Fact]
-        public void ShouldCategoriseItemInHistogram()
-        {
+        public void ShouldCategoriseItemInHistogram() {
             var myhistogram = HistogramTools.BinGenerator(new BinDescriptor(-100, 100, 25));
             HistogramTools.CategoriseItem(myhistogram, 72);
             HistogramTools.CategoriseItem(myhistogram, 0);
@@ -118,35 +116,32 @@ namespace Logic.Tests
         }
 
         [Fact]
-        public void ShouldCategoriseItemInCategory()
-        {
+        public void ShouldCategoriseItemInCategory() {
             var myhistogram = HistogramTools.CategoryGenerator(new BinDescriptor(-66, 33, 11));
-            HistogramTools.CategoriseItem(myhistogram,7,-45);
-            HistogramTools.CategoriseItem(myhistogram,12365.022,-54);
-            HistogramTools.CategoriseItem(myhistogram,2.3,-45);
-            HistogramTools.CategoriseItem(myhistogram,-0.2,235);
-            HistogramTools.CategoriseItem(myhistogram,-6.5,-0);
-            
-            Assert.Equal(myhistogram[-44], new List<double>(){7,12365.022,2.3});
-            Assert.Equal(myhistogram[11], new List<double>(){-6.5});
+            HistogramTools.CategoriseItem(myhistogram, 7, -45);
+            HistogramTools.CategoriseItem(myhistogram, 12365.022, -54);
+            HistogramTools.CategoriseItem(myhistogram, 2.3, -45);
+            HistogramTools.CategoriseItem(myhistogram, -0.2, 235);
+            HistogramTools.CategoriseItem(myhistogram, -6.5, -0);
+
+            Assert.Equal(myhistogram[-44], new List<double>() { 7, 12365.022, 2.3 });
+            Assert.Equal(myhistogram[11], new List<double>() { -6.5 });
             Assert.Equal(myhistogram[-66], new List<double>());
-            Assert.Equal(myhistogram[double.PositiveInfinity], new List<double>(){-0.2});
+            Assert.Equal(myhistogram[double.PositiveInfinity], new List<double>() { -0.2 });
         }
 
         [Fact]
-        public void ShouldGenerateHistogram()
-        {
+        public void ShouldGenerateHistogram() {
             var bins = HistogramTools.BinGenerator(new BinDescriptor(-20, 20, 5));
-            foreach (var t in numbers) HistogramTools.CategoriseItem(bins,t);
+            foreach (var t in numbers) HistogramTools.CategoriseItem(bins, t);
             var hist = HistogramTools.GenerateHistogram(bins);
             for (int i = 0; i < hist.Count; i++) hist[i] = _round(hist[i]);
             for (int i = 0; i < result.Count; i++) result[i] = _round(result[i]);
-            Assert.Equal(hist,result);
+            Assert.Equal(hist, result);
         }
 
         [Fact]
-        public void ShouldGenerateCumulativeHistogram()
-        {
+        public void ShouldGenerateCumulativeHistogram() {
             var bins = HistogramTools.BinGenerator(new BinDescriptor(-20, 20, 5));
             foreach (var t in numbers) HistogramTools.CategoriseItem(bins, t);
             var hist = HistogramTools.GenerateHistogram(bins);
@@ -158,28 +153,26 @@ namespace Logic.Tests
 
 
         [Fact]
-        public void ShouldGenerateCategorisedSeries()
-        {
+        public void ShouldGenerateCategorisedSeries() {
             var categoriseDrawdown = HistogramTools.CategoryGenerator(new BinDescriptor(-20, 20, 5));
             foreach (var t in ReturnsAndDrawdown) HistogramTools.CategoriseItem(categoriseDrawdown, t.Item2, t.Item1);
             var results = HistogramTools.GenerateHistorgramsFromCategories(categoriseDrawdown, new BinDescriptor(-20, 0, 5));
 
             for (int i = 0; i < RanDResults.Count; i++)
-            for (int j = 0; j < RanDResults[i].Count; j++)
-                RanDResults[i][j] = _round(RanDResults[i][j]);
+                for (int j = 0; j < RanDResults[i].Count; j++)
+                    RanDResults[i][j] = _round(RanDResults[i][j]);
 
             for (int i = 0; i < results.Count; i++)
-            for (int j = 0; j < results[i].Count; j++)
-                results[i][j] = _round(results[i][j]);
+                for (int j = 0; j < results[i].Count; j++)
+                    results[i][j] = _round(results[i][j]);
 
             Assert.Equal(results, RanDResults);
 
         }
 
         [Fact]
-        public void ShouldCollateCategorisedLists()
-        {
-            var categorisedList = HistogramTools.CollateCategories(CollationInput, new BinDescriptor(0,3,1.5));
+        public void ShouldCollateCategorisedLists() {
+            var categorisedList = HistogramTools.CollateCategories(CollationInput, new BinDescriptor(0, 3, 1.5));
             Assert.Equal(CollationResults, categorisedList);
         }
     }
