@@ -61,16 +61,12 @@ namespace DataStructures.Tests.Stats
             Assert.Equal(0.75, new TradeStatistics(_testList2).MedianExpectancy);
             Assert.Equal(-5.8125, new TradeStatistics(_testList3).MedianExpectancy);
         }
+
+        [Fact]
+        private void ShouldGenerateCorrectSortino() {
+            Assert.Equal(0, new TradeStatistics(_testList).Sortino);
+            Assert.Equal(0, new TradeStatistics(_testList2).Sortino);
+            Assert.Equal(1.722954062637295, new TradeStatistics(_testList3).Sortino);
+        }
     }
 }
-
-
-//var tempavg = tenEpoch.Select(x => x.AverageExpectancy).ToList();
-//var tempmed = tenEpoch.Select(x => x.MedianExpectancy).ToList();
-//System.Text.StringBuilder t = new System.Text.StringBuilder();
-//for (int i = 0; i<tempavg.Count; i++) {
-//t.AppendLine($"{tempavg[i]},{tempmed[i]}");
-//}
-//File.WriteAllText(@"C:\Temp\res.txt", t.ToString());
-
-

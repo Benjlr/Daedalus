@@ -28,8 +28,8 @@ namespace DataStructures.PriceAlgorithms
             var atrPC = new List<double>();
 
             for (int i = 0; i < atr.Count; i++) {
-                if (i > ATRPCLB ) {
-                    var lastTwenty = atr.Skip(Math.Max(0, i - ATRPCLB-1)).Take(ATRPCLB+1).ToList();
+                if (i >= ATRPCLB-1 ) {
+                    var lastTwenty = atr.GetRange(i- ATRPCLB+1,ATRPCLB).ToList();
 
                     var last = lastTwenty.Last();
                     var Min = lastTwenty.Min();

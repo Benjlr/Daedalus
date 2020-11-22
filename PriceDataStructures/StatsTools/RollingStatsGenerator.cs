@@ -15,10 +15,9 @@ namespace DataStructures.StatsTools
 
         private static List<TradeStatistics> IterateThroughEpochs(List<List<double>> epochs) {
             var retval = new List<TradeStatistics>();
-            foreach (var epoch in epochs)
-            {
+            foreach (var epoch in epochs) {
                 var vals = epoch.Where(x => x != 0).ToList();
-                //retval.Add(IterateExpectancy(vals));
+                retval.Add(IterateStats(vals));
             }
             return retval;
         }

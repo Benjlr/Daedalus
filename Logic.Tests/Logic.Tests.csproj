@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="DrilldownData\10RollingExpData.txt" />
-    <None Remove="DrilldownData\13RollingExpData.txt" />
     <None Remove="StopTarget\DrawdownLong.txt" />
     <None Remove="StopTarget\DrawdownLongWinners.txt" />
     <None Remove="StopTarget\DrawdownShort.txt" />
@@ -21,24 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="DrilldownData\13RollingExpData.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DrilldownData\30PeriodExp.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DrilldownData\10RollingExpData.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DrilldownData\10RollingExpResults.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DrilldownData\10PeriodExp.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="DrilldownData\13RollingExpResults.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="StopTarget\DrawdownShortWinners.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -86,6 +66,10 @@
     <ProjectReference Include="..\PriceDataStructures\DataStructures.csproj" />
     <ProjectReference Include="..\RuleSets\RuleSets.csproj" />
     <ProjectReference Include="..\TestUtils\TestUtils.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DrilldownData\" />
   </ItemGroup>
 
 </Project>
