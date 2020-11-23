@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using DataStructures;
+﻿using DataStructures;
 using DataStructures.StatsTools;
+using System.Collections.Generic;
 
 namespace Logic.Metrics
 {
@@ -8,7 +8,7 @@ namespace Logic.Metrics
     {
         public List<Trade> Trades { get; protected set; }
         public ExtendedStats Stats { get; protected set; }
-
+        protected List<double> _currentTrade { get; set; }
         protected int _endIndex { get; set; }
 
         public void Run(BidAskData[] data, bool[] entries, List<SessionData> myInputs = null) {
@@ -28,17 +28,12 @@ namespace Logic.Metrics
         }
 
         protected void PerformEntryActions(BidAskData[] data, int i) {
+            _currentTrade = new List<double>();
             SetResult(data, i);
-            FindDrawdown(data, i);
+            Trades.Add(new Trade(_currentTrade.ToArray(), i));
         }
 
         protected abstract void SetResult(BidAskData[] data, int i);
-
-        protected void FindDrawdown(BidAskData[] data, int i) {
-            IterateTime(data, i);
-        }
-
-        protected abstract void IterateTime(BidAskData[] data, int i);
 
         private void GenerateStats() {
             Stats = new ExtendedStats(Trades);

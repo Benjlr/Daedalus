@@ -28,7 +28,7 @@ namespace DataStructures.PriceAlgorithms
                 }
 
             }
-
+            if(input.Count > start) returnValue.Add(BuildSingleSessionFromList(input.GetRange(start, input.Count - start)));
             return returnValue;
         }
 
@@ -42,8 +42,8 @@ namespace DataStructures.PriceAlgorithms
                     day = input[i].OpenDate.Hour;
                     start = i;
                 }
-
             }
+            if (input.Count > start) returnValue.Add(BuildSingleSessionFromList(input.GetRange(start, input.Count - start)));
 
             return returnValue;
         }

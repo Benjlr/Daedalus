@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using DataStructures;
+using DataStructures.StatsTools;
 
 namespace Logic.Metrics.ExitTests
 {
@@ -19,38 +22,10 @@ namespace Logic.Metrics.ExitTests
 
         public void RunRE(BidAskData[] data, bool[] exits)
         {
-            FBEResults= new double[data.Length];
-
-            for (int i = 0; i < exits.Length - 1; i++)
-            {
-                if (exits[i])
-                {
-                    var x = i + 1;
-
-                    double randDist = -1;
-                    while (randDist < 0)
-                    {
-                        randDist = BoxMullerDistribution.Generate(_mean, _sDev);
-                    }
-
-                    var fbel = (int)Math.Round(randDist);
-                    if ( x-fbel > 0 && x-fbel < data.Length )
-                    {
-                        double exitPriceBull = data[x].Open_Bid;
-                        FBEResults[i] = exitPriceBull - data[x - fbel].Open_Ask;
-
-                    }
-                }
-            }
-        }
-
-        protected override void SetResult(BidAskData[] data, int i)
-        {
             throw new NotImplementedException();
         }
 
-
-        protected override void IterateTime(BidAskData[] data, int i)
+        protected override void SetResult(BidAskData[] data, int i)
         {
             throw new NotImplementedException();
         }

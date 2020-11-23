@@ -28,11 +28,12 @@ namespace Logic.Tests
         [Fact]
         private void ShouldGenerateReturns()
         {
-            var fste = new FixedStopTargetExitStrategyRunner(myMarket, new List<Strategy>(){myStrategy});
-            fste.ExecuteRunner();
-            var results = fste.Runner.Select(x => x.Return).ToList();
-            var loadResults = Loaders.LoadDataSingleColumn(returnItemData);
-            Assert.Equal(loadResults, results);
+            //var fste = new FixedStopTargetExitStrategyRunner(myMarket, new List<Strategy>(){myStrategy});
+            //fste.ExecuteRunner();
+            //var results = fste.Runner.Select(x => x.Return).ToList();
+            //var loadResults = Loaders.LoadDataSingleColumn(returnItemData);
+            //Assert.Equal(loadResults, results);
+            Assert.Equal(true,false);
         }
     }
 }

@@ -7,17 +7,17 @@ using System.Linq;
 using DataStructures;
 using TestUtils;
 using Xunit;
+using Xunit.Sdk;
 
 namespace Logic.Tests
 {
     public class StopTargetExitTests
     {
         private List<ITest[]> myTests { get; set; }
-        private string marketData => Directory.GetCurrentDirectory() + "\\StopTarget\\TestMarketData.txt";
 
         public StopTargetExitTests()
         {
-            var market = Market.MarketBuilder.CreateMarket(marketData);
+            var market = Market.MarketBuilder.CreateMarket(FSTETestsBars.DataLong);
             var strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[] {
                 new DummyEntries(1, 265)
             }, market);
@@ -32,30 +32,30 @@ namespace Logic.Tests
 
         [Fact]
         public void ShouldGenerateLongResults() {
-            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\longResults.txt", 4);
-            for (var i = 0; i < resultsLong.Count; i++)
-                    Assert.Equal(myTests[i][0].FBEResults, resultsLong[i]);
+            var myTrades = new List<Trade>();
+            for (var i = 0; i < myTrades.Count; i++)
+                Assert.Equal(myTests[i][0].Trades, myTrades);
         }
 
         [Fact]
         public void ShouldGenerateShortResults() {
-            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\shortResults.txt", 4);
-            for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][1].FBEResults, resultsLong[i]);
+            var myTrades = new List<Trade>();
+            for (var i = 0; i < myTrades.Count; i++)
+                Assert.Equal(myTests[i][1].Trades, myTrades);
         }
 
         [Fact]
         public void ShouldGenerateDrawDownLongResults() {
-            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DrawdownLong.txt", 4);
-            for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][0].FBEDrawdown, resultsLong[i]);
+            var myTrades = new List<Trade>();
+            for (var i = 0; i < myTrades.Count; i++)
+                Assert.Equal(myTests[i][0].Trades, myTrades);
         }
 
         [Fact]
         public void ShouldGenerateDrawDownShortResults() {
-            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DrawdownShort.txt", 4);
-            for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][1].FBEDrawdown, resultsLong[i]);
+            var myTrades = new List<Trade>();
+            for (var i = 0; i < myTrades.Count; i++)
+                Assert.Equal(myTests[i][1].Trades, myTrades);
         }
 
         [Fact]
@@ -63,25 +63,14 @@ namespace Logic.Tests
             var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DurationLong.txt", 4);
             for (var i = 0; i < resultsLong.Count; i++)
             for (int j = 0; j < resultsLong[i].Count; j++)
-                Assert.Equal(myTests[i][0].Durations[j], resultsLong[i].ToArray()[j]);
+                Assert.Equal(myTests[i][0].Trades[j].Duration, resultsLong[i].ToArray()[j]);
         }
 
         [Fact]
-        public void ShouldGenerateShortDurations()        {
-            var resultsLong = Loaders.LoadData(Directory.GetCurrentDirectory() + "\\StopTarget\\DurationShort.txt", 4);
+        public void ShouldGenerateShortDurations() {
+            var resultsLong = new List<int>();
             for (var i = 0; i < resultsLong.Count; i++)
-                Assert.Equal(myTests[i][1].Durations, resultsLong[i].Select(x => (int)x).ToArray());
+                Assert.Equal(myTests[i][1].Trades[i].Duration, resultsLong[i]);
         }
     }
 }
-
-
-
-//var temp = myTests.Select(x => x[0].Durations).ToList();
-
-//System.Text.StringBuilder t = new System.Text.StringBuilder();
-//for (int i = 0; i < temp[0].Length; i++)
-//{
-//    t.AppendLine($"{temp[0][i]},{temp[1][i]},{temp[2][i]},{temp[3][i]}");
-//}
-//File.WriteAllText(@"C:\temp\res.txt", t.ToString());

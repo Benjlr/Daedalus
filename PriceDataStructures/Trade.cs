@@ -21,6 +21,8 @@ namespace DataStructures
             Drawdown = results.Any(x => x < 0) ? results.Where(x => x < 0).Min() : 0;
             Win = results.Last() > 0;
         }
+
+        public int Duration => MarketEnd - MarketStart+1;
     }
 
 

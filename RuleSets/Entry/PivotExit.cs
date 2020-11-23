@@ -15,7 +15,7 @@ namespace RuleSets.Entry
         public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
         {
             Satisfied = new bool[data.Count];
-            var pivots = Pivots.Calculate(data, 2);
+            var pivots = Pivots.Calculate(data);
             var hourly = SessionCollate.CollateToHourly(data);
             var nrwrsHourly = NRWRBars.Calculate(hourly);
 
@@ -26,7 +26,7 @@ namespace RuleSets.Entry
 
                 for (int k = i - 1; k > 0; k--)
                 {
-                    if (pivots[k].Pivo == Pivot.High)
+                    if (pivots[k].HighPivot > 0)
                     {
                         lastHighPiv = k;
                         break;

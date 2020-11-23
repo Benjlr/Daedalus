@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using DataStructures;
 using Logic.Metrics;
+using TestUtils;
 using Xunit;
 
 namespace Logic.Tests
@@ -13,8 +14,39 @@ namespace Logic.Tests
     {
 
         private List<ITest[]> myTests { get; set; }
-        //private string marketData => Directory.GetCurrentDirectory() + "\\FBEData\\TestMarketData.txt";
+        private List<Trade> longTradesOne = new List<Trade>()
+        {
+            new Trade(new []{0,(12 - 9) / 9.0,(13 - 9) / 9.0},1),
+            new Trade(new []{0, (15 - 13) / 13.0, (7.0 - 13) / 13.0}, 3),
+            new Trade(new []{0, (6 - 7) / 7.0, (9 - 7) / 7.0}, 5),
+            new Trade(new []{0, (13 - 9) / 9.0, (14 - 9) / 9.0}, 7),
+            new Trade(new []{0.0}, 9),
+        };
+        private List<Trade> longTradesTwo = new List<Trade>()
+        {
+            new Trade(new []{0,(12 - 9) / 9.0,(13 - 9) / 9.0, (15 - 9) / 9.0, (7 - 9) / 9.0},1),
+            new Trade(new []{0, (15 - 13) / 13.0, (7.0 - 13) / 13.0, (6 - 13) / 13.0, (9 - 13) / 13.0}, 3),
+            new Trade(new []{0, (6 - 7) / 7.0, (9 - 7) / 7.0, (13 - 7) / 7.0, (14 - 7) / 7.0}, 5),
+            new Trade(new []{0, (13 - 9) / 9.0, (14 - 9) / 9.0}, 7),
+            new Trade(new []{0.0}, 9),
+        };
 
+        private List<Trade> shortTradesOne = new List<Trade>()
+        {
+            new Trade(new []{0,(9 - 12) / 9.0, (9 - 13) / 9.0},1),
+            new Trade(new []{0, (13 - 15) / 13.0, (13.0 - 7) / 13.0}, 3),
+            new Trade(new []{0, (7 - 6) / 7.0, (7 - 9) / 7.0}, 5),
+            new Trade(new []{0, (9 - 13) / 9.0,(9 - 14) / 9.0}, 7),
+            new Trade(new []{0.0}, 9),
+        };
+        private List<Trade> shortTradesTwo = new List<Trade>()
+        {
+            new Trade(new []{0, (9 - 12) / 9.0, (9 - 13) / 9.0,(9 - 15) / 9.0,(9 - 7) / 9.0},1),
+            new Trade(new []{0, (13 - 15) / 13.0, (13 - 7) / 13.0,(13 - 6) / 13.0,(13 - 9) / 13.0}, 3),
+            new Trade(new []{0, (7 - 6) / 7.0, (7 - 9) / 7.0,(7 - 13) / 7.0,(7 - 14) / 7.0}, 5),
+            new Trade(new []{0, (9 - 13) / 9.0,(9 - 14) / 9.0}, 7),
+            new Trade(new []{0.0}, 9),
+        };
 
         public FixedBarExitTests() {
             var market = Market.MarketBuilder.CreateMarket(FBETestBars.DataLong);
@@ -37,140 +69,69 @@ namespace Logic.Tests
 
         [Fact]
         public void ShouldGenerateLongResults() {
-            var arrayOne = new double[,]
-            {
-                {0, 0},
-                {0, 0},
-                {(12 - 9) / 9.0, (12 - 9) / 9.0},
-                {(13 - 9) / 9.0, (13 - 9) / 9.0 + 0},
-                {(15 - 13) / 13.0, (15 - 13) / 13.0 + (15 - 9) / 9.0},
-                {(7.0 - 13) / 13.0, (7 - 9) / 9.0 + (7 - 13) / 13.0},
-                {(6 - 7) / 7.0, (6 - 13) / 13.0 + (6 - 7) / 7.0},
-                {(9 - 7) / 7.0, (9 - 13) / 13.0 + (9 - 7) / 7.0 + 0},
-                {(13 - 9) / 9.0, (13 - 9) / 9.0 + (13 - 7) / 7.0},
-                {(14 - 9) / 9.0, (14 - 7) / 7.0 + (14 - 9) / 9.0}
-            };
+            for (int i = 0; i < 5; i++) {
+                Assert.Equal(longTradesOne[i].Result, myTests[0][0].Trades[i].Result);
+                Assert.Equal(longTradesOne[i].Results, myTests[0][0].Trades[i].Results);
+                Assert.Equal(longTradesOne[i].Win, myTests[0][0].Trades[i].Win);
 
-            for (int i = 0; i < arrayOne.GetLength(0); i++) {
-                //Assert.Equal(arrayOne[i, 0], myTests[0][0].FBEResults[i]);
-                //Assert.Equal(arrayOne[i, 1], myTests[1][0].FBEResults[i]);
-                Assert.False(true);
-
+                Assert.Equal(longTradesTwo[i].Result, myTests[1][0].Trades[i].Result);
+                Assert.Equal(longTradesTwo[i].Results, myTests[1][0].Trades[i].Results);
+                Assert.Equal(longTradesTwo[i].Win, myTests[1][0].Trades[i].Win);
             }
         }
 
         [Fact]
         public void ShouldGenerateShortResults() {
-            var arrayOne = new double[,]
-            {
-                {0, 0},
-                {0, 0},
-                {(9 - 12) / 9.0, (9 - 12) / 9.0},
-                {(9 - 13) / 9.0, (9 - 13) / 9.0 + 0},
-                {(13 - 15) / 13.0, (13 - 15) / 13.0 + (9 - 15) / 9.0},
-                {(13 - 7) / 13.0, (9 - 7) / 9.0 + (13 - 7) / 13.0},
-                {(7 - 6) / 7.0, (13 - 6) / 13.0 + (7 - 6) / 7.0},
-                {(7 - 9) / 7.0, (13 - 9) / 13.0 + (7 - 9) / 7.0 + 0},
-                {(9 - 13) / 9.0, (9 - 13) / 9.0 + (7 - 13) / 7.0},
-                {(9 - 14) / 9.0, (7 - 14) / 7.0 + (9 - 14) / 9.0}
-            };
+            for (int i = 0; i < 5; i++) {
+                Assert.Equal(shortTradesOne[i].Result, myTests[0][1].Trades[i].Result);
+                Assert.Equal(shortTradesOne[i].Results, myTests[0][1].Trades[i].Results);
+                Assert.Equal(shortTradesOne[i].Win, myTests[0][1].Trades[i].Win);
 
-            for (int i = 0; i < arrayOne.GetLength(0); i++) {
-                //Assert.Equal(arrayOne[i, 0], myTests[0][1].FBEResults[i]);
-                //Assert.Equal(arrayOne[i, 1], myTests[1][1].FBEResults[i]);
-                Assert.False(true);
-
+                Assert.Equal(shortTradesTwo[i].Result, myTests[1][1].Trades[i].Result);
+                Assert.Equal(shortTradesTwo[i].Results, myTests[1][1].Trades[i].Results);
+                Assert.Equal(shortTradesTwo[i].Win, myTests[1][1].Trades[i].Win);
             }
         }
 
         [Fact]
         public void ShouldGenerateDrawDownLongResults() {
-            var arrayOne = new double[,]
-            {
-                {0, 0},
-                {(8 - 9) / 9.0, (8 - 9) / 9.0},
-                {0, 0},
-                {0, 0},
-                {(9 - 13) / 13.0, (9 - 13) / 13.0},
-                {(6 - 13) / 13.0 + (6 - 7) / 7.0, (6 - 9) / 9.0 + (6 - 13) / 13.0 + (6 - 7) / 7.0},
-                {(4 - 7) / 7.0, (4 - 13) / 13.0 + (4 - 7) / 7.0},
-                {(8 - 9) / 9.0, (8 - 13) / 13.0 + (8 - 9) / 9.0},
-                {0, 0},
-                {(13 - 14) / 14.0, (13 - 14) / 14.0}
-            };
-
-            for (int i = 0; i < arrayOne.GetLength(0); i++) {
-                //Assert.Equal(arrayOne[i, 0], myTests[0][0].FBEDrawdown[i]);
-                //Assert.Equal(arrayOne[i, 1], myTests[1][0].FBEDrawdown[i]);
-                Assert.False(true);
-
+            for (int i = 0; i < 5; i++) {
+                Assert.Equal(longTradesOne[i].Drawdown, myTests[0][0].Trades[i].Drawdown);
+                Assert.Equal(longTradesTwo[i].Drawdown, myTests[1][0].Trades[i].Drawdown);
             }
         }
 
         [Fact]
         public void ShouldGenerateDrawDownShortResults() {
-            var arrayOne = new double[,]
-            {
-                {0, 0},
-                {(9 - 11) / 9.0, (9 - 11) / 9.0},
-                {(9 - 14) / 9.0, (9 - 14) / 9.0},
-                {(9 - 14) / 9.0 + (13 - 14) / 13.0, (9 - 14) / 9.0 + (13 - 14) / 13.0},
-                {(13 - 18) / 13.0, (13 - 18) / 13.0 + (9 - 18) / 9.0},
-                {(7 - 9) / 7.0, (7 - 9) / 7.0},
-                {0, 0},
-                {(7 - 10) / 7.0 + (9 - 10) / 9.0, (7 - 10) / 7.0 + (9 - 10) / 9.0},
-                {(9 - 14) / 9.0, (9 - 14) / 9.0 + (7 - 14) / 7.0},
-                {(9 - 16) / 9.0 + (14 - 16) / 14.0, (7 - 16) / 7.0 + (9 - 16) / 9.0 + (14 - 16) / 14.0}
-            };
-
-            for (int i = 0; i < arrayOne.GetLength(0); i++) {
-                //Assert.Equal(arrayOne[i, 0], myTests[0][1].FBEDrawdown[i]);
-                //Assert.Equal(arrayOne[i, 1], myTests[1][1].FBEDrawdown[i]);
-                Assert.False(true);
+            for (int i = 0; i < 5; i++) {
+                Assert.Equal(shortTradesOne[i].Drawdown, myTests[0][1].Trades[i].Drawdown);
+                Assert.Equal(shortTradesTwo[i].Drawdown, myTests[1][1].Trades[i].Drawdown);
             }
         }
 
         [Fact]
         public void ShouldGenerateLongDurations() {
-            var arrayOne = new double[,]
-            {
-                {0, 0},
-                {2, 4},
-                {0, 0},
-                {2, 4},
-                {0, 0},
-                {2, 4},
-                {0, 0},
-                {2, 4},
-                {0, 0},
-                {2, 4}
-            };
+            for (int i = 0; i < 5; i++) {
+                Assert.Equal(longTradesOne[i].MarketEnd, myTests[0][0].Trades[i].MarketEnd);
+                Assert.Equal(longTradesOne[i].MarketStart, myTests[0][0].Trades[i].MarketStart);
+                Assert.Equal(longTradesOne[i].Duration, myTests[0][0].Trades[i].Duration);
 
-            for (int i = 0; i < arrayOne.GetLength(0); i++) {
-                Assert.Equal(arrayOne[i, 0], myTests[0][1].Trades[i].Results.Length );
-                Assert.Equal(arrayOne[i, 1], myTests[1][1].Trades[i].Results.Length);
+                Assert.Equal(longTradesTwo[i].MarketEnd, myTests[1][0].Trades[i].MarketEnd);
+                Assert.Equal(longTradesTwo[i].MarketStart, myTests[1][0].Trades[i].MarketStart);
+                Assert.Equal(longTradesTwo[i].Duration, myTests[1][0].Trades[i].Duration);
             }
         }
 
         [Fact]
         public void ShouldGenerateShortDurations() {
-            var arrayOne = new double[,]
-            {
-                {0, 0},
-                {2, 4},
-                {0, 0},
-                {2, 4},
-                {0, 0},
-                {2, 4},
-                {0, 0},
-                {2, 4},
-                {0, 0},
-                {2, 4}
-            };
+            for (int i = 0; i < 5; i++) {
+                Assert.Equal(shortTradesOne[i].MarketEnd, myTests[0][1].Trades[i].MarketEnd);
+                Assert.Equal(shortTradesOne[i].MarketStart, myTests[0][1].Trades[i].MarketStart);
+                Assert.Equal(shortTradesOne[i].Duration, myTests[0][1].Trades[i].Duration);
 
-            for (int i = 0; i < arrayOne.GetLength(0); i++) {
-                Assert.Equal(arrayOne[i, 0], myTests[0][1].Trades[i].Results.Length);
-                Assert.Equal(arrayOne[i, 1], myTests[1][1].Trades[i].Results.Length);
+                Assert.Equal(shortTradesTwo[i].MarketEnd, myTests[1][1].Trades[i].MarketEnd);
+                Assert.Equal(shortTradesTwo[i].MarketStart, myTests[1][1].Trades[i].MarketStart);
+                Assert.Equal(shortTradesTwo[i].Duration, myTests[1][1].Trades[i].Duration);
             }
         }
     }

@@ -57,7 +57,7 @@ namespace Logic.StrategyRunners
             return false;
         }
 
-        public bool ShouldExit(StrategyState investedState, TradeStateGenerator previousState, BidAskData data)        {
+        public bool ShouldExit(TradeStateGenerator previousState, BidAskData data){
             if(!NoTradePeriods?.All(x => WithinTradeablePeriod(new DateBoundary(data.Time), x)) ?? false) 
                 //investedState.Returns.Add((data.Open_Bid - previousState.EntryPrice) / previousState.EntryPrice);           
                 return false;

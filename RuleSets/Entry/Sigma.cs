@@ -18,7 +18,7 @@ namespace RuleSets.Entry
         {
             var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
             var fiftyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 50);
-            var sigma = SigmaSpike.Calculate(data);
+            var sigma = SigmaSpike.Calculate(data.Select(x => x.Close).ToList());
 
             int lookback = 300;
 

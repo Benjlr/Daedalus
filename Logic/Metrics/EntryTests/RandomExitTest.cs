@@ -1,7 +1,6 @@
-﻿using System;
+﻿using DataStructures;
+using System;
 using System.ComponentModel;
-using DataStructures;
-using RuleSets;
 
 namespace Logic.Metrics.EntryTests
 {
@@ -19,10 +18,6 @@ namespace Logic.Metrics.EntryTests
             _endIndex = _randomGenerator.Next(0,_maxLength);
             if (_endIndex > maxCount) _endIndex = 0;
         }
-        protected void SetDuration(int i) {
-            Durations[i] = _endIndex;
-            _endIndex = 0;
-        }
         public static RandomExitTest PrepareTest(MarketSide longShort, int maxLength) {
             switch (longShort) {
                 case MarketSide.Bull: return new LongRandomExitTest(maxLength);
@@ -37,14 +32,7 @@ namespace Logic.Metrics.EntryTests
         protected override void SetResult(BidAskData[] data, int i) {
             GenerateExit(i, data.Length -1);
             for (int j = i; j <= _endIndex + i && j < data.Length; j++)
-                FBEResults[i] += (data[j].Open_Bid - data[i].Open_Ask) / data[i].Open_Ask;
-        }
-
-        protected override void IterateTime(BidAskData[] data, int i) {
-            for (int j = i; j <= _endIndex + i && j < data.Length; j++)
-                if ((data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask < 0)
-                    FBEDrawdown[j] += (data[j].Low_Bid - data[i].Open_Ask) / data[i].Open_Ask;
-            SetDuration(_endIndex);
+                _currentTrade.Add((data[j].Open_Bid - data[i].Open_Ask) / data[i].Open_Ask);
         }
         
         public LongRandomExitTest(int maxLength) : base(maxLength)
@@ -57,14 +45,7 @@ namespace Logic.Metrics.EntryTests
         protected override void SetResult(BidAskData[] data, int i) {
             GenerateExit(i, data.Length - 1);
             for (int j = i; j <= _endIndex + i && j < data.Length; j++)
-                FBEResults[i] += (data[i].Open_Bid - data[i].Open_Ask) / data[i].Open_Bid;
-        }
-
-        protected override void IterateTime(BidAskData[] data, int i) {
-            for (int j = i; j <= _endIndex + i && j < data.Length; j++)
-                if ((data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid < 0)
-                    FBEDrawdown[j] += (data[i].Open_Bid - data[j].High_Ask) / data[i].Open_Bid;
-            SetDuration(i);
+                _currentTrade.Add((data[i].Open_Bid - data[i].Open_Ask) / data[i].Open_Bid);
         }
 
         public ShortRandomExitTest(int maxLength) : base(maxLength)

@@ -6,36 +6,21 @@ namespace DataStructures.PriceAlgorithms
     {
         public static List<int> Calculate(List<SessionData> input) {
             var retval = new List<int>();
+            var ranges =new List<double>();
+            input.ForEach(x => ranges.Add(x.High - x.Low));
             input.ForEach(x => retval.Add(0));
 
             for (var i = 1; i < input.Count; i++) {
-                var range = 0;
-                var counter = i - 1;
-
-                var todaysRange = input[i].High - input[i].Low;
-                var yesterdaysRange = input[counter].High - input[counter].Low;
-
-
-                if (todaysRange > yesterdaysRange) {
-                    while (todaysRange > yesterdaysRange) {
-                        range++;
-                        counter--;
-                        if (counter < 1) break;
-                        yesterdaysRange = input[counter].High - input[counter].Low;
-                        retval[i] = range;
+                if (ranges[i] < ranges[i - 1]) 
+                    for (int j = i-1; j >= 0; j--) {
+                        retval[i]--;
+                        if (ranges[j] <= ranges[i]) break;
                     }
-
-                }
-                else {
-                    while (todaysRange < yesterdaysRange) {
-                        range--;
-                        counter--;
-                        if (counter < 1) break;
-                        yesterdaysRange = input[counter].High - input[counter].Low;
-                        retval[i] = range;
+                else if (ranges[i] > ranges[i - 1]) 
+                    for (int j = i-1; j >= 0; j--) {
+                        retval[i]++;
+                        if (ranges[j] >= ranges[i]) break;
                     }
-                }
-
             }
 
             return retval;

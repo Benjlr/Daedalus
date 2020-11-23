@@ -3,7 +3,7 @@ using DataStructures;
 
 namespace TestUtils
 {
-    public class FBETestBars
+    public class FSTETestsBars
     {
         public static BidAskData[] DataLong = new BidAskData[]
         {

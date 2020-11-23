@@ -1,14 +1,13 @@
-﻿using OxyPlot;
+﻿using DataStructures;
+using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
-using PriceSeriesCore.Calculations;
-using RuleSets;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using DataStructures;
+using DataStructures.PriceAlgorithms;
 using ViewCommon.Models;
 using ViewCommon.Utils;
 using Action = DataStructures.Action;

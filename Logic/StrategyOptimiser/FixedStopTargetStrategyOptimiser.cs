@@ -37,8 +37,8 @@ namespace Logic.StrategyOptimiser
             List<double> targets = topTests.Select(x => x.TargetDistance).ToList();
             
             var myExps = new List<List<double>>();
-            foreach (var test in topTests.Select(x => x.Trades.Select(y=>y.results).ToList()).ToList())
-                myExps.Add(RollingStatsGenerator.GetRollingStats(test.ToList(), 6).Select(x => x.AverageExpectancy).ToList());
+            //foreach (var test in topTests.Select(x => x.Trades.Select(y=>y.results).ToList()).ToList())
+            //    myExps.Add(RollingStatsGenerator.GetRollingStats(test.ToList(), 6).Select(x => x.AverageExpectancy).ToList());
 
             var bouned = GenerateBoundedStats.Generate(myExps);
 

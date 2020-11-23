@@ -83,11 +83,11 @@ namespace Logic.StrategyRunners
 
 
 
-                Trace.WriteLine($"{i} -- {Runner.Sum(x=>x.Return)} -- {Runner.Last().InvestedState.TradeState.Invested} -- " +
-                                $"{Runner.Last().InvestedState.TradeState.TargetPrice} -- {Runner.Last().InvestedState.TradeState.StopPrice} -- {_market.RawData[i].Close_Bid}" +
-                                $" -- {stateBuilder.target} -- {stateBuilder.stop}");
+                //Trace.WriteLine($"{i} -- {Runner.Sum(x=>x.Return)} -- {Runner.Last().InvestedState.TradeState.Invested} -- " +
+                //                $"{Runner.Last().InvestedState.TradeState.TargetPrice} -- {Runner.Last().InvestedState.TradeState.StopPrice} -- {_market.RawData[i].Close_Bid}" +
+                //                $" -- {stateBuilder.target} -- {stateBuilder.stop}");
 
-                if(i == _market.RawData.Length -1 || i % 500 == 0) update?.Invoke(new ResultsContainer(Runner.Select(x => x.Return).ToList(), 0));
+                //if(i == _market.RawData.Length -1 || i % 500 == 0) update?.Invoke(new ResultsContainer(Runner.Select(x => x.Return).ToList(), 0));
             }
 
         }
