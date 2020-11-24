@@ -1,13 +1,11 @@
-﻿using Logic.Metrics;
+﻿using DataStructures;
+using Logic.Metrics;
 using RuleSets;
 using RuleSets.Entry;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using DataStructures;
 using TestUtils;
 using Xunit;
-using Xunit.Sdk;
 
 namespace Logic.Tests
 {
@@ -22,8 +20,12 @@ namespace Logic.Tests
                 new DummyEntries(1, 265)
             }, market);
 
-            var longSide = TestFactory.GenerateFixedStopTargetExitTest(strat, market, new FixedStopTargetExitTestOptions(0.0015, 0.0015,0.0015,1, MarketSide.Bull));
-            var shortSide = TestFactory.GenerateFixedStopTargetExitTest(strat, market, new FixedStopTargetExitTestOptions(0.0015, 0.0015,0.0015,1, MarketSide.Bear));
+            var longSide = TestFactory.GenerateFixedStopTargetExitTest
+                (strat, market, 
+                new FixedStopTargetExitTestOptions(0.1, 0.1, 0.1, 2, MarketSide.Bull));
+            var shortSide = TestFactory.GenerateFixedStopTargetExitTest
+                (strat, market, 
+                new FixedStopTargetExitTestOptions(0.1, 0.1, 0.1, 2, MarketSide.Bear));
 
             myTests = new List<ITest[]>();
             for (int i = 0; i < longSide.Count; i++)

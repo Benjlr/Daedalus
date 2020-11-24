@@ -27,7 +27,7 @@ namespace DataStructures
 
 
 
-    public class TradeTimeLineBuilder{
+    public class ArrayBuilder{
         private Stack<double> _results { get; set; }
         private int _index { get; set; }
 

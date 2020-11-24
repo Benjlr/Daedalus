@@ -23,16 +23,16 @@ namespace Logic.StrategyRunners
 
         private bool LongCheck(BidAskData data) {
 
-            if (data.Open_Bid < InvestedState.CurrentState.StopPrice)
+            if (data.Open_Bid < InvestedState.TradeLimits.StopPrice)
                 InvestedState.Exit(data.Open_Bid);
-            else if (data.Low_Bid < InvestedState.CurrentState.StopPrice)
-                InvestedState.Exit(InvestedState.CurrentState.StopPrice);
+            else if (data.Low_Bid < InvestedState.TradeLimits.StopPrice)
+                InvestedState.Exit(InvestedState.TradeLimits.StopPrice);
             return false;
 
-            if (data.Open_Bid > InvestedState.CurrentState.TargetPrice)
+            if (data.Open_Bid > InvestedState.TradeLimits.TargetPrice)
                 InvestedState.Exit(data.Open_Bid);
-            else if (data.High_Bid > InvestedState.CurrentState.TargetPrice)
-                InvestedState.Exit(InvestedState.CurrentState.TargetPrice);
+            else if (data.High_Bid > InvestedState.TradeLimits.TargetPrice)
+                InvestedState.Exit(InvestedState.TradeLimits.TargetPrice);
             return false;
 
 
@@ -41,16 +41,16 @@ namespace Logic.StrategyRunners
 
         private bool ShortCheck(BidAskData data) {
 
-            if (data.Open_Ask < InvestedState.CurrentState.TargetPrice)
+            if (data.Open_Ask < InvestedState.TradeLimits.TargetPrice)
                 InvestedState.Exit(data.Open_Ask);
-            else if (data.Low_Ask < InvestedState.CurrentState.TargetPrice)
-                InvestedState.Exit(InvestedState.CurrentState.TargetPrice);
+            else if (data.Low_Ask < InvestedState.TradeLimits.TargetPrice)
+                InvestedState.Exit(InvestedState.TradeLimits.TargetPrice);
             return false;
 
-            if (data.Open_Ask > InvestedState.CurrentState.StopPrice)
+            if (data.Open_Ask > InvestedState.TradeLimits.StopPrice)
                 InvestedState.Exit(data.Open_Ask);
-            else if (data.High_Ask > InvestedState.CurrentState.StopPrice)
-                InvestedState.Exit(InvestedState.CurrentState.StopPrice);
+            else if (data.High_Ask > InvestedState.TradeLimits.StopPrice)
+                InvestedState.Exit(InvestedState.TradeLimits.StopPrice);
             return false;
 
 

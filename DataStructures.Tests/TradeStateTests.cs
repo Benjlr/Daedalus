@@ -44,8 +44,8 @@ namespace DataStructures.Tests
             var state = TradeStateGenerator.Invest(ExitPrices.NoStop(1.1), MarketSide.Bull, 0, 10 , 9 );
             state.Continue(12);
 
-            Assert.Equal(double.NaN, state.CurrentState.StopPrice);
-            Assert.Equal(1.1 * 10, state.CurrentState.TargetPrice);
+            Assert.Equal(double.NaN, state.TradeLimits.StopPrice);
+            Assert.Equal(1.1 * 10, state.TradeLimits.TargetPrice);
         }
 
         [Fact]
@@ -53,8 +53,8 @@ namespace DataStructures.Tests
             var state = TradeStateGenerator.Invest(ExitPrices.NoTarget(1.1), MarketSide.Bear, 0, 14.5, 15);
             state.Continue(12);
 
-            Assert.Equal(double.NaN, state.CurrentState.TargetPrice);
-            Assert.Equal(1.1 * 14.5, state.CurrentState.StopPrice);
+            Assert.Equal(double.NaN, state.TradeLimits.TargetPrice);
+            Assert.Equal(1.1 * 14.5, state.TradeLimits.StopPrice);
         }
 
         [Fact]
@@ -62,18 +62,18 @@ namespace DataStructures.Tests
             var state = TradeStateGenerator.Invest(ExitPrices.NoStopTarget(), MarketSide.Bull, 0, 10, 9);
             state.Continue(4);
 
-            Assert.Equal(double.NaN, state.CurrentState.StopPrice);
-            Assert.Equal(double.NaN, state.CurrentState.TargetPrice);
+            Assert.Equal(double.NaN, state.TradeLimits.StopPrice);
+            Assert.Equal(double.NaN, state.TradeLimits.TargetPrice);
         }
 
         [Fact]
         private void ShouldInvestLong() {
             var state = TradeStateGenerator.Invest(new ExitPrices(0.995, 1.005), MarketSide.Bull, 0, 11, 10);
 
-            Assert.Equal(11, state.CurrentState.EntryPrice);
-            Assert.Equal((10-11)/11.0, state.CurrentState.Return);
-            Assert.Equal(11 * 0.995, state.CurrentState.StopPrice);
-            Assert.Equal(11 * 1.005, state.CurrentState.TargetPrice);
+            Assert.Equal(11, state.TradeLimits.EntryPrice);
+            Assert.Equal((10-11)/11.0, state.TradeLimits.Return);
+            Assert.Equal(11 * 0.995, state.TradeLimits.StopPrice);
+            Assert.Equal(11 * 1.005, state.TradeLimits.TargetPrice);
         }
 
         [Fact]
@@ -81,20 +81,20 @@ namespace DataStructures.Tests
             var state = TradeStateGenerator.Invest(new ExitPrices(0.995, 1.005), MarketSide.Bull, 0, 15,14);
             state.Continue(18);
 
-            Assert.Equal(15, state.CurrentState.EntryPrice);
-            Assert.Equal((18-15)/15.0, state.CurrentState.Return);
-            Assert.Equal(15 * 0.995, state.CurrentState.StopPrice);
-            Assert.Equal(15 * 1.005, state.CurrentState.TargetPrice);
+            Assert.Equal(15, state.TradeLimits.EntryPrice);
+            Assert.Equal((18-15)/15.0, state.TradeLimits.Return);
+            Assert.Equal(15 * 0.995, state.TradeLimits.StopPrice);
+            Assert.Equal(15 * 1.005, state.TradeLimits.TargetPrice);
         }
 
         [Fact]
         private void ShouldInvestShort() {
             var state = TradeStateGenerator.Invest(new ExitPrices(1.005, 0.995), MarketSide.Bear, 0, 100, 102);
 
-            Assert.Equal(100, state.CurrentState.EntryPrice);
-            Assert.Equal(-0.02, state.CurrentState.Return);
-            Assert.Equal(100 * 1.005, state.CurrentState.StopPrice);
-            Assert.Equal(100 * 0.995, state.CurrentState.TargetPrice);
+            Assert.Equal(100, state.TradeLimits.EntryPrice);
+            Assert.Equal(-0.02, state.TradeLimits.Return);
+            Assert.Equal(100 * 1.005, state.TradeLimits.StopPrice);
+            Assert.Equal(100 * 0.995, state.TradeLimits.TargetPrice);
         }
 
         [Fact]
@@ -102,10 +102,10 @@ namespace DataStructures.Tests
             var state = TradeStateGenerator.Invest(new ExitPrices(1.005, 0.995), MarketSide.Bear, 0, 35,36.5);
             state.Continue(42);
 
-            Assert.Equal(35, state.CurrentState.EntryPrice);
-            Assert.Equal((35- 42) /35.0, state.CurrentState.Return);
-            Assert.Equal(35 * 1.005, state.CurrentState.StopPrice);
-            Assert.Equal(35 * 0.995, state.CurrentState.TargetPrice);
+            Assert.Equal(35, state.TradeLimits.EntryPrice);
+            Assert.Equal((35- 42) /35.0, state.TradeLimits.Return);
+            Assert.Equal(35 * 1.005, state.TradeLimits.StopPrice);
+            Assert.Equal(35 * 0.995, state.TradeLimits.TargetPrice);
         }
 
         [Fact]
@@ -116,10 +116,10 @@ namespace DataStructures.Tests
             var shortstate = TradeStateGenerator.Invest(ExitPrices.NoStopTarget(), MarketSide.Bear, 0, 6.5, 7);
             shortstate.ContinueUpdateExits(10, new ExitPrices(1.005, 0.995));
 
-            Assert.Equal(7 * 0.995, longstate.CurrentState.StopPrice);
-            Assert.Equal(7 * 1.005, longstate.CurrentState.TargetPrice);
-            Assert.Equal(6.5 * 1.005, shortstate.CurrentState.StopPrice);
-            Assert.Equal(6.5 * 0.995, shortstate.CurrentState.TargetPrice);
+            Assert.Equal(7 * 0.995, longstate.TradeLimits.StopPrice);
+            Assert.Equal(7 * 1.005, longstate.TradeLimits.TargetPrice);
+            Assert.Equal(6.5 * 1.005, shortstate.TradeLimits.StopPrice);
+            Assert.Equal(6.5 * 0.995, shortstate.TradeLimits.TargetPrice);
         }
 
     }
