@@ -8,7 +8,7 @@ namespace Logic.Metrics
     {
         public List<Trade> Trades { get; protected set; }
         public ExtendedStats Stats { get; protected set; }
-        protected TradeStateGenerator _currentTrade { get; set; }
+        protected TradeGeneratorInterface _currentTrade { get; set; }
         protected int _endIndex { get; set; }
 
         public void Run(BidAskData[] data, bool[] entries, List<SessionData> myInputs = null) {

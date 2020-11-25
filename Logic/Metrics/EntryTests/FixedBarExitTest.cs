@@ -28,14 +28,15 @@ namespace Logic.Metrics.EntryTests
     {
         protected override void IterateBars(BidAskData[] data, int i) {
             _currentTrade =
-                TradeStateGenerator.Invest(
-                    MarketSide.Bull,
-                    new TradePrices(ExitPrices.NoStopTarget()), 
-                    AddTrade,
-                    i);
+                new LongTradeGenerator(i,
+                    new TradePrices(ExitPrices.NoStopTarget(),
+                    data[i].Open_Ask), 
+                    AddTrade);
 
-            for (int j = i; j <= _endIndex + i && j < data.Length; j++)
-                _currentTrade.Add((data[j].Open_Bid - data[i].Open_Ask) / data[i].Open_Ask);
+            for (int j = i; j < _endIndex + i-1 && j < data.Length-1; j++)
+                _currentTrade.Continue(data[j]);
+
+            _currentTrade.Exit(data[_endIndex+i-1].Open_Bid);
         }
 
         public LongFixedBarExitTest(int bars_to_wait) : base(bars_to_wait)
@@ -46,8 +47,14 @@ namespace Logic.Metrics.EntryTests
     class ShortFixedBarExitTest : FixedBarExitTest
     {
         protected override void IterateBars(BidAskData[] data, int i) {
-            for (int j = i; j <= _endIndex + i && j < data.Length; j++)
-                _currentTrade.Add((data[i].Open_Bid - data[j].Open_Ask) / data[i].Open_Bid);
+            _currentTrade =
+                new ShortTradeGenerator(i,
+                    new TradePrices(ExitPrices.NoStopTarget(),
+                        data[i].Open_Bid),
+                    AddTrade);
+            for (int j = i; j <= _endIndex + i-1 && j < data.Length; j++)
+                _currentTrade.Continue(data[j]);
+            _currentTrade.Exit(data[_endIndex + i-1].Open_Bid);
         }
 
         public ShortFixedBarExitTest(int bars_to_wait) : base(bars_to_wait)

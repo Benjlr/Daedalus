@@ -22,6 +22,7 @@ namespace DataStructures
     {
         public TradePrices TradeLimits { get; }
         public double CurrentReturn { get; }
+        public bool isActive { get; }
         public void ContinueUpdateExits(BidAskData data, ExitPrices exitPrices);
         public void Continue(BidAskData data);
         public void Exit(double exitPrice);
@@ -34,7 +35,7 @@ namespace DataStructures
         protected ArrayBuilder _tradeBuilder { get; set; }
         public TradePrices TradeLimits { get; private set; }
         public double CurrentReturn { get; protected set; }
-
+        public bool isActive { get; private set; }
 
         protected TradeStateGenerator(int marketIndex, TradePrices tradeInit, Action<Trade> exiting) {
             _tradeBuilder = new ArrayBuilder();
@@ -42,12 +43,9 @@ namespace DataStructures
             TradeLimits = tradeInit;
             _tradeBuilder.AddResult(CurrentReturn);
             onExit = exiting;
+            isActive = true;
         }
 
-        public static TradeGeneratorInterface Invest(MarketSide longShort, TradePrices tradeInit, Action<Trade> exiting, int marketIndex) {
-            if (longShort.Equals(MarketSide.Bull)) return new LongTradeGenerator(marketIndex, tradeInit, exiting);
-            else return new ShortTradeGenerator(marketIndex, tradeInit, exiting);
-        }
 
         public void Continue(BidAskData data) {
             CheckStopsAndTargets(data);
@@ -59,27 +57,25 @@ namespace DataStructures
         }
 
         public void Exit(double exitPrice) {
-            _tradeBuilder.AddResult(calculateReturn(exitPrice));
+            _tradeBuilder.AddResult(CalculateReturn(exitPrice));
             onExit?.Invoke(_tradeBuilder.CompileTrade());
+            isActive = false;
         }
         
         protected void AddTradeBuilderStats(double data) {
-            CurrentReturn = calculateReturn(data);
+            CurrentReturn = CalculateReturn(data);
             this._tradeBuilder.AddResult(CurrentReturn);
         }
 
         protected abstract void CheckStopsAndTargets(BidAskData data);
 
-        private double calculateReturn(double data) {
-            return (data / this.TradeLimits.EntryPrice) - 1;
-        }
+        protected abstract double CalculateReturn(double data);
     }
 
     public class LongTradeGenerator : TradeStateGenerator
     {
         public LongTradeGenerator(int marketIndex, TradePrices tradeInit, Action<Trade> exiting) : base(marketIndex, tradeInit, exiting) {
         }
-
 
         protected override void CheckStopsAndTargets(BidAskData data) {
             if (!CheckStops(data) && !CheckTargets(data))
@@ -106,6 +102,10 @@ namespace DataStructures
             }
 
             return false;
+        }
+
+        protected override double CalculateReturn(double data) {
+            return (data / this.TradeLimits.EntryPrice) - 1;
         }
     }
 
@@ -139,6 +139,10 @@ namespace DataStructures
             }
 
             return false;
+        }
+
+        protected override double CalculateReturn(double data) {
+            return 1- ( data / this.TradeLimits.EntryPrice) ;
         }
     }
 }

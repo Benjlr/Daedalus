@@ -10,11 +10,11 @@
             TargetPercentage = target;
         }
 
-        public static ExitPrices NoTarget(double stop) {
+        public static ExitPrices StopOnly(double stop) {
             return new ExitPrices(stop, double.NaN);
         }
 
-        public static ExitPrices NoStop(double target) {
+        public static ExitPrices TargetOnly(double target) {
             return new ExitPrices(double.NaN, target);
         }
         public static ExitPrices NoStopTarget() {
