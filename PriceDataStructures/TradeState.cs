@@ -1,91 +1,145 @@
 ﻿
 
+using System;
+using System.Collections.Generic;
+
 namespace DataStructures
 {
-    public struct TradePrices
+    public readonly struct TradePrices
     {
-        public double EntryPrice { get; set; }
-        public double StopPrice { get; set; }
-        public double TargetPrice { get; set; }
-        public double Return { get; set; }
+        public double EntryPrice { get; }
+        public double StopPrice { get; }
+        public double TargetPrice { get; }
 
-        public TradePrices(ExitPrices exits, double entryPrice)
-        {
-
+        public TradePrices(ExitPrices exits, double entryPrice) {
+            EntryPrice = entryPrice;
+            StopPrice = entryPrice * exits.StopPercentage;
+            TargetPrice = entryPrice * exits.TargetPercentage;
         }
     }
 
-    public abstract class TradeStateGenerator
+    public interface TradeGeneratorInterface
     {
-        private ArrayBuilder _tradeBuilder { get; set; }
+        public TradePrices TradeLimits { get; }
+        public double CurrentReturn { get; }
+        public void ContinueUpdateExits(BidAskData data, ExitPrices exitPrices);
+        public void Continue(BidAskData data);
+        public void Exit(double exitPrice);
+
+    }
+
+    public abstract class TradeStateGenerator : TradeGeneratorInterface
+    {
+        private Action<Trade> onExit { get; }
+        protected ArrayBuilder _tradeBuilder { get; set; }
         public TradePrices TradeLimits { get; private set; }
-        
-        protected TradeStateGenerator(int marketIndex) {
+        public double CurrentReturn { get; protected set; }
+
+
+        protected TradeStateGenerator(int marketIndex, TradePrices tradeInit, Action<Trade> exiting) {
             _tradeBuilder = new ArrayBuilder();
             _tradeBuilder.Init(marketIndex);
-
+            TradeLimits = tradeInit;
+            _tradeBuilder.AddResult(CurrentReturn);
+            onExit = exiting;
         }
 
-        public static TradeStateGenerator Invest(MarketSide longShort, int marketIndex, double entryPrice, double closePrice) {
-            TradeStateGenerator generator = new TradeStateGenerator(longShort, marketIndex);
-            generator.TradeLimits = new TradePrices() {
-                EntryPrice = entryPrice,
-                StopPrice = entryPrice * stopTarget.StopPercentage,
-                TargetPrice = entryPrice * stopTarget.TargetPercentage,
-                Return = generator.CalculateReturn(closePrice, entryPrice)
-            };
-            generator._tradeBuilder.AddResult(generator.TradeLimits.Return);
-            return generator;
+        public static TradeGeneratorInterface Invest(MarketSide longShort, TradePrices tradeInit, Action<Trade> exiting, int marketIndex) {
+            if (longShort.Equals(MarketSide.Bull)) return new LongTradeGenerator(marketIndex, tradeInit, exiting);
+            else return new ShortTradeGenerator(marketIndex, tradeInit, exiting);
         }
 
-        public void Continue(double closeData) {
-            TradeLimits = new TradePrices() {
-                EntryPrice = TradeLimits.EntryPrice,
-                StopPrice = TradeLimits.StopPrice,
-                TargetPrice = TradeLimits.TargetPrice,
-                Return = CalculateReturn(closeData, TradeLimits.EntryPrice)
-            };
-            _tradeBuilder.AddResult(TradeLimits.Return);
+        public void Continue(BidAskData data) {
+            CheckStopsAndTargets(data);
         }
 
-        public void ContinueUpdateExits(double closeData, ExitPrices exitPrices) {
-            TradeLimits = new TradePrices()
-            {
-                EntryPrice = TradeLimits.EntryPrice,
-                StopPrice = TradeLimits.EntryPrice * exitPrices.StopPercentage,
-                TargetPrice = TradeLimits.EntryPrice * exitPrices.TargetPercentage,
-                Return = CalculateReturn(closeData, TradeLimits.EntryPrice)
-            };
-            _tradeBuilder.AddResult(TradeLimits.Return);
+        public void ContinueUpdateExits(BidAskData data, ExitPrices exitPrices) {
+            TradeLimits = new TradePrices(exitPrices, TradeLimits.EntryPrice);
+            CheckStopsAndTargets(data);
         }
 
-        public Trade Exit(double exitPrice) {
-            _tradeBuilder.AddResult(CalculateReturn(exitPrice, TradeLimits.EntryPrice));
-            return _tradeBuilder.CompileTrade();
+        public void Exit(double exitPrice) {
+            _tradeBuilder.AddResult(calculateReturn(exitPrice));
+            onExit?.Invoke(_tradeBuilder.CompileTrade());
+        }
+        
+        protected void AddTradeBuilderStats(double data) {
+            CurrentReturn = calculateReturn(data);
+            this._tradeBuilder.AddResult(CurrentReturn);
         }
 
-        protected abstract double calculateReturn(BidAskData data) {
-            if (_isLong.Equals(MarketSide.Bull)) return (current - entry) / entry;
-            else return -(current - entry) / entry;
+        protected abstract void CheckStopsAndTargets(BidAskData data);
 
+        private double calculateReturn(double data) {
+            return (data / this.TradeLimits.EntryPrice) - 1;
         }
-
-        protected abstract TradePrices initTradePrices(BidAskData data);
     }
 
     public class LongTradeGenerator : TradeStateGenerator
     {
-        protected LongTradeGenerator(int marketIndex) : base(marketIndex)
-        { }
+        public LongTradeGenerator(int marketIndex, TradePrices tradeInit, Action<Trade> exiting) : base(marketIndex, tradeInit, exiting) {
+        }
 
-        protected override double calculateReturn(BidAskData data)
-        {
-            return 
+
+        protected override void CheckStopsAndTargets(BidAskData data) {
+            if (!CheckStops(data) && !CheckTargets(data))
+                AddTradeBuilderStats(data.Close_Bid);
+        }
+
+        private bool CheckTargets(BidAskData data) {
+            if (data.High_Bid > TradeLimits.TargetPrice) {
+                if (data.Open_Bid > TradeLimits.TargetPrice)
+                    Exit(data.Open_Bid);
+                else Exit(TradeLimits.TargetPrice);
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool CheckStops(BidAskData data) {
+            if (data.Low_Bid < TradeLimits.StopPrice) {
+                if (data.Open_Bid < TradeLimits.StopPrice)
+                    Exit(data.Open_Bid);
+                else Exit(TradeLimits.StopPrice);
+                return true;
+            }
+
+            return false;
         }
     }
 
     public class ShortTradeGenerator : TradeStateGenerator
     {
+        public ShortTradeGenerator(int marketIndex, TradePrices tradeInit, Action<Trade> exiting) : base(marketIndex, tradeInit, exiting) {
+        }
 
+        protected override void CheckStopsAndTargets(BidAskData data) {
+            if (!CheckStops(data) && !CheckTargets(data))
+                AddTradeBuilderStats(data.Close_Ask);
+        }
+
+        private bool CheckStops(BidAskData data) {
+            if (data.High_Ask > TradeLimits.StopPrice) {
+                if (data.Open_Ask > TradeLimits.StopPrice)
+                    Exit(data.Open_Ask);
+                else Exit(TradeLimits.StopPrice);
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool CheckTargets(BidAskData data) {
+            if (data.Low_Ask < TradeLimits.TargetPrice) {
+                if (data.Open_Ask < TradeLimits.TargetPrice)
+                    Exit(data.Open_Ask);
+                else Exit(TradeLimits.TargetPrice);
+                return true;
+            }
+
+            return false;
+        }
     }
 }
+

@@ -27,6 +27,13 @@ namespace Logic.Metrics.EntryTests
     class LongFixedBarExitTest : FixedBarExitTest
     {
         protected override void IterateBars(BidAskData[] data, int i) {
+            _currentTrade =
+                TradeStateGenerator.Invest(
+                    MarketSide.Bull,
+                    new TradePrices(ExitPrices.NoStopTarget()), 
+                    AddTrade,
+                    i);
+
             for (int j = i; j <= _endIndex + i && j < data.Length; j++)
                 _currentTrade.Add((data[j].Open_Bid - data[i].Open_Ask) / data[i].Open_Ask);
         }

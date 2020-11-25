@@ -28,10 +28,13 @@ namespace Logic.Metrics
         }
 
         protected void PerformEntryActions(BidAskData[] data, int i) {
-            _currentTrade = new List<double>();
             SetResult(data, i);
-            Trades.Add(new Trade(_currentTrade.ToArray(), i));
         }
+
+        protected void AddTrade(Trade myTrade) {
+            Trades.Add(myTrade);
+        }
+
 
         protected abstract void SetResult(BidAskData[] data, int i);
 
