@@ -1,5 +1,6 @@
 ﻿using DataStructures;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Logic.Metrics.EntryTests
 {
@@ -33,10 +34,13 @@ namespace Logic.Metrics.EntryTests
                     data[i].Open_Ask), 
                     AddTrade);
 
-            for (int j = i; j < _endIndex + i-1 && j < data.Length-1; j++)
+            for (int j = i; j < (_endIndex) + i && j < data.Length-1; j++)
                 _currentTrade.Continue(data[j]);
 
-            _currentTrade.Exit(data[_endIndex+i-1].Open_Bid);
+            if(_endIndex + i < data.Length)
+                _currentTrade.Exit(data[_endIndex+i].Open_Bid);
+            else 
+                _currentTrade.Exit(data.Last().Close_Bid);
         }
 
         public LongFixedBarExitTest(int bars_to_wait) : base(bars_to_wait)
@@ -52,9 +56,14 @@ namespace Logic.Metrics.EntryTests
                     new TradePrices(ExitPrices.NoStopTarget(),
                         data[i].Open_Bid),
                     AddTrade);
-            for (int j = i; j <= _endIndex + i-1 && j < data.Length; j++)
+
+            for (int j = i; j < (_endIndex) + i && j < data.Length - 1; j++)
                 _currentTrade.Continue(data[j]);
-            _currentTrade.Exit(data[_endIndex + i-1].Open_Bid);
+
+            if (_endIndex + i  < data.Length)
+                _currentTrade.Exit(data[_endIndex + i].Open_Ask);
+            else
+                _currentTrade.Exit(data.Last().Close_Ask);
         }
 
         public ShortFixedBarExitTest(int bars_to_wait) : base(bars_to_wait)

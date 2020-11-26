@@ -17,7 +17,7 @@ namespace Logic.Tests
         {
             var market = Market.MarketBuilder.CreateMarket(FSTETestsBars.DataLong);
             var strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[] {
-                new DummyEntries(1, 265)
+                new DummyEntries(1, FSTETestsBars.DataLong.Length)
             }, market);
 
             var longSide = TestFactory.GenerateFixedStopTargetExitTest

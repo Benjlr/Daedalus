@@ -13,17 +13,17 @@ namespace DataStructures.Tests
             var longstate = new LongTradeGenerator(0, 
                 new TradePrices(ExitPrices.NoStopTarget(), 5), 
                 new Action<Trade>((x) => { trades.Add(x); }));
-            longstate.Continue(new BidAskData(new DateTime(2020,01,01),5,5,5,5, 4.5, 4.5, 4.5,4.5,1 ));
-            longstate.Continue(new BidAskData(new DateTime(2020, 01, 01), 5, 5, 10, 10, 4.5, 4.5, 9, 9, 1));
+            longstate.Continue(new BidAskData(new DateTime(2020,01,01),4.5,4.5,5,5, 4.5, 4.5, 4.5,4.5,1 ));
+            longstate.Continue(new BidAskData(new DateTime(2020, 01, 01), 9, 9, 10, 10, 4.5, 4.5, 9, 9, 1));
             longstate.Continue(new BidAskData(new DateTime(2020, 01, 01), 5, 5, 8, 8, 4.5, 4.5,5, 5 , 1));
             longstate.Exit(2);
 
-            Assert.Equal(4, trades[0].MarketEnd);
+            Assert.Equal(3, trades[0].MarketEnd);
             Assert.Equal(0, trades[0].MarketStart);
             Assert.Equal((2-5)/5.0, trades[0].Drawdown);
             Assert.Equal((2 - 5) / 5.0, trades[0].Result);
             Assert.False(trades[0].Win);
-            Assert.Equal(new double[] {0, (4.5/5.0)-1, (9/5.0)-1, 0, (2 / 5.0) -1}, trades[0].Results);
+            Assert.Equal(new double[] {(4.5/5.0)-1, (9/5.0)-1, 0, (2 / 5.0) -1}, trades[0].Results);
         }
 
         [Fact]
@@ -39,12 +39,12 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 10, 10, 10, 10, 10, 10, 10, 10, 1));
             shortstate.Exit(8);
 
-            Assert.Equal(5, trades[0].MarketEnd);
+            Assert.Equal(4, trades[0].MarketEnd);
             Assert.Equal(0, trades[0].MarketStart);
             Assert.Equal(1- (15/11.0), trades[0].Drawdown);
             Assert.Equal(1-(8 / 11.0) , trades[0].Result);
             Assert.True(trades[0].Win);
-            Assert.Equal(new double[] { 0, 1-(13 / 11.0), 1-(15 / 11.0), 1-(14 / 11.0), 1-(10 / 11.0), 1-( 8 / 11.0 )}, trades[0].Results);
+            Assert.Equal(new double[] { 1-(13 / 11.0), 1-(15 / 11.0), 1-(14 / 11.0), 1-(10 / 11.0), 1-( 8 / 11.0 )}, trades[0].Results);
         }
 
 
@@ -143,7 +143,8 @@ namespace DataStructures.Tests
                 new TradePrices(ExitPrices.NoStopTarget(), 7),
                 new Action<Trade>((x) => { }));
 
-            longstate.ContinueUpdateExits(new BidAskData(new DateTime(),8,8,8,8,8,8,8,8,1), new ExitPrices(0.995, 1.005));
+            longstate.UpdateExits( new ExitPrices(0.995, 1.005));
+            longstate.Continue(new BidAskData(new DateTime(), 8, 8, 8, 8, 8, 8, 8, 8, 1));
             
             Assert.Equal(7 * 0.995, longstate.TradeLimits.StopPrice);
             Assert.Equal(7 * 1.005, longstate.TradeLimits.TargetPrice);
@@ -155,7 +156,8 @@ namespace DataStructures.Tests
                 new TradePrices(ExitPrices.NoStopTarget(), 6.5),
                 new Action<Trade>((x) => { }));
 
-            shortstate.ContinueUpdateExits(new BidAskData(new DateTime(), 8, 8, 8, 8, 8, 8, 8, 8, 1), new ExitPrices(1.005, 0.995));
+            shortstate.UpdateExits(new ExitPrices(1.005, 0.995));
+            shortstate.Continue(new BidAskData(new DateTime(), 8, 8, 8, 8, 8, 8, 8, 8, 1));
 
             Assert.Equal(6.5 * 1.005, shortstate.TradeLimits.StopPrice);
             Assert.Equal(6.5 * 0.995, shortstate.TradeLimits.TargetPrice);
@@ -172,7 +174,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 10, 10, 13, 13, 9, 7.5, 9, 9, 1));
 
             Assert.Equal(-0.19999999999999996, myTrade.Last().Result);
-            Assert.Equal(3, myTrade.Last().Duration);
+            Assert.Equal(2, myTrade.Last().Duration);
         }
 
         [Fact]
@@ -186,7 +188,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 9, 9, 9, 9, 7.5, 7.5, 9, 9, 1));
 
             Assert.Equal(-0.19999999999999996, myTrade.Last().Result);
-            Assert.Equal(3, myTrade.Last().Duration);
+            Assert.Equal(2, myTrade.Last().Duration);
         }
 
         [Fact]
@@ -200,7 +202,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 10, 10, 11, 11, 7, 7, 9, 9, 1));
 
             Assert.Equal(0.19999999999999996, myTrade.Last().Result);
-            Assert.Equal(3, myTrade.Last().Duration);
+            Assert.Equal(2, myTrade.Last().Duration);
         }
 
         [Fact]
@@ -214,7 +216,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 9, 9, 15, 15, 9, 9, 9, 9, 1));
 
             Assert.Equal(0.19999999999999996, myTrade.Last().Result);
-            Assert.Equal(3, myTrade.Last().Duration);
+            Assert.Equal(2, myTrade.Last().Duration);
         }
 
         [Fact]
@@ -228,7 +230,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 14, 14, 13, 13, 9, 7.5, 9, 9, 1));
 
             Assert.Equal(-0.3999999999999999, myTrade.Last().Result);
-            Assert.Equal(3, myTrade.Last().Duration);
+            Assert.Equal(2, myTrade.Last().Duration);
         }
 
         [Fact]
@@ -242,7 +244,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 5, 5, 9, 9, 7.5, 7.5, 9, 9, 1));
 
             Assert.Equal(-0.5, myTrade.Last().Result);
-            Assert.Equal(3, myTrade.Last().Duration);
+            Assert.Equal(2, myTrade.Last().Duration);
         }
 
         [Fact]
@@ -256,7 +258,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 5, 5, 11, 11, 7, 7, 9, 9, 1));
 
             Assert.Equal(0.5, myTrade.Last().Result);
-            Assert.Equal(3, myTrade.Last().Duration);
+            Assert.Equal(2, myTrade.Last().Duration);
         }
 
         [Fact]
@@ -270,7 +272,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 20, 20, 15, 15, 9, 9, 9, 9, 1));
 
             Assert.Equal(1, myTrade.Last().Result);
-            Assert.Equal(3, myTrade.Last().Duration);
+            Assert.Equal(2, myTrade.Last().Duration);
         }
     }
 }

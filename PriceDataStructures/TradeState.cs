@@ -23,7 +23,7 @@ namespace DataStructures
         public TradePrices TradeLimits { get; }
         public double CurrentReturn { get; }
         public bool isActive { get; }
-        public void ContinueUpdateExits(BidAskData data, ExitPrices exitPrices);
+        public void UpdateExits(ExitPrices exitPrices);
         public void Continue(BidAskData data);
         public void Exit(double exitPrice);
 
@@ -41,7 +41,6 @@ namespace DataStructures
             _tradeBuilder = new ArrayBuilder();
             _tradeBuilder.Init(marketIndex);
             TradeLimits = tradeInit;
-            _tradeBuilder.AddResult(CurrentReturn);
             onExit = exiting;
             isActive = true;
         }
@@ -51,9 +50,8 @@ namespace DataStructures
             CheckStopsAndTargets(data);
         }
 
-        public void ContinueUpdateExits(BidAskData data, ExitPrices exitPrices) {
+        public void UpdateExits(ExitPrices exitPrices) {
             TradeLimits = new TradePrices(exitPrices, TradeLimits.EntryPrice);
-            CheckStopsAndTargets(data);
         }
 
         public void Exit(double exitPrice) {
