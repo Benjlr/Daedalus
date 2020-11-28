@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using DataStructures;
 using System.ComponentModel;
 using System.Linq;
-using DataStructures;
-using RuleSets;
 
 namespace Logic.Metrics.EntryTests
 {
@@ -10,8 +8,6 @@ namespace Logic.Metrics.EntryTests
     {
         public double TargetDistance { get; }
         public double StopDistance { get; }
-        protected double _stopPrice { get; set; }
-        protected double _targetPrice { get; set; }
 
         protected FixedStopTargetExitTest(double target_distance, double stop_distance) {
             TargetDistance = target_distance;
@@ -20,18 +16,17 @@ namespace Logic.Metrics.EntryTests
 
         protected override void SetResult(BidAskData[] data, int i) {
             InitialiseTradeGenerator(data[i],i);
-            for (int j = i; i < data.Length-1; j++)
-                if (ParseConditionals(data, j))
+            for (int j = i; j < data.Length; j++)
+                if (ParseConditionals(data[j]))
                     break;
-            ExitTrade(data.Last());
+            if(_currentTrade.isActive) ExitTrade(data.Last());
         }
 
-        private bool ParseConditionals(BidAskData[] data, int x) {
-            _currentTrade.Continue(data[x]);
+        private bool ParseConditionals(BidAskData data) {
+            _currentTrade.Continue(data);
             return !_currentTrade.isActive;
         }
 
-        protected abstract int SetStopAndTarget(BidAskData[] data, int i);
         protected abstract void InitialiseTradeGenerator(BidAskData data, int i);
         protected abstract void ExitTrade(BidAskData data);
         public static FixedStopTargetExitTest PrepareTest(MarketSide longShort, double target_distance, double stop_distance) {
@@ -45,7 +40,7 @@ namespace Logic.Metrics.EntryTests
 
     public class LongFixedStopTargetExitTest : FixedStopTargetExitTest
     {
-        public LongFixedStopTargetExitTest(double target_distance, double stop_distance) : base(target_distance, stop_distance) {
+        public LongFixedStopTargetExitTest(double target_distance, double stop_distance) : base(target_distance+1, 1-stop_distance) {
         }
 
         protected override void InitialiseTradeGenerator(BidAskData data, int i) {
@@ -58,17 +53,11 @@ namespace Logic.Metrics.EntryTests
         protected override void ExitTrade(BidAskData data) {
             _currentTrade.Exit(data.Close_Bid);
         }
-
-        protected override int SetStopAndTarget(BidAskData[] data, int i) {
-            var exitPrices = new ExitPrices(StopDistance, TargetDistance);
-            _currentTrade = new LongTradeGenerator(i, new TradePrices(exitPrices, data[i].Open_Ask), AddTrade);
-            return i;
-        }
     }
 
     public class ShortFixedStopTargetExitTest : FixedStopTargetExitTest
     {
-        public ShortFixedStopTargetExitTest(double target_distance, double stop_distance) : base(target_distance, stop_distance) {
+        public ShortFixedStopTargetExitTest(double target_distance, double stop_distance) : base(1-target_distance, stop_distance+1) {
         }
 
         protected override void InitialiseTradeGenerator(BidAskData data, int i) {
@@ -80,12 +69,6 @@ namespace Logic.Metrics.EntryTests
 
         protected override void ExitTrade(BidAskData data) {
             _currentTrade.Exit(data.Close_Ask);
-        }
-
-        protected override int SetStopAndTarget(BidAskData[] data, int i) {
-            var exitPrices = new ExitPrices(StopDistance, TargetDistance);
-            _currentTrade = new ShortTradeGenerator(i, new TradePrices(exitPrices, data[i].Open_Ask), AddTrade);
-            return i;
         }
     }
 }

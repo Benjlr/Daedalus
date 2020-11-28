@@ -1,10 +1,8 @@
+using DataStructures;
+using Logic.Metrics;
 using RuleSets;
 using RuleSets.Entry;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using DataStructures;
-using Logic.Metrics;
 using TestUtils;
 using Xunit;
 

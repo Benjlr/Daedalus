@@ -41,7 +41,7 @@ namespace Logic.Metrics
             MinimumTarget = minTarget;
             Range = range;
             Divisions = intervals;
-            Increment = range / (intervals);
+            if(intervals != 0.0)Increment = range / (intervals);
             LongShort = longShort;
         }
     }
@@ -76,7 +76,7 @@ namespace Logic.Metrics
             Parallel.For(0, threadSafeDict.Count, (i) =>
             {
                 threadSafeDict.TryGetValue(i, out ITest myTests);
-                myTests.Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
+                myTests?.Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
                 progress?.Invoke();
             });
         }
@@ -99,8 +99,8 @@ namespace Logic.Metrics
 
         private static Dictionary<int, ITest> StopTargetTestsToDictionary(FixedStopTargetExitTestOptions options) {
             Dictionary<int, ITest> retval = new Dictionary<int, ITest>();
-            for (int i = 0; i <= options.Range / options.Increment; i++)
-            for (int j = 0; j <= options.Range / options.Increment; j++)
+            for (int i = 0; i <= options.Divisions; i++)
+            for (int j = 0; j <= options.Divisions; j++)
                 retval.Add(retval.Count,
                     FixedStopTargetExitTest.PrepareTest(options.LongShort, 
                         j * options.Increment + options.MinimumTarget, 
