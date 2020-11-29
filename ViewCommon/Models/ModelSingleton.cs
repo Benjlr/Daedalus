@@ -22,11 +22,11 @@ namespace ViewCommon.Models
             lock (_lock)
             {
                 try {
-                    Mymarket = Market.MarketBuilder.CreateMarket(Markets.ASX200_Cash_5_Min);
+                    Mymarket = Market.MarketBuilder.CreateMarket(DataLoader.LoadBidAskData(Markets.asx200_cash_5));
                 }
                 catch {
                     var marketData = Directory.GetCurrentDirectory() + "\\Utils\\LocalData\\asx200cash";
-                    Mymarket = Market.MarketBuilder.CreateMarket(marketData);
+                    Mymarket = Market.MarketBuilder.CreateMarket(DataLoader.LoadBidAskData(marketData));
                 }
 
 

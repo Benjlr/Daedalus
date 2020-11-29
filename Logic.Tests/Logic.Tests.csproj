@@ -68,8 +68,4 @@
     <ProjectReference Include="..\TestUtils\TestUtils.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DrilldownData\" />
-  </ItemGroup>
-
 </Project>

@@ -31,8 +31,8 @@ namespace Logic
                 foreach (var t in myRules) t.CalculateBackSeries(dt, myMarket.RawData);
                 //RulesContext.InitBroaderMarketContext(myMarket.CostanzaData.ToList());
 
-                var entryRules = myRules.Where(x => x.Order.Equals(Action.Entry));
-                var exitRules = myRules.Where(x => x.Order.Equals(Action.Exit));
+                var entryRules = myRules.Where(x => x.Order.Equals(Action.Entry)).ToList();
+                var exitRules = myRules.Where(x => x.Order.Equals(Action.Exit)).ToList();
 
                 bool[] entries = new bool[myMarket.RawData.Length];
                 bool[] exits = new bool[myMarket.RawData.Length];
@@ -40,8 +40,7 @@ namespace Logic
 
                 for (int i = 0; i < myMarket.RawData.Length; i++) {
                     if (entryRules.Any(x => x.Satisfied[i])) entries[i] = true;
-                    //if (exitRules.Any(x => x.Satisfied[i]) || RulesContext.CloseActionitions(myMarket.RawData[i])) exits[i] = true;
-                    //if (entryRules.Any(x => x.Satisfied[i])) exits[i+10] = true;
+                    if (exitRules.Any(x => x.Satisfied[i])) exits[i] = true;
                 }
 
 

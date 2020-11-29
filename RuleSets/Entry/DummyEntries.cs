@@ -23,4 +23,23 @@ namespace RuleSets.Entry
                 if (i % interval == 0) Satisfied[i] = true;
         }
     }
+
+    public class DummyExits : RuleBase
+    {
+        private int interval { get; set; }
+        private int rangeToTest { get; set; }
+
+        public DummyExits(int intervalInput, int barsToTest) {
+            interval = intervalInput;
+            rangeToTest = barsToTest;
+            Dir = MarketSide.Bull;
+            Order = Action.Exit;
+        }
+
+        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData) {
+            Satisfied = new bool[data.Count];
+            for (int i = 0; i < rangeToTest; i++)
+                if (i % interval == 0) Satisfied[i] = true;
+        }
+    }
 }
