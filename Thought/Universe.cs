@@ -1,0 +1,36 @@
+﻿using DataStructures;
+using RuleSets;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Thought
+{
+    public class Universe
+    {
+        public List<UniverseObject> Elements { get; }
+        private IRuleSet[] Ruleset { get; }
+
+        public Universe(IRuleSet[] rules) {
+            Ruleset = rules;
+            Elements = new List<UniverseObject>();
+        }
+
+        public void AddMarket(string market) {
+            if (!Elements.Any(x => x.Name.Equals(market)))
+                Elements.Add(new UniverseObject(market, OpenMarket(market), Ruleset));
+        }
+
+        public void AddMarket(List<string> markets) {
+            for (int i = 0; i < markets.Count; i++)
+                AddMarket(markets[i]);
+        }
+
+        private Market OpenMarket(string market) {
+            if (DataLoader.CheckDataType(market).Equals(typeof(SessionData)))
+                return Market.MarketBuilder.CreateMarket(DataLoader.LoadConsolidatedData(market));
+            else
+                return Market.MarketBuilder.CreateMarket(DataLoader.LoadBidAskData(market));
+        }
+
+    }
+}
