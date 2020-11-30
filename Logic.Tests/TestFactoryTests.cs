@@ -27,7 +27,7 @@ namespace Logic.Tests
         [Fact]
         private void ShouldGenerateOneFixedStopTestLong() {
             var longSide = TestFactory.GenerateFixedStopTargetExitTest
-                (_strat, _market, new FixedStopTargetExitTestOptions(0.15, 0.15, 0, 0, MarketSide.Bull));
+                (_strat, _market, new TestFactory.FixedStopTargetExitTestOptions(0.15, 0.15, 0, 0, MarketSide.Bull));
 
             Assert.Single(longSide);
         }
@@ -35,7 +35,7 @@ namespace Logic.Tests
         [Fact]
         private void ShouldGenerateCorrectStopTargetsLong() {
             var longSide = TestFactory.GenerateFixedStopTargetExitTest
-                (_strat, _market, new FixedStopTargetExitTestOptions(0.15, 0.15, 0, 0, MarketSide.Bull));
+                (_strat, _market, new TestFactory.FixedStopTargetExitTestOptions(0.15, 0.15, 0, 0, MarketSide.Bull));
 
             Assert.Equal(1.15, ((FixedStopTargetExitTest)longSide.First()).TargetDistance);
             Assert.Equal(0.85, ((FixedStopTargetExitTest)longSide.First()).StopDistance);
@@ -44,7 +44,7 @@ namespace Logic.Tests
         [Fact]
         private void ShouldGenerateOneFixedStopTestShort() {
             var shorts = TestFactory.GenerateFixedStopTargetExitTest
-                (_strat, _market, new FixedStopTargetExitTestOptions(0.15, 0.15, 0.15, 0, MarketSide.Bear));
+                (_strat, _market, new TestFactory.FixedStopTargetExitTestOptions(0.15, 0.15, 0.15, 0, MarketSide.Bear));
 
             Assert.Single(shorts);
         }
@@ -52,7 +52,7 @@ namespace Logic.Tests
         [Fact]
         private void ShouldGenerateCorrectStopTargetsShort() {
             var shorts = TestFactory.GenerateFixedStopTargetExitTest
-                (_strat, _market, new FixedStopTargetExitTestOptions(0.15, 0.15, 0, 0, MarketSide.Bear));
+                (_strat, _market, new TestFactory.FixedStopTargetExitTestOptions(0.15, 0.15, 0, 0, MarketSide.Bear));
 
             Assert.Equal(0.85, ((FixedStopTargetExitTest)shorts.First()).TargetDistance);
             Assert.Equal(1.15, ((FixedStopTargetExitTest)shorts.First()).StopDistance);
@@ -61,7 +61,7 @@ namespace Logic.Tests
         [Fact]
         private void ShouldGenerateFourFixedStopTestLong() {
             var longSide = TestFactory.GenerateFixedStopTargetExitTest
-                (_strat, _market, new FixedStopTargetExitTestOptions(0.15, 0.15, 0.15, 1, MarketSide.Bull));
+                (_strat, _market, new TestFactory.FixedStopTargetExitTestOptions(0.15, 0.15, 0.15, 1, MarketSide.Bull));
 
             Assert.Equal(4,longSide.Count);
             Assert.Equal(1.15, ((FixedStopTargetExitTest)longSide[0]).TargetDistance);
@@ -77,7 +77,7 @@ namespace Logic.Tests
         [Fact]
         private void ShouldGenerateFourFixedStopTestShort() {
             var longSide = TestFactory.GenerateFixedStopTargetExitTest
-                (_strat, _market, new FixedStopTargetExitTestOptions(0.15, 0.15, 0.15, 1, MarketSide.Bear));
+                (_strat, _market, new TestFactory.FixedStopTargetExitTestOptions(0.15, 0.15, 0.15, 1, MarketSide.Bear));
 
             Assert.Equal(4, longSide.Count);
             Assert.Equal(0.85, ((FixedStopTargetExitTest)longSide[0]).TargetDistance);
@@ -93,7 +93,7 @@ namespace Logic.Tests
         [Fact]
         private void ShouldGenerateTwelveFixedStopTestLong() {
             var longSide = TestFactory.GenerateFixedStopTargetExitTest
-                (_strat, _market, new FixedStopTargetExitTestOptions(0.15, 0.15, 0.6, 4, MarketSide.Bull));
+                (_strat, _market, new TestFactory.FixedStopTargetExitTestOptions(0.15, 0.15, 0.6, 4, MarketSide.Bull));
 
             Assert.Equal(25, longSide.Count);
             Assert.Equal(1.15, ((FixedStopTargetExitTest)longSide[0]).TargetDistance);
@@ -154,8 +154,8 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldGenerateTwelveFixedStopTestShort() {
-            var shortSide = TestFactory.GenerateFixedStopTargetExitTest
-                (_strat, _market, new FixedStopTargetExitTestOptions(0.15, 0.15, 0.6, 4, MarketSide.Bear));
+            var shortSide = new  TestFactory.FixedStopTargetExitTestOptions(0.15, 0.15, 0.6, 4));
+            shortSide.Run()
 
             Assert.Equal(25, shortSide.Count);
             Assert.Equal(0.85, ((FixedStopTargetExitTest)shortSide[0]).TargetDistance);
@@ -213,5 +213,7 @@ namespace Logic.Tests
             Assert.Equal(0.25, ((FixedStopTargetExitTest)shortSide[24]).TargetDistance);
             Assert.Equal(1.75, ((FixedStopTargetExitTest)shortSide[24]).StopDistance);
         }
+
+
     }
 }
