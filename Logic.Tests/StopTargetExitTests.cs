@@ -20,14 +20,11 @@ namespace Logic.Tests
                 new DummyEntries(2, FSTETestsBars.DataLong.Length)
             }, market);
 
-            var longSide = TestFactory.GenerateFixedStopTargetExitTest
-                (strat, market, new FixedStopTargetExitTestOptions(0.15, 0.15, 0.15, 1, MarketSide.Bull));
-            var shortSide = TestFactory.GenerateFixedStopTargetExitTest
-                (strat, market,
-                new FixedStopTargetExitTestOptions(0.15, 0.15, 0.15, 1, MarketSide.Bear));
+            var longSide = new TestFactory.FixedStopTargetExitTestOptions(0.15, 0.15, 0.15, 1).Run(strat, market, MarketSide.Bull);
+            var shortSide = new TestFactory.FixedStopTargetExitTestOptions(0.15, 0.15, 0.15, 1).Run(strat, market, MarketSide.Bear);
 
             myTests = new List<ITest[]>();
-            for (int i = 0; i < longSide.Count; i++)
+            for (int i = 0; i < longSide.Length; i++)
                 myTests.Add(new[]
                 {
                     longSide[i], 

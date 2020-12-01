@@ -1,10 +1,9 @@
-using System.Collections.Generic;
+using DataStructures;
 using DataStructures.StatsTools;
+using Logic.Metrics;
 using RuleSets;
 using RuleSets.Entry;
 using System.Linq;
-using DataStructures;
-using Logic.Metrics;
 using Xunit;
 
 namespace Thought.Tests
@@ -12,8 +11,9 @@ namespace Thought.Tests
     public class UniverseBuilderTests
     {
         private readonly Universe _universe;
+
         public UniverseBuilderTests() {
-            _universe = new Universe(new IRuleSet[2] { new DummyEntries(2, 40), new DummyExits(3, 40) });
+            _universe = new Universe(new IRuleSet[2] {new DummyEntries(2, 40), new DummyExits(3, 40)});
             _universe.AddMarket(Markets.futures_wheat_5);
             _universe.AddMarket(Markets.aud_usd_5);
             _universe.AddMarket(Markets.ASX20());
@@ -44,6 +44,7 @@ namespace Thought.Tests
             foreach (var t in t1.LongTests) {
                 Assert.True(t.Stats.AverageExpectancy != 0);
                 Assert.True(t.Stats.MedianExpectancy != 0);
+                Assert.True(!double.IsNaN(t.Stats.WinPercent));
             }
         }
 
@@ -53,6 +54,7 @@ namespace Thought.Tests
             foreach (var t in t1.ShortTests) {
                 Assert.True(t.Stats.AverageExpectancy != 0);
                 Assert.True(t.Stats.MedianExpectancy != 0);
+                Assert.True(!double.IsNaN(t.Stats.WinPercent));
             }
         }
 
@@ -62,6 +64,7 @@ namespace Thought.Tests
             foreach (var t in t1.LongTests) {
                 Assert.True(t.Stats.AverageExpectancy != 0);
                 Assert.True(t.Stats.MedianExpectancy != 0);
+                Assert.True(!double.IsNaN(t.Stats.WinPercent));
             }
         }
 
@@ -71,6 +74,7 @@ namespace Thought.Tests
             foreach (var t in t1.ShortTests) {
                 Assert.True(t.Stats.AverageExpectancy != 0);
                 Assert.True(t.Stats.MedianExpectancy != 0);
+                Assert.True(!double.IsNaN(t.Stats.WinPercent));
             }
         }
 
@@ -80,6 +84,7 @@ namespace Thought.Tests
             foreach (var t in t1.LongTests) {
                 Assert.True(t.Stats.AverageExpectancy != 0);
                 Assert.True(t.Stats.MedianExpectancy != 0);
+                Assert.True(!double.IsNaN(t.Stats.WinPercent));
             }
         }
 
@@ -89,22 +94,22 @@ namespace Thought.Tests
             foreach (var t in t1.ShortTests) {
                 Assert.True(t.Stats.AverageExpectancy != 0);
                 Assert.True(t.Stats.MedianExpectancy != 0);
+                Assert.True(!double.IsNaN(t.Stats.WinPercent));
             }
         }
 
         private UniverseTest[] FBETests;
         private UniverseTest[] FSTETests;
         private UniverseTest[] RandomExitests;
-        public void TestTheUniverse(Universe myUniverse)
-        {
+
+        public void TestTheUniverse(Universe myUniverse) {
             RunFixedBarTests(myUniverse);
         }
 
-        private void RunFixedBarTests(Universe myUniverse)
-        {
-            FBETests = IterateTests(myUniverse,new TestFactory.FixedBarExitTestOptions(2, 6, 2));
-            FBETests = IterateTests(myUniverse,new TestFactory.FixedStopTargetExitTestOptions(2, 6, 2));
-            FBETests = IterateTests(myUniverse,new TestFactory.RandomExitTestOptions());
+        private void RunFixedBarTests(Universe myUniverse) {
+            FBETests = IterateTests(myUniverse, new TestFactory.FixedBarExitTestOptions(2, 6, 2));
+            FSTETests = IterateTests(myUniverse, new TestFactory.FixedStopTargetExitTestOptions(0.04, 0.1, 0.05, 1));
+            RandomExitests = IterateTests(myUniverse, new TestFactory.RandomExitTestOptions());
 
         }
 

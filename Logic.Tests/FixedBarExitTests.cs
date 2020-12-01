@@ -24,10 +24,10 @@ namespace Logic.Tests
         }
 
         private void PrepareTests(Strategy strat, Market market) {
-            var longSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(2, 4, 2, MarketSide.Bull));
-            var shortSide = TestFactory.GenerateFixedBarExitTest(strat, market, new FixedBarExitTestOptions(2, 4, 2, MarketSide.Bear));
+            var longSide = new TestFactory.FixedBarExitTestOptions(2, 4, 2).Run(strat, market, MarketSide.Bull);
+            var shortSide = new TestFactory.FixedBarExitTestOptions(2, 4, 2).Run(strat, market, MarketSide.Bear);
             myTests = new List<ITest[]>();
-            for (int i = 0; i < longSide.Count; i++)
+            for (int i = 0; i < longSide.Length; i++)
                 myTests.Add(new[] {longSide[i], shortSide[i]});
         }
 

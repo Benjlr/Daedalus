@@ -28,20 +28,21 @@ namespace DataStructures
 
 
     public class ArrayBuilder{
-        private Stack<double> _results { get; set; }
+        private List<double> _results { get; set; }
         private int _index { get; set; }
 
         public void Init(int start) {
-            _results = new Stack<double>();
+            _results = new List<double>();
             _index = start;
         }
 
         public void AddResult(double result) {
-            _results.Push(result);
+            _results.Add(result);
         }
 
         public Trade CompileTrade() {
-            return new Trade(_results.Reverse().ToArray(), _index);
+            _results.Reverse();
+            return new Trade(_results.ToArray(), _index);
         }
     }
 }

@@ -15,13 +15,13 @@ namespace Logic.StrategyOptimiser
         private Strategy _baseStrategy { get; set; }
         private MarketSide _side { get; set; }
 
-        private FixedStopTargetExitTestOptions _options { get; set; }
+        private TestFactory.FixedStopTargetExitTestOptions _options { get; set; }
 
         public FixedStopTargetStrategyOptimiser(Market market, Strategy strat, MarketSide side)
         {
             _baseMarket = market;
             _baseStrategy = strat;
-            _options = new FixedStopTargetExitTestOptions(0.001, 0.001, 0.007, 12, side);
+            _options = new TestFactory.FixedStopTargetExitTestOptions(0.001, 0.001, 0.007, 12);
         }
 
         public FixedStopTargetExitOptimisation Optimise(int lastKnownData, int lookBack)
@@ -29,7 +29,7 @@ namespace Logic.StrategyOptimiser
             var slicedMarket = _baseMarket.Slice(lastKnownData - lookBack+1, lastKnownData);
             var slicedStrat = _baseStrategy.Slice(lastKnownData - lookBack+1, lastKnownData);
 
-            _myTests = TestFactory.GenerateFixedStopTargetExitTest(slicedStrat, slicedMarket, _options);
+            _myTests = _options.Run(slicedStrat,slicedMarket, _side).ToList();
 
             var topTests = _myTests.Select(x => (FixedStopTargetExitTest) x).OrderByDescending(x => x.Stats.AverageExpectancy).Take((int)(_myTests.Count * 0.05)).ToList();
 

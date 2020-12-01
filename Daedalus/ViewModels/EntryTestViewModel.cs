@@ -119,18 +119,22 @@ namespace Daedalus.ViewModels
     public class FixedBarExitViewmodel : EntryTestViewModel
     {
         protected override List<ITest[]> GenerateEntryTests() {
-            var fixedBarExitOptions = new FixedBarExitTestOptions(25, 220, 1, MarketSide.Bull);
+            var fixedBarExitOptions = new TestFactory.FixedBarExitTestOptions(25, 220, 1);
             LoadStatus.UpdateNameAndTotal($"Generating Long Fixed Bar Exit Tests", 
                 (fixedBarExitOptions.MaximumExitPeriod - fixedBarExitOptions.MinimumExitPeriod) / fixedBarExitOptions.Increment);
-            var longSide = TestFactory.GenerateFixedBarExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, fixedBarExitOptions, LoadStatus.UpdateCount);
-            fixedBarExitOptions = new FixedBarExitTestOptions(25, 220, 1, MarketSide.Bear);
+
+            var longSide = fixedBarExitOptions.Run(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, MarketSide.Bull);
+
 
             LoadStatus.UpdateNameAndTotal($"Generating Short Fixed Bar Exit Tests",
                 (fixedBarExitOptions.MaximumExitPeriod - fixedBarExitOptions.MinimumExitPeriod ) / fixedBarExitOptions.Increment);
-            var shortSide = TestFactory.GenerateFixedBarExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, fixedBarExitOptions, LoadStatus.UpdateCount);
+
+            var shortSide = fixedBarExitOptions.Run(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, MarketSide.Bear);
+
 
             var retval = new List<ITest[]>();
-            for (int i = 0; i < longSide.Count; i++)
+
+            for (int i = 0; i < longSide.Length; i++)
                 retval.Add(new []{longSide[i], shortSide[i]});
 
             return retval;
@@ -141,17 +145,15 @@ namespace Daedalus.ViewModels
     {
         protected override List<ITest[]> GenerateEntryTests()        {
             LoadStatus.UpdateNameAndTotal($"Generating Long Random Exit Tests", 200);
-            var longSide = TestFactory.GenerateRandomExitTests( 
-                        ModelSingleton.Instance.MyStrategy, 
-                        ModelSingleton.Instance.Mymarket, MarketSide.Bull ,200, 200, LoadStatus.UpdateCount);
+            var longSide = new TestFactory.RandomExitTestOptions(200,200).Run(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, MarketSide.Bull);
+                
 
             LoadStatus.UpdateNameAndTotal($"Generating Short Random Exit Tests", 200);
-            var shortSide = TestFactory.GenerateRandomExitTests(
-                ModelSingleton.Instance.MyStrategy,
-                ModelSingleton.Instance.Mymarket, MarketSide.Bear, 200, 200, LoadStatus.UpdateCount);
+            var shortSide = new TestFactory.RandomExitTestOptions(200, 200).Run(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, MarketSide.Bear);
+
 
             var retval = new List<ITest[]>();
-            for (int i = 0; i < longSide.Count; i++)
+            for (int i = 0; i < longSide.Length; i++)
                 retval.Add(new[] { longSide[i], shortSide[i] });
 
             return retval;
@@ -161,18 +163,15 @@ namespace Daedalus.ViewModels
     public class StopTargetExitViewmodel : EntryTestViewModel
     {
         protected override List<ITest[]> GenerateEntryTests()        {
-            var stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.001, 0.001, 0.005, 15, MarketSide.Bull);
+            var stopTargetExitOptions = new TestFactory.FixedStopTargetExitTestOptions(0.001, 0.001, 0.005, 15);
             LoadStatus.UpdateNameAndTotal($"Generating Long Stop Target Exit Tests", stopTargetExitOptions.Divisions * stopTargetExitOptions.Divisions);
-            var longSide = TestFactory.GenerateFixedStopTargetExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, 
-                stopTargetExitOptions, LoadStatus.UpdateCount);
+            var longSide = stopTargetExitOptions.Run(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, MarketSide.Bull);
 
-            stopTargetExitOptions = new FixedStopTargetExitTestOptions(0.001, 0.001, 0.005, 15, MarketSide.Bear);
             LoadStatus.UpdateNameAndTotal($"Generating Short Stop Target Exit Tests", stopTargetExitOptions.Divisions * stopTargetExitOptions.Divisions);
-            var shortSide = TestFactory.GenerateFixedStopTargetExitTest(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket,
-                stopTargetExitOptions, LoadStatus.UpdateCount);
-
+            var shortSide = stopTargetExitOptions.Run(ModelSingleton.Instance.MyStrategy, ModelSingleton.Instance.Mymarket, MarketSide.Bear);
+            
             var retval = new List<ITest[]>();
-            for (int i = 0; i < longSide.Count; i++)
+            for (int i = 0; i < longSide.Length; i++)
                 retval.Add(new[] { longSide[i], shortSide[i] });
 
             return retval;

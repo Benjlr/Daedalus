@@ -48,6 +48,9 @@ namespace DataStructures.StatsTools
         private void CalculateExpectancy() {
             AverageExpectancy = AvgGain * WinPercent + (AvgLoss * (1 - WinPercent));
             MedianExpectancy = MedianGain * WinPercent + (MedianLoss * (1 - WinPercent));
+            if (double.IsNaN(AverageExpectancy)) {
+                string b = "";
+            }
         }
 
         private void CalculateSharpeRatio(List<double> results) {
