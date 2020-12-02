@@ -33,7 +33,7 @@ namespace Logic.Metrics.EntryTests
             GenerateExit(i, data.Length -1);
             _currentTrade = new LongTradeGenerator(
                 i, new TradePrices(ExitPrices.NoStopTarget(), data[i].Open_Ask), AddTrade);
-            for (int j = i; j <= _endIndex + i && j < data.Length; j++)
+            for (int j = i; j < _endIndex + i && j < data.Length; j++)
                 _currentTrade.Continue(data[j]);
             _currentTrade.Exit(data[_endIndex + i].Open_Bid);
         }
@@ -49,9 +49,9 @@ namespace Logic.Metrics.EntryTests
             GenerateExit(i, data.Length - 1);
             _currentTrade = new ShortTradeGenerator(
                 i, new TradePrices(ExitPrices.NoStopTarget(), data[i].Open_Bid), AddTrade);
-            for (int j = i; j <= _endIndex + i && j < data.Length; j++)
+            for (int j = i; j < _endIndex + i && j < data.Length; j++)
                 _currentTrade.Continue(data[j]);
-            _currentTrade.Exit(data[_endIndex + i].Open_Bid);
+            _currentTrade.Exit(data[_endIndex + i].Open_Ask);
         }
 
         public ShortRandomExitTest(int maxLength) : base(maxLength)

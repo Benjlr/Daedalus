@@ -8,16 +8,33 @@ using Xunit;
 
 namespace Thought.Tests
 {
+
+
     public class UniverseBuilderTests
     {
-        private readonly Universe _universe;
+        private Universe _universe;
+        private UniverseTest[] _fbeTests;
+        private UniverseTest[] _fsteTests;
+        private UniverseTest[] _randomExitests;
+        private UniverseTestFactory _testFactory;
 
         public UniverseBuilderTests() {
+            BuildUniverse();
+            PrepareAndRunTests();
+        }
+
+        private void BuildUniverse() {
             _universe = new Universe(new IRuleSet[2] {new DummyEntries(2, 40), new DummyExits(3, 40)});
             _universe.AddMarket(Markets.futures_wheat_5);
             _universe.AddMarket(Markets.aud_usd_5);
             _universe.AddMarket(Markets.ASX20());
-            TestTheUniverse(_universe);
+        }
+
+        private void PrepareAndRunTests() {
+            _testFactory = new UniverseTestFactory();
+            _fbeTests = _testFactory.RunTests(_universe, new TestFactory.FixedBarExitTestOptions(2, 10, 1));
+            _fsteTests = _testFactory.RunTests(_universe, new TestFactory.FixedStopTargetExitTestOptions(0.05, 0.05, 0.05, 3));
+            _randomExitests = _testFactory.RunTests(_universe, new TestFactory.RandomExitTestOptions(5, 10));
         }
 
         [Fact]
@@ -33,105 +50,75 @@ namespace Thought.Tests
 
         [Fact]
         private void ShouldRunTestsOnUniverse() {
-            Assert.Equal(22, FBETests.Length);
-            Assert.Equal(22, RandomExitests.Length);
-            Assert.Equal(22, FSTETests.Length);
+            Assert.Equal(22, _fbeTests.Length);
+            Assert.Equal(22, _randomExitests.Length);
+            Assert.Equal(22, _fsteTests.Length);
         }
 
         [Fact]
         private void ShouldGenerateLongFixedBarTests() {
-            foreach (var t1 in FBETests)
-            foreach (var t in t1.LongTests) {
-                Assert.True(t.Stats.AverageExpectancy != 0);
-                Assert.True(t.Stats.MedianExpectancy != 0);
-                Assert.True(!double.IsNaN(t.Stats.WinPercent));
-            }
+            foreach (var t1 in _fbeTests)
+            foreach (var t in t1.LongTests)
+                AssertTrades(t);
         }
 
         [Fact]
         private void ShouldGenerateShortFixedTests() {
-            foreach (var t1 in FBETests)
-            foreach (var t in t1.ShortTests) {
-                Assert.True(t.Stats.AverageExpectancy != 0);
-                Assert.True(t.Stats.MedianExpectancy != 0);
-                Assert.True(!double.IsNaN(t.Stats.WinPercent));
-            }
+            foreach (var t1 in _fbeTests)
+            foreach (var t in t1.ShortTests)
+                AssertTrades(t);
         }
 
         [Fact]
         private void ShouldGenerateLongFixedStopTargetBarTests() {
-            foreach (var t1 in FSTETests)
-            foreach (var t in t1.LongTests) {
-                Assert.True(t.Stats.AverageExpectancy != 0);
-                Assert.True(t.Stats.MedianExpectancy != 0);
-                Assert.True(!double.IsNaN(t.Stats.WinPercent));
-            }
+            foreach (var t1 in _fsteTests)
+            foreach (var t in t1.LongTests)
+                AssertTrades(t);
         }
 
         [Fact]
         private void ShouldGenerateShortFixedStopTargetTests() {
-            foreach (var t1 in FSTETests)
-            foreach (var t in t1.ShortTests) {
-                Assert.True(t.Stats.AverageExpectancy != 0);
-                Assert.True(t.Stats.MedianExpectancy != 0);
-                Assert.True(!double.IsNaN(t.Stats.WinPercent));
-            }
+            foreach (var t1 in _fsteTests)
+            foreach (var t in t1.ShortTests)
+                AssertTrades(t);
         }
 
         [Fact]
         private void ShouldGenerateLongRandomExitTests() {
-            foreach (var t1 in RandomExitests)
-            foreach (var t in t1.LongTests) {
-                Assert.True(t.Stats.AverageExpectancy != 0);
-                Assert.True(t.Stats.MedianExpectancy != 0);
-                Assert.True(!double.IsNaN(t.Stats.WinPercent));
-            }
+            foreach (var t1 in _randomExitests)
+            foreach (var t in t1.LongTests)
+                AssertTrades(t);
         }
 
         [Fact]
         private void ShouldGenerateShortRandomExitTests() {
-            foreach (var t1 in RandomExitests)
-            foreach (var t in t1.ShortTests) {
-                Assert.True(t.Stats.AverageExpectancy != 0);
-                Assert.True(t.Stats.MedianExpectancy != 0);
-                Assert.True(!double.IsNaN(t.Stats.WinPercent));
-            }
+            foreach (var t1 in _randomExitests)
+            foreach (var t in t1.ShortTests) 
+                AssertTrades(t);
         }
 
-        private UniverseTest[] FBETests;
-        private UniverseTest[] FSTETests;
-        private UniverseTest[] RandomExitests;
-
-        public void TestTheUniverse(Universe myUniverse) {
-            RunFixedBarTests(myUniverse);
+        private void AssertTrades(ITest t) {
+            AssertAvgExp(t);
+            AssertAvgMed(t);
+            AssertResults(t);
         }
 
-        private void RunFixedBarTests(Universe myUniverse) {
-            FBETests = IterateTests(myUniverse, new TestFactory.FixedBarExitTestOptions(2, 6, 2));
-            FSTETests = IterateTests(myUniverse, new TestFactory.FixedStopTargetExitTestOptions(0.04, 0.1, 0.05, 1));
-            RandomExitests = IterateTests(myUniverse, new TestFactory.RandomExitTestOptions());
-
+        private void AssertResults(ITest t) {
+            Assert.True(t.Trades.Count > 0);
+            Assert.True(!t.Trades.All(x => x.Result.Equals(0)));
+            Assert.True(!double.IsNaN(t.Stats.WinPercent));
         }
 
-        private UniverseTest[] IterateTests(Universe myUniverse, TestOption options) {
-            var results = new UniverseTest[myUniverse.Elements.Count];
-            for (int i = 0; i < myUniverse.Elements.Count; i++)
-                results[i] = new UniverseTest(myUniverse.Elements[i], options);
-            return results;
+        private void AssertAvgMed(ITest t) {
+            var medExp = t.Stats.MedianExpectancy != 0 && !double.IsNaN(t.Stats.MedianExpectancy);
+            var medGainLoss = !double.IsNaN(t.Stats.MedianExpectancy) && (t.Stats.MedianGain > 0 & t.Stats.MedianLoss < 0);
+            Assert.True(medExp || medGainLoss);
         }
 
-        public readonly struct UniverseTest
-        {
-            public string Name { get; }
-            public ITest[] LongTests { get; }
-            public ITest[] ShortTests { get; }
-
-            public UniverseTest(UniverseObject universeIter, TestOption option) {
-                Name = universeIter.Name;
-                LongTests = option.Run(universeIter.Strategy, universeIter.MarketData, MarketSide.Bull);
-                ShortTests = option.Run(universeIter.Strategy, universeIter.MarketData, MarketSide.Bear);
-            }
+        private void AssertAvgExp(ITest t) {
+            var avgExp = t.Stats.AverageExpectancy != 0 && !double.IsNaN(t.Stats.AverageExpectancy);
+            var avgGainLoss = !double.IsNaN(t.Stats.AverageExpectancy) && (t.Stats.AvgGain > 0 & t.Stats.AvgLoss < 0);
+            Assert.True(avgExp || avgGainLoss);
         }
-
     }
 }

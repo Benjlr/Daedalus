@@ -19,7 +19,7 @@ namespace Logic.Metrics
     {
         public static Action progress;
 
-        public readonly struct FixedBarExitTestOptions : TestOption
+        public class FixedBarExitTestOptions : TestOption
         {
             public int MinimumExitPeriod { get; }
             public int MaximumExitPeriod { get; }
@@ -36,7 +36,7 @@ namespace Logic.Metrics
             }
         }
 
-        public readonly struct FixedStopTargetExitTestOptions : TestOption
+        public class FixedStopTargetExitTestOptions : TestOption
         {
             public double MinimumStop { get; }
             public double MinimumTarget { get; }
@@ -59,10 +59,10 @@ namespace Logic.Metrics
             }
         }
 
-        public readonly struct RandomExitTestOptions : TestOption
+        public class RandomExitTestOptions : TestOption
         {
-            public int TestCount { get; }
-            public int MaxBars { get; }
+            public int TestCount { get; } 
+            public int MaxBars { get; } 
 
             public RandomExitTestOptions(int testCount, int maxLength) {
                 TestCount = testCount;

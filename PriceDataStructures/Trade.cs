@@ -41,7 +41,6 @@ namespace DataStructures
         }
 
         public Trade CompileTrade() {
-            _results.Reverse();
             return new Trade(_results.ToArray(), _index);
         }
     }

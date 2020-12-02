@@ -1,6 +1,7 @@
 ﻿using DataStructures;
 using RuleSets;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Thought
@@ -17,7 +18,7 @@ namespace Thought
 
         public void AddMarket(string market) {
             if (!Elements.Any(x => x.Name.Equals(market)))
-                Elements.Add(new UniverseObject(market, OpenMarket(market), Ruleset));
+                Elements.Add(new UniverseObject(Path.GetFileNameWithoutExtension(market), OpenMarket(market), Ruleset));
         }
 
         public void AddMarket(List<string> markets) {
@@ -26,10 +27,9 @@ namespace Thought
         }
 
         private Market OpenMarket(string market) {
-            if (DataLoader.CheckDataType(market).Equals(typeof(SessionData)))
+            if (DataLoader.CheckDataType(market) == typeof(SessionData))
                 return Market.MarketBuilder.CreateMarket(DataLoader.LoadConsolidatedData(market));
-            else
-                return Market.MarketBuilder.CreateMarket(DataLoader.LoadBidAskData(market));
+            return Market.MarketBuilder.CreateMarket(DataLoader.LoadBidAskData(market));
         }
 
     }
