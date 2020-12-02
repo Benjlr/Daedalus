@@ -1,5 +1,4 @@
 ﻿using DataStructures;
-using Logic.Metrics.CoreTests;
 using Logic.Metrics.EntryTests;
 using System;
 using System.Collections.Concurrent;
@@ -137,22 +136,6 @@ namespace Logic.Metrics
             for (int i = 0; i <= options.TestCount; i++)
                 retval.Add(i, RandomExitTest.PrepareTest(longShort, options.MaxBars));
             return retval;
-        }
-
-
-
-        public static RangeTest GenerateRangeTest(int rangesToTest, Strategy strat, Market market)
-        {
-            RangeTest retval = new RangeTest(rangesToTest);
-            retval.Run(market.RawData, strat, 10000, 5);
-            return retval;
-        }
-
-        public static MonteCarloTest GenerateMonteCarloTest(int iteration, Strategy strat, Market market, double initialCapital, double dollarsPerPoint)
-        {
-            var mt = new MonteCarloTest();
-            mt.Run(strat,market,initialCapital,dollarsPerPoint, iteration);
-            return mt;
         }
     }
 }

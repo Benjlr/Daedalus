@@ -11,13 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="InvalidMarketData.txt">
+    <Content Include="TextData\InvalidMarketData.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestMarketBidSession.txt">
+    <Content Include="TextData\TestMarketBidSession.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestMarketBidask.txt">
+    <Content Include="TextData\TestMarketBidask.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

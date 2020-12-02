@@ -15,7 +15,7 @@ namespace DataStructures.Tests
         }
         [Fact]
         private void ShouldSliceMarket() {
-            Market myMarket = Market.MarketBuilder.CreateMarket(DataLoader.LoadConsolidatedData(GetData("TestMarketBidSession.txt")));
+            Market myMarket = Market.MarketBuilder.CreateMarket(DataLoader.LoadConsolidatedData(GetData("TextData\\TestMarketBidSession.txt")));
             var newMarket = myMarket.Slice(20, 40);
             for (int i = 20; i <= 40; i++) {
                 Assert.Equal(myMarket.RawData[i], newMarket.RawData[i-20]);  

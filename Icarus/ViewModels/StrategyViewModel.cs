@@ -1,5 +1,5 @@
-﻿using Logic;
-using Logic.StrategyRunners;
+﻿using DataStructures.StatsTools;
+using Logic;
 using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
@@ -7,11 +7,9 @@ using OxyPlot.Series;
 using RuleSets;
 using RuleSets.Entry;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using DataStructures.StatsTools;
 using ViewCommon.Models;
 using ViewCommon.Utils;
 
@@ -49,9 +47,9 @@ namespace Icarus.ViewModels
             MyResults.Annotations.Add(new LineAnnotation() { Type = LineAnnotationType.Vertical, X = 0 });
         }
 
-        public void Update(ResultsContainer container) {
+        public void Update() {
             Application.Current.Dispatcher.Invoke(() => {
-                var resultsp = HistogramTools.MakeCumulative(container.Returns);
+                var resultsp = HistogramTools.MakeCumulative(new List<double>());
                 for (int i = mySeries.Points.Count; i < resultsp.Count; i++) 
                     mySeries.Points.Add(new DataPoint(mySeries.Points.Count+1, resultsp[i]));
                 MyResults.InvalidatePlot(true);
@@ -66,8 +64,7 @@ namespace Icarus.ViewModels
         private void Dowork(object callback) {
             var stratOne = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[] {new ATRContraction()}, ModelSingleton.Instance.Mymarket);
 
-            var runner = new FixedStopTargetExitStrategyRunner(ModelSingleton.Instance.Mymarket, new List<Strategy>(){stratOne});
-            runner.ExecuteRunner(Update);
+
         }
 
     }

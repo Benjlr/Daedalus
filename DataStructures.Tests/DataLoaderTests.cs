@@ -16,8 +16,8 @@ namespace DataStructures.Tests
 
         [Fact]
         private void ShouldLoadMarketFromBidAsktxt() {
-            var myData = File.ReadAllLines(GetData("TestMarketBidask.txt"));
-            BidAskData[] myMarket = DataLoader.LoadBidAskData(GetData("TestMarketBidask.txt"));
+            var myData = File.ReadAllLines(GetData("TextData\\TestMarketBidask.txt"));
+            BidAskData[] myMarket = DataLoader.LoadBidAskData(GetData("TextData\\TestMarketBidask.txt"));
 
             for (int i = 0; i < myMarket.Length; i++) {
                 var row = myData[i].Split(',');
@@ -36,8 +36,8 @@ namespace DataStructures.Tests
 
         [Fact]
         private void ShouldLoadMarketFromSessiontxt() {
-            var myData = File.ReadAllLines(GetData("TestMarketBidSession.txt"));
-            SessionData[] myMarket = DataLoader.LoadConsolidatedData(GetData("TestMarketBidSession.txt"));
+            var myData = File.ReadAllLines(GetData("TextData\\TestMarketBidSession.txt"));
+            SessionData[] myMarket = DataLoader.LoadConsolidatedData(GetData("TextData\\TestMarketBidSession.txt"));
             for (int i = 0; i < myMarket.Length; i++) {
                 var row = myData[i].Split(',');
                 Assert.Equal(DateTime.ParseExact(row[0], "yyyy/MM/dd", null), myMarket[i].CloseDate);
@@ -51,13 +51,13 @@ namespace DataStructures.Tests
 
         [Fact]
         private void ShouldReturnDataType() {
-            Assert.IsType(DataLoader.CheckDataType(GetData("TestMarketBidSession.txt")), new SessionData());
-            Assert.IsType(DataLoader.CheckDataType(GetData("TestMarketBidask.txt")), new BidAskData());
+            Assert.IsType(DataLoader.CheckDataType(GetData("TextData\\TestMarketBidSession.txt")), new SessionData());
+            Assert.IsType(DataLoader.CheckDataType(GetData("TextData\\TestMarketBidask.txt")), new BidAskData());
         }
 
         [Fact]
         private void ShouldThrowForWrongData() {
-            Assert.Throws<Exception>(() => DataLoader.CheckDataType(GetData("InvalidMarketData.txt")));
+            Assert.Throws<Exception>(() => DataLoader.CheckDataType(GetData("TextData\\InvalidMarketData.txt")));
         }
     }
 }

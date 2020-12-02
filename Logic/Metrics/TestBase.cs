@@ -34,8 +34,7 @@ namespace Logic.Metrics
         protected void AddTrade(Trade myTrade) {
             Trades.Add(myTrade);
         }
-
-
+        
         protected abstract void SetResult(BidAskData[] data, int i);
 
         private void GenerateStats() {
