@@ -1,4 +1,3 @@
-using DataStructures;
 using DataStructures.StatsTools;
 using Logic.Metrics;
 using RuleSets;
@@ -9,22 +8,21 @@ using Xunit;
 namespace Thought.Tests
 {
 
-
-    public class UniverseBuilderTests
+    public class UniverseBuilderTestsFixture
     {
-        private Universe _universe;
-        private UniverseTest[] _fbeTests;
-        private UniverseTest[] _fsteTests;
-        private UniverseTest[] _randomExitests;
-        private UniverseTestFactory _testFactory;
+        public Universe _universe { get; private set; }
+        public UniverseTest[] _fbeTests { get; private set; }
+        public UniverseTest[] _fsteTests { get; private set; }
+        public UniverseTest[] _randomExitests { get; private set; }
+        private UniverseTestFactory _testFactory { get; set; }
 
-        public UniverseBuilderTests() {
+        public UniverseBuilderTestsFixture() {
             BuildUniverse();
             PrepareAndRunTests();
         }
 
         private void BuildUniverse() {
-            _universe = new Universe(new IRuleSet[2] {new DummyEntries(2, 40), new DummyExits(3, 40)});
+            _universe = new Universe(new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 1000) });
             _universe.AddMarket(Markets.futures_wheat_5);
             _universe.AddMarket(Markets.aud_usd_5);
             _universe.AddMarket(Markets.ASX20());
@@ -32,67 +30,81 @@ namespace Thought.Tests
 
         private void PrepareAndRunTests() {
             _testFactory = new UniverseTestFactory();
-            _fbeTests = _testFactory.RunTests(_universe, new TestFactory.FixedBarExitTestOptions(2, 10, 1));
-            _fsteTests = _testFactory.RunTests(_universe, new TestFactory.FixedStopTargetExitTestOptions(0.05, 0.05, 0.05, 3));
-            _randomExitests = _testFactory.RunTests(_universe, new TestFactory.RandomExitTestOptions(5, 10));
+            _fbeTests = _testFactory.RunTests(_universe, new TestFactory.FixedBarExitTestOptions(5, 40, 5));
+            _fsteTests = _testFactory.RunTests(_universe, new TestFactory.FixedStopTargetExitTestOptions(0.05, 0.05, 0.1, 15));
+            _randomExitests = _testFactory.RunTests(_universe, new TestFactory.RandomExitTestOptions(20, 15));
+        }
+    }
+
+    public class UniverseBuilderTests : IClassFixture<UniverseBuilderTestsFixture>
+    {
+        private readonly UniverseBuilderTestsFixture _fixture;
+
+        public UniverseBuilderTests(UniverseBuilderTestsFixture fixt) {
+            _fixture = fixt;
         }
 
         [Fact]
         private void ShouldOpenMultipleMarkets() {
-            Assert.Equal(22, _universe.Elements.Count);
+            Assert.Equal(22, _fixture._universe.Elements.Count);
         }
 
         [Fact]
         private void ShouldCalculateMultipleStrategyResults() {
-            Assert.True(_universe.Elements.All(x => x.Strategy.Entries.Any(y => y)));
-            Assert.True(_universe.Elements.All(x => x.Strategy.Exits.Any(y => y)));
+            Assert.True(_fixture._universe.Elements.All(x => x.Strategy.Entries.Any(y => y)));
+            Assert.True(_fixture._universe.Elements.All(x => x.Strategy.Exits.Any(y => y)));
+        }
+
+        [Fact]
+        private void ShouldReturnElement() {
+            Assert.True(true);
         }
 
         [Fact]
         private void ShouldRunTestsOnUniverse() {
-            Assert.Equal(22, _fbeTests.Length);
-            Assert.Equal(22, _randomExitests.Length);
-            Assert.Equal(22, _fsteTests.Length);
+            Assert.Equal(22, _fixture._fbeTests.Length);
+            Assert.Equal(22, _fixture._randomExitests.Length);
+            Assert.Equal(22, _fixture._fsteTests.Length);
         }
 
         [Fact]
         private void ShouldGenerateLongFixedBarTests() {
-            foreach (var t1 in _fbeTests)
+            foreach (var t1 in _fixture._fbeTests)
             foreach (var t in t1.LongTests)
                 AssertTrades(t);
         }
 
         [Fact]
         private void ShouldGenerateShortFixedTests() {
-            foreach (var t1 in _fbeTests)
+            foreach (var t1 in _fixture._fbeTests)
             foreach (var t in t1.ShortTests)
                 AssertTrades(t);
         }
 
         [Fact]
         private void ShouldGenerateLongFixedStopTargetBarTests() {
-            foreach (var t1 in _fsteTests)
+            foreach (var t1 in _fixture._fsteTests)
             foreach (var t in t1.LongTests)
                 AssertTrades(t);
         }
 
         [Fact]
         private void ShouldGenerateShortFixedStopTargetTests() {
-            foreach (var t1 in _fsteTests)
+            foreach (var t1 in _fixture._fsteTests)
             foreach (var t in t1.ShortTests)
                 AssertTrades(t);
         }
 
         [Fact]
         private void ShouldGenerateLongRandomExitTests() {
-            foreach (var t1 in _randomExitests)
+            foreach (var t1 in _fixture._randomExitests)
             foreach (var t in t1.LongTests)
                 AssertTrades(t);
         }
 
         [Fact]
         private void ShouldGenerateShortRandomExitTests() {
-            foreach (var t1 in _randomExitests)
+            foreach (var t1 in _fixture._randomExitests)
             foreach (var t in t1.ShortTests) 
                 AssertTrades(t);
         }

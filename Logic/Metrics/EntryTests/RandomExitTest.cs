@@ -1,6 +1,7 @@
 ﻿using DataStructures;
 using System;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Logic.Metrics.EntryTests
 {
@@ -8,6 +9,7 @@ namespace Logic.Metrics.EntryTests
     {
         protected Random _randomGenerator { get; set; }
         protected int _maxLength { get; set; }
+        protected int _randomExit { get; private set; }
 
         protected RandomExitTest(int maxLength) {
             _randomGenerator = new Random();
@@ -15,8 +17,8 @@ namespace Logic.Metrics.EntryTests
         }
 
         protected void GenerateExit(int i, int maxCount) {
-            _endIndex = _randomGenerator.Next(0,_maxLength);
-            if (_endIndex > maxCount) _endIndex = 0;
+            _randomExit = _randomGenerator.Next(0,_maxLength);
+            if (_randomExit > maxCount) _randomExit = 0;
         }
         public static RandomExitTest PrepareTest(MarketSide longShort, int maxLength) {
             switch (longShort) {
@@ -33,9 +35,14 @@ namespace Logic.Metrics.EntryTests
             GenerateExit(i, data.Length -1);
             _currentTrade = new LongTradeGenerator(
                 i, new TradePrices(ExitPrices.NoStopTarget(), data[i].Open_Ask), AddTrade);
-            for (int j = i; j < _endIndex + i && j < data.Length; j++)
+
+            for (int j = i; j < _randomExit + i && j < data.Length; j++)
                 _currentTrade.Continue(data[j]);
-            _currentTrade.Exit(data[_endIndex + i].Open_Bid);
+
+            if (_randomExit + i < data.Length)
+                _currentTrade.Exit(data[_randomExit + i].Open_Bid);
+            else
+                _currentTrade.Exit(data.Last().Close_Bid);
         }
         
         public LongRandomExitTest(int maxLength) : base(maxLength)
@@ -49,9 +56,14 @@ namespace Logic.Metrics.EntryTests
             GenerateExit(i, data.Length - 1);
             _currentTrade = new ShortTradeGenerator(
                 i, new TradePrices(ExitPrices.NoStopTarget(), data[i].Open_Bid), AddTrade);
-            for (int j = i; j < _endIndex + i && j < data.Length; j++)
+
+            for (int j = i; j < _randomExit + i && j < data.Length; j++)
                 _currentTrade.Continue(data[j]);
-            _currentTrade.Exit(data[_endIndex + i].Open_Ask);
+
+            if (_randomExit + i < data.Length)
+                _currentTrade.Exit(data[_randomExit + i].Open_Bid);
+            else
+                _currentTrade.Exit(data.Last().Close_Bid);
         }
 
         public ShortRandomExitTest(int maxLength) : base(maxLength)

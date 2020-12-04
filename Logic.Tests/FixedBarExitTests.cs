@@ -8,95 +8,108 @@ using Xunit;
 
 namespace Logic.Tests
 {
-    public class FixedBarExitTests
+    public class FixedBarExitTestsFixture
     {
+        private Market _market;
+        private Strategy _strat;
+        public List<ITest[]> myTests { get; private set; }
 
-        private List<ITest[]> myTests { get; set; }
-
-        public FixedBarExitTests() {
-            var market = Market.MarketBuilder.CreateMarket(FBETestBars.DataLong);
-            var strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[]
-            {
-                new DummyEntries(2, FBETestBars.DataLong.Length)
-            }, market);
-
-            PrepareTests(strat, market);
+        public FixedBarExitTestsFixture() {
+            BuildMarket();
+            PrepareTests();
         }
 
-        private void PrepareTests(Strategy strat, Market market) {
-            var longSide = new TestFactory.FixedBarExitTestOptions(2, 4, 2).Run(strat, market, MarketSide.Bull);
-            var shortSide = new TestFactory.FixedBarExitTestOptions(2, 4, 2).Run(strat, market, MarketSide.Bear);
+        private void BuildMarket() {
+            _market = Market.MarketBuilder.CreateMarket(FBETestBars.DataLong);
+            _strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[]
+            {
+                new DummyEntries(2, FBETestBars.DataLong.Length)
+            }, _market);
+        }
+
+        private void PrepareTests() {
+            var longSide = new TestFactory.FixedBarExitTestOptions(2, 4, 2).Run(_strat, _market, MarketSide.Bull);
+            var shortSide = new TestFactory.FixedBarExitTestOptions(2, 4, 2).Run(_strat, _market, MarketSide.Bear);
             myTests = new List<ITest[]>();
             for (int i = 0; i < longSide.Length; i++)
-                myTests.Add(new[] {longSide[i], shortSide[i]});
+                myTests.Add(new[] { longSide[i], shortSide[i] });
+        }
+
+    }
+
+    public class FixedBarExitTests : IClassFixture<FixedBarExitTestsFixture>
+    {
+        private FixedBarExitTestsFixture _fixture;
+        public FixedBarExitTests(FixedBarExitTestsFixture fixt) {
+            _fixture = fixt;
         }
 
 
         [Fact]
         public void ShouldGenerateLongResults() {
             for (int i = 0; i < 5; i++) {
-                Assert.Equal(FBETestBars.longTradesOne[i].Result, myTests[0][0].Trades[i].Result);
-                Assert.Equal(FBETestBars.longTradesOne[i].Results, myTests[0][0].Trades[i].Results);
-                Assert.Equal(FBETestBars.longTradesOne[i].Win, myTests[0][0].Trades[i].Win);
+                Assert.Equal(FBETestBars.longTradesOne[i].Result, _fixture.myTests[0][0].Trades[i].Result);
+                Assert.Equal(FBETestBars.longTradesOne[i].Results, _fixture.myTests[0][0].Trades[i].Results);
+                Assert.Equal(FBETestBars.longTradesOne[i].Win, _fixture.myTests[0][0].Trades[i].Win);
 
-                Assert.Equal(FBETestBars.longTradesTwo[i].Result, myTests[1][0].Trades[i].Result);
-                Assert.Equal(FBETestBars.longTradesTwo[i].Results, myTests[1][0].Trades[i].Results);
-                Assert.Equal(FBETestBars.longTradesTwo[i].Win, myTests[1][0].Trades[i].Win);
+                Assert.Equal(FBETestBars.longTradesTwo[i].Result, _fixture.myTests[1][0].Trades[i].Result);
+                Assert.Equal(FBETestBars.longTradesTwo[i].Results, _fixture.myTests[1][0].Trades[i].Results);
+                Assert.Equal(FBETestBars.longTradesTwo[i].Win, _fixture.myTests[1][0].Trades[i].Win);
             }
         }
 
         [Fact]
         public void ShouldGenerateShortResults() {
             for (int i = 0; i < 5; i++) {
-                Assert.Equal(FBETestBars.shortTradesOne[i].Result, myTests[0][1].Trades[i].Result);
-                Assert.Equal(FBETestBars.shortTradesOne[i].Results, myTests[0][1].Trades[i].Results);
-                Assert.Equal(FBETestBars.shortTradesOne[i].Win, myTests[0][1].Trades[i].Win);
+                Assert.Equal(FBETestBars.shortTradesOne[i].Result, _fixture.myTests[0][1].Trades[i].Result);
+                Assert.Equal(FBETestBars.shortTradesOne[i].Results, _fixture.myTests[0][1].Trades[i].Results);
+                Assert.Equal(FBETestBars.shortTradesOne[i].Win, _fixture.myTests[0][1].Trades[i].Win);
 
-                Assert.Equal(FBETestBars.shortTradesTwo[i].Result, myTests[1][1].Trades[i].Result);
-                Assert.Equal(FBETestBars.shortTradesTwo[i].Results, myTests[1][1].Trades[i].Results);
-                Assert.Equal(FBETestBars.shortTradesTwo[i].Win, myTests[1][1].Trades[i].Win);
+                Assert.Equal(FBETestBars.shortTradesTwo[i].Result, _fixture.myTests[1][1].Trades[i].Result);
+                Assert.Equal(FBETestBars.shortTradesTwo[i].Results, _fixture.myTests[1][1].Trades[i].Results);
+                Assert.Equal(FBETestBars.shortTradesTwo[i].Win, _fixture.myTests[1][1].Trades[i].Win);
             }
         }
 
         [Fact]
         public void ShouldGenerateDrawDownLongResults() {
             for (int i = 0; i < 5; i++) {
-                Assert.Equal(FBETestBars.longTradesOne[i].Drawdown, myTests[0][0].Trades[i].Drawdown);
-                Assert.Equal(FBETestBars.longTradesTwo[i].Drawdown, myTests[1][0].Trades[i].Drawdown);
+                Assert.Equal(FBETestBars.longTradesOne[i].Drawdown, _fixture.myTests[0][0].Trades[i].Drawdown);
+                Assert.Equal(FBETestBars.longTradesTwo[i].Drawdown, _fixture.myTests[1][0].Trades[i].Drawdown);
             }               
         }
 
         [Fact]
         public void ShouldGenerateDrawDownShortResults() {
             for (int i = 0; i < 5; i++) {
-                Assert.Equal(FBETestBars.shortTradesOne[i].Drawdown, myTests[0][1].Trades[i].Drawdown);
-                Assert.Equal(FBETestBars.shortTradesTwo[i].Drawdown, myTests[1][1].Trades[i].Drawdown);
+                Assert.Equal(FBETestBars.shortTradesOne[i].Drawdown, _fixture.myTests[0][1].Trades[i].Drawdown);
+                Assert.Equal(FBETestBars.shortTradesTwo[i].Drawdown, _fixture.myTests[1][1].Trades[i].Drawdown);
             }               
         }
 
         [Fact]
         public void ShouldGenerateLongDurations() {
             for (int i = 0; i < 5; i++) {
-                Assert.Equal(FBETestBars.longTradesOne[i].MarketEnd, myTests[0][0].Trades[i].MarketEnd);
-                Assert.Equal(FBETestBars.longTradesOne[i].MarketStart, myTests[0][0].Trades[i].MarketStart);
-                Assert.Equal(FBETestBars.longTradesOne[i].Duration, myTests[0][0].Trades[i].Duration);
+                Assert.Equal(FBETestBars.longTradesOne[i].MarketEnd, _fixture.myTests[0][0].Trades[i].MarketEnd);
+                Assert.Equal(FBETestBars.longTradesOne[i].MarketStart, _fixture.myTests[0][0].Trades[i].MarketStart);
+                Assert.Equal(FBETestBars.longTradesOne[i].Duration, _fixture.myTests[0][0].Trades[i].Duration);
 
-                Assert.Equal(FBETestBars.longTradesTwo[i].MarketEnd, myTests[1][0].Trades[i].MarketEnd);
-                Assert.Equal(FBETestBars.longTradesTwo[i].MarketStart, myTests[1][0].Trades[i].MarketStart);
-                Assert.Equal(FBETestBars.longTradesTwo[i].Duration, myTests[1][0].Trades[i].Duration);
+                Assert.Equal(FBETestBars.longTradesTwo[i].MarketEnd, _fixture.myTests[1][0].Trades[i].MarketEnd);
+                Assert.Equal(FBETestBars.longTradesTwo[i].MarketStart, _fixture.myTests[1][0].Trades[i].MarketStart);
+                Assert.Equal(FBETestBars.longTradesTwo[i].Duration, _fixture.myTests[1][0].Trades[i].Duration);
             }
         }
 
         [Fact]
         public void ShouldGenerateShortDurations() {
             for (int i = 0; i < 5; i++) {
-                Assert.Equal(FBETestBars.shortTradesOne[i].MarketEnd, myTests[0][1].Trades[i].MarketEnd);
-                Assert.Equal(FBETestBars.shortTradesOne[i].MarketStart, myTests[0][1].Trades[i].MarketStart);
-                Assert.Equal(FBETestBars.shortTradesOne[i].Duration, myTests[0][1].Trades[i].Duration);
+                Assert.Equal(FBETestBars.shortTradesOne[i].MarketEnd, _fixture.myTests[0][1].Trades[i].MarketEnd);
+                Assert.Equal(FBETestBars.shortTradesOne[i].MarketStart, _fixture.myTests[0][1].Trades[i].MarketStart);
+                Assert.Equal(FBETestBars.shortTradesOne[i].Duration, _fixture.myTests[0][1].Trades[i].Duration);
 
-                Assert.Equal(FBETestBars.shortTradesTwo[i].MarketEnd, myTests[1][1].Trades[i].MarketEnd);
-                Assert.Equal(FBETestBars.shortTradesTwo[i].MarketStart, myTests[1][1].Trades[i].MarketStart);
-                Assert.Equal(FBETestBars.shortTradesTwo[i].Duration, myTests[1][1].Trades[i].Duration);
+                Assert.Equal(FBETestBars.shortTradesTwo[i].MarketEnd, _fixture.myTests[1][1].Trades[i].MarketEnd);
+                Assert.Equal(FBETestBars.shortTradesTwo[i].MarketStart, _fixture.myTests[1][1].Trades[i].MarketStart);
+                Assert.Equal(FBETestBars.shortTradesTwo[i].Duration, _fixture.myTests[1][1].Trades[i].Duration);
             }
         }
     }

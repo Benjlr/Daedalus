@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RuleSets\RuleSets.csproj" />
+    <ProjectReference Include="..\TestUtils\TestUtils.csproj" />
     <ProjectReference Include="..\Thought\Thought.csproj" />
   </ItemGroup>
 

@@ -108,11 +108,11 @@ namespace DataStructures.Tests
             HistogramTools.CategoriseItem(myhistogram, -0.001);
             HistogramTools.CategoriseItem(myhistogram, 200);
             HistogramTools.CategoriseItem(myhistogram, 52);
-            Assert.Equal(myhistogram[75], 2);
-            Assert.Equal(myhistogram[Double.PositiveInfinity], 1);
-            Assert.Equal(myhistogram[0], 1);
-            Assert.Equal(myhistogram[25], 1);
-            Assert.Equal(myhistogram[-50], 0);
+            Assert.Equal(2, myhistogram[75]);
+            Assert.Equal(1, myhistogram[Double.PositiveInfinity]);
+            Assert.Equal(1, myhistogram[0]);
+            Assert.Equal(1, myhistogram[25]);
+            Assert.Equal(0, myhistogram[-50]);
         }
 
         [Fact]

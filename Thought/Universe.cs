@@ -16,9 +16,23 @@ namespace Thought
             Elements = new List<UniverseObject>();
         }
 
+        public UniverseObject GetObject(string name) {
+            return Elements.FirstOrDefault(x => x.Name == name);
+        }
+
         public void AddMarket(string market) {
             if (!Elements.Any(x => x.Name.Equals(market)))
                 Elements.Add(new UniverseObject(Path.GetFileNameWithoutExtension(market), OpenMarket(market), Ruleset));
+        }
+
+        public void AddMarket(BidAskData[] market, string name) {
+            if (!Elements.Any(x => x.Name.Equals(market)))
+                Elements.Add(new UniverseObject(name, Market.MarketBuilder.CreateMarket(market), Ruleset));
+        }
+
+        public void AddMarket(SessionData[] market, string name) {
+            if (!Elements.Any(x => x.Name.Equals(market)))
+                Elements.Add(new UniverseObject(name, Market.MarketBuilder.CreateMarket(market), Ruleset));
         }
 
         public void AddMarket(List<string> markets) {
@@ -31,6 +45,8 @@ namespace Thought
                 return Market.MarketBuilder.CreateMarket(DataLoader.LoadConsolidatedData(market));
             return Market.MarketBuilder.CreateMarket(DataLoader.LoadBidAskData(market));
         }
+
+        
 
     }
 }

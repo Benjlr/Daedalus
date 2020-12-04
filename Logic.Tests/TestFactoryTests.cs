@@ -206,6 +206,73 @@ namespace Logic.Tests
             Assert.Equal(1.75, ((FixedStopTargetExitTest)shortSide[24]).StopDistance);
         }
 
+        [Fact]
+        private void ShouldGenerateOneFixedBarExitTestsLong() {
+            var longSide = new TestFactory.FixedBarExitTestOptions(5, 5, 1).Run(_strat, _market, MarketSide.Bull);
+            Assert.True(longSide.Length == 1);
+            Assert.True(((FixedBarExitTest)longSide[0]).BarsToWait == 5);
+        }
 
+        [Fact]
+        private void ShouldGenerateFourFixedBarExitTestsLong() {
+            var longSide = new TestFactory.FixedBarExitTestOptions(5,20,5).Run(_strat, _market, MarketSide.Bull);
+            Assert.True(longSide.Length == 4);
+        }
+
+        [Fact]
+        private void ShouldGenerateCorrectExitsFixedBarExitTestsLong() {
+            var longSide = new TestFactory.FixedBarExitTestOptions(5, 20, 5).Run(_strat, _market, MarketSide.Bull);
+            Assert.True(((FixedBarExitTest)longSide[0]).BarsToWait == 5);
+            Assert.True(((FixedBarExitTest)longSide[1]).BarsToWait == 10);
+            Assert.True(((FixedBarExitTest)longSide[2]).BarsToWait == 15);
+            Assert.True(((FixedBarExitTest)longSide[3]).BarsToWait == 20);
+        }
+
+        [Fact]
+        private void ShouldGenerateOneFixedBarExitTestsShort() {
+            var longSide = new TestFactory.FixedBarExitTestOptions(5, 5, 1).Run(_strat, _market, MarketSide.Bear);
+            Assert.True(longSide.Length == 1);
+            Assert.True(((FixedBarExitTest)longSide[0]).BarsToWait == 5);
+        }
+
+
+        [Fact]
+        private void ShouldGenerateFourFixedBarExitTestsShort() {
+            var shortSide = new TestFactory.FixedBarExitTestOptions(5, 20, 5).Run(_strat, _market, MarketSide.Bear);
+            Assert.True(shortSide.Length == 4);
+        }
+
+        [Fact]
+        private void ShouldGenerateCorrectExitsFixedBarExitTestsShort() {
+            var shortSide = new TestFactory.FixedBarExitTestOptions(5, 20, 5).Run(_strat, _market, MarketSide.Bear);
+            Assert.True(((FixedBarExitTest)shortSide[0]).BarsToWait == 5);
+            Assert.True(((FixedBarExitTest)shortSide[1]).BarsToWait == 10);
+            Assert.True(((FixedBarExitTest)shortSide[2]).BarsToWait == 15);
+            Assert.True(((FixedBarExitTest)shortSide[3]).BarsToWait == 20);
+        }
+
+        [Fact]
+        private void ShouldGenerateOneRandomExitTestLong() {
+            var longSide = new TestFactory.RandomExitTestOptions(1,10).Run(_strat, _market, MarketSide.Bull);
+            Assert.True(longSide.Length == 1);
+        }
+
+        [Fact]
+        private void ShouldGenerateTenRandomExitTestLong() {
+            var longSide = new TestFactory.RandomExitTestOptions(10,10).Run(_strat, _market, MarketSide.Bull);
+            Assert.True(longSide.Length == 10);
+        }
+
+        [Fact]
+        private void ShouldGenerateOneRandomExitTestShort() {
+            var longSide = new TestFactory.RandomExitTestOptions(1, 10).Run(_strat, _market, MarketSide.Bear);
+            Assert.True(longSide.Length == 1);
+        }
+
+        [Fact]
+        private void ShouldGenerateTenRandomExitTestShort() {
+            var longSide = new TestFactory.RandomExitTestOptions(10, 10).Run(_strat, _market, MarketSide.Bear);
+            Assert.True(longSide.Length == 10);
+        }
     }
 }

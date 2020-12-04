@@ -84,10 +84,6 @@ namespace DataStructures.Tests.Stats
                 Assert.Equal(Math.Round(sortinoTen[i], 4), Math.Round(ten[i].Sortino, 4));
         }
 
-
-
-
-
         [Fact]
         private void ShouldGenerateRollingStatsOverLongPeriodAvgExp() {
             var thirteen = RollingStatsGenerator.GetRollingStats(GenerateList(55), 30);
@@ -136,11 +132,6 @@ namespace DataStructures.Tests.Stats
             for (int i = 0; i < sortinoThirty.Count; i++)
                 Assert.Equal(Math.Round(sortinoThirty[i], 4), Math.Round(thirteen[i].Sortino, 4));
         }
-
-
-
-
-
 
         [Fact]
         private void ShouldGenerateStatsOverFewEpochAvgExp() {
@@ -197,10 +188,6 @@ namespace DataStructures.Tests.Stats
             for (int i = 0; i < smallEpochSortino.Count; i++)
                 Assert.Equal(Math.Round(smallEpochSortino[i], 4), Math.Round(ThreeEpoch[i].Sortino, 4));
         }
-
-
-
-
 
         [Fact]
         private void ShouldGenerateStatsOverManyEpochAvgExp() {
@@ -5951,7 +5938,6 @@ namespace DataStructures.Tests.Stats
             double.PositiveInfinity,
         };
 
-
         private readonly List<double> smallEpochWinPercent = new List<double>()
         {
             0.3333333333,
@@ -6294,7 +6280,6 @@ namespace DataStructures.Tests.Stats
 Double.PositiveInfinity,
 Double.PositiveInfinity,
         };
-
     }
 }
 

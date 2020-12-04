@@ -133,7 +133,7 @@ namespace Logic.Metrics
         }
         private static Dictionary<int, ITest> RandomExitTestsToDictionary(RandomExitTestOptions options, MarketSide longShort) {
             Dictionary<int, ITest> retval = new Dictionary<int, ITest>();
-            for (int i = 0; i <= options.TestCount; i++)
+            for (int i = 0; i < options.TestCount; i++)
                 retval.Add(i, RandomExitTest.PrepareTest(longShort, options.MaxBars));
             return retval;
         }

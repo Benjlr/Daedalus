@@ -4,10 +4,11 @@ using System.Linq;
 
 namespace Logic.Metrics.EntryTests
 {
-    abstract class FixedBarExitTest : TestBase
+    public abstract class FixedBarExitTest : TestBase
     {
+        public int BarsToWait { get; }
         protected FixedBarExitTest(int bars_to_wait) {
-            _endIndex = bars_to_wait;
+            BarsToWait = bars_to_wait;
         }
 
         protected override void SetResult(BidAskData[] data, int i) {
@@ -34,11 +35,11 @@ namespace Logic.Metrics.EntryTests
                     data[i].Open_Ask), 
                     AddTrade);
 
-            for (int j = i; j < (_endIndex) + i && j < data.Length-1; j++)
+            for (int j = i; j < (BarsToWait) + i && j < data.Length-1; j++)
                 _currentTrade.Continue(data[j]);
 
-            if(_endIndex + i < data.Length)
-                _currentTrade.Exit(data[_endIndex+i].Open_Bid);
+            if(BarsToWait + i < data.Length)
+                _currentTrade.Exit(data[BarsToWait + i].Open_Bid);
             else 
                 _currentTrade.Exit(data.Last().Close_Bid);
         }
@@ -57,11 +58,11 @@ namespace Logic.Metrics.EntryTests
                         data[i].Open_Bid),
                     AddTrade);
 
-            for (int j = i; j < (_endIndex) + i && j < data.Length - 1; j++)
+            for (int j = i; j < (BarsToWait) + i && j < data.Length - 1; j++)
                 _currentTrade.Continue(data[j]);
 
-            if (_endIndex + i  < data.Length)
-                _currentTrade.Exit(data[_endIndex + i].Open_Ask);
+            if (BarsToWait + i  < data.Length)
+                _currentTrade.Exit(data[BarsToWait + i].Open_Ask);
             else
                 _currentTrade.Exit(data.Last().Close_Ask);
         }
