@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DataStructures;
-using DataStructures.StatsTools;
 using Logic.Metrics;
 using RuleSets;
 using RuleSets.Entry;
+using System.Linq;
 using TestUtils;
 using Xunit;
 
@@ -36,7 +34,7 @@ namespace Thought.Tests
 
         private void PrepareAndRunTests() {
             _testFactory = new UniverseTestFactory();
-            _fbeTests = _testFactory.RunTests(_universe, new TestFactory.FixedBarExitTestOptions(5, 40, 5));
+            _fbeTests = _testFactory.RunTests(_universe, new TestFactory.FixedBarExitTestOptions(5, 10, 2));
         }
     }
 
@@ -50,26 +48,30 @@ namespace Thought.Tests
 
         [Fact]
         private void ShouldCorrectlySizeOutputToMarket() {
-            Assert.Equal(TradeFlatteningData.longMarket.Length, GetArrayForReturns(_fixt._universe.GetObject(_fixt.longMarket).MarketData).Length);
-            Assert.Equal(TradeFlatteningData.shorterMarket.Length, GetArrayForReturns(_fixt._universe.GetObject(_fixt.mediumMarket).MarketData).Length);
-            Assert.Equal(TradeFlatteningData.shortestMarket.Length, GetArrayForReturns(_fixt._universe.GetObject(_fixt.shortMarket).MarketData).Length);
+            Assert.Equal(TradeFlatteningData.longMarket.Length, GetArrayForReturns(_fixt.longMarket).Length);
+            Assert.Equal(TradeFlatteningData.shorterMarket.Length, GetArrayForReturns(_fixt.mediumMarket).Length);
+            Assert.Equal(TradeFlatteningData.shortestMarket.Length, GetArrayForReturns(_fixt.shortMarket).Length);
         }
+
 
         [Fact]
-        private void ShouldFlattenTradeResults() {
+        private void ShouldFlattenOneTradeResults() {
+            Universe newUniverse = new Universe(new IRuleSet[]{new DummyEntries(4,1) });
+            newUniverse.AddMarket(new SessionData[]{new SessionData(new DateTime(),30,10,10,10,10 ),new SessionData(new DateTime(),20,20,20,20,20 )  }, "test");
+            UniverseTest t = new UniverseTest(newUniverse.GetObject("test"), new TestFactory.FixedBarExitTestOptions(5,7,1));
             
-
-            Assert.True(true);
+            var retvals = new List<double>(){};
+            
+            Assert.Equal(1,1);
         }
 
-        private double[] GetArrayForReturns(Market myMarket) {
-            var market = "Wheat";
-            var wheatMarket = _fixt._universe.Elements.FirstOrDefault(x => x.Name == market).MarketData;
-            return new double[wheatMarket.RawData.Length];
+        private double[] GetArrayForReturns(string myMarket) {
+            var market = _fixt._universe.GetObject(myMarket).MarketData;
+            return new double[market.RawData.Length];
         }
 
-        private void PrintTradesToReturnTimeLine() {
-
+        private double[] PrintTradesToReturnTimeLine(List<Trade> test) {
+            test.
         }
 
 
