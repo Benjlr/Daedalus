@@ -45,8 +45,9 @@ namespace Thought
                 return Market.MarketBuilder.CreateMarket(DataLoader.LoadConsolidatedData(market));
             return Market.MarketBuilder.CreateMarket(DataLoader.LoadBidAskData(market));
         }
-
-        
-
+        public double[] GetArrayForReturns(string myMarket) {
+            var market = this.GetObject(myMarket).MarketData;
+            return new double[market.RawData.Length];
+        }
     }
 }

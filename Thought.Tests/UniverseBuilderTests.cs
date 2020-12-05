@@ -22,7 +22,7 @@ namespace Thought.Tests
         }
 
         private void BuildUniverse() {
-            _universe = new Universe(new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 1000) });
+            _universe = new Universe(new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) });
             _universe.AddMarket(Markets.futures_wheat_5);
             _universe.AddMarket(Markets.aud_usd_5);
             _universe.AddMarket(Markets.ASX20());

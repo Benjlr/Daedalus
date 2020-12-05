@@ -59,6 +59,7 @@ namespace TestUtils
         };
         public static SessionData[] longMarket = new SessionData[]
         {
+            new SessionData(),
             new SessionData(StartDate, 200, 10, 10, 10, 10), //0    0                   0
             new SessionData(IncStart(), 200, 11, 11, 11, 11),//     0.1                 0.1
             new SessionData(IncStart(), 200, 12, 12, 12, 12),//     0.2                 0.2
