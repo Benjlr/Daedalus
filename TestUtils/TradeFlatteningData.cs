@@ -6,9 +6,9 @@ namespace TestUtils
 {
     public class TradeFlatteningData
     {
-        private static DateTime StartDate = new DateTime(2020,01,01);
-        private static DateTime StartDateShorter = new DateTime(2020,01,10);
-        private static DateTime StartDateShortest = new DateTime(2020,01,15);
+        private static DateTime StartDate = new DateTime(2020, 01, 01);
+        private static DateTime StartDateShorter = new DateTime(2020, 01, 10);
+        private static DateTime StartDateShortest = new DateTime(2020, 01, 15);
 
         private static DateTime IncStart() {
             StartDate = StartDate.AddDays(1);
@@ -27,36 +27,22 @@ namespace TestUtils
 
         public static List<Trade> longMarketTradesFiveInterval = new List<Trade>()
         {
-            new Trade(new double[] {0, 0.1, 0.2, 0.3, 0.4}, 0),
-            new Trade(new double[] {0, (16 / 15.0) - 1, (17 / 15.0) - 1, (18 / 15.0) - 1, (19 / 15.0) - 1}, 5),
-            new Trade(new double[] {0, (21 / 20.0) - 1, (22 / 20.0) - 1, (23 / 20.0) - 1, (24 / 20.0) - 1}, 10),
-            new Trade(new double[] {0, (26 / 25.0) - 1, (27 / 25.0) - 1, (28 / 25.0) - 1, (29 / 25.0) - 1}, 15),
-            new Trade(new double[] {0, (31 / 30.0) - 1, (32 / 30.0) - 1, (33 / 30.0) - 1, (34 / 30.0) - 1}, 20),
-            new Trade(new double[] {0, (36 / 35.0) - 1, (37 / 35.0) - 1, (38 / 35.0) - 1, (39 / 35.0) - 1}, 25),
+            new Trade(new double[] {0, (11 / 10.0) - 1, (12 / 10.0) - 1, (13 / 10.0) - 1, (14 / 10.0) - 1, (15 / 10.0) - 1}, 1),
+            new Trade(new double[] {0, (16 / 15.0) - 1, (17 / 15.0) - 1, (18 / 15.0) - 1, (19 / 15.0) - 1, (20 / 15.0) - 1}, 6),
+            new Trade(new double[] {0, (21 / 20.0) - 1, (22 / 20.0) - 1, (23 / 20.0) - 1, (24 / 20.0) - 1, (25 / 20.0) - 1}, 11),
+            new Trade(new double[] {0, (26 / 25.0) - 1, (27 / 25.0) - 1, (28 / 25.0) - 1, (29 / 25.0) - 1, (30 / 25.0) - 1}, 16),
+            new Trade(new double[] {0, (31 / 30.0) - 1, (32 / 30.0) - 1, (33 / 30.0) - 1, (34 / 30.0) - 1, (35 / 30.0) - 1}, 21),
+            new Trade(new double[] {0, (36 / 35.0) - 1, (37 / 35.0) - 1, (38 / 35.0) - 1, (39 / 35.0) - 1, (40 / 35.0) - 1}, 26),
         };
 
         public static List<Trade> longMarketTradesTenInterval = new List<Trade>()
         {
             new Trade(new double[] {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9}, 0),
-            new Trade(
-                new double[]
-                {
-                    0, (21 / 20.0) - 1, (22 / 20.0) - 1, (23 / 20.0) - 1, (24 / 20.0) - 1, (25 / 20.0) - 1,
-                    (26 / 20.0) - 1, (27 / 20.0) - 1, (28 / 20.0) - 1, (29 / 20.0) - 1
-                }, 10),
-            new Trade(
-                new double[]
-                {
-                    0, (31 / 30.0) - 1, (32 / 30.0) - 1, (33 / 30.0) - 1, (34 / 30.0) - 1, (35 / 30.0) - 1,
-                    (36 / 30.0) - 1, (37 / 30.0) - 1, (38 / 30.0) - 1, (39 / 30.0) - 1
-                }, 20),
-            new Trade(
-                new double[]
-                {
-                    0, (41 / 40.0) - 1, (42 / 40.0) - 1, (43 / 40.0) - 1, (44 / 40.0) - 1, (45 / 40.0) - 1,
-                    (46 / 40.0) - 1, (47 / 40.0) - 1, (48 / 40.0) - 1, (49 / 40.0) - 1
-                }, 30)
+            new Trade(new double[] {0, (21 / 20.0) - 1, (22 / 20.0) - 1, (23 / 20.0) - 1, (24 / 20.0) - 1, (25 / 20.0) - 1, (26 / 20.0) - 1, (27 / 20.0) - 1, (28 / 20.0) - 1, (29 / 20.0) - 1}, 10), 
+            new Trade(new double[] {0, (31 / 30.0) - 1, (32 / 30.0) - 1, (33 / 30.0) - 1, (34 / 30.0) - 1, (35 / 30.0) - 1, (36 / 30.0) - 1, (37 / 30.0) - 1, (38 / 30.0) - 1, (39 / 30.0) - 1}, 20),
+            new Trade(new double[] {0, (41 / 40.0) - 1, (42 / 40.0) - 1, (43 / 40.0) - 1, (44 / 40.0) - 1, (45 / 40.0) - 1, (46 / 40.0) - 1, (47 / 40.0) - 1, (48 / 40.0) - 1, (49 / 40.0) - 1}, 30)
         };
+
         public static SessionData[] longMarket = new SessionData[]
         {
             new SessionData(),
@@ -103,7 +89,7 @@ namespace TestUtils
             new SessionData(IncStart(), 200, 50, 50, 50, 50) //40   0                   0
         };
 
-        
+
 
         public static SessionData[] shorterMarket = new SessionData[]
         {
@@ -143,15 +129,21 @@ namespace TestUtils
             new SessionData(IncStartDateShortest(), 200, 19, 19, 19, 19),
         };
 
-        public static List<Trade> shortestMarketTradesFiveInterval = new List<Trade>()
+
+        public static List<Trade> shorterMarketTradesFiveInterval = new List<Trade>()
         {
-            new Trade(new double[] {0, 0.1, 0.2, 0.3, 0.4}, 0),
-            new Trade(new double[] {0, (16 / 15.0) - 1, (17 / 15.0) - 1, (18 / 15.0) - 1, (19 / 15.0) - 1}, 5),
+            new Trade(new double[] {0, (11 / 10.0) - 1, (12 / 10.0) - 1, (13 / 10.0) - 1, (14 / 10.0) - 1, (15 / 10.0) - 1}, 1),
+            new Trade(new double[] {0, (16 / 15.0) - 1, (17 / 15.0) - 1, (18 / 15.0) - 1, (19 / 15.0) - 1, (20 / 15.0) - 1}, 6),
+            new Trade(new double[] {0, (21 / 20.0) - 1, (22 / 20.0) - 1, (23 / 20.0) - 1, (24 / 20.0) - 1, (25 / 20.0) - 1}, 11),
+            new Trade(new double[] {0, (26 / 25.0) - 1, (27 / 25.0) - 1, (28 / 25.0) - 1, (29 / 25.0) - 1, (30 / 25.0) - 1}, 16)
         };
 
-        public static List<Trade> shortestMarketTradesTenInterval = new List<Trade>()
+
+        public static List<Trade> shortestMarketTradesFiveInterval = new List<Trade>()
         {
-            new Trade(new double[] {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9}, 0),
+            new Trade(new double[] {0, (11 / 10.0) - 1, (12 / 10.0) - 1, (13 / 10.0) - 1, (14 / 10.0) - 1, (15 / 10.0) - 1}, 10),
+            new Trade(new double[] {0, (16 / 15.0) - 1, (17 / 15.0) - 1, (18 / 15.0) - 1, (19 / 15.0) - 1, (20 / 15.0) - 1}, 6),
         };
     }
 }
+

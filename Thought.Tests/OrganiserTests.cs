@@ -83,7 +83,7 @@ namespace Thought.Tests
                 new SessionData(new DateTime(),20,30,30,30,30 ),
                 new SessionData(new DateTime(),20,40,40,40,40 ),
             }, "test");
-            UniverseTest t = new UniverseTest(newUniverse.GetObject("test"), new TestFactory.FixedBarExitTestOptions(5, 7, 1));
+            UniverseTest t = new UniverseTest(newUniverse.GetObject("test"), new TestFactory.FixedBarExitTestOptions(5,7, 1));
             var myArray = newUniverse.GetArrayForReturns("test");
             PrintTradesToReturnTimeLine(t.LongTests[0].Trades, myArray);
             var retvals = new double[] { 0, 0,0.5,  (4 / 3.0)  };
@@ -94,27 +94,52 @@ namespace Thought.Tests
 
         [Fact]
         private void ShouldFlattenManyTradeResults() {
+            List<>
+
+
             for (int i = 0; i < TradeFlatteningData.longMarketTradesFiveInterval.Count; i++) 
-                Assert.Equal(TradeFlatteningData.longMarketTradesFiveInterval[i], _fixt._fbeTests.FirstOrDefault(x => x.Name.Equals(_fixt.longMarket)).LongTests[0].Trades[i]);
-            for (int i = 0; i < TradeFlatteningData.longMarketTradesTenInterval.Count; i++) 
-                Assert.Equal(TradeFlatteningData.longMarketTradesTenInterval[i], _fixt._fbeTests.FirstOrDefault(x=>x.Name.Equals(_fixt.longMarket)).LongTests[1].Trades[i]);
-            for (int i = 0; i < TradeFlatteningData.shortestMarketTradesFiveInterval.Count; i++) 
-                Assert.Equal(TradeFlatteningData.shortestMarketTradesFiveInterval[i], _fixt._fbeTests.FirstOrDefault(x=>x.Name.Equals(_fixt.shortMarket)).LongTests[0].Trades[i]);
-            for (int i = 0; i < TradeFlatteningData.shortestMarketTradesTenInterval.Count; i++) 
-                Assert.Equal(TradeFlatteningData.shortestMarketTradesTenInterval[i], _fixt._fbeTests.FirstOrDefault(x=>x.Name.Equals(_fixt.shortMarket)).LongTests[1].Trades[i]);
+                AssertTrade(TradeFlatteningData.longMarketTradesFiveInterval[i], 
+                    _fixt._fbeTests.FirstOrDefault(x => x.Name.Equals(_fixt.longMarket)).LongTests[0].Trades[i]);
+
+            for (int i = 0; i < TradeFlatteningData.longMarketTradesTenInterval.Count; i++)
+                AssertTrade(TradeFlatteningData.longMarketTradesTenInterval[i],
+                    _fixt._fbeTests.FirstOrDefault(x => x.Name.Equals(_fixt.longMarket)).LongTests[1].Trades[i]);
+
+            for (int i = 0; i < TradeFlatteningData.shortestMarketTradesFiveInterval.Count; i++)
+                AssertTrade(TradeFlatteningData.shortestMarketTradesFiveInterval[i],
+                    _fixt._fbeTests.FirstOrDefault(x => x.Name.Equals(_fixt.shortMarket)).LongTests[0].Trades[i]);
+
+            for (int i = 0; i < TradeFlatteningData.shortestMarketTradesTenInterval.Count; i++)
+                AssertTrade(TradeFlatteningData.shortestMarketTradesTenInterval[i],
+                    _fixt._fbeTests.FirstOrDefault(x => x.Name.Equals(_fixt.shortMarket)).LongTests[1].Trades[i]);
+        }
+
+        private void AssertTrade(Trade Actual, Trade Expected) {
+            Assert.Equal(Actual.MarketStart, Expected.MarketStart);
+            Assert.Equal(Actual.MarketEnd, Expected.MarketEnd);
+            Assert.Equal(Actual.Duration, Expected.Duration);
+            Assert.Equal(Actual.Drawdown, Expected.Drawdown);
+            Assert.Equal(Actual.Result, Expected.Result);
+            Assert.Equal(Actual.Results, Expected.Results);
+            Assert.Equal(Actual.Win, Expected.Win);
         }
 
 
 
 
-        private void PrintTradesToReturnTimeLine(List<Trade> test, double[] timeline) {
+
+
+        private void PrintTradesToReturnTimeLine(List<Trade> test, double[] market) {
+
             for (int i = 0; i < test.Count; i++) {
                 for (int j = 0; j < test[i].Results.Length; j++) {
-                    timeline[test[i].MarketStart + j] += test[i].Results[j];
+                    market[test[i].MarketStart + j] += test[i].Results[j];
                 }
             }
         }
 
+
+        
 
     }
 }
