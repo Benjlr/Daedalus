@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DataStructures.PriceAlgorithms;
+using TestUtils;
 using Xunit;
 
 namespace DataStructures.Tests.Calculations
@@ -26,14 +27,16 @@ namespace DataStructures.Tests.Calculations
 
         [Fact]
         private void ShouldCalculateATRCorrectly() {
-            Assert.Equal(new List<double>(){ 2, 2.8, 2.6399999999999997, 3.912, 3.5296, 3.2236800000000003, 5.778944, 5.4231552, 5.13852416, 5.510819328 },
-                AverageTrueRange.Calculate(myArray.ToList(), 5));
+            var expected = new List<double>() {2, 2.8, 2.6399999999999997, 3.912, 3.5296, 3.2236800000000003, 5.778944, 5.4231552, 5.13852416, 5.510819328};
+            var actual = AverageTrueRange.Calculate(myArray.ToList(), 5);
+            Asserters.ListDoublesEqual(expected, actual);
         }
 
         [Fact]
         private void ShouldCalculateATRPCCorrectly() {
-            Assert.Equal(new List<double>() { 1,1, 0.79999999999999982,1, 0.69937106918238989 ,0,1, 0.86076241045934976 ,0,1},
-                AverageTrueRange.CalculateATRPC(myArray.ToList(),5,3));
+            var expected = new List<double>() {1, 1, 0.79999999999999982, 1, 0.69937106918238989, 0, 1, 0.86076241045934976, 0, 1};
+            var actual = AverageTrueRange.CalculateATRPC(myArray.ToList(), 5, 3);
+            Asserters.ListDoublesEqual(expected, actual);
         }
     }
 }

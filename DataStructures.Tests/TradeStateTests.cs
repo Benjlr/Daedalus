@@ -173,7 +173,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 11, 11, 11, 11, 11, 11, 11, 11, 1));
             shortstate.Continue(new BidAskData(new DateTime(), 10, 10, 13, 13, 9, 7.5, 9, 9, 1));
 
-            Assert.Equal(-0.19999999999999996, myTrade.Last().Result);
+            Assert.Equal(-0.2, myTrade.Last().Result,5);
             Assert.Equal(2, myTrade.Last().Duration);
         }
 
@@ -187,7 +187,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 9, 9, 9, 9, 9, 9, 9, 9, 1));
             shortstate.Continue(new BidAskData(new DateTime(), 9, 9, 9, 9, 7.5, 7.5, 9, 9, 1));
 
-            Assert.Equal(-0.19999999999999996, myTrade.Last().Result);
+            Assert.Equal(-0.2, myTrade.Last().Result,5);
             Assert.Equal(2, myTrade.Last().Duration);
         }
 
@@ -201,7 +201,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 11, 11, 11, 11, 11, 11, 11, 11, 1));
             shortstate.Continue(new BidAskData(new DateTime(), 10, 10, 11, 11, 7, 7, 9, 9, 1));
 
-            Assert.Equal(0.19999999999999996, myTrade.Last().Result);
+            Assert.Equal(0.2, myTrade.Last().Result,5);
             Assert.Equal(2, myTrade.Last().Duration);
         }
 
@@ -215,7 +215,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 9, 9, 9, 9, 9, 9, 9, 9, 1));
             shortstate.Continue(new BidAskData(new DateTime(), 9, 9, 15, 15, 9, 9, 9, 9, 1));
 
-            Assert.Equal(0.19999999999999996, myTrade.Last().Result);
+            Assert.Equal(0.2, myTrade.Last().Result,5);
             Assert.Equal(2, myTrade.Last().Duration);
         }
 
@@ -229,7 +229,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 11, 11, 11, 11, 11, 11, 11, 11, 1));
             shortstate.Continue(new BidAskData(new DateTime(), 14, 14, 13, 13, 9, 7.5, 9, 9, 1));
 
-            Assert.Equal(-0.3999999999999999, myTrade.Last().Result);
+            Assert.Equal(-0.4, myTrade.Last().Result,5);
             Assert.Equal(2, myTrade.Last().Duration);
         }
 

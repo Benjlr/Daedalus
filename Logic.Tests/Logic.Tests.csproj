@@ -1,52 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="StopTarget\DrawdownLong.txt" />
-    <None Remove="StopTarget\DrawdownLongWinners.txt" />
-    <None Remove="StopTarget\DrawdownShort.txt" />
-    <None Remove="StopTarget\DrawdownShortWinners.txt" />
-    <None Remove="StopTarget\DurationLong.txt" />
-    <None Remove="StopTarget\DurationShort.txt" />
-    <None Remove="StopTarget\longResults.txt" />
-    <None Remove="StopTarget\shortResults.txt" />
-    <None Remove="StopTarget\TestMarketData.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="StopTarget\DrawdownShortWinners.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="StopTarget\DrawdownLongWinners.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="StopTarget\DrawdownShort.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="StopTarget\DrawdownLong.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="StopTarget\DurationLong.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="StopTarget\DurationShort.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="StopTarget\shortResults.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="StopTarget\longResults.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="StopTarget\TestMarketData.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />

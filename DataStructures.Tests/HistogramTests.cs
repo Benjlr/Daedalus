@@ -8,10 +8,10 @@ namespace DataStructures.Tests
 {
     public class HistogramTests
     {
-        private List<double> numbers = new List<double>() { -15.4, -45, -25.2, -22.5, -19.1, 35.78, 5.6, 0, 2.78, 3.6, 12, -6.4, -8.8, 1, 5.41, 16.20, 17.1, -13, -7, 3, 22, 6.2, 0.2, -2, -1.3, -4.6, -0.2 };
-        private List<double> result = new List<double>() { 0.111111111, 0.074074074, 0.037037037, 0.111111111, 0.148148148, 0.222222222, 0.111111111, 0.037037037, 0.074074074, 0.074074074 };
-        private List<double> resultCumulative = new List<double>() { 0.111111111, 0.185185185, 0.222222222, 0.333333333, 0.481481481, 0.703703704, 0.814814815, 0.851851852, 0.925925926, 1 };
-        private List<Tuple<double, double>> ReturnsAndDrawdown = new List<Tuple<double, double>>()
+        private readonly List<double> numbers = new List<double>() { -15.4, -45, -25.2, -22.5, -19.1, 35.78, 5.6, 0, 2.78, 3.6, 12, -6.4, -8.8, 1, 5.41, 16.20, 17.1, -13, -7, 3, 22, 6.2, 0.2, -2, -1.3, -4.6, -0.2 };
+        private readonly List<double> result = new List<double>() { 0.111111111, 0.074074074, 0.037037037, 0.111111111, 0.148148148, 0.222222222, 0.111111111, 0.037037037, 0.074074074, 0.074074074 };
+        private readonly List<double> resultCumulative = new List<double>() { 0.111111111, 0.185185185, 0.222222222, 0.333333333, 0.481481481, 0.703703704, 0.814814815, 0.851851852, 0.925925926, 1 };
+        private readonly List<Tuple<double, double>> ReturnsAndDrawdown = new List<Tuple<double, double>>()
         {
             new Tuple<double,double>(12.2, -2.8),
             new Tuple<double,double>(-5.2, -77),
@@ -24,7 +24,7 @@ namespace DataStructures.Tests
             new Tuple<double,double>(15.2, -12.9)
         };
 
-        private List<List<double>> RanDResults = new List<List<double>>()
+        private readonly List<List<double>> RanDResults = new List<List<double>>()
         {
             new List<double>() {0, 0, 0, 0, 1, 1},
             new List<double>() {double.NaN, double.NaN, double.NaN, double.NaN, double.NaN, double.NaN},
@@ -38,7 +38,7 @@ namespace DataStructures.Tests
             new List<double>() {1, 1, 1, 1, 1, 1},
         };
 
-        private List<Dictionary<double, List<double>>> CollationInput = new List<Dictionary<double, List<double>>>()
+        private readonly List<Dictionary<double, List<double>>> CollationInput = new List<Dictionary<double, List<double>>>()
         {
             new Dictionary<double, List<double>>(){ {0.0, new List<double>() { } },{1.5, new List<double>() {96,2000 } },{3.0, new List<double>() {1 } } },
             new Dictionary<double, List<double>>(){ {0.0, new List<double>() {5,6 } },{1.5, new List<double>() { -78,0.0} },{ 3.0, new List<double>() { -1} } },
@@ -49,7 +49,7 @@ namespace DataStructures.Tests
 
 
 
-        private Dictionary<double, List<double>> CollationResults = new Dictionary<double, List<double>>()
+        private readonly Dictionary<double, List<double>> CollationResults = new Dictionary<double, List<double>>()
         {
             {0.0, new List<double>() { 5,6,-1,23,0,0} },{1.5, new List<double>() {96,2000,-78,0.0,-1,10,-23,4 } },{3.0, new List<double>() {1,-1,0.8 } } ,{double.PositiveInfinity, new List<double>() {} }
         };
@@ -158,16 +158,15 @@ namespace DataStructures.Tests
             foreach (var t in ReturnsAndDrawdown) HistogramTools.CategoriseItem(categoriseDrawdown, t.Item2, t.Item1);
             var results = HistogramTools.GenerateHistorgramsFromCategories(categoriseDrawdown, new BinDescriptor(-20, 0, 5));
 
-            for (int i = 0; i < RanDResults.Count; i++)
-                for (int j = 0; j < RanDResults[i].Count; j++)
-                    RanDResults[i][j] = _round(RanDResults[i][j]);
+            foreach (var t in RanDResults)
+                for (int j = 0; j < t.Count; j++)
+                    t[j] = _round(t[j]);
 
-            for (int i = 0; i < results.Count; i++)
-                for (int j = 0; j < results[i].Count; j++)
-                    results[i][j] = _round(results[i][j]);
+            foreach (var t in results)
+                for (int j = 0; j < t.Count; j++)
+                    t[j] = _round(t[j]);
 
             Assert.Equal(results, RanDResults);
-
         }
 
         [Fact]

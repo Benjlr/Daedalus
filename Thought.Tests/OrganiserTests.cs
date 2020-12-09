@@ -28,8 +28,8 @@ namespace Thought.Tests
         private void BuildUniverse() {
             _universe = new Universe(new IRuleSet[2] { new DummyEntries(5, 35), new DummyExits(5, 30) });
             _universe.AddMarket(TradeFlatteningData.longMarket, longMarket);
-            _universe.AddMarket(TradeFlatteningData.shorterMarket, mediumMarket);
-            _universe.AddMarket(TradeFlatteningData.shortestMarket, shortMarket);
+            _universe.AddMarket(TradeFlatteningData.mediumMarket, mediumMarket);
+            _universe.AddMarket(TradeFlatteningData.shortMarket, shortMarket);
         }
 
         private void PrepareAndRunTests() {
@@ -49,8 +49,8 @@ namespace Thought.Tests
         [Fact]
         private void ShouldCorrectlySizeOutputToMarket() {
             Assert.Equal(TradeFlatteningData.longMarket.Length, _fixt._universe.GetArrayForReturns(_fixt.longMarket).Length);
-            Assert.Equal(TradeFlatteningData.shorterMarket.Length, _fixt._universe.GetArrayForReturns(_fixt.mediumMarket).Length);
-            Assert.Equal(TradeFlatteningData.shortestMarket.Length, _fixt._universe.GetArrayForReturns(_fixt.shortMarket).Length);
+            Assert.Equal(TradeFlatteningData.mediumMarket.Length, _fixt._universe.GetArrayForReturns(_fixt.mediumMarket).Length);
+            Assert.Equal(TradeFlatteningData.shortMarket.Length, _fixt._universe.GetArrayForReturns(_fixt.shortMarket).Length);
         }
 
 
@@ -87,59 +87,86 @@ namespace Thought.Tests
             var myArray = newUniverse.GetArrayForReturns("test");
             PrintTradesToReturnTimeLine(t.LongTests[0].Trades, myArray);
             var retvals = new double[] { 0, 0,0.5,  (4 / 3.0)  };
-
-
             Assert.Equal(retvals.ToArray(), myArray);
         }
 
         [Fact]
-        private void ShouldFlattenManyTradeResults() {
-            List<>
-
-
-            for (int i = 0; i < TradeFlatteningData.longMarketTradesFiveInterval.Count; i++) 
-                AssertTrade(TradeFlatteningData.longMarketTradesFiveInterval[i], 
-                    _fixt._fbeTests.FirstOrDefault(x => x.Name.Equals(_fixt.longMarket)).LongTests[0].Trades[i]);
-
-            for (int i = 0; i < TradeFlatteningData.longMarketTradesTenInterval.Count; i++)
-                AssertTrade(TradeFlatteningData.longMarketTradesTenInterval[i],
-                    _fixt._fbeTests.FirstOrDefault(x => x.Name.Equals(_fixt.longMarket)).LongTests[1].Trades[i]);
-
-            for (int i = 0; i < TradeFlatteningData.shortestMarketTradesFiveInterval.Count; i++)
-                AssertTrade(TradeFlatteningData.shortestMarketTradesFiveInterval[i],
-                    _fixt._fbeTests.FirstOrDefault(x => x.Name.Equals(_fixt.shortMarket)).LongTests[0].Trades[i]);
-
-            for (int i = 0; i < TradeFlatteningData.shortestMarketTradesTenInterval.Count; i++)
-                AssertTrade(TradeFlatteningData.shortestMarketTradesTenInterval[i],
-                    _fixt._fbeTests.FirstOrDefault(x => x.Name.Equals(_fixt.shortMarket)).LongTests[1].Trades[i]);
+        private void ShouldFlattenLongTradeResults() {
+            var longMarketArray = _fixt._universe.GetArrayForReturns(_fixt.longMarket);
+            PrintTradesToReturnTimeLine(TradeFlatteningData.longMarketTrades, longMarketArray);
+            Asserters.ArrayDoublesEqual(TradeFlatteningData.longExpectedResults, longMarketArray);
         }
 
-        private void AssertTrade(Trade Actual, Trade Expected) {
-            Assert.Equal(Actual.MarketStart, Expected.MarketStart);
-            Assert.Equal(Actual.MarketEnd, Expected.MarketEnd);
-            Assert.Equal(Actual.Duration, Expected.Duration);
-            Assert.Equal(Actual.Drawdown, Expected.Drawdown);
-            Assert.Equal(Actual.Result, Expected.Result);
-            Assert.Equal(Actual.Results, Expected.Results);
-            Assert.Equal(Actual.Win, Expected.Win);
+        [Fact]
+        private void ShouldFlattenMediumTradeResults() {
+            var mediumMarketArray = _fixt._universe.GetArrayForReturns(_fixt.mediumMarket);
+            PrintTradesToReturnTimeLine(TradeFlatteningData.mediumMarketTrades, mediumMarketArray);
+            Asserters.ArrayDoublesEqual(TradeFlatteningData.mediumExpectedResults, mediumMarketArray);
         }
 
-
-
-
-
-
-        private void PrintTradesToReturnTimeLine(List<Trade> test, double[] market) {
-
-            for (int i = 0; i < test.Count; i++) {
-                for (int j = 0; j < test[i].Results.Length; j++) {
-                    market[test[i].MarketStart + j] += test[i].Results[j];
-                }
-            }
+        [Fact]
+        private void ShouldFlattenShortTradeResults() {
+            var shortMarketArray = _fixt._universe.GetArrayForReturns(_fixt.shortMarket);
+            PrintTradesToReturnTimeLine(TradeFlatteningData.shortMarketTrades, shortMarketArray);
+            Asserters.ArrayDoublesEqual(TradeFlatteningData.shortExpectedResults, shortMarketArray);
         }
 
+        [Fact]
+        private void ShouldCollateLongAndShortMarket() {
+            var longMarketArray = _fixt._universe.GetArrayForReturns(_fixt.longMarket);
+            PrintTradesToReturnTimeLine(TradeFlatteningData.longMarketTrades, longMarketArray);
+            var shortMarketArray = _fixt._universe.GetArrayForReturns(_fixt.shortMarket);
+            PrintTradesToReturnTimeLine(TradeFlatteningData.shortMarketTrades, shortMarketArray);
 
-        
+            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.CostanzaData, shortMarketArray, 
+                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.CostanzaData);
+
+            Asserters.ArrayDoublesEqual(TradeFlatteningData.LongAndShortResults, longMarketArray);
+        }
+
+        [Fact]
+        private void ShouldCollateLongAndMediumMarket() {
+            var longMarketArray = _fixt._universe.GetArrayForReturns(_fixt.longMarket);
+            PrintTradesToReturnTimeLine(TradeFlatteningData.longMarketTrades, longMarketArray);
+            var mediumMarketArray = _fixt._universe.GetArrayForReturns(_fixt.mediumMarket);
+            PrintTradesToReturnTimeLine(TradeFlatteningData.mediumMarketTrades, mediumMarketArray);
+
+            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.CostanzaData, mediumMarketArray, 
+                _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.CostanzaData);
+
+            Asserters.ArrayDoublesEqual(TradeFlatteningData.LongAndMediumResults, longMarketArray);
+        }
+
+        [Fact]
+        private void ShouldCollateMediumAndShortMarket() {
+            var mediumMarketArray = _fixt._universe.GetArrayForReturns(_fixt.mediumMarket);
+            PrintTradesToReturnTimeLine(TradeFlatteningData.mediumMarketTrades, mediumMarketArray);
+            var shortMarketArray = _fixt._universe.GetArrayForReturns(_fixt.shortMarket);
+            PrintTradesToReturnTimeLine(TradeFlatteningData.shortMarketTrades, shortMarketArray);
+
+            CollateTradesAcrossMarkets(mediumMarketArray, _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.CostanzaData, shortMarketArray, 
+                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.CostanzaData);
+
+            Asserters.ArrayDoublesEqual(TradeFlatteningData.ShortAndMediumResults, mediumMarketArray);
+        }
+
+        [Fact]
+        private void ShouldCollateLongShortAndMediumMarket() {
+            var longMarketArray = _fixt._universe.GetArrayForReturns(_fixt.longMarket);
+            PrintTradesToReturnTimeLine(TradeFlatteningData.longMarketTrades, longMarketArray);
+            var mediumMarketArray = _fixt._universe.GetArrayForReturns(_fixt.mediumMarket);
+            PrintTradesToReturnTimeLine(TradeFlatteningData.mediumMarketTrades, mediumMarketArray);
+            var shortMarketArray = _fixt._universe.GetArrayForReturns(_fixt.shortMarket);
+            PrintTradesToReturnTimeLine(TradeFlatteningData.shortMarketTrades, shortMarketArray);
+
+            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.CostanzaData, mediumMarketArray,
+                _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.CostanzaData);
+            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.CostanzaData, shortMarketArray, 
+                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.CostanzaData);
+
+            Asserters.ArrayDoublesEqual(TradeFlatteningData.LongShortAndMediumResults, longMarketArray);
+        }
+
 
     }
 }

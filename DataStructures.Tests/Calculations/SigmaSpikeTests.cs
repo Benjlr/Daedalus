@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using DataStructures.PriceAlgorithms;
+using TestUtils;
 using Xunit;
 
 namespace DataStructures.Tests.Calculations
@@ -11,8 +12,7 @@ namespace DataStructures.Tests.Calculations
         [Fact]
         private void ShouldCalculateSigmaCorrectly() {
             var sigResult = SigmaSpike.Calculate(data,5);
-            Assert.Equal(new List<double>()
-            {
+            var expected = new List<double>() {               
                 0                       ,
                 0                       ,
                 0                       ,
@@ -28,8 +28,9 @@ namespace DataStructures.Tests.Calculations
                 -0.014930024518812597   ,
                 -0.022377124801225692   ,
                 0.022437173425243578    ,
-                43.25323770611957       ,
-            }, sigResult);
+                43.25323770611957       , };
+
+           Asserters.ListDoublesEqual(expected, sigResult);
         }
 
 

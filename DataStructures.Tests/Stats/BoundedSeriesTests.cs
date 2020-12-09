@@ -59,36 +59,36 @@ namespace DataStructures.Tests.Stats
 
         [Fact]
         private void ShouldGenerateCorrectBoundsUnEvenCount() {
-            var myLIst = new List<double>() { -20,-18,-16,-14,-12,-10,-8,-6,-4,-2,0,2,4,6,8,10,12,14,16,18,20 };
+            var myList = new List<double>() { -20,-18,-16,-14,-12,-10,-8,-6,-4,-2,0,2,4,6,8,10,12,14,16,18,20 };
 
-           var myStat = new BoundedStat(myLIst, 0.1);
+           var myStat = new BoundedStat(myList, 0.1);
             Assert.Equal(2, myStat.Upper);
             Assert.Equal(-2, myStat.Lower);
-            myStat = new BoundedStat(myLIst, 0.2);
+            myStat = new BoundedStat(myList, 0.2);
             Assert.Equal(4, myStat.Upper);
             Assert.Equal(-4, myStat.Lower);
-            myStat = new BoundedStat(myLIst, 0.3);
+            myStat = new BoundedStat(myList, 0.3);
             Assert.Equal(6, myStat.Upper);
             Assert.Equal(-6, myStat.Lower);
-            myStat = new BoundedStat(myLIst, 0.4);
+            myStat = new BoundedStat(myList, 0.4);
             Assert.Equal(8, myStat.Upper);
             Assert.Equal(-8, myStat.Lower);
-            myStat = new BoundedStat(myLIst, 0.5);
+            myStat = new BoundedStat(myList, 0.5);
             Assert.Equal(10, myStat.Upper);
             Assert.Equal(-10, myStat.Lower);
-             myStat = new BoundedStat(myLIst, 0.6);
+             myStat = new BoundedStat(myList, 0.6);
             Assert.Equal(12, myStat.Upper);
             Assert.Equal(-12, myStat.Lower);
-             myStat = new BoundedStat(myLIst, 0.7);
+             myStat = new BoundedStat(myList, 0.7);
             Assert.Equal(14, myStat.Upper);
             Assert.Equal(-14, myStat.Lower);
-             myStat = new BoundedStat(myLIst, 0.8);
+             myStat = new BoundedStat(myList, 0.8);
             Assert.Equal(16, myStat.Upper);
             Assert.Equal(-16, myStat.Lower);
-             myStat = new BoundedStat(myLIst, 0.9);
+             myStat = new BoundedStat(myList, 0.9);
             Assert.Equal(18, myStat.Upper);
             Assert.Equal(-18, myStat.Lower);
-             myStat = new BoundedStat(myLIst, 1);
+             myStat = new BoundedStat(myList, 1);
             Assert.Equal(20, myStat.Upper);
             Assert.Equal(-20, myStat.Lower);
         }

@@ -1,27 +1,24 @@
-﻿using System;
+﻿using DataStructures.PriceAlgorithms;
 using System.Collections.Generic;
-using System.Text;
-using DataStructures.PriceAlgorithms;
+using TestUtils;
 using Xunit;
 
 namespace DataStructures.Tests.Calculations
 {
     public class MovingAverageTests
     {
-        private List<double> myValues = new List<double>()
+        private readonly List<double> myValues = new List<double>()
         {
             9.355409848, 8.411808685, 5.599313938, 0.414904245, 5.256302681,
             6.31540909, 1.497067101, 8.838435337, 5.662222594, 3.726458634,
             2.79255853, 9.489498002, 5.726134449, 6.330258231,
             1.066416182, 6.24062087, 8.904408531, 8.504210806, 1.769079426,
-
         };
 
         [Fact]
         private void ShouldCalculateSimpleMovingAverageCorrectlySevenPeriod() {
             var result = MovingAverage.SimpleMovingAverage(myValues, 7);
-
-            Assert.Equal(new List<double>()
+            List<double> expected = new List<double>()
             {
                 9.355409848, 8.8836092665, 7.788844157, 5.9453591789999995, 5.8075478793999995, 5.8921914145,
                 5.264316512571428,
@@ -37,14 +34,14 @@ namespace DataStructures.Tests.Calculations
                 5.792842113571429,
                 6.6087924387142847,
                 5.5058754992857146
-            }, result);
+            };
+            Asserters.ListDoublesEqual(expected, result);
         }
 
         [Fact]
         private void ShouldCalculateSimpleMovingAverageCorrectlyFourPeriod() {
             var result = MovingAverage.SimpleMovingAverage(myValues, 4);
-
-            Assert.Equal(new List<double>()
+            var expected = new List<double>()
             {
                 9.355409848,
                 8.8836092665,
@@ -65,14 +62,14 @@ namespace DataStructures.Tests.Calculations
                 5.6354259535,
                 6.17891409725,
                 6.35457990825
-            }, result);
+            };
+            Asserters.ListDoublesEqual(expected, result);
         }
 
         [Fact]
         private void ShouldCalculateExpMovingAverageCorrectlyThreePeriod() {
             var result = MovingAverage.ExponentialMovingAverage(myValues, 3);
-
-            Assert.Equal(new List<double>()
+            var expected = new List<double>()
             {
                 9.355409848,
                 8.8836092665,
@@ -82,7 +79,7 @@ namespace DataStructures.Tests.Calculations
                 5.42882594615625,
                 3.4629465235781249,
                 6.1506909302890627,
-                5.906456762144531 ,
+                5.906456762144531,
                 4.8164576980722655,
                 3.8045081140361328,
                 6.6470030580180666,
@@ -93,17 +90,17 @@ namespace DataStructures.Tests.Calculations
                 6.9279631922818146,
                 7.7160869991409076,
                 4.7425832125704535
-            }, result);
+            };
+            Asserters.ListDoublesEqual(expected, result);
         }
 
         [Fact]
         private void ShouldCalculateExpMovingAverageCorrectlyNinePeriod() {
             var result = MovingAverage.ExponentialMovingAverage(myValues, 9);
-
-            Assert.Equal(new List<double>()
+            var expected = new List<double>()
             {
                 9.355409848,
-                9.166689615400001 ,
+                9.166689615400001,
                 8.4532144799200015,
                 6.8455524329360014,
                 6.5277024825488015,
@@ -121,7 +118,8 @@ namespace DataStructures.Tests.Calculations
                 5.9742740079663195,
                 6.4802613675730552,
                 5.5380249792584442
-            }, result);
+            };
+            Asserters.ListDoublesEqual(expected,result);
         }
     }
 }

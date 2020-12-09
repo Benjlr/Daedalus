@@ -1,4 +1,5 @@
-﻿using DataStructures;
+﻿using System;
+using DataStructures;
 using RuleSets;
 using System.Collections.Generic;
 using System.IO;
@@ -39,6 +40,7 @@ namespace Thought
             for (int i = 0; i < markets.Count; i++)
                 AddMarket(markets[i]);
         }
+
 
         private Market OpenMarket(string market) {
             if (DataLoader.CheckDataType(market) == typeof(SessionData))

@@ -25,27 +25,8 @@ namespace TestUtils
             return StartDateShortest;
         }
 
-        public static List<Trade> longMarketTradesFiveInterval = new List<Trade>()
-        {
-            new Trade(new double[] {0, (11 / 10.0) - 1, (12 / 10.0) - 1, (13 / 10.0) - 1, (14 / 10.0) - 1, (15 / 10.0) - 1}, 1),
-            new Trade(new double[] {0, (16 / 15.0) - 1, (17 / 15.0) - 1, (18 / 15.0) - 1, (19 / 15.0) - 1, (20 / 15.0) - 1}, 6),
-            new Trade(new double[] {0, (21 / 20.0) - 1, (22 / 20.0) - 1, (23 / 20.0) - 1, (24 / 20.0) - 1, (25 / 20.0) - 1}, 11),
-            new Trade(new double[] {0, (26 / 25.0) - 1, (27 / 25.0) - 1, (28 / 25.0) - 1, (29 / 25.0) - 1, (30 / 25.0) - 1}, 16),
-            new Trade(new double[] {0, (31 / 30.0) - 1, (32 / 30.0) - 1, (33 / 30.0) - 1, (34 / 30.0) - 1, (35 / 30.0) - 1}, 21),
-            new Trade(new double[] {0, (36 / 35.0) - 1, (37 / 35.0) - 1, (38 / 35.0) - 1, (39 / 35.0) - 1, (40 / 35.0) - 1}, 26),
-        };
-
-        public static List<Trade> longMarketTradesTenInterval = new List<Trade>()
-        {
-            new Trade(new double[] {0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9}, 0),
-            new Trade(new double[] {0, (21 / 20.0) - 1, (22 / 20.0) - 1, (23 / 20.0) - 1, (24 / 20.0) - 1, (25 / 20.0) - 1, (26 / 20.0) - 1, (27 / 20.0) - 1, (28 / 20.0) - 1, (29 / 20.0) - 1}, 10), 
-            new Trade(new double[] {0, (31 / 30.0) - 1, (32 / 30.0) - 1, (33 / 30.0) - 1, (34 / 30.0) - 1, (35 / 30.0) - 1, (36 / 30.0) - 1, (37 / 30.0) - 1, (38 / 30.0) - 1, (39 / 30.0) - 1}, 20),
-            new Trade(new double[] {0, (41 / 40.0) - 1, (42 / 40.0) - 1, (43 / 40.0) - 1, (44 / 40.0) - 1, (45 / 40.0) - 1, (46 / 40.0) - 1, (47 / 40.0) - 1, (48 / 40.0) - 1, (49 / 40.0) - 1}, 30)
-        };
-
         public static SessionData[] longMarket = new SessionData[]
         {
-            new SessionData(),
             new SessionData(StartDate, 200, 10, 10, 10, 10), //0    0                   0
             new SessionData(IncStart(), 200, 11, 11, 11, 11),//     0.1                 0.1
             new SessionData(IncStart(), 200, 12, 12, 12, 12),//     0.2                 0.2
@@ -89,9 +70,7 @@ namespace TestUtils
             new SessionData(IncStart(), 200, 50, 50, 50, 50) //40   0                   0
         };
 
-
-
-        public static SessionData[] shorterMarket = new SessionData[]
+        public static SessionData[] mediumMarket = new SessionData[]
         {
             new SessionData(StartDateShorter, 200, 10, 10, 10, 10),     //0
             new SessionData(IncStartDateShorter(), 200, 11, 11, 11, 11),
@@ -115,7 +94,7 @@ namespace TestUtils
             new SessionData(IncStartDateShorter(), 200, 29, 29, 29, 29)
         };
 
-        public static SessionData[] shortestMarket = new SessionData[]
+        public static SessionData[] shortMarket = new SessionData[]
         {
             new SessionData(StartDateShortest, 200, 10, 10, 10, 10),//0
             new SessionData(IncStartDateShortest(), 200, 11, 11, 11, 11),
@@ -130,20 +109,81 @@ namespace TestUtils
         };
 
 
-        public static List<Trade> shorterMarketTradesFiveInterval = new List<Trade>()
+        public static List<Trade> longMarketTrades = new List<Trade>()
         {
-            new Trade(new double[] {0, (11 / 10.0) - 1, (12 / 10.0) - 1, (13 / 10.0) - 1, (14 / 10.0) - 1, (15 / 10.0) - 1}, 1),
-            new Trade(new double[] {0, (16 / 15.0) - 1, (17 / 15.0) - 1, (18 / 15.0) - 1, (19 / 15.0) - 1, (20 / 15.0) - 1}, 6),
-            new Trade(new double[] {0, (21 / 20.0) - 1, (22 / 20.0) - 1, (23 / 20.0) - 1, (24 / 20.0) - 1, (25 / 20.0) - 1}, 11),
-            new Trade(new double[] {0, (26 / 25.0) - 1, (27 / 25.0) - 1, (28 / 25.0) - 1, (29 / 25.0) - 1, (30 / 25.0) - 1}, 16)
+            new Trade(new double[] {0.046, 0.01 , 0.015 , -0.01,  -0.2,  0.15}, 1),
+            new Trade(new double[] {0.014, 0.03 , -0.039, 0.004,  0.01,  0.03}, 6),
+            new Trade(new double[] {-0.029, 0.05 , 0.008, 0.04,  0.022,  0.034}, 8),
+            new Trade(new double[] {0.003, 0.2  , 0.03  ,  -0.1,  0.01,  0.05}, 11),
+            new Trade(new double[] {0.008, 0.025, -0.038, -0.02,  0.03, -0.02}, 16),
+            new Trade(new double[] {0.025, 0.027, 0.007, -0.038, -0.043, -0.015}, 18),
+            new Trade(new double[] {-0.040, 0.01 , 0.04  , 0.005, -0.06, -0.065}, 21),
+            new Trade(new double[] {-0.034, 0.036 , -0.019  , -0.039, 0.031, -0.008}, 23),
+            new Trade(new double[] {-0.046, 0.012, -0.01 ,  0.01,  0.04,  0.05}, 26),
+            new Trade(new double[] {0.007,-0.011,0.017,0.028,0.029,-0.016}, 30),
+            new Trade(new double[] {-0.046,0.004,-0.041,-0.043,-0.025,0.044}, 32),
+            new Trade(new double[] {-0.012,-0.03,0.002,0.022,-0.014,-0.048}, 35),
+            new Trade(new double[] {-0.027,0.048,-0.002}, 38),
+        };
+
+        public static double[] longExpectedResults = new[]
+        {
+            0, 0.046, 0.01, 0.015, -0.01, -0.2, 0.164, 0.03, -0.068, 0.054, 0.018, 0.073, 0.222, 0.064, -0.1, 0.01, 0.058, 0.025, -0.013, 0.007, 0.037, -0.098, -0.033, -0.009, 0.041, -0.079, -0.15, 0.043, -0.018, 0.01,
+            0.047, 0.039, -0.029, 0.032, -0.012, -0.071, -0.055, 0.046, -0.005, 0.034, -0.05
+        };
+
+        public static List<Trade> mediumMarketTrades = new List<Trade>()
+        {
+            new Trade(new double[] {-0.004, 0.026, 0.039, 0.044, 0.01, -0.03}, 1),
+            new Trade(new double[] {0.034, -0.027, 0.018, 0.029, -0.012, 0.028}, 3),
+            new Trade(new double[] {-0.012, 0.016, 0.016, -0.032, -0.046, 0.048}, 6),
+            new Trade(new double[] {-0.014, -0.042, -0.012, -0.006, -0.019, 0.006}, 9),
+            new Trade(new double[] {0.023, 0.03, 0.016, -0.007, 0.031, -0.042}, 12),
+            new Trade(new double[] {-0.049, 0.01, 0.02, -0.021, -0.028}, 15),
+            new Trade(new double[] {-0.033, -0.04}, 18)
         };
 
 
-        public static List<Trade> shortestMarketTradesFiveInterval = new List<Trade>()
+        public static double[] mediumExpectedResults = new[]
         {
-            new Trade(new double[] {0, (11 / 10.0) - 1, (12 / 10.0) - 1, (13 / 10.0) - 1, (14 / 10.0) - 1, (15 / 10.0) - 1}, 10),
-            new Trade(new double[] {0, (16 / 15.0) - 1, (17 / 15.0) - 1, (18 / 15.0) - 1, (19 / 15.0) - 1, (20 / 15.0) - 1}, 6),
+            0, -0.004, 0.026, 0.073, 0.017, 0.028, -0.013, 0.004, 0.044, -0.046, -0.088, 0.036, 0.017, 0.011, 0.022, -0.056, 0.041, -0.022, -0.054, -0.068
         };
+
+        public static List<Trade> shortMarketTrades = new List<Trade>()
+        {
+            new Trade(new double[] {0.048,0.037,-0.03,0.022,-0.027,0.034}, 0),
+            new Trade(new double[] {0.014,0.016,0.03,-0.034,-0.014,0.012}, 1),
+            new Trade(new double[] {-0.028,0.046,-0.025,-0.038,-0.032,0.003}, 3),
+            new Trade(new double[] {-0.02,-0.034,0.002,0.039,0.042}, 5),
+            new Trade(new double[] {-0.032,0.041,0.01,0.033}, 6),
+            new Trade(new double[] {0.024,-0.009}, 8),
+            new Trade(new double[] {-0.001}, 9),
+        };
+
+        public static double[] shortExpectedResults = new[]
+        {
+            0.048, 0.051, -0.014, 0.024, -0.015, -0.025, -0.092, 0.011, 0.076, 0.065
+        };
+
+        public static double[] LongAndShortResults = new[]
+        {
+            0,0.046,0.01,0.015,-0.01,-0.2,0.164,0.03,-0.068,0.054,0.018,0.073,0.222,0.064,-0.052,0.061,0.044,0.049,-0.028,-0.018,-0.055,-0.087,0.043,0.056,0.041,-0.079,-0.15,0.043,-0.018,0.01,0.047,0.039,-0.029,0.032,-0.012,-0.071,-0.055,0.046,-0.005,0.034,-0.05
+        };
+
+        public static double[] LongAndMediumResults = new[]
+        {
+            0,0.046,0.01,0.015,-0.01,-0.2,0.164,0.03,-0.068,0.054,0.014,0.099,0.295,0.081,-0.072,-0.003,0.062,0.069,-0.059,-0.081,0.073,-0.081,-0.022,0.013,-0.015,-0.038,-0.172,-0.011,-0.086,0.01,0.047,0.039,-0.029,0.032,-0.012,-0.071,-0.055,0.046,-0.005,0.034,-0.05
+        };
+
+        public static double[] LongShortAndMediumResults = new[]
+        {
+            0,0.046,0.01,0.015,-0.01,-0.2,0.164,0.03,-0.068,0.054,0.014,0.099,0.295,0.081,-0.024,0.048,0.048,0.093,-0.074,-0.106,-0.019,-0.07,0.054,0.078,-0.015,-0.038,-0.172,-0.011,-0.086,0.01,0.047,0.039,-0.029,0.032,-0.012,-0.071,-0.055,0.046,-0.005,0.034,-0.05
+        };
+        public static double[] ShortAndMediumResults = new[]
+        {
+            0,-0.004,0.026,0.073,0.017,0.076,0.038,-0.01,0.068,-0.061,-0.113,-0.056,0.028,0.087,0.087,-0.056,0.041,-0.022,-0.054,-0.068
+        };
+
     }
 }
 

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using DataStructures.PriceAlgorithms;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using DataStructures.PriceAlgorithms;
+using System.Linq;
+using TestUtils;
 using Xunit;
 
 namespace DataStructures.Tests.Calculations
@@ -11,11 +12,12 @@ namespace DataStructures.Tests.Calculations
         [Fact]
         private void ShouldCalculateNRWRCorrectly() {
 
-            var nrs = NRWRBars.Calculate(data);
-            Assert.Equal(new List<int>()
+            var actual = NRWRBars.Calculate(data).Select(x=>(double)x).ToList();
+            var expected = new List<double>()
             {
                 0, -1, -2, 3, 4, -3, -4, 2, 4
-            }, nrs);
+            };
+            Asserters.ListDoublesEqual(expected, actual);
         }
 
 

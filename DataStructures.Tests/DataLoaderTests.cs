@@ -9,8 +9,8 @@ namespace DataStructures.Tests
     {
         static string GetData(string data) {
             var bundleAssembly = AppDomain.CurrentDomain?.GetAssemblies().FirstOrDefault(x => x.FullName != null && x.FullName.Contains("TestUtils"));
-            if (bundleAssembly?.CodeBase == null) return "";
-            var asmPath = new Uri(bundleAssembly.CodeBase).LocalPath;
+            if (bundleAssembly?.Location == null) return "";
+            var asmPath = new Uri(bundleAssembly.Location).LocalPath;
             return Path.Combine(Path.GetDirectoryName(asmPath) ?? "", data);
         }
 
