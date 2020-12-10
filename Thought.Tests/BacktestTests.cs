@@ -54,10 +54,18 @@ namespace Thought.Tests
         {
             public Universe Markets { get; set; }
             private List<DatedResult> _results { get; set; }
+
+
+
             public object Results { get; set; }
 
             public Backtest(Universe markets, StrategyExecuter exec) {
 
+                foreach (var element in markets.Elements) {
+                    var trades = exec.Execute(element);
+                    
+                }    
+                
             }
             private void GetResults() {
 
