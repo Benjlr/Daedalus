@@ -5,6 +5,7 @@ using Logic.Metrics;
 using RuleSets;
 using RuleSets.Entry;
 using System.Linq;
+using DataStructures.StatsTools;
 using TestUtils;
 using Xunit;
 
@@ -167,6 +168,23 @@ namespace Thought.Tests
             Asserters.ArrayDoublesEqual(TradeFlatteningData.LongShortAndMediumResults, longMarketArray);
         }
 
+        private void CollateTradesAcrossMarkets(double[] returnsDatum, SessionData[] dataDatum, double[] returnsToAdd, SessionData[] dataToReference) {
+            for (int i = 0; i < dataToReference.Length; i++) {
+                if (returnsToAdd[i] != 0) {
+                    var date = dataToReference[i].CloseDate;
+                    var relevantDatumItem = dataDatum.OrderBy(x => Math.Abs(x.CloseDate.Ticks - date.Ticks)).First();
+                    for (int j = 0; j < dataDatum.Length; j++)
+                        if (dataDatum[j].CloseDate == relevantDatumItem.CloseDate)
+                            returnsDatum[j] += returnsToAdd[i];
+                }
+            }
+        }
 
+
+        private void PrintTradesToReturnTimeLine(List<Trade> test, double[] market) {
+            foreach (var t in test)
+                for (int j = 0; j < t.Results.Length; j++)
+                    market[t.MarketStart + j] += t.Results[j];
+        }
     }
 }

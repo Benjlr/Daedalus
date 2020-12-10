@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using DataStructures.StatsTools;
+﻿using DataStructures.StatsTools;
+using System.Collections.Generic;
 using Xunit;
 
 namespace DataStructures.Tests.Stats
 {
     public class TradeStatsTests
     {
-        private List<double> _testList = new List<double>() { -1, -1, -1, -0.5, -0.5, -0.5, 0, 0, 0, 0.5, 0.5, 0.5, 1, 1, 1 };
-        private List<double> _testList2 = new List<double>() { 1, 1, 1, 0.5, 0.5, 0.5, 0, 0, 0, 0.5, 0.5, 0.5, 1, 1, 1 };
-        private List<double> _testList3 = new List<double>() { 123, -45, 0.02, 12, 99, -89, 123, 122.4, -450.55, 450, -0.002, 0.003, 0.05, 12, 3, -42 };
+        private readonly List<double> _testList = new List<double>() { -1, -1, -1, -0.5, -0.5, -0.5, 0, 0, 0, 0.5, 0.5, 0.5, 1, 1, 1 };
+        private readonly List<double> _testList2 = new List<double>() { 1, 1, 1, 0.5, 0.5, 0.5, 0, 0, 0, 0.5, 0.5, 0.5, 1, 1, 1 };
+        private readonly List<double> _testList3 = new List<double>() { 123, -45, 0.02, 12, 99, -89, 123, 122.4, -450.55, 450, -0.002, 0.003, 0.05, 12, 3, -42 };
 
 
         [Fact]
