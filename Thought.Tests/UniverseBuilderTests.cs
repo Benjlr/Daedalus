@@ -117,7 +117,7 @@ namespace Thought.Tests
 
         private void AssertResults(ITest t) {
             Assert.True(t.Trades.Count > 0);
-            Assert.True(!t.Trades.All(x => x.Result.Equals(0)));
+            Assert.True(!t.Trades.All(x => x.FinalResult.Equals(0)));
             Assert.True(!double.IsNaN(t.Stats.WinPercent));
         }
 

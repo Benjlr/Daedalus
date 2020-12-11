@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataStructures;
 using DataStructures.StatsTools;
 using Logic.Metrics;
 
@@ -72,7 +73,6 @@ namespace Logic
             ReturnByTest = _analyses.Select(x => x._histoStats.ResultHistogram).ToList();
             DrawdownByTest = _analyses.Select(x => x._histoStats.DrawddownHistogram).ToList();
             RollingExpectancy = _analyses.Select(x => x.RollingExpectancy).ToList();
-
         }
     }
 
@@ -95,7 +95,18 @@ namespace Logic
             ExpectancyAverage = results.Stats.AverageExpectancy;
             ExpectancyMedian = results.Stats.MedianExpectancy;
             WinPercentage = (results.Stats.WinPercent);
-            RollingExpectancy = RollingStatsGenerator.GetRollingStats(results.Trades.SelectMany(x=>x.Results).ToList(),100).Select(x=>x.AverageExpectancy).ToList();
+            RollingExpectancy = getAvgExpectancy(results);
+        }
+
+        private List<double> getAvgExpectancy(ITest results) {
+            return RollingStatsGenerator.GetRollingStats(resultList(results),100).
+                Select(x=>x.AverageExpectancy).ToList();
+        }
+
+        private List<double> resultList(ITest results) {
+            return results.Trades.
+                SelectMany(x=>x.
+                    Results.Select(y=>y.Return)).ToList();
         }
     }
 
@@ -112,22 +123,25 @@ namespace Logic
             _drawdownHistogramBuilder = HistogramTools.BinGenerator(bin);
             DrawdownByReturn = HistogramTools.CategoryGenerator(bin);
 
-            GenerateHistogramStats(results);
+            GenerateHistogramStats(results.Trades);
             Finalise();
-
         }
 
-        private void GenerateHistogramStats(ITest results) {
-            for (int j = 0; j < results.Trades.SelectMany(x => x.Results).Count(); j++)
-                if (results.Trades.SelectMany(x => x.Results).ToList()[j] != 0) {
-                    //HistogramTools.CategoriseItem(DrawdownByReturn, results.FBEDrawdown[j], results.FBEResults[j]);
-                    //HistogramTools.CategoriseItem(_resultHistogramBuilder, results.FBEResults[j]);
-                    //if (results.FBEResults[j] > 0) HistogramTools.CategoriseItem(_drawdownHistogramBuilder, results.FBEDrawdown[j]);
-                }
+        private void GenerateHistogramStats(List<Trade> results) {
+            var finalResults = results.Select(x => x.FinalResult).ToList();
+            for (int j = 0; j < finalResults.Count(); j++)
+                if (finalResults[j] != 0) 
+                    histogramCategorisation(results, j);
         }
 
-        private void Finalise()
-        {
+        private void histogramCategorisation(List<Trade> results, int j) {
+            HistogramTools.CategoriseItem(DrawdownByReturn, results[j].Drawdown, results[j].FinalResult);
+            HistogramTools.CategoriseItem(_resultHistogramBuilder, results[j].FinalResult);
+            if (results[j].FinalResult > 0) 
+                HistogramTools.CategoriseItem(_drawdownHistogramBuilder, results[j].Drawdown);
+        }
+
+        private void Finalise() {
             ResultHistogram = HistogramTools.GenerateHistogram(_resultHistogramBuilder);
             DrawddownHistogram = HistogramTools.MakeCumulative(HistogramTools.GenerateHistogram(_drawdownHistogramBuilder));
         }

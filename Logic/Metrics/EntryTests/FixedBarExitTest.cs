@@ -39,9 +39,9 @@ namespace Logic.Metrics.EntryTests
                 _currentTrade.Continue(data[j]);
 
             if(BarsToWait + i < data.Length)
-                _currentTrade.Exit(data[BarsToWait + i].Open_Bid);
+                _currentTrade.Exit(data[BarsToWait + i].Time, data[BarsToWait + i].Open_Bid);
             else 
-                _currentTrade.Exit(data.Last().Close_Bid);
+                _currentTrade.Exit(data.Last().Time, data.Last().Close_Bid);
         }
 
         public LongFixedBarExitTest(int bars_to_wait) : base(bars_to_wait)
@@ -62,9 +62,9 @@ namespace Logic.Metrics.EntryTests
                 _currentTrade.Continue(data[j]);
 
             if (BarsToWait + i  < data.Length)
-                _currentTrade.Exit(data[BarsToWait + i].Open_Ask);
+                _currentTrade.Exit(data[BarsToWait + i].Time, data[BarsToWait + i].Open_Ask);
             else
-                _currentTrade.Exit(data.Last().Close_Ask);
+                _currentTrade.Exit(data.Last().Time, data.Last().Close_Ask);
         }
 
         public ShortFixedBarExitTest(int bars_to_wait) : base(bars_to_wait)

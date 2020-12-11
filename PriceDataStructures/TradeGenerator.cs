@@ -17,12 +17,9 @@ namespace DataStructures
 
     public interface TradeGeneratorInterface
     {
-        public TradePrices TradeLimits { get; }
-        public double CurrentReturn { get; }
         public bool isActive { get; }
-        public void UpdateExits(ExitPrices exitPrices);
         public void Continue(BidAskData data);
-        public void Exit(double exitPrice);
+        public void Exit(DateTime date, double exitPrice);
 
     }
 
@@ -51,15 +48,16 @@ namespace DataStructures
             TradeLimits = new TradePrices(exitPrices, TradeLimits.EntryPrice);
         }
 
-        public void Exit(double exitPrice) {
-            _tradeBuilder.AddResult(CalculateReturn(exitPrice));
+        public void Exit(DateTime date, double exitPrice) {
+            var final = CalculateReturn(exitPrice);
+            _tradeBuilder.AddResult(date, final, final);
             onExit?.Invoke(_tradeBuilder.CompileTrade());
             isActive = false;
         }
         
-        protected void AddTradeBuilderStats(double data) {
+        protected void AddTradeBuilderStats(DateTime date, double data, double low) {
             CurrentReturn = CalculateReturn(data);
-            this._tradeBuilder.AddResult(CurrentReturn);
+            this._tradeBuilder.AddResult(date, CurrentReturn, CalculateReturn(low));
         }
 
         protected abstract void CheckStopsAndTargets(BidAskData data);
@@ -74,14 +72,14 @@ namespace DataStructures
 
         protected override void CheckStopsAndTargets(BidAskData data) {
             if (!CheckStops(data) && !CheckTargets(data))
-                AddTradeBuilderStats(data.Close_Bid);
+                AddTradeBuilderStats(data.Time, data.Close_Bid, data.Low_Bid);
         }
 
         private bool CheckTargets(BidAskData data) {
             if (data.High_Bid > TradeLimits.TargetPrice) {
                 if (data.Open_Bid > TradeLimits.TargetPrice)
-                    Exit(data.Open_Bid);
-                else Exit(TradeLimits.TargetPrice);
+                    Exit(data.Time, data.Open_Bid);
+                else Exit(data.Time, TradeLimits.TargetPrice);
                 return true;
             }
 
@@ -91,8 +89,8 @@ namespace DataStructures
         private bool CheckStops(BidAskData data) {
             if (data.Low_Bid < TradeLimits.StopPrice) {
                 if (data.Open_Bid < TradeLimits.StopPrice)
-                    Exit(data.Open_Bid);
-                else Exit(TradeLimits.StopPrice);
+                    Exit(data.Time, data.Open_Bid);
+                else Exit(data.Time, TradeLimits.StopPrice);
                 return true;
             }
 
@@ -111,14 +109,14 @@ namespace DataStructures
 
         protected override void CheckStopsAndTargets(BidAskData data) {
             if (!CheckStops(data) && !CheckTargets(data))
-                AddTradeBuilderStats(data.Close_Ask);
+                AddTradeBuilderStats(data.Time, data.Close_Ask, data.High_Ask);
         }
 
         private bool CheckStops(BidAskData data) {
             if (data.High_Ask > TradeLimits.StopPrice) {
                 if (data.Open_Ask > TradeLimits.StopPrice)
-                    Exit(data.Open_Ask);
-                else Exit(TradeLimits.StopPrice);
+                    Exit(data.Time, data.Open_Ask);
+                else Exit(data.Time, TradeLimits.StopPrice);
                 return true;
             }
 
@@ -128,8 +126,8 @@ namespace DataStructures
         private bool CheckTargets(BidAskData data) {
             if (data.Low_Ask < TradeLimits.TargetPrice) {
                 if (data.Open_Ask < TradeLimits.TargetPrice)
-                    Exit(data.Open_Ask);
-                else Exit(TradeLimits.TargetPrice);
+                    Exit(data.Time, data.Open_Ask);
+                else Exit(data.Time, TradeLimits.TargetPrice);
                 return true;
             }
 

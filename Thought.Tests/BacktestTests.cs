@@ -47,7 +47,7 @@ namespace Thought.Tests
 
             var Backtest = new Backtest(myUnivers, strat);
 
-            Assert.True(Backtest.Results.Count >0 );
+            Assert.True(Backtest.GetResults().Count >0 );
         }
 
         public class Backtest
@@ -63,24 +63,17 @@ namespace Thought.Tests
 
                 foreach (var element in markets.Elements) {
                     var trades = exec.Execute(element);
-                    
+                    foreach (var trade in trades) {
+                        //_results.Add(dated);
+                    }
                 }    
                 
             }
-            private void GetResults() {
-
+            public List<DatedResult> GetResults() {
+                return null;
             }
         }
 
-        public readonly struct DatedResult
-        {
-            public DateTime Date { get; }
-            public double Result { get; }
-
-            public DatedResult(DateTime date, double result) {
-                Date = date;
-                Result = result;
-            }
-        }
+ 
     }
 }

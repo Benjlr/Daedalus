@@ -1,10 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Xunit;
+using DataStructures;
 
 namespace TestUtils
 {
+    public class TradeTimeMocker
+    {
+        private static DateTime _mockTime;
+        public static DatedResult[] Mock(double[] vals, double[] drawDowns, DateTime startDate ) {
+            _mockTime  = startDate;
+            DatedResult[] dateResults = new DatedResult[vals.Length];
+            iterateTime(vals, drawDowns, dateResults);
+            return dateResults;
+        }
+
+        public static DatedResult[] Mock(double[] vals) {
+            _mockTime = new DateTime(2020, 01, 01);
+            DatedResult[] dateResults = new DatedResult[vals.Length];
+            iterateTime(vals, vals, dateResults);
+            return dateResults;
+        }
+
+        private static void iterateTime(double[] vals, double[] drawDowns, DatedResult[] dateResults) {
+            for (int i = 0; i < vals.Length; i++)
+                dateResults[i] = new DatedResult(_mockTime.AddDays(i ), vals[i], drawDowns[i]);
+        }
+    }
+
     public class Loaders
     {
         

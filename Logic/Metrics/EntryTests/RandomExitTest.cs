@@ -40,9 +40,9 @@ namespace Logic.Metrics.EntryTests
                 _currentTrade.Continue(data[j]);
 
             if (_randomExit + i < data.Length)
-                _currentTrade.Exit(data[_randomExit + i].Open_Bid);
+                _currentTrade.Exit(data[_randomExit + i].Time, data[_randomExit + i].Open_Bid);
             else
-                _currentTrade.Exit(data.Last().Close_Bid);
+                _currentTrade.Exit(data.Last().Time, data.Last().Close_Bid);
         }
         
         public LongRandomExitTest(int maxLength) : base(maxLength)
@@ -61,9 +61,9 @@ namespace Logic.Metrics.EntryTests
                 _currentTrade.Continue(data[j]);
 
             if (_randomExit + i < data.Length)
-                _currentTrade.Exit(data[_randomExit + i].Open_Bid);
+                _currentTrade.Exit(data[_randomExit + i].Time, data[_randomExit + i].Open_Bid);
             else
-                _currentTrade.Exit(data.Last().Close_Bid);
+                _currentTrade.Exit(data.Last().Time, data.Last().Close_Bid);
         }
 
         public ShortRandomExitTest(int maxLength) : base(maxLength)

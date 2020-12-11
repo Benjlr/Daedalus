@@ -48,13 +48,13 @@ namespace Logic.Tests
         [Fact]
         public void ShouldGenerateLongResults() {
             for (int i = 0; i < FSTETestsBars._longSmallStopTarget.Count; i++) {
-                Assert.Equal(FSTETestsBars._longSmallStopTarget[i].Result, _fixture.myTests[0][0].Trades[i].Result);
+                Assert.Equal(FSTETestsBars._longSmallStopTarget[i].FinalResult, _fixture.myTests[0][0].Trades[i].FinalResult);
                 Assert.Equal(FSTETestsBars._longSmallStopTarget[i].Results, _fixture.myTests[0][0].Trades[i].Results);
                 Assert.Equal(FSTETestsBars._longSmallStopTarget[i].Win, _fixture.myTests[0][0].Trades[i].Win);
             }
 
             for (int i = 0; i < FSTETestsBars._longLargerStopTarget.Count; i++) {
-                Assert.Equal(FSTETestsBars._longLargerStopTarget[i].Result, _fixture.myTests[3][0].Trades[i].Result);
+                Assert.Equal(FSTETestsBars._longLargerStopTarget[i].FinalResult, _fixture.myTests[3][0].Trades[i].FinalResult);
                 Assert.Equal(FSTETestsBars._longLargerStopTarget[i].Results, _fixture.myTests[3][0].Trades[i].Results);
                 Assert.Equal(FSTETestsBars._longLargerStopTarget[i].Win, _fixture.myTests[3][0].Trades[i].Win);
             }
@@ -63,13 +63,13 @@ namespace Logic.Tests
         [Fact]
         public void ShouldGenerateShortResults() {
             for (int i = 0; i < FSTETestsBars._shortSmallStopTarget.Count; i++) {
-                Assert.Equal(FSTETestsBars._shortSmallStopTarget[i].Result, _fixture.myTests[0][1].Trades[i].Result);
+                Assert.Equal(FSTETestsBars._shortSmallStopTarget[i].FinalResult, _fixture.myTests[0][1].Trades[i].FinalResult);
                 Assert.Equal(FSTETestsBars._shortSmallStopTarget[i].Results, _fixture.myTests[0][1].Trades[i].Results);
                 Assert.Equal(FSTETestsBars._shortSmallStopTarget[i].Win, _fixture.myTests[0][1].Trades[i].Win);
             }
 
             for (int i = 0; i < FSTETestsBars._shortLargerStopTarget.Count; i++) {
-                Assert.Equal(FSTETestsBars._shortLargerStopTarget[i].Result, _fixture.myTests[3][1].Trades[i].Result);
+                Assert.Equal(FSTETestsBars._shortLargerStopTarget[i].FinalResult, _fixture.myTests[3][1].Trades[i].FinalResult);
                 Assert.Equal(FSTETestsBars._shortLargerStopTarget[i].Results, _fixture.myTests[3][1].Trades[i].Results);
                 Assert.Equal(FSTETestsBars._shortLargerStopTarget[i].Win, _fixture.myTests[3][1].Trades[i].Win);
             }

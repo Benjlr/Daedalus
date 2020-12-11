@@ -66,7 +66,7 @@ namespace DataStructures.StatsTools
         public double MedianDrawDown { get; private set; }
         public double MedianDrawDownWinners { get; private set; }
 
-        public ExtendedStats(List<Trade> trades) : base(trades.Select(x=>x.Result).ToList())
+        public ExtendedStats(List<Trade> trades) : base(trades.Select(x=>x.FinalResult).ToList())
         {
             var results = trades.Select(x => x.Drawdown).ToList();
             results = results.Where(x => x < 0).ToList();
@@ -92,7 +92,7 @@ namespace DataStructures.StatsTools
         private List<double> GetWinningTradeDrawdowns(List<Trade> trades) {
             var drawdowns = new List<double>();
             foreach (var t in trades)
-                if (t.Result > 0) drawdowns.Add(t.Drawdown);
+                if (t.FinalResult > 0) drawdowns.Add(t.Drawdown);
             return drawdowns;
         }
     }

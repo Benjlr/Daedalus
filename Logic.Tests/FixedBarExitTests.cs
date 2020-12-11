@@ -48,11 +48,11 @@ namespace Logic.Tests
         [Fact]
         public void ShouldGenerateLongResults() {
             for (int i = 0; i < 5; i++) {
-                Assert.Equal(FBETestBars.longTradesOne[i].Result, _fixture.myTests[0][0].Trades[i].Result);
+                Assert.Equal(FBETestBars.longTradesOne[i].FinalResult, _fixture.myTests[0][0].Trades[i].FinalResult);
                 Assert.Equal(FBETestBars.longTradesOne[i].Results, _fixture.myTests[0][0].Trades[i].Results);
                 Assert.Equal(FBETestBars.longTradesOne[i].Win, _fixture.myTests[0][0].Trades[i].Win);
 
-                Assert.Equal(FBETestBars.longTradesTwo[i].Result, _fixture.myTests[1][0].Trades[i].Result);
+                Assert.Equal(FBETestBars.longTradesTwo[i].FinalResult, _fixture.myTests[1][0].Trades[i].FinalResult);
                 Assert.Equal(FBETestBars.longTradesTwo[i].Results, _fixture.myTests[1][0].Trades[i].Results);
                 Assert.Equal(FBETestBars.longTradesTwo[i].Win, _fixture.myTests[1][0].Trades[i].Win);
             }
@@ -61,11 +61,11 @@ namespace Logic.Tests
         [Fact]
         public void ShouldGenerateShortResults() {
             for (int i = 0; i < 5; i++) {
-                Assert.Equal(FBETestBars.shortTradesOne[i].Result, _fixture.myTests[0][1].Trades[i].Result);
+                Assert.Equal(FBETestBars.shortTradesOne[i].FinalResult, _fixture.myTests[0][1].Trades[i].FinalResult);
                 Assert.Equal(FBETestBars.shortTradesOne[i].Results, _fixture.myTests[0][1].Trades[i].Results);
                 Assert.Equal(FBETestBars.shortTradesOne[i].Win, _fixture.myTests[0][1].Trades[i].Win);
 
-                Assert.Equal(FBETestBars.shortTradesTwo[i].Result, _fixture.myTests[1][1].Trades[i].Result);
+                Assert.Equal(FBETestBars.shortTradesTwo[i].FinalResult, _fixture.myTests[1][1].Trades[i].FinalResult);
                 Assert.Equal(FBETestBars.shortTradesTwo[i].Results, _fixture.myTests[1][1].Trades[i].Results);
                 Assert.Equal(FBETestBars.shortTradesTwo[i].Win, _fixture.myTests[1][1].Trades[i].Win);
             }

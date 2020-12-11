@@ -111,19 +111,19 @@ namespace TestUtils
 
         public static List<Trade> longMarketTrades = new List<Trade>()
         {
-            new Trade(new double[] {0.046, 0.01 , 0.015 , -0.01,  -0.2,  0.15}, 1),
-            new Trade(new double[] {0.014, 0.03 , -0.039, 0.004,  0.01,  0.03}, 6),
-            new Trade(new double[] {-0.029, 0.05 , 0.008, 0.04,  0.022,  0.034}, 8),
-            new Trade(new double[] {0.003, 0.2  , 0.03  ,  -0.1,  0.01,  0.05}, 11),
-            new Trade(new double[] {0.008, 0.025, -0.038, -0.02,  0.03, -0.02}, 16),
-            new Trade(new double[] {0.025, 0.027, 0.007, -0.038, -0.043, -0.015}, 18),
-            new Trade(new double[] {-0.040, 0.01 , 0.04  , 0.005, -0.06, -0.065}, 21),
-            new Trade(new double[] {-0.034, 0.036 , -0.019  , -0.039, 0.031, -0.008}, 23),
-            new Trade(new double[] {-0.046, 0.012, -0.01 ,  0.01,  0.04,  0.05}, 26),
-            new Trade(new double[] {0.007,-0.011,0.017,0.028,0.029,-0.016}, 30),
-            new Trade(new double[] {-0.046,0.004,-0.041,-0.043,-0.025,0.044}, 32),
-            new Trade(new double[] {-0.012,-0.03,0.002,0.022,-0.014,-0.048}, 35),
-            new Trade(new double[] {-0.027,0.048,-0.002}, 38),
+            new Trade(TradeTimeMocker.Mock(new double[] {0.046, 0.01 , 0.015 , -0.01,  -0.2,  0.15}), 1),
+            new Trade(TradeTimeMocker.Mock(new double[] {0.014, 0.03 , -0.039, 0.004,  0.01,  0.03}), 6),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.029, 0.05 , 0.008, 0.04,  0.022,  0.034}), 8),
+            new Trade(TradeTimeMocker.Mock(new double[] {0.003, 0.2  , 0.03  ,  -0.1,  0.01,  0.05}), 11),
+            new Trade(TradeTimeMocker.Mock(new double[] {0.008, 0.025, -0.038, -0.02,  0.03, -0.02}), 16),
+            new Trade(TradeTimeMocker.Mock(new double[] {0.025, 0.027, 0.007, -0.038, -0.043, -0.015}), 18),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.040, 0.01 , 0.04  , 0.005, -0.06, -0.065}), 21),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.034, 0.036 , -0.019  , -0.039, 0.031, -0.008}), 23),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.046, 0.012, -0.01 ,  0.01,  0.04,  0.05}), 26),
+            new Trade(TradeTimeMocker.Mock(new double[] {0.007,-0.011,0.017,0.028,0.029,-0.016}), 30),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.046,0.004,-0.041,-0.043,-0.025,0.044}), 32),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.012,-0.03,0.002,0.022,-0.014,-0.048}), 35),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.027,0.048,-0.002}), 38),
         };
 
         public static double[] longExpectedResults = new[]
@@ -134,13 +134,13 @@ namespace TestUtils
 
         public static List<Trade> mediumMarketTrades = new List<Trade>()
         {
-            new Trade(new double[] {-0.004, 0.026, 0.039, 0.044, 0.01, -0.03}, 1),
-            new Trade(new double[] {0.034, -0.027, 0.018, 0.029, -0.012, 0.028}, 3),
-            new Trade(new double[] {-0.012, 0.016, 0.016, -0.032, -0.046, 0.048}, 6),
-            new Trade(new double[] {-0.014, -0.042, -0.012, -0.006, -0.019, 0.006}, 9),
-            new Trade(new double[] {0.023, 0.03, 0.016, -0.007, 0.031, -0.042}, 12),
-            new Trade(new double[] {-0.049, 0.01, 0.02, -0.021, -0.028}, 15),
-            new Trade(new double[] {-0.033, -0.04}, 18)
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.004, 0.026, 0.039, 0.044, 0.01, -0.03}), 1),
+            new Trade(TradeTimeMocker.Mock(new double[] {0.034, -0.027, 0.018, 0.029, -0.012, 0.028}), 3),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.012, 0.016, 0.016, -0.032, -0.046, 0.048}), 6),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.014, -0.042, -0.012, -0.006, -0.019, 0.006}), 9),
+            new Trade(TradeTimeMocker.Mock(new double[] {0.023, 0.03, 0.016, -0.007, 0.031, -0.042}), 12),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.049, 0.01, 0.02, -0.021, -0.028}), 15),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.033, -0.04}), 18)
         };
 
 
@@ -151,13 +151,13 @@ namespace TestUtils
 
         public static List<Trade> shortMarketTrades = new List<Trade>()
         {
-            new Trade(new double[] {0.048,0.037,-0.03,0.022,-0.027,0.034}, 0),
-            new Trade(new double[] {0.014,0.016,0.03,-0.034,-0.014,0.012}, 1),
-            new Trade(new double[] {-0.028,0.046,-0.025,-0.038,-0.032,0.003}, 3),
-            new Trade(new double[] {-0.02,-0.034,0.002,0.039,0.042}, 5),
-            new Trade(new double[] {-0.032,0.041,0.01,0.033}, 6),
-            new Trade(new double[] {0.024,-0.009}, 8),
-            new Trade(new double[] {-0.001}, 9),
+            new Trade(TradeTimeMocker.Mock(new double[] {0.048,0.037,-0.03,0.022,-0.027,0.034}), 0),
+            new Trade(TradeTimeMocker.Mock(new double[] {0.014,0.016,0.03,-0.034,-0.014,0.012}), 1),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.028,0.046,-0.025,-0.038,-0.032,0.003}), 3),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.02,-0.034,0.002,0.039,0.042}), 5),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.032,0.041,0.01,0.033}), 6),
+            new Trade(TradeTimeMocker.Mock(new double[] {0.024,-0.009}), 8),
+            new Trade(TradeTimeMocker.Mock(new double[] {-0.001}), 9),
         };
 
         public static double[] shortExpectedResults = new[]

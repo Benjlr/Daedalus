@@ -184,7 +184,7 @@ namespace Thought.Tests
         private void PrintTradesToReturnTimeLine(List<Trade> test, double[] market) {
             foreach (var t in test)
                 for (int j = 0; j < t.Results.Length; j++)
-                    market[t.MarketStart + j] += t.Results[j];
+                    market[t.MarketStart + j] += t.Results[j].Return;
         }
     }
 }
