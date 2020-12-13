@@ -59,17 +59,17 @@
         //    //new Tuple<DateTime, DateTime>(new DateTime(01, 01, 01, 23, 30, 0), new DateTime(01, 01, 01, 0, 0, 0)),
         //};
 
-        //private static List<SessionData> _broaderMarket { get; set; }
-        //public static void InitBroaderMarketContext(List<SessionData> input)
+        //private static List<BidAskData> _broaderMarket { get; set; }
+        //public static void InitBroaderMarketContext(List<BidAskData> input)
         //{
-        //    _broaderMarket = SessionDataCollate.CollateToDaily(input);
+        //    _broaderMarket = BidAskDataCollate.CollateToDaily(input);
 
         //}
 
         //public static bool IsValid(BidAskData entryPoint)
         //{
         //    var timeCheck = okToTrade.Any(x => entryPoint.Time.TimeOfDay > x.Item1.TimeOfDay && entryPoint.Time.TimeOfDay < x.Item2.TimeOfDay);
-        //    var maxSpread = (entryPoint.Close_Ask - entryPoint.Close_Bid) <= MaxSpread;
+        //    var maxSpread = (entryPoint.Close.Ask - entryPoint.Close.Bid) <= MaxSpread;
 
         //    return  maxSpread ;
         //}

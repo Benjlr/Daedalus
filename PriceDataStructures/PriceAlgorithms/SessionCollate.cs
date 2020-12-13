@@ -6,24 +6,24 @@ namespace DataStructures.PriceAlgorithms
 {
     public class SessionCollate
     {
-        public static List<SessionData> CollateToDaily(List<SessionData> input) {
-            List<SessionData> returnValue = new List<SessionData>();
+        public static List<BidAskData> CollateToDaily(List<BidAskData> input) {
+            List<BidAskData> returnValue = new List<BidAskData>();
             for (int i = 0; i < input.Count; i++) {
-                if (input[i].OpenDate.TimeOfDay == new TimeSpan(10, 0, 0))
+                if (input[i].Open.Time.TimeOfDay == new TimeSpan(10, 0, 0))
                     returnValue.Add(BuildSingleSessionFromList(input.GetRange(i, 72)));
             }
 
             return returnValue;
         }
 
-        public static List<SessionData> CollateTo24HrDaily(List<SessionData> input) {
-            List<SessionData> returnValue = new List<SessionData>();
-            DayOfWeek day = input[0].OpenDate.DayOfWeek;
+        public static List<BidAskData> CollateTo24HrDaily(List<BidAskData> input) {
+            List<BidAskData> returnValue = new List<BidAskData>();
+            DayOfWeek day = input[0].Open.Time.DayOfWeek;
             int start = 0;
             for (int i = 0; i < input.Count; i++) {
-                if (input[i].OpenDate.DayOfWeek != day) {
+                if (input[i].Open.Time.DayOfWeek != day) {
                     returnValue.Add(BuildSingleSessionFromList(input.GetRange(start, i - start)));
-                    day = input[i].OpenDate.DayOfWeek;
+                    day = input[i].Open.Time.DayOfWeek;
                     start = i;
                 }
 
@@ -32,14 +32,14 @@ namespace DataStructures.PriceAlgorithms
             return returnValue;
         }
 
-        public static List<SessionData> CollateToHourly(List<SessionData> input) {
-            List<SessionData> returnValue = new List<SessionData>();
-            int day = input[0].OpenDate.Hour;
+        public static List<BidAskData> CollateToHourly(List<BidAskData> input) {
+            List<BidAskData> returnValue = new List<BidAskData>();
+            int day = input[0].Open.Time.Hour;
             int start = 0;
             for (int i = 0; i < input.Count; i++) {
-                if (input[i].OpenDate.Hour != day) {
+                if (input[i].Open.Time.Hour != day) {
                     returnValue.Add(BuildSingleSessionFromList(input.GetRange(start, i - start)));
-                    day = input[i].OpenDate.Hour;
+                    day = input[i].Open.Time.Hour;
                     start = i;
                 }
             }
@@ -48,27 +48,11 @@ namespace DataStructures.PriceAlgorithms
             return returnValue;
         }
 
-        public static List<BidAskData> CollateToHourly(List<BidAskData> input) {
-            List<BidAskData> returnValue = new List<BidAskData>();
-            int day = input[0].Time.Hour;
-            int start = 0;
-            for (int i = 0; i < input.Count; i++) {
-                if (input[i].Time.Hour != day) {
-                    returnValue.Add(BuildSingleSessionFromList(input.GetRange(start, i - start)));
-                    day = input[i].Time.Hour;
-                    start = i;
-                }
-
-            }
-
-            return returnValue;
-        }
-
         public static List<BidAskData> CollateToHalfHourly(List<BidAskData> input) {
             List<BidAskData> returnValue = new List<BidAskData>();
             int start = 0;
             for (int i = 1; i < input.Count; i++) {
-                var lastmin = input[i].Time.Minute;
+                var lastmin = input[i].Open.Time.Minute;
 
                 if (lastmin == 30 || lastmin == 0) {
                     returnValue.Add(BuildSingleSessionFromList(input.GetRange(start, i - start)));
@@ -83,22 +67,22 @@ namespace DataStructures.PriceAlgorithms
         //public static List<Session> CollateToTradingWeek(List<Session> input)
         //{
         //    var consignmentsByWeek = from inp in input
-        //        group inp by inp.CloseDate.AddDays(-(int)inp.CloseDate.DayOfWeek);
+        //        group inp by inp.Close.Time.AddDays(-(int)inp.Close.Time.DayOfWeek);
 
 
-        //    var yearWeekGroups = input.GroupBy(d => new { d.CloseDate.Year, WeekNum = Calendar.ReadOnly().GetWeekOfYear(d.CloseDate, CalendarWeekRule.FirstFullWeek,DayOfWeek.Sunday) });
+        //    var yearWeekGroups = input.GroupBy(d => new { d.Close.Time.Year, WeekNum = Calendar.ReadOnly().GetWeekOfYear(d.Close.Time, CalendarWeekRule.FirstFullWeek,DayOfWeek.Sunday) });
 
-        //    var grouped = input.GroupBy(x=>x.CloseDate.AddDays(-(int)x.CloseDate.DayOfWeek)).ToList();
+        //    var grouped = input.GroupBy(x=>x.Close.Time.AddDays(-(int)x.Close.Time.DayOfWeek)).ToList();
         //    var retVal = new List<Session>();
 
         //    foreach (var t in grouped)
         //    {
         //        var high = t.Max(x => x.High);
         //        var low = t.Min(x => x.Low);
-        //        retVal.Add(new Session(t.First().OpenDate, 
-        //                                t.First(x => x.Low == low).LowDate, 
-        //                                t.First(x=>x.High == high).HighDate, 
-        //                                t.Last().CloseDate, 
+        //        retVal.Add(new Session(t.First().Open.Time, 
+        //                                t.First(x => x.Low == low).Low.Time, 
+        //                                t.First(x=>x.High == high).High.Time, 
+        //                                t.Last().Close.Time, 
         //                                t.Sum(x=>x.Volume), 
         //                                t.First().Open,
         //                                high,
@@ -111,35 +95,18 @@ namespace DataStructures.PriceAlgorithms
         //    return retVal;
         //}
 
-        private static SessionData BuildSingleSessionFromList(List<SessionData> input) {
-            var highBar = input.IndexOf(input.First(x => x.High.Equals(input.Max(y => y.High))));
-            var lowBar = input.IndexOf(input.First(x => x.Low.Equals(input.Min(y => y.Low))));
-            return new SessionData(
-                od: input[0].OpenDate,
-                hd: input[highBar].HighDate,
-                ld: input[lowBar].LowDate,
-                cd: input.Last().CloseDate,
-                v: input.Sum(x => x.Volume),
-                o: input[0].Open,
-                h: input[highBar].High,
-                l: input[lowBar].Low,
-                c: input.Last().Close);
-        }
-
         private static BidAskData BuildSingleSessionFromList(List<BidAskData> input) {
-            var highBar = input.IndexOf(input.First(x => x.High_Ask.Equals(input.Max(y => y.High_Ask))));
-            var lowBar = input.IndexOf(input.First(x => x.Low_Bid.Equals(input.Min(y => y.Low_Bid))));
-            return new BidAskData(
-                time: input[0].Time,
-                o_a: input[0].Open_Ask,
-                o_b: input[0].Open_Bid,
-                h_a: input[highBar].High_Ask,
-                h_b: input[highBar].High_Bid,
-                l_a: input[lowBar].Low_Ask,
-                l_b: input[lowBar].Low_Bid,
-                c_a: input.Last().Close_Ask,
-                c_b: input.Last().Close_Bid,
-                vol: input.Sum(x => x.volume));
+            var highBar = input.IndexOf(input.First(x => x.High.Ask.Equals(input.Max(y => y.High.Ask))));
+            var lowBar = input.IndexOf(input.First(x => x.Low.Bid.Equals(input.Min(y => y.Low.Bid))));
+
+            var open = input[0].Open;
+            var high = input[highBar].High;
+            var low = input[lowBar].Low;
+            var close = input.Last().Close;
+
+
+            return new BidAskData(open,high,low,close,
+                 input.Sum(x => x.Volume));
         }
     }
 }

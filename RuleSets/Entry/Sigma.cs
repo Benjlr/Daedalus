@@ -14,11 +14,11 @@ namespace RuleSets.Entry
         }
 
 
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
         {
-            var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
-            var fiftyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 50);
-            var sigma = SigmaSpike.Calculate(data.Select(x => x.Close).ToList());
+            var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
+            var fiftyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 50);
+            var sigma = SigmaSpike.Calculate(data.Select(x => x.Close.Mid).ToList());
 
             int lookback = 300;
 
@@ -28,9 +28,9 @@ namespace RuleSets.Entry
 
             for (int i = lookback; i < data.Count; i++)
             {
-                var max = data.GetRange(i - lookback, lookback).Max(x => x.High);
-                var low = data.GetRange(i - lookback, lookback).Min(x => x.Low);
-                var cuur = data[i].Close;
+                var max = data.GetRange(i - lookback, lookback).Max(x => x.High.Mid);
+                var low = data.GetRange(i - lookback, lookback).Min(x => x.Low.Mid);
+                var cuur = data[i].Close.Mid;
 
                 var percentage = (cuur - low) / (max - low);
 

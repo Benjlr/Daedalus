@@ -21,25 +21,25 @@ namespace RuleSets.Entry
         private int endLook = 5;
         private double spread = 2;
 
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
         {
             Satisfied = new bool[data.Count];
-            var twentyEMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
-            var tenSMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 10);
-            var sixEMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 6);
+            var twentyEMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
+            var tenSMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 10);
+            var sixEMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 6);
             var atr = AverageTrueRange.Calculate(data);
             var nrwRs = NRWRBars.Calculate(data);
 
             for (int i = 20; i < data.Count; i++)
             {
-                if ((Math.Abs(data[i].Close - twentyEMA[i]) < atrnum * atr[i]
-                     || Math.Abs(data[i].Close - tenSMA[i]) < atrnum * atr[i]))
+                if ((Math.Abs(data[i].Close.Mid - twentyEMA[i]) < atrnum * atr[i]
+                     || Math.Abs(data[i].Close.Mid - tenSMA[i]) < atrnum * atr[i]))
                 {
                     for (int j = i - startLook; j < i - endLook; j++)
                     {
                         if (nrwRs[j] > gapSize &&
-                            data[i].Close < sixEMA[i] &&
-                            rawData[i].Open_Ask - rawData[i].Open_Bid <= spread)
+                            data[i].Close.Mid < sixEMA[i] &&
+                            rawData[i].Open.Ask - rawData[i].Open.Bid <= spread)
                         {
                             Satisfied[i] = true;
                         }

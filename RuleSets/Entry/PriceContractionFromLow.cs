@@ -13,7 +13,7 @@ namespace RuleSets.Entry
             Order = Action.Entry;
         }
 
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
         {
 
             Satisfied = new bool[data.Count];
@@ -22,9 +22,9 @@ namespace RuleSets.Entry
 
             for (int i = lookback; i < data.Count; i++)
             {
-                var max = data.GetRange(i - lookback, lookback).Max(x => x.High);
-                var low = data.GetRange(i - lookback, lookback).Min(x => x.Low);
-                var cuur = data[i].Close;
+                var max = data.GetRange(i - lookback, lookback).Max(x => x.High.Mid);
+                var low = data.GetRange(i - lookback, lookback).Min(x => x.Low.Mid);
+                var cuur = data[i].Close.Mid;
 
                 var percentage = (cuur - low) / (max - low);
 

@@ -21,17 +21,17 @@ namespace DataStructures.Tests.Calculations
         }
 
 
-        public List<SessionData> data = new List<SessionData>()
+        public List<BidAskData> data = new List<BidAskData>()
         {
-            new SessionData(new DateTime(2020,01,01), 7, 5,7,3,5),
-            new SessionData(new DateTime(2020,01,01), 7, 5,6,4,5), //-1
-            new SessionData(new DateTime(2020,01,01), 7, 5,5,5,5), //-2
-            new SessionData(new DateTime(2020,01,01), 7, 5,8,2,5), //3
-            new SessionData(new DateTime(2020,01,01), 7, 5,9,1,5), //4
-            new SessionData(new DateTime(2020,01,01), 7, 5,6,3,5), //-3
-            new SessionData(new DateTime(2020,01,01), 7, 5,5,5,5), //-4
-            new SessionData(new DateTime(2020,01,01), 7, 5,6,4,5), //2
-            new SessionData(new DateTime(2020,01,01), 7, 5,8,2,5), //4
+            new BidAskData(new DateTime(2020,01,01), 7, 5,7,3,5),
+            new BidAskData(new DateTime(2020,01,01), 7, 5,6,4,5), //-1
+            new BidAskData(new DateTime(2020,01,01), 7, 5,5,5,5), //-2
+            new BidAskData(new DateTime(2020,01,01), 7, 5,8,2,5), //3
+            new BidAskData(new DateTime(2020,01,01), 7, 5,9,1,5), //4
+            new BidAskData(new DateTime(2020,01,01), 7, 5,6,3,5), //-3
+            new BidAskData(new DateTime(2020,01,01), 7, 5,5,5,5), //-4
+            new BidAskData(new DateTime(2020,01,01), 7, 5,6,4,5), //2
+            new BidAskData(new DateTime(2020,01,01), 7, 5,8,2,5), //4
         };
 
     }

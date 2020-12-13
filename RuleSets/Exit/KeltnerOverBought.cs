@@ -12,11 +12,11 @@ namespace RuleSets.Exit
             Dir = MarketSide.Bull;
             Order = Action.Exit;
         }
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
         {
             Satisfied = new bool[data.Count];
 
-            var ema20 = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
+            var ema20 = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
             var atr = AverageTrueRange.Calculate(data);
 
             var lower = new List<double>();
@@ -31,7 +31,7 @@ namespace RuleSets.Exit
 
             for (int i = 0; i < data.Count; i++)
             {
-                if (data[i].Close > upper[i]) Satisfied[i] = true;
+                if (data[i].Close.Mid > upper[i]) Satisfied[i] = true;
             }
 
         }

@@ -15,14 +15,14 @@ namespace RuleSets.Entry
             Order = Action.Entry;
         }
 
-        public  void aasass(List<SessionData> data, BidAskData[] rawData)
+        public  void aasass(List<BidAskData> data, BidAskData[] rawData)
         {
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             var atr = AverageTrueRange.Calculate(data, 20);
-            var twentyMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
-            var fissy = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 50);
-            var tenMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 10);
-            var SixMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 6);
+            var twentyMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
+            var fissy = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 50);
+            var tenMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 10);
+            var SixMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 6);
 
             Satisfied = new bool[data.Count];
             var coun = 0;
@@ -33,7 +33,7 @@ namespace RuleSets.Entry
 
                 if (sixtoTen < atr[i] * 0.5) {
                     coun++;
-                    if (coun > 7 && twentyMa[i] > fissy[i] && atrPC[i - 1] == 0.0 && atrPC[i] != 0.0 && rawData[i].Open_Ask - rawData[i].Open_Bid <= 3) Satisfied[i] = true;
+                    if (coun > 7 && twentyMa[i] > fissy[i] && atrPC[i - 1] == 0.0 && atrPC[i] != 0.0 && rawData[i].Open.Ask - rawData[i].Open.Bid <= 3) Satisfied[i] = true;
                 }
                 else coun = 0;
             }
@@ -54,12 +54,12 @@ namespace RuleSets.Entry
 
 
 
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
         {
 
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             Satisfied = new bool[data.Count];
-            var volavg = rawData.Select(x => x.volume).ToList();
+            var volavg = rawData.Select(x => x.Volume).ToList();
             for (int i = 30; i < data.Count; i++) {
                 var myVOl = GetPositionInRange(volavg.GetRange(i - 20, 20), volavg[i]);
                 if (atrPC[i] == 0.0 && myVOl < 0.1  ) 
@@ -81,14 +81,14 @@ namespace RuleSets.Entry
             var Max = myInput.Max();
             return (value - Min) / (Max - Min);
         }
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData) {
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData) {
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             Satisfied = new bool[data.Count];
             //var sma = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 200);
-            var volavg = rawData.Select(x => x.volume).ToList();
+            var volavg = rawData.Select(x => x.Volume).ToList();
             for (int i = 30; i < data.Count; i++) {
                 var myVOl = GetPositionInRange(volavg.GetRange(i - 20, 20), volavg[i]);
-                if (/*sma[i - 1] < data[i - 1].Close &&*/ atrPC[i] == 0.0 && myVOl < 0.1 && rawData[i].Open_Ask - rawData[i].Open_Bid <= 4)
+                if (/*sma[i - 1] < data[i - 1].Close &&*/ atrPC[i] == 0.0 && myVOl < 0.1 && rawData[i].Open.Ask - rawData[i].Open.Bid <= 4)
                     Satisfied[i] = true;
             }
         }
@@ -105,14 +105,14 @@ namespace RuleSets.Entry
             var Max = myInput.Max();
             return (value - Min) / (Max - Min);
         }
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData) {
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData) {
             var atrPC = AverageTrueRange.CalculateATRPC(data);
-            var sma = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
+            var sma = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
             Satisfied = new bool[data.Count];
-            var volavg = rawData.Select(x => x.volume).ToList();
+            var volavg = rawData.Select(x => x.Volume).ToList();
             for (int i = 201; i < data.Count; i++) {
                 var myVOl = GetPositionInRange(volavg.GetRange(i - 20, 20), volavg[i]);
-                if (sma[i-1] > data[i-1].Close && atrPC[i] == 0.0 && myVOl < 0.1 && rawData[i].Open_Ask - rawData[i].Open_Bid <= 4)
+                if (sma[i-1] > data[i-1].Close.Mid && atrPC[i] == 0.0 && myVOl < 0.1 && rawData[i].Open.Ask - rawData[i].Open.Bid <= 4)
                     Satisfied[i] = true;
             }
         }
@@ -127,15 +127,15 @@ namespace RuleSets.Entry
         }
 
 
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
         {
 
 
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             var atr = AverageTrueRange.Calculate(data);
-            var twentyMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
-            var tenMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 10);
-            var SixMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 6);
+            var twentyMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
+            var tenMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 10);
+            var SixMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 6);
 
             var myLineCloseness = MovingAverage.GetRMSE(new List<List<double>>() { tenMA, SixMA, twentyMa });
 

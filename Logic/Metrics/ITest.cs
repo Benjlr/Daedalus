@@ -10,6 +10,6 @@ namespace Logic.Metrics
 
         public ExtendedStats Stats { get; }
 
-        void Run(BidAskData[] data, bool[] entries, List<SessionData> myInputs = null);
+        void Run(BidAskData[] data, bool[] entries, List<BidAskData> myInputs = null);
     }
 }

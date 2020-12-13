@@ -10,18 +10,18 @@ namespace DataStructures.Tests.Calculations
 {
     public class ATRTests
     {
-        private SessionData[] myArray = new SessionData[]
+        private BidAskData[] myArray = new BidAskData[]
         {
-            new SessionData(new DateTime(),12,5,6,4,5  ), 
-            new SessionData(new DateTime(),12,10,11,9,10  ), 
-            new SessionData(new DateTime(),12,11,12,10,11  ), 
-            new SessionData(new DateTime(),12,2,2,2,2  ), 
-            new SessionData(new DateTime(),12,3,4,3,3  ),
-            new SessionData(new DateTime(),12,3,5,3,4  ),
-            new SessionData(new DateTime(),12,4,20,4,15  ),
-            new SessionData(new DateTime(),12,15,18,14,14  ),
-            new SessionData(new DateTime(),12,14,16,12,13  ),
-            new SessionData(new DateTime(),9,9,10,6,7  ),
+            new BidAskData(new DateTime(),12,5,6,4,5  ), 
+            new BidAskData(new DateTime(),12,10,11,9,10  ), 
+            new BidAskData(new DateTime(),12,11,12,10,11  ), 
+            new BidAskData(new DateTime(),12,2,2,2,2  ), 
+            new BidAskData(new DateTime(),12,3,4,3,3  ),
+            new BidAskData(new DateTime(),12,3,5,3,4  ),
+            new BidAskData(new DateTime(),12,4,20,4,15  ),
+            new BidAskData(new DateTime(),12,15,18,14,14  ),
+            new BidAskData(new DateTime(),12,14,16,12,13  ),
+            new BidAskData(new DateTime(),9,9,10,6,7  ),
         };
 
 

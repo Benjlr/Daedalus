@@ -59,8 +59,8 @@ namespace Thought
         private double getEntry(BidAskData[] prices, int i) {
             return _side switch
             {
-                MarketSide.Bull => prices[i].Open_Bid,
-                _ => prices[i].Open_Ask
+                MarketSide.Bull => prices[i].Open.Bid,
+                _ => prices[i].Open.Ask
             };
         }
 

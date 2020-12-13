@@ -83,7 +83,7 @@ namespace Daedalus.ViewModels
             var graphStart = EntryPoints[x] - 40;
             var graphEnd = entryPoint + 150;
             //var graphStart = 0;
-            //var graphEnd = ModelSingleton.Instance.Mymarket.CostanzaData.Length;
+            //var graphEnd = ModelSingleton.Instance.Mymarket.RawData.Length;
 
             PlotModel.Annotations.Add(new LineAnnotation()
             {
@@ -96,7 +96,7 @@ namespace Daedalus.ViewModels
                 MaximumX = entryPoint + 3,
                 Type = LineAnnotationType.Horizontal,
                 Y = ModelSingleton.Instance.MyStrategy.Rules.First(x=>x.Order.Equals(Action.Entry)).Dir == MarketSide.Bull ? 
-                    ModelSingleton.Instance.Mymarket.RawData[EntryPoints[x]].Open_Ask: ModelSingleton.Instance.Mymarket.RawData[EntryPoints[x]].Open_Bid,
+                    ModelSingleton.Instance.Mymarket.RawData[EntryPoints[x]].Open.Ask: ModelSingleton.Instance.Mymarket.RawData[EntryPoints[x]].Open.Bid,
             });
 
             if (_exitPoint.Any(y => y > EntryPoints[x]))
@@ -115,20 +115,20 @@ namespace Daedalus.ViewModels
                     MaximumX= exitPnt +3,
                     Type = LineAnnotationType.Horizontal,
                     Y = ModelSingleton.Instance.MyStrategy.Rules.First(x => x.Order.Equals(Action.Exit)).Dir == MarketSide.Bull ?
-                        ModelSingleton.Instance.Mymarket.RawData[exitPnt].Open_Bid : ModelSingleton.Instance.Mymarket.RawData[exitPnt].Open_Ask,
+                        ModelSingleton.Instance.Mymarket.RawData[exitPnt].Open.Bid : ModelSingleton.Instance.Mymarket.RawData[exitPnt].Open.Ask,
                 });
                 graphEnd = exitPnt + 50;
-                graphEnd = ModelSingleton.Instance.Mymarket.CostanzaData.Length;
+                graphEnd = ModelSingleton.Instance.Mymarket.RawData.Length;
             }
 
-            var atrpc = AverageTrueRange.CalculateATRPC(ModelSingleton.Instance.Mymarket.CostanzaData.ToList(),2,60);
+            var atrpc = AverageTrueRange.CalculateATRPC(ModelSingleton.Instance.Mymarket.RawData.ToList(),2,60);
             var retval = new List<Tuple<double, double, double>>();
             var mdpt = new List<double>();
             var dist = 0.1;
 
-            ModelSingleton.Instance.Mymarket.CostanzaData.ToList().ForEach(x => mdpt.Add(x.High - ((x.High - x.Low) / 2.0)));
+            ModelSingleton.Instance.Mymarket.RawData.ToList().ForEach(x => mdpt.Add(x.High.Mid - ((x.High.Mid - x.Low.Mid) / 2.0)));
 
-            for (var i = 0; i < ModelSingleton.Instance.Mymarket.CostanzaData.Length; i++)
+            for (var i = 0; i < ModelSingleton.Instance.Mymarket.RawData.Length; i++)
             {
                 retval.Add(new Tuple<double, double, double>
                 (mdpt[i] + (mdpt[i] / 200 * atrpc[i]),
@@ -143,11 +143,11 @@ namespace Daedalus.ViewModels
                 StrokeThickness = 3
             };
 
-            var six= MovingAverage.ExponentialMovingAverage(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(),6);
-            var ten = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(),10);
-            var twenty = MovingAverage.ExponentialMovingAverage(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(),20);
-            var fifty = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(),50);
-            var twoHunMA = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.CostanzaData.Select(x => x.Close).ToList(), 200);
+            var six= MovingAverage.ExponentialMovingAverage(ModelSingleton.Instance.Mymarket.RawData.Select(x => x.Close.Mid).ToList(),6);
+            var ten = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.RawData.Select(x => x.Close.Mid).ToList(),10);
+            var twenty = MovingAverage.ExponentialMovingAverage(ModelSingleton.Instance.Mymarket.RawData.Select(x => x.Close.Mid).ToList(),20);
+            var fifty = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.RawData.Select(x => x.Close.Mid).ToList(),50);
+            var twoHunMA = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.RawData.Select(x => x.Close.Mid).ToList(), 200);
 
             var sixLine = new OxyPlot.Series.LineSeries()
             {
@@ -193,10 +193,10 @@ namespace Daedalus.ViewModels
             for (int i = graphStart; i < graphEnd; i++)
             {
                 if (i < 0) continue;
-                if (i > ModelSingleton.Instance.Mymarket.CostanzaData.Length - 1) continue;
+                if (i > ModelSingleton.Instance.Mymarket.RawData.Length - 1) continue;
 
-                var item = ModelSingleton.Instance.Mymarket.CostanzaData[i];
-                series.Append(new OhlcvItem(i, item.Open, item.High, item.Low, item.Close, item.Volume));
+                var item = ModelSingleton.Instance.Mymarket.RawData[i];
+                series.Append(new OhlcvItem(i, item.Open.Mid, item.High.Mid, item.Low.Mid, item.Close.Mid, item.Volume));
             }
 
             LinearAxis xAx = new LinearAxis()
@@ -205,9 +205,9 @@ namespace Daedalus.ViewModels
                 Maximum = graphStart+150,
                 Minimum = graphStart
             };
-            var rane = ModelSingleton.Instance.Mymarket.CostanzaData.ToList().GetRange(graphStart, 150).ToList();
-            var yMax = rane.Max(x=>x.High);
-            var yMin = rane.Min(x=>x.Low);
+            var rane = ModelSingleton.Instance.Mymarket.RawData.ToList().GetRange(graphStart, 150).ToList();
+            var yMax = rane.Max(x=>x.High.Mid);
+            var yMin = rane.Min(x=>x.Low.Mid);
 
             LinearAxis yAx = new LinearAxis()
             {

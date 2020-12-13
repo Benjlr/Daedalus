@@ -7,54 +7,46 @@ namespace DataStructures
     public class DataLoader
     {
 
-        public static Type CheckDataType(string file) {
+        public static BidAskData[] LoadData(string file) {
             var fs = File.ReadAllLines(file);
-            if (fs?.FirstOrDefault()?.Split(',').Length == 10) return typeof(BidAskData);
-            else if(fs?.FirstOrDefault()?.Split(',').Length == 6) return typeof(SessionData);
+            if (fs?.FirstOrDefault()?.Split(',').Length == 10) return LoadBidAskData(fs);
+            else if(fs?.FirstOrDefault()?.Split(',').Length == 6) return LoadConsolidatedData(fs);
             else throw new Exception("Not valid data");
         }
 
-        public static SessionData[] LoadConsolidatedData(string location) {
-            var fs = File.ReadAllLines(location);
-            var myArray = new SessionData[fs.Length];
+        private static BidAskData[] LoadConsolidatedData(string[] lines) {
+            var myArray = new BidAskData[lines.Length];
 
-            for (int i = 0; i < fs.Length; i++) {
-                var myLine = fs[i].Split(',');
+            for (int i = 0; i < lines.Length; i++) {
+                var myLine = lines[i].Split(',');
+                var date = DateTime.ParseExact(myLine[0], "yyyy/MM/dd", null);
 
-                myArray[i] = new SessionData(
-                    cd: DateTime.ParseExact(myLine[0], "yyyy/MM/dd", null),
-                    v: double.Parse(myLine[5]),
-                    o: double.Parse(myLine[1]),
-                    h: double.Parse(myLine[2]),
-                    l: double.Parse(myLine[3]),
-                    c: double.Parse(myLine[4]));
+                myArray[i] = new BidAskData(
+                    new BidAsk(double.Parse(myLine[1]), double.Parse(myLine[1]),date),
+                    new BidAsk(double.Parse(myLine[2]), double.Parse(myLine[2]),date),
+                    new BidAsk(double.Parse(myLine[3]), double.Parse(myLine[3]), date),
+                    new BidAsk(double.Parse(myLine[4]), double.Parse(myLine[4]), date),
+                    double.Parse(myLine[5]));
             }
 
             return myArray;
 
         }
 
-        public static BidAskData[] LoadBidAskData(string location) {
-            var fs = File.ReadAllLines(location);
-            var myArray = new BidAskData[fs.Length];
+        private static BidAskData[] LoadBidAskData(string[] lines) {
+            var myArray = new BidAskData[lines.Length];
 
-            for (int i = 0; i < fs.Length; i++) {
-                var myLine = fs[i].Split(',');
-
-                myArray[i] = new BidAskData(time: DateTime.ParseExact(myLine[0], "yyyy/MM/dd HH:mm:ss", null),
-                    o_a: double.Parse(myLine[1]),
-                    o_b: double.Parse(myLine[2]),
-                    h_a: double.Parse(myLine[3]),
-                    h_b: double.Parse(myLine[4]),
-                    l_a: double.Parse(myLine[5]),
-                    l_b: double.Parse(myLine[6]),
-                    c_a: double.Parse(myLine[7]),
-                    c_b: double.Parse(myLine[8]),
-                    vol: long.Parse(myLine[9]));
+            for (int i = 0; i < lines.Length; i++) {
+                var myLine = lines[i].Split(',');
+                var date = DateTime.ParseExact(myLine[0], "yyyy/MM/dd HH:mm:ss", null);
+                var open = new BidAsk(double.Parse(myLine[2]), double.Parse(myLine[1]), date);
+                var high = new BidAsk(double.Parse(myLine[4]), double.Parse(myLine[3]), date);
+                var low = new BidAsk(double.Parse(myLine[6]), double.Parse(myLine[5]), date);
+                var close = new BidAsk(double.Parse(myLine[8]), double.Parse(myLine[7]), date) ;
+                myArray[i] = new BidAskData(open,high,low,close, double.Parse(myLine[9]));
             }
 
             return myArray;
-
         }
 
     }

@@ -14,9 +14,9 @@ namespace RuleSets.Entry
         }
 
 
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData) {
-            var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
-            var fiftyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 50);
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData) {
+            var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
+            var fiftyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 50);
 
             Satisfied = new bool[data.Count];
 

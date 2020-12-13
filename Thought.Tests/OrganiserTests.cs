@@ -58,12 +58,12 @@ namespace Thought.Tests
         [Fact]
         private void ShouldFlattenOneTradeResults() {
             Universe newUniverse = new Universe(new IRuleSet[]{new DummyEntries(4,1) });
-            newUniverse.AddMarket(new SessionData[]
+            newUniverse.AddMarket(new BidAskData[]
             {
-                new SessionData(new DateTime(),30,10,10,10,10 ),
-                new SessionData(new DateTime(),20,20,20,20,20 ),
-                new SessionData(new DateTime(),20,30,30,30,30 ),
-                new SessionData(new DateTime(),20,40,40,40,40 ),
+                new BidAskData(new DateTime(),30,10,10,10,10 ),
+                new BidAskData(new DateTime(),20,20,20,20,20 ),
+                new BidAskData(new DateTime(),20,30,30,30,30 ),
+                new BidAskData(new DateTime(),20,40,40,40,40 ),
             }, "test");
             UniverseTest t = new UniverseTest(newUniverse.GetObject("test"), new TestFactory.FixedBarExitTestOptions(5,7,1));
             var myArray = newUniverse.GetArrayForReturns("test");
@@ -77,12 +77,12 @@ namespace Thought.Tests
         [Fact]
         private void ShouldFlattenTwoTradeResults() {
             Universe newUniverse = new Universe(new IRuleSet[] { new DummyEntries(1, 10) });
-            newUniverse.AddMarket(new SessionData[]
+            newUniverse.AddMarket(new BidAskData[]
             {
-                new SessionData(new DateTime(),30,10,10,10,10 ),
-                new SessionData(new DateTime(),20,20,20,20,20 ),
-                new SessionData(new DateTime(),20,30,30,30,30 ),
-                new SessionData(new DateTime(),20,40,40,40,40 ),
+                new BidAskData(new DateTime(),30,10,10,10,10 ),
+                new BidAskData(new DateTime(),20,20,20,20,20 ),
+                new BidAskData(new DateTime(),20,30,30,30,30 ),
+                new BidAskData(new DateTime(),20,40,40,40,40 ),
             }, "test");
             UniverseTest t = new UniverseTest(newUniverse.GetObject("test"), new TestFactory.FixedBarExitTestOptions(5,7, 1));
             var myArray = newUniverse.GetArrayForReturns("test");
@@ -119,8 +119,8 @@ namespace Thought.Tests
             var shortMarketArray = _fixt._universe.GetArrayForReturns(_fixt.shortMarket);
             PrintTradesToReturnTimeLine(TradeFlatteningData.shortMarketTrades, shortMarketArray);
 
-            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.CostanzaData, shortMarketArray, 
-                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.CostanzaData);
+            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.RawData, shortMarketArray, 
+                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.RawData);
 
             Asserters.ArrayDoublesEqual(TradeFlatteningData.LongAndShortResults, longMarketArray);
         }
@@ -132,8 +132,8 @@ namespace Thought.Tests
             var mediumMarketArray = _fixt._universe.GetArrayForReturns(_fixt.mediumMarket);
             PrintTradesToReturnTimeLine(TradeFlatteningData.mediumMarketTrades, mediumMarketArray);
 
-            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.CostanzaData, mediumMarketArray, 
-                _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.CostanzaData);
+            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.RawData, mediumMarketArray, 
+                _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.RawData);
 
             Asserters.ArrayDoublesEqual(TradeFlatteningData.LongAndMediumResults, longMarketArray);
         }
@@ -145,8 +145,8 @@ namespace Thought.Tests
             var shortMarketArray = _fixt._universe.GetArrayForReturns(_fixt.shortMarket);
             PrintTradesToReturnTimeLine(TradeFlatteningData.shortMarketTrades, shortMarketArray);
 
-            CollateTradesAcrossMarkets(mediumMarketArray, _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.CostanzaData, shortMarketArray, 
-                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.CostanzaData);
+            CollateTradesAcrossMarkets(mediumMarketArray, _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.RawData, shortMarketArray, 
+                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.RawData);
 
             Asserters.ArrayDoublesEqual(TradeFlatteningData.ShortAndMediumResults, mediumMarketArray);
         }
@@ -160,21 +160,21 @@ namespace Thought.Tests
             var shortMarketArray = _fixt._universe.GetArrayForReturns(_fixt.shortMarket);
             PrintTradesToReturnTimeLine(TradeFlatteningData.shortMarketTrades, shortMarketArray);
 
-            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.CostanzaData, mediumMarketArray,
-                _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.CostanzaData);
-            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.CostanzaData, shortMarketArray, 
-                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.CostanzaData);
+            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.RawData, mediumMarketArray,
+                _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.RawData);
+            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.RawData, shortMarketArray, 
+                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.RawData);
 
             Asserters.ArrayDoublesEqual(TradeFlatteningData.LongShortAndMediumResults, longMarketArray);
         }
 
-        private void CollateTradesAcrossMarkets(double[] returnsDatum, SessionData[] dataDatum, double[] returnsToAdd, SessionData[] dataToReference) {
+        private void CollateTradesAcrossMarkets(double[] returnsDatum, BidAskData[] dataDatum, double[] returnsToAdd, BidAskData[] dataToReference) {
             for (int i = 0; i < dataToReference.Length; i++) {
                 if (returnsToAdd[i] != 0) {
-                    var date = dataToReference[i].CloseDate;
-                    var relevantDatumItem = dataDatum.OrderBy(x => Math.Abs(x.CloseDate.Ticks - date.Ticks)).First();
+                    var date = dataToReference[i].Close.Time;
+                    var relevantDatumItem = dataDatum.OrderBy(x => Math.Abs(x.Close.Time.Ticks - date.Ticks)).First();
                     for (int j = 0; j < dataDatum.Length; j++)
-                        if (dataDatum[j].CloseDate == relevantDatumItem.CloseDate)
+                        if (dataDatum[j].Close.Time == relevantDatumItem.Close.Time)
                             returnsDatum[j] += returnsToAdd[i];
                 }
             }

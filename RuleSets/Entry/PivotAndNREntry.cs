@@ -15,7 +15,7 @@ namespace RuleSets.Entry
             Order = Action.Entry;
         }
 
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
         {
             Satisfied = new bool[data.Count];
             var pivots = Pivots.Calculate(data);
@@ -35,9 +35,9 @@ namespace RuleSets.Entry
                 if (seondclosestPiv.LowPivot == 0) continue;
                 if (furthestPiv.HighPivot == 0) continue;
 
-                var ClosestPivCost = data[closestPiv.Index].High;
-                var seondclosestPivCXot = data[seondclosestPiv.Index].Low;
-                var furthestpivcost = data[furthestPiv.Index].High;
+                var ClosestPivCost = data[closestPiv.Index].High.Mid;
+                var seondclosestPivCXot = data[seondclosestPiv.Index].Low.Mid;
+                var furthestpivcost = data[furthestPiv.Index].High.Mid;
 
                 if (ClosestPivCost > furthestpivcost &&
                     ClosestPivCost > seondclosestPivCXot)
@@ -45,10 +45,10 @@ namespace RuleSets.Entry
 
                     var dist = Math.Abs(ClosestPivCost - seondclosestPivCXot);
 
-                    if (data[i].High > ClosestPivCost - 0.8 * dist)
+                    if (data[i].High.Mid > ClosestPivCost - 0.8 * dist)
                     {
                         Satisfied[i] = true;
-                        var currenthrlyIndex = hourly.IndexOf(hourly.First(x => x.CloseDate.Hour == data[i].OpenDate.AddHours(-1).Hour));
+                        var currenthrlyIndex = hourly.IndexOf(hourly.First(x => x.Close.Time.Hour == data[i].Open.Time.AddHours(-1).Hour));
                         if (nrwrsHourly[currenthrlyIndex] < -7) Satisfied[i] = true;
                     }
 

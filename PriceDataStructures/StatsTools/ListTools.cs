@@ -98,13 +98,13 @@ namespace DataStructures.StatsTools
         }
 
 
-       public static int ReturnHourlyIndex(List<SessionData> Hourly, SessionData FiveMinute) {
-            return Hourly.IndexOf(Hourly.First(x => x.CloseDate.Hour == FiveMinute.OpenDate.AddHours(-1).Hour));
+       public static int ReturnHourlyIndex(List<BidAskData> Hourly, BidAskData FiveMinute) {
+            return Hourly.IndexOf(Hourly.First(x => x.Close.Time.Hour == FiveMinute.Open.Time.AddHours(-1).Hour));
         }
 
-       public static double GetPositionInRange(List<SessionData> myInput, double value) {
-            var Min = myInput.Min(x => x.Low);
-            var Max = myInput.Max(x => x.High);
+       public static double GetPositionInRange(List<BidAskData> myInput, double value) {
+            var Min = myInput.Min(x => x.Low.Mid);
+            var Max = myInput.Max(x => x.High.Mid);
             return (value - Min) / (Max - Min);
         }
 

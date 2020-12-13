@@ -31,21 +31,13 @@ namespace Thought
                 Elements.Add(new UniverseObject(name, Market.MarketBuilder.CreateMarket(market), Ruleset));
         }
 
-        public void AddMarket(SessionData[] market, string name) {
-            if (!Elements.Any(x => x.Name.Equals(market)))
-                Elements.Add(new UniverseObject(name, Market.MarketBuilder.CreateMarket(market), Ruleset));
-        }
-
         public void AddMarket(List<string> markets) {
-            for (int i = 0; i < markets.Count; i++)
-                AddMarket(markets[i]);
+            foreach (var market in markets)
+                AddMarket(market);
         }
-
-
+        
         private Market OpenMarket(string market) {
-            if (DataLoader.CheckDataType(market) == typeof(SessionData))
-                return Market.MarketBuilder.CreateMarket(DataLoader.LoadConsolidatedData(market));
-            return Market.MarketBuilder.CreateMarket(DataLoader.LoadBidAskData(market));
+            return Market.MarketBuilder.CreateMarket(DataLoader.LoadData(market));
         }
         public double[] GetArrayForReturns(string myMarket) {
             var market = this.GetObject(myMarket).MarketData;

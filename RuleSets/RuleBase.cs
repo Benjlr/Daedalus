@@ -9,7 +9,7 @@ namespace RuleSets
         public Action Order { get; protected set; }
         public bool[] Satisfied { get; protected set; }
 
-        public virtual void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
+        public virtual void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
         {
         }
     }

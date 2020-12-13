@@ -10,7 +10,7 @@ namespace Logic.Metrics
         public ExtendedStats Stats { get; protected set; }
         protected TradeGeneratorInterface _currentTrade { get; set; }
 
-        public void Run(BidAskData[] data, bool[] entries, List<SessionData> myInputs = null) {
+        public void Run(BidAskData[] data, bool[] entries, List<BidAskData> myInputs = null) {
             initLists(data.Length);
             IterateEntries(data, entries);
             GenerateStats();

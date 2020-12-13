@@ -27,9 +27,9 @@ namespace Logic
         public class StrategyBuilder
         {
             public static Strategy CreateStrategy(IRuleSet[] myRules, Market myMarket) {
-                var dt = myMarket.CostanzaData.ToList();
+                var dt = myMarket.RawData.ToList();
                 foreach (var t in myRules) t.CalculateBackSeries(dt, myMarket.RawData);
-                //RulesContext.InitBroaderMarketContext(myMarket.CostanzaData.ToList());
+                //RulesContext.InitBroaderMarketContext(myMarket.RawData.ToList());
 
                 var entryRules = myRules.Where(x => x.Order.Equals(Action.Entry)).ToList();
                 var exitRules = myRules.Where(x => x.Order.Equals(Action.Exit)).ToList();

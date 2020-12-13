@@ -34,15 +34,15 @@ namespace Logic.Metrics.EntryTests
         protected override void SetResult(BidAskData[] data, int i) {
             GenerateExit(i, data.Length -1);
             _currentTrade = new LongTradeGenerator(
-                i, new TradePrices(ExitPrices.NoStopTarget(), data[i].Open_Ask), AddTrade);
+                i, new TradePrices(ExitPrices.NoStopTarget(), data[i].Open.Ask), AddTrade);
 
             for (int j = i; j < _randomExit + i && j < data.Length; j++)
                 _currentTrade.Continue(data[j]);
 
             if (_randomExit + i < data.Length)
-                _currentTrade.Exit(data[_randomExit + i].Time, data[_randomExit + i].Open_Bid);
+                _currentTrade.Exit(data[_randomExit + i].Open.Time, data[_randomExit + i].Open.Bid);
             else
-                _currentTrade.Exit(data.Last().Time, data.Last().Close_Bid);
+                _currentTrade.Exit(data.Last().Close.Time, data.Last().Close.Bid);
         }
         
         public LongRandomExitTest(int maxLength) : base(maxLength)
@@ -55,15 +55,15 @@ namespace Logic.Metrics.EntryTests
         protected override void SetResult(BidAskData[] data, int i) {
             GenerateExit(i, data.Length - 1);
             _currentTrade = new ShortTradeGenerator(
-                i, new TradePrices(ExitPrices.NoStopTarget(), data[i].Open_Bid), AddTrade);
+                i, new TradePrices(ExitPrices.NoStopTarget(), data[i].Open.Bid), AddTrade);
 
             for (int j = i; j < _randomExit + i && j < data.Length; j++)
                 _currentTrade.Continue(data[j]);
 
             if (_randomExit + i < data.Length)
-                _currentTrade.Exit(data[_randomExit + i].Time, data[_randomExit + i].Open_Bid);
+                _currentTrade.Exit(data[_randomExit + i].Open.Time, data[_randomExit + i].Open.Bid);
             else
-                _currentTrade.Exit(data.Last().Time, data.Last().Close_Bid);
+                _currentTrade.Exit(data.Last().Close.Time, data.Last().Close.Bid);
         }
 
         public ShortRandomExitTest(int maxLength) : base(maxLength)

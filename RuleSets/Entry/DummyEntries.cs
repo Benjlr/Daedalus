@@ -16,7 +16,7 @@ namespace RuleSets.Entry
             Order = Action.Entry;
         }
 
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
         {
             Satisfied = new bool[data.Count];
             for (int i = 0; i < rangeToTest && i < Satisfied.Length; i++)
@@ -36,7 +36,7 @@ namespace RuleSets.Entry
             Order = Action.Exit;
         }
 
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData) {
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData) {
             Satisfied = new bool[data.Count];
             for (int i = 0; i < rangeToTest && i < Satisfied.Length; i++)
                 if (i % interval == 0) Satisfied[i] = true;

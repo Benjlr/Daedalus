@@ -13,13 +13,13 @@ namespace RuleSets.Entry
             Order = Action.Entry;
         }
 
-        public override void CalculateBackSeries(List<SessionData> myData, BidAskData[] rawData)
+        public override void CalculateBackSeries(List<BidAskData> myData, BidAskData[] rawData)
         {
             Satisfied = new bool[myData.Count];
             var daily = SessionCollate.CollateToHourly(myData);
 
 
-            var ema20 = MovingAverage.ExponentialMovingAverage(daily.Select(x => x.Close).ToList(), 20);
+            var ema20 = MovingAverage.ExponentialMovingAverage(daily.Select(x => x.Close.Mid).ToList(), 20);
             var atr = AverageTrueRange.Calculate(myData);
 
 
@@ -34,7 +34,7 @@ namespace RuleSets.Entry
 
             for (int i = 10; i < daily.Count; i++)
             {
-                if (daily[i].Low < lower[i])
+                if (daily[i].Low.Mid < lower[i])
                 {
 
                     Satisfied[i] = true;

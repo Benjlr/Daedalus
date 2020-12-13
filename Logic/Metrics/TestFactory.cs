@@ -100,7 +100,7 @@ namespace Logic.Metrics
             Parallel.For(0, threadSafeDict.Count, (i) =>
             {
                 threadSafeDict.TryGetValue(i, out ITest myTests);
-                myTests?.Run(market.RawData, strat.Entries, market.CostanzaData.ToList());
+                myTests?.Run(market.RawData, strat.Entries, market.RawData.ToList());
                 progress?.Invoke();
             });
         }

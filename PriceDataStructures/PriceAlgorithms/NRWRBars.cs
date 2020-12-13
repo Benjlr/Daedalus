@@ -4,10 +4,10 @@ namespace DataStructures.PriceAlgorithms
 {
     public class NRWRBars
     {
-        public static List<int> Calculate(List<SessionData> input) {
+        public static List<int> Calculate(List<BidAskData> input) {
             var retval = new List<int>();
             var ranges =new List<double>();
-            input.ForEach(x => ranges.Add(x.High - x.Low));
+            input.ForEach(x => ranges.Add(x.High.Mid - x.Low.Mid));
             input.ForEach(x => retval.Add(0));
 
             for (var i = 1; i < input.Count; i++) {

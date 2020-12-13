@@ -6,16 +6,16 @@ namespace DataStructures.PriceAlgorithms
 {
     public class AverageTrueRange
     {
-        public static List<double> Calculate(List<SessionData> input, int period = 20) {
+        public static List<double> Calculate(List<BidAskData> input, int period = 20) {
             var atr = new List<double>();
-            atr.Add(input.First().High - input.First().Low);
+            atr.Add(input.First().High.Mid - input.First().Low.Mid);
 
             for (var i = 1; i < input.Count; i++) {
                 var trueRangeVals = new List<double>
                 {
-                    input[i].High - input[i].Low, 
-                    Math.Abs(input[i].High - input[i - 1].Close), 
-                    Math.Abs(input[i].Low - input[i - 1].Close)
+                    input[i].High.Mid - input[i].Low.Mid, 
+                    Math.Abs(input[i].High.Mid - input[i - 1].Close.Mid), 
+                    Math.Abs(input[i].Low.Mid - input[i - 1].Close.Mid)
                 };
                 atr.Add(((atr.Last() * (period - 1.0)) + trueRangeVals.Max()) / period);
             }
@@ -23,7 +23,7 @@ namespace DataStructures.PriceAlgorithms
             return atr;
         }
 
-        public static List<double> CalculateATRPC(List<SessionData> input, int atrLB = 2, int ATRPCLB = 55) {
+        public static List<double> CalculateATRPC(List<BidAskData> input, int atrLB = 2, int ATRPCLB = 55) {
             var atr = Calculate(input, atrLB);
             var atrPC = new List<double>();
 

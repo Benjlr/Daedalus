@@ -13,13 +13,13 @@ namespace RuleSets.Exit
             Order = Action.Exit;
         }
 
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
         {
             Satisfied = new bool[data.Count];
 
             for (int i = 2; i < data.Count; i++)
             {
-                if (data[i].Low < data[i - 1].Low && data[i - 1].Low < data[i - 2].Low) Satisfied[i] = true;
+                if (data[i].Low.Mid < data[i - 1].Low.Mid && data[i - 1].Low.Mid < data[i - 2].Low.Mid) Satisfied[i] = true;
             }
 
         }
@@ -33,14 +33,14 @@ namespace RuleSets.Exit
             Order = Action.Exit;
         }
 
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
         {
-            var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
+            var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
             Satisfied = new bool[data.Count];
 
             for (int i = 25; i < data.Count; i++)
             {
-                if (data[i - 1].Close < twentyMA[i - 1] && data[i].Low < data[i - 1].Low) Satisfied[i] = true;
+                if (data[i - 1].Close.Mid < twentyMA[i - 1] && data[i].Low.Mid < data[i - 1].Low.Mid) Satisfied[i] = true;
             }
 
         }

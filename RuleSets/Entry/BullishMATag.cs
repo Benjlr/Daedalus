@@ -14,19 +14,19 @@ namespace RuleSets.Entry
         }
 
 
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
         {
-            var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
-            var twohundredMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 50);
-            var six = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 6);
+            var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
+            var twohundredMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 50);
+            var six = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 6);
 
             Satisfied = new bool[data.Count];
 
             for (int i = 60; i < data.Count; i++)
             {
-                if (data[i].Close > twohundredMA[i] &&
-                    data[i].Close > twentyMA[i] &&
-                    data[i].High < six[i]) Satisfied[i] = true;
+                if (data[i].Close.Mid > twohundredMA[i] &&
+                    data[i].Close.Mid > twentyMA[i] &&
+                    data[i].High.Mid < six[i]) Satisfied[i] = true;
             }
 
         }
@@ -41,14 +41,14 @@ namespace RuleSets.Entry
         }
 
 
-        public override void CalculateBackSeries(List<SessionData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
         {
             var Atr = AverageTrueRange.Calculate(data);
 
-            var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 20);
-            var fiftyMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 50);
-            var tenMa = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 10);
-            var sixMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close).ToList(), 6);
+            var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
+            var fiftyMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 50);
+            var tenMa = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 10);
+            var sixMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 6);
 
             Satisfied = new bool[data.Count];
             int count = 0;
