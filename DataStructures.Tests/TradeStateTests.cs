@@ -20,7 +20,7 @@ namespace DataStructures.Tests
 
             Assert.Equal(3, trades[0].MarketEnd);
             Assert.Equal(0, trades[0].MarketStart);
-            Assert.Equal((2-5)/5.0, trades[0].Drawdown);
+            Assert.Equal((2-5)/5.0, trades[0].FinalDrawdown);
             Assert.Equal((2 - 5) / 5.0, trades[0].FinalResult);
             Assert.False(trades[0].Win);
             Assert.Equal(new double[] {(4.5/5.0)-1, (9/5.0)-1, 0, (2 / 5.0) -1}, trades[0].ResultArray);
@@ -41,7 +41,7 @@ namespace DataStructures.Tests
 
             Assert.Equal(4, trades[0].MarketEnd);
             Assert.Equal(0, trades[0].MarketStart);
-            Assert.Equal(1- (15/11.0), trades[0].Drawdown);
+            Assert.Equal(1- (15/11.0), trades[0].FinalDrawdown);
             Assert.Equal(1-(8 / 11.0) , trades[0].FinalResult);
             Assert.True(trades[0].Win);
             Assert.Equal(new double[] { 1-(13 / 11.0), 1-(15 / 11.0), 1-(14 / 11.0), 1-(10 / 11.0), 1-( 8 / 11.0 )}, trades[0].ResultArray);

@@ -8,7 +8,7 @@ namespace DataStructures
     {
         public DatedResult[] Results { get; }
         public double FinalResult { get; }
-        public double Drawdown { get; }
+        public double FinalDrawdown { get; }
         public int MarketStart { get; }
         public int MarketEnd { get; }
         public bool Win { get; }
@@ -19,7 +19,7 @@ namespace DataStructures
             MarketStart = startIndex;
             MarketEnd = results.Length + startIndex-1;
             FinalResult = results.Last().Return;
-            Drawdown = results.Any(x => x.Drawdown < 0) ? results.Where(x => x.Drawdown < 0).Min(x=>x.Drawdown) : 0;
+            FinalDrawdown = results.Min(x=>x.Drawdown);
             Win = results.Last().Return > 0;
         }
 

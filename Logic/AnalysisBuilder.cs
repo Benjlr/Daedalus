@@ -135,10 +135,10 @@ namespace Logic
         }
 
         private void histogramCategorisation(List<Trade> results, int j) {
-            HistogramTools.CategoriseItem(DrawdownByReturn, results[j].Drawdown, results[j].FinalResult);
+            HistogramTools.CategoriseItem(DrawdownByReturn, results[j].FinalDrawdown, results[j].FinalResult);
             HistogramTools.CategoriseItem(_resultHistogramBuilder, results[j].FinalResult);
             if (results[j].FinalResult > 0) 
-                HistogramTools.CategoriseItem(_drawdownHistogramBuilder, results[j].Drawdown);
+                HistogramTools.CategoriseItem(_drawdownHistogramBuilder, results[j].FinalDrawdown);
         }
 
         private void Finalise() {

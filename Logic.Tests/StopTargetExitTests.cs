@@ -49,13 +49,13 @@ namespace Logic.Tests
         public void ShouldGenerateLongResults() {
             for (int i = 0; i < FSTETestsBars._longSmallStopTarget.Count; i++) {
                 Assert.Equal(FSTETestsBars._longSmallStopTarget[i].FinalResult, _fixture.myTests[0][0].Trades[i].FinalResult);
-                Assert.Equal(FSTETestsBars._longSmallStopTarget[i].Results, _fixture.myTests[0][0].Trades[i].Results);
+                Asserters.ArrayDoublesEqual(FSTETestsBars._longSmallStopTarget[i].Results, _fixture.myTests[0][0].Trades[i].Results);
                 Assert.Equal(FSTETestsBars._longSmallStopTarget[i].Win, _fixture.myTests[0][0].Trades[i].Win);
             }
 
             for (int i = 0; i < FSTETestsBars._longLargerStopTarget.Count; i++) {
                 Assert.Equal(FSTETestsBars._longLargerStopTarget[i].FinalResult, _fixture.myTests[3][0].Trades[i].FinalResult);
-                Assert.Equal(FSTETestsBars._longLargerStopTarget[i].Results, _fixture.myTests[3][0].Trades[i].Results);
+                Asserters.ArrayDoublesEqual(FSTETestsBars._longLargerStopTarget[i].Results, _fixture.myTests[3][0].Trades[i].Results);
                 Assert.Equal(FSTETestsBars._longLargerStopTarget[i].Win, _fixture.myTests[3][0].Trades[i].Win);
             }
         }
@@ -64,13 +64,13 @@ namespace Logic.Tests
         public void ShouldGenerateShortResults() {
             for (int i = 0; i < FSTETestsBars._shortSmallStopTarget.Count; i++) {
                 Assert.Equal(FSTETestsBars._shortSmallStopTarget[i].FinalResult, _fixture.myTests[0][1].Trades[i].FinalResult);
-                Assert.Equal(FSTETestsBars._shortSmallStopTarget[i].Results, _fixture.myTests[0][1].Trades[i].Results);
+                Asserters.ArrayDoublesEqual(FSTETestsBars._shortSmallStopTarget[i].Results, _fixture.myTests[0][1].Trades[i].Results);
                 Assert.Equal(FSTETestsBars._shortSmallStopTarget[i].Win, _fixture.myTests[0][1].Trades[i].Win);
             }
 
             for (int i = 0; i < FSTETestsBars._shortLargerStopTarget.Count; i++) {
                 Assert.Equal(FSTETestsBars._shortLargerStopTarget[i].FinalResult, _fixture.myTests[3][1].Trades[i].FinalResult);
-                Assert.Equal(FSTETestsBars._shortLargerStopTarget[i].Results, _fixture.myTests[3][1].Trades[i].Results);
+                Asserters.ArrayDoublesEqual(FSTETestsBars._shortLargerStopTarget[i].Results, _fixture.myTests[3][1].Trades[i].Results);
                 Assert.Equal(FSTETestsBars._shortLargerStopTarget[i].Win, _fixture.myTests[3][1].Trades[i].Win);
             }
         }
@@ -78,19 +78,19 @@ namespace Logic.Tests
         [Fact]
         public void ShouldGenerateDrawDownLongResults() {
             for (int i = 0; i < FSTETestsBars._longSmallStopTarget.Count; i++) 
-                Assert.Equal(FSTETestsBars._longSmallStopTarget[i].Drawdown, _fixture.myTests[0][0].Trades[i].Drawdown);
+                Assert.Equal(FSTETestsBars._longSmallStopTarget[i].FinalDrawdown, _fixture.myTests[0][0].Trades[i].FinalDrawdown);
 
             for (int i = 0; i < FSTETestsBars._longLargerStopTarget.Count; i++) 
-                Assert.Equal(FSTETestsBars._longLargerStopTarget[i].Drawdown, _fixture.myTests[3][0].Trades[i].Drawdown);
+                Assert.Equal(FSTETestsBars._longLargerStopTarget[i].FinalDrawdown, _fixture.myTests[3][0].Trades[i].FinalDrawdown);
         }
 
         [Fact]
         public void ShouldGenerateDrawDownShortResults() {
             for (int i = 0; i < FSTETestsBars._shortSmallStopTarget.Count; i++)
-                Assert.Equal(FSTETestsBars._shortSmallStopTarget[i].Drawdown, _fixture.myTests[0][1].Trades[i].Drawdown);
+                Assert.Equal(FSTETestsBars._shortSmallStopTarget[i].FinalDrawdown, _fixture.myTests[0][1].Trades[i].FinalDrawdown);
 
             for (int i = 0; i < FSTETestsBars._shortLargerStopTarget.Count; i++)
-                Assert.Equal(FSTETestsBars._shortLargerStopTarget[i].Drawdown, _fixture.myTests[3][1].Trades[i].Drawdown);
+                Assert.Equal(FSTETestsBars._shortLargerStopTarget[i].FinalDrawdown, _fixture.myTests[3][1].Trades[i].FinalDrawdown);
         }
 
         [Fact]

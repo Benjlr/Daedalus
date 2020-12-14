@@ -39,7 +39,7 @@ namespace Logic.Tests
 
     public class FixedBarExitTests : IClassFixture<FixedBarExitTestsFixture>
     {
-        private FixedBarExitTestsFixture _fixture;
+        private readonly FixedBarExitTestsFixture _fixture;
         public FixedBarExitTests(FixedBarExitTestsFixture fixt) {
             _fixture = fixt;
         }
@@ -49,11 +49,11 @@ namespace Logic.Tests
         public void ShouldGenerateLongResults() {
             for (int i = 0; i < 5; i++) {
                 Assert.Equal(FBETestBars.longTradesOne[i].FinalResult, _fixture.myTests[0][0].Trades[i].FinalResult);
-                Assert.Equal(FBETestBars.longTradesOne[i].Results, _fixture.myTests[0][0].Trades[i].Results);
+                Asserters.ArrayDoublesEqual(FBETestBars.longTradesOne[i].Results, _fixture.myTests[0][0].Trades[i].Results);
                 Assert.Equal(FBETestBars.longTradesOne[i].Win, _fixture.myTests[0][0].Trades[i].Win);
 
                 Assert.Equal(FBETestBars.longTradesTwo[i].FinalResult, _fixture.myTests[1][0].Trades[i].FinalResult);
-                Assert.Equal(FBETestBars.longTradesTwo[i].Results, _fixture.myTests[1][0].Trades[i].Results);
+                Asserters.ArrayDoublesEqual(FBETestBars.longTradesTwo[i].Results, _fixture.myTests[1][0].Trades[i].Results);
                 Assert.Equal(FBETestBars.longTradesTwo[i].Win, _fixture.myTests[1][0].Trades[i].Win);
             }
         }
@@ -62,11 +62,11 @@ namespace Logic.Tests
         public void ShouldGenerateShortResults() {
             for (int i = 0; i < 5; i++) {
                 Assert.Equal(FBETestBars.shortTradesOne[i].FinalResult, _fixture.myTests[0][1].Trades[i].FinalResult);
-                Assert.Equal(FBETestBars.shortTradesOne[i].Results, _fixture.myTests[0][1].Trades[i].Results);
+                Asserters.ArrayDoublesEqual(FBETestBars.shortTradesOne[i].Results, _fixture.myTests[0][1].Trades[i].Results);
                 Assert.Equal(FBETestBars.shortTradesOne[i].Win, _fixture.myTests[0][1].Trades[i].Win);
 
                 Assert.Equal(FBETestBars.shortTradesTwo[i].FinalResult, _fixture.myTests[1][1].Trades[i].FinalResult);
-                Assert.Equal(FBETestBars.shortTradesTwo[i].Results, _fixture.myTests[1][1].Trades[i].Results);
+                Asserters.ArrayDoublesEqual(FBETestBars.shortTradesTwo[i].Results, _fixture.myTests[1][1].Trades[i].Results);
                 Assert.Equal(FBETestBars.shortTradesTwo[i].Win, _fixture.myTests[1][1].Trades[i].Win);
             }
         }
@@ -74,16 +74,16 @@ namespace Logic.Tests
         [Fact]
         public void ShouldGenerateDrawDownLongResults() {
             for (int i = 0; i < 5; i++) {
-                Assert.Equal(FBETestBars.longTradesOne[i].Drawdown, _fixture.myTests[0][0].Trades[i].Drawdown);
-                Assert.Equal(FBETestBars.longTradesTwo[i].Drawdown, _fixture.myTests[1][0].Trades[i].Drawdown);
+                Assert.Equal(FBETestBars.longTradesOne[i].FinalDrawdown, _fixture.myTests[0][0].Trades[i].FinalDrawdown);
+                Assert.Equal(FBETestBars.longTradesTwo[i].FinalDrawdown, _fixture.myTests[1][0].Trades[i].FinalDrawdown);
             }               
         }
 
         [Fact]
         public void ShouldGenerateDrawDownShortResults() {
             for (int i = 0; i < 5; i++) {
-                Assert.Equal(FBETestBars.shortTradesOne[i].Drawdown, _fixture.myTests[0][1].Trades[i].Drawdown);
-                Assert.Equal(FBETestBars.shortTradesTwo[i].Drawdown, _fixture.myTests[1][1].Trades[i].Drawdown);
+                Assert.Equal(FBETestBars.shortTradesOne[i].FinalDrawdown, _fixture.myTests[0][1].Trades[i].FinalDrawdown);
+                Assert.Equal(FBETestBars.shortTradesTwo[i].FinalDrawdown, _fixture.myTests[1][1].Trades[i].FinalDrawdown);
             }               
         }
 
