@@ -53,7 +53,7 @@ namespace Thought
                 return;
             else
                 generators.Add(buildGenerator(
-                    new TradePrices(new ExitPrices(0.8, 1.2), getEntry(prices, i)), i));
+                    new TradePrices(new ExitPrices(0.9, 1.1), getEntry(prices, i)), i));
         }
 
         private double getEntry(BidAskData[] prices, int i) {

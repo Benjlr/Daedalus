@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DataStructures;
+using Xunit;
 
 namespace TestUtils
 {
@@ -60,6 +61,36 @@ namespace TestUtils
             var row = files[i].Split(',').ToList();
             for (int j = 0; j < row.Count; j++)
                 myLists[j].Add(double.Parse(row[j]));
+        }
+
+    }
+
+
+    public class RandomBars
+    {
+        public static BidAskData[] GenerateRandomMarket(int bars)
+        {
+            Random t = new Random();
+            var myMarket = new List<BidAskData>();
+            var startDate = new DateTime(1,1,1,0,0,0);
+            for (int i = 0; i < bars; i++)
+            {
+                var openPrice = t.NextDouble() * 20 ;
+                var highPrice = openPrice + t.NextDouble() * 2 ;
+                var lowPrice = openPrice - t.NextDouble() * 2;
+                var closePrice = t.NextDouble() * 20 + i;
+                if (highPrice < closePrice) closePrice = highPrice;
+                if (lowPrice > closePrice) closePrice = lowPrice;
+                var open = new BidAsk(openPrice, openPrice+0.5, startDate);
+                var close = new BidAsk(closePrice, closePrice+0.5,startDate);
+                var high = new BidAsk(highPrice, highPrice+0.5,startDate);
+                var low = new BidAsk(lowPrice, lowPrice+0.5,startDate);
+
+                myMarket.Add(new BidAskData(open,high,low,close,(int)Math.Round(t.NextDouble() *20)));
+                startDate = startDate.AddMinutes(5);
+            }
+
+            return myMarket.ToArray();
         }
 
     }

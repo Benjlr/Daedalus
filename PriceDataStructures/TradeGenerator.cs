@@ -50,14 +50,15 @@ namespace DataStructures
 
         public void Exit(DateTime date, double exitPrice) {
             var final = CalculateReturn(exitPrice);
-            _tradeBuilder.AddResult(date, final, final);
+            _tradeBuilder.AddResult(date, final, final >= 0 ? 0 : final );
             onExit?.Invoke(_tradeBuilder.CompileTrade());
             isActive = false;
         }
         
         protected void AddTradeBuilderStats(DateTime date, double data, double low) {
             CurrentReturn = CalculateReturn(data);
-            this._tradeBuilder.AddResult(date, CurrentReturn, CalculateReturn(low));
+            var drawdown = CalculateReturn(low);
+            this._tradeBuilder.AddResult(date, CurrentReturn, drawdown < 0 ?drawdown:0);
         }
 
         protected abstract void CheckStopsAndTargets(BidAskData data);
