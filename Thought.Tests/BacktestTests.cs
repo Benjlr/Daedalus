@@ -16,18 +16,49 @@ namespace Thought.Tests
     {
         private Universe _universeData { get; }
         public BacktestTests.Backtest TestinObject { get; }
+        public List<Trade> TradesGenerated { get; }
+        public List<Trade> Trades = new List<Trade>()
+        {
+            new Trade(new DatedResult[]
+            {
+                new DatedResult(new DateTime(1,1,1,1,1,1).Ticks, 0.1,-0.1 ),
+                new DatedResult(new DateTime(1,1,10,1,1,1).Ticks, 0.15,-0.15 ),
+                new DatedResult(new DateTime(1,1,20,1,1,1).Ticks, 0.2,-0.15 ),
+                new DatedResult(new DateTime(1,1,30,1,1,1).Ticks, 0.25,-0.2 ),
+            }, 0),
+            new Trade(new DatedResult[]
+            {
+                new DatedResult(new DateTime(1,1,1,1,1,1).Ticks, 0.1,-0.05 ),
+                new DatedResult(new DateTime(1,1,5,1,1,1).Ticks, 0.05,-0.05 ),
+                new DatedResult(new DateTime(1,1,10,1,1,1).Ticks, -0.05,-0.15 ),
+                new DatedResult(new DateTime(1,1,15,1,1,1).Ticks, 0.05,-0.15 ),
+                new DatedResult(new DateTime(1,1,20,1,1,1).Ticks, 0.1,-0.15 ),
+            }, 0),
+            new Trade(new DatedResult[]
+            {
+                new DatedResult(new DateTime(1,1,1,1,1,1).Ticks, 0.1,-0.05 ),
+                new DatedResult(new DateTime(1,1,2,1,1,1).Ticks, 0.05,-0.05 ),
+                new DatedResult(new DateTime(1,1,3,1,1,1).Ticks, -0.05,-0.1 ),
+                new DatedResult(new DateTime(1,1,4,1,1,1).Ticks, 0.05,-0.11 ),
+                  new DatedResult(new DateTime(1, 1, 5,1,1,1).Ticks, 0.08, -0.12),
+                  new DatedResult(new DateTime(1, 1, 6,1,1,1).Ticks, 0.12, -0.13),
+                  new DatedResult(new DateTime(1, 1, 7,1,1,1).Ticks, 0.14, -0.14),
+                  new DatedResult(new DateTime(1, 1, 8,1,1,1).Ticks, 0.16, -0.15),
+                  new DatedResult(new DateTime(1, 1, 9,1,1,1).Ticks, 0.1, -0.16),
+                  new DatedResult(new DateTime(1, 1, 10,1,1,1).Ticks, 0.1, -0.2),
+            }, 0),
+        };
 
         public BackTestFixture()
         {
             _universeData  = new Universe(new IRuleSet[1] { new DummyEntries(5, 10000) });
-            _universeData.AddMarket(RandomBars.GenerateRandomMarket(1500), "longTest");
-            _universeData.AddMarket(RandomBars.GenerateRandomMarket(1000), "mediumMarket");
-            _universeData.AddMarket(RandomBars.GenerateRandomMarket(800), "shortMarket");
+            _universeData.AddMarket(RandomBars.GenerateRandomMarket(6000), "longTest");
+            _universeData.AddMarket(RandomBars.GenerateRandomMarket(4500), "mediumMarket");
+            _universeData.AddMarket(RandomBars.GenerateRandomMarket(2000), "shortMarket");
 
-            var strat = new StrategyExecuter(MarketSide.Bull, true);
-            TestinObject = new BacktestTests.Backtest(_universeData, strat);
+            TestinObject = new BacktestTests.Backtest(_universeData);
+            TradesGenerated = TestinObject.RunBackTest(new StrategyExecuter(MarketSide.Bull, true));
         }
-
     }
 
     public class BacktestTests : IClassFixture<BackTestFixture>
@@ -40,51 +71,155 @@ namespace Thought.Tests
 
         [Fact]
         private void GeneratesResults() {
-
-
-            Assert.True(_fixture.TestinObject.ParseResults(TimeSpan.FromDays(1)).Count > 0);
+            var results = _fixture.TestinObject.ParseResults(TimeSpan.FromDays(1), _fixture.TradesGenerated);
+            Assert.True(results.Count > 0);
+            for (int i = 0; i < results.Count; i++) {
+                Assert.True(results[i].Return != 0);
+                Assert.True(results[i].Date != 0);
+            }
         }
 
         [Fact]
         private void GeneratesResultsForDays() {
-            var results = _fixture.TestinObject.ParseResults(TimeSpan.FromDays(1));
+            var results = _fixture.TestinObject.ParseResults(TimeSpan.FromDays(1), _fixture.TradesGenerated);
 
             Assert.True(results.Count > 0);
+            Assert.False(results.All(x => x.Drawdown == 0));
+            Assert.False(results.All(x => x.Return == 0));
             for (int i = 1; i < results.Count; i++) {
-                Assert.Equal(results[i].Date - results[i-1].Date, TimeSpan.FromDays(1));
+                Assert.Equal(TimeSpan.FromDays(1).Ticks, results[i].Date - results[i-1].Date);
+                Assert.True(results[i].Date != 0);
+            }
+        }
+
+        [Fact]
+        private void GeneratesResultsForHours() {
+            var results = _fixture.TestinObject.ParseResults(TimeSpan.FromHours(1), _fixture.TradesGenerated);
+
+            Assert.True(results.Count > 0);
+            Assert.False(results.All(x => x.Drawdown == 0));
+            Assert.False(results.All(x => x.Return == 0));
+            for (int i = 1; i < results.Count; i++) {
+                Assert.Equal(TimeSpan.FromHours(1).Ticks, results[i].Date - results[i - 1].Date);
+                Assert.True(results[i].Date != 0);
+            }
+        }
+
+        [Fact]
+        private void GeneratesResultsForArbitraryTicks() {
+            var results = _fixture.TestinObject.ParseResults(TimeSpan.FromTicks(29556547847), _fixture.TradesGenerated);
+
+            Assert.True(results.Count > 0);
+            Assert.False(results.All(x=>x.Drawdown == 0));
+            Assert.False(results.All(x=>x.Return == 0));
+            for (int i = 1; i < results.Count; i++) {
+                Assert.Equal(29556547847, results[i].Date - results[i - 1].Date);
+                Assert.True(results[i].Date != 0);
             }
         }
 
 
+        [Fact]
+        private void ShouldGenerateResultsInCorrectOrder() {
+            //new Trade(new DatedResult[]
+            //{
+            //    new DatedResult(new DateTime(1,1,1).Ticks, 0.1,-0.1 ),
+            //    new DatedResult(new DateTime(1,1,10).Ticks, 0.15,-0.15 ),
+            //    new DatedResult(new DateTime(1,1,20).Ticks, 0.2,-0.15 ),
+            //    new DatedResult(new DateTime(1,1,30).Ticks, 0.25,-0.2 ),
+            //}, 0),
+            //new Trade(new DatedResult[]
+            //{
+            //    new DatedResult(new DateTime(1,1,1).Ticks, 0.1,-0.05 ),
+            //    new DatedResult(new DateTime(1,1,5).Ticks, 0.05,-0.05 ),
+            //    new DatedResult(new DateTime(1,1,10).Ticks, -0.05,-0.15 ),
+            //    new DatedResult(new DateTime(1,1,15).Ticks, 0.05,-0.15 ),
+            //    new DatedResult(new DateTime(1,1,20).Ticks, 0.1,-0.15 ),
+            //}, 0),
+            //new Trade(new DatedResult[]
+            //{
+            //    new DatedResult(new DateTime(1,1,1).Ticks, 0.1,-0.05 ),
+            //    new DatedResult(new DateTime(1,1,2).Ticks, 0.05,-0.05 ),
+            //    new DatedResult(new DateTime(1,1,3).Ticks, -0.05,-0.1 ),
+            //    new DatedResult(new DateTime(1,1,4).Ticks, 0.05,-0.11 ),
+            //      new DatedResult(new DateTime(1, 1, 5).Ticks, 0.08, -0.12),
+            //      new DatedResult(new DateTime(1, 1, 6).Ticks, 0.12, -0.13),
+            //      new DatedResult(new DateTime(1, 1, 7).Ticks, 0.14, -0.14),
+            //      new DatedResult(new DateTime(1, 1, 8).Ticks, 0.16, -0.15),
+            //      new DatedResult(new DateTime(1, 1, 9).Ticks, 0.1, -0.16),
+            //      new DatedResult(new DateTime(1, 1, 10).Ticks, 0.1, -0.2),
+            //}, 0),
+
+            var results = _fixture.TestinObject.ParseResults(TimeSpan.FromDays(10), _fixture.Trades);
+            AssertDatedResult(new DatedResult(new DateTime(1, 1, 11).Ticks, 0.15 - 0.05 + 0.1, (-0.3 + -0.2)/3), results[0]);
+            AssertDatedResult(new DatedResult(new DateTime(1, 1, 21).Ticks, 0.2 + 0.1, -0.15), results[1]);
+            AssertDatedResult(new DatedResult(new DateTime(1, 1, 31).Ticks, 0.25, -0.2), results[2]);
+        }
+
+        [Fact]
+        private void ShouldGenerateResultsInCorrectOrderOnSmallScale() {
+            var results = _fixture.TestinObject.ParseResults(TimeSpan.FromDays(5), _fixture.Trades);
+            AssertDatedResult(new DatedResult(new DateTime(1, 1, 6).Ticks, 0.1 + 0.05 + 0.08, (-0.1-0.05 -0.12)/3), results[0]);
+            AssertDatedResult(new DatedResult(new DateTime(1, 1, 11).Ticks, 0.15 - 0.05 + 0.1, (-0.15-0.15 -0.2)/3), results[1]);
+            AssertDatedResult(new DatedResult(new DateTime(1, 1, 16).Ticks, 0.15 + 0.05, (-0.15-0.15 )/2), results[2]);
+            AssertDatedResult(new DatedResult(new DateTime(1, 1, 21).Ticks, 0.2 + 0.1 , (-0.15- 0.15) /2), results[3]);
+            AssertDatedResult(new DatedResult(new DateTime(1, 1, 26).Ticks, 0.2, (-0.15)/1), results[4]);
+            AssertDatedResult(new DatedResult(new DateTime(1, 1, 31).Ticks, 0.25, (-0.2)/1), results[5]);
+        }
+
+        private void AssertDatedResult(DatedResult expected, DatedResult results) {
+            Assert.Equal(expected.Date, results.Date);
+            Assert.Equal(expected.Return, results.Return,6);
+            Assert.Equal(expected.Drawdown, results.Drawdown,6);
+        }
+
+
+
         public class Backtest
         {
-            public Universe Markets { get; set; }
-            private List<Trade> _results { get; set; }
+            public Universe Markets { get; }
 
-            public Backtest(Universe markets, StrategyExecuter exec) {
-                _results = new List<Trade>();
-                foreach (var element in markets.Elements) {
-                    var trades = exec.Execute(element);
-                    foreach (var trade in trades)
-                        _results.Add(trade);
-                }
+            public Backtest(Universe markets) {
+                Markets = markets;
+
             }
 
-            public List<DatedResult> ParseResults(TimeSpan time) {
-                //return _results.SelectMany(x => x.Results.ToList()).ToList();
+            public List<Trade> RunBackTest(StrategyExecuter exec) {
+                var results = new List<Trade>();
+                foreach (var element in Markets.Elements) {
+                    var trades = exec.Execute(element);
+                    foreach (var trade in trades)
+                        results.Add(trade);
+                }
+
+                return results;
+            }
+
+            public List<DatedResult> ParseResults(TimeSpan time, List<Trade> results) {
                 var retVal = new List<DatedResult>();
-                var orderedResults = _results.OrderBy(x => x.Results.Last().Date).ToList();
-                var totalSpan = (orderedResults.Last().Results.Last().Date.Ticks -
-                                 orderedResults.First().Results.First().Date.Ticks);
+                var orderedResults = results.OrderBy(x => x.Results.Last().Date).ToList();
+                var totalSpan = (orderedResults.Last().Results.Last().Date - orderedResults.First().Results.First().Date);
                 
                 var iters =  totalSpan / (double)time.Ticks;
-                for (long i = 0; i < totalSpan; i += time.Ticks)
-                {
-                    var resultIter = _results.Where(x => x.Results.Last().Date.Ticks > i && x.Results.Last().Date.Ticks < i + iters).ToList();
-                    var avgDD = resultIter.Any(x => x.FinalDrawdown < 0)
-                        ? resultIter.Where(x => x.FinalDrawdown < 0).Average(x => x.FinalDrawdown)
-                        : 0;
-                    retVal.Add(new DatedResult(new DateTime((long)iters+i), resultIter.Sum(x=>x.FinalResult), avgDD));
+                for (long i = 0; i < totalSpan; i += time.Ticks) {
+
+                    var resultsTw = new List<DatedResult>();
+                    foreach (var t in orderedResults) {
+                        if(t.Results.Last().Date < i)
+                            continue;
+                        if(t.Results.First().Date > i + time.Ticks)
+                            continue;
+                        var relevantResult = t.Results.LastOrDefault(x => x.Date < i + time.Ticks);
+                        if(relevantResult.Date > 0)
+                            resultsTw.Add(relevantResult);
+                    }
+
+
+  
+
+                    var avgDD = resultsTw.Any(x => x.Drawdown < 0) ? resultsTw.Where(x => x.Drawdown < 0).Average(x => x.Drawdown) : 0;
+                    var sum = resultsTw.Sum(x => x.Return);
+                    retVal.Add(new DatedResult((long)time.Ticks + i, sum, avgDD));
                 }
 
                 return retVal;

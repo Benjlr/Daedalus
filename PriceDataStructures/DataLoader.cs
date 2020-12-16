@@ -6,7 +6,6 @@ namespace DataStructures
 {
     public class DataLoader
     {
-
         public static BidAskData[] LoadData(string file) {
             var fs = File.ReadAllLines(file);
             if (fs?.FirstOrDefault()?.Split(',').Length == 10) return LoadBidAskData(fs);

@@ -16,7 +16,7 @@ namespace Logic.Metrics
 
     public class TestFactory
     {
-        public static Action progress;
+        public Action progress;
 
         public class FixedBarExitTestOptions : TestOption
         {
@@ -31,7 +31,7 @@ namespace Logic.Metrics
             }
 
             public ITest[] Run(Strategy strat, Market market, MarketSide longShort) {
-                return TestFactory.GenerateFixedBarExitTest(strat, market, this, longShort);
+                return new TestFactory().GenerateFixedBarExitTest(strat, market, this, longShort);
             }
         }
 
@@ -54,7 +54,7 @@ namespace Logic.Metrics
                     Increment = 0;
             }
             public ITest[] Run(Strategy strat, Market market, MarketSide longShort) {
-                return TestFactory.GenerateFixedStopTargetExitTest(strat, market, this, longShort);
+                return new TestFactory().GenerateFixedStopTargetExitTest(strat, market, this, longShort);
             }
         }
 
@@ -68,11 +68,11 @@ namespace Logic.Metrics
                 MaxBars = maxLength;
             }
             public ITest[] Run(Strategy strat, Market market, MarketSide longShort) {
-                return TestFactory.GenerateRandomExitTests(strat, market, this, longShort);
+                return new TestFactory().GenerateRandomExitTests(strat, market, this, longShort);
             }
         }
 
-        private static ITest[] GenerateFixedBarExitTest(Strategy strat, Market market, FixedBarExitTestOptions options, MarketSide longShort) {
+        private ITest[] GenerateFixedBarExitTest(Strategy strat, Market market, FixedBarExitTestOptions options, MarketSide longShort) {
             if (options.MinimumExitPeriod > options.MaximumExitPeriod)
                 throw new Exception();
             var threadSafeDict = new ConcurrentDictionary<int, ITest>(FixedBarTestsToDictionary(options, longShort));
@@ -80,14 +80,14 @@ namespace Logic.Metrics
             return threadSafeDict.Values.ToArray();
         }
 
-        private static ITest[] GenerateFixedStopTargetExitTest(Strategy strat, Market market, FixedStopTargetExitTestOptions options, MarketSide longShort)
+        private ITest[] GenerateFixedStopTargetExitTest(Strategy strat, Market market, FixedStopTargetExitTestOptions options, MarketSide longShort)
         {
             var threadSafeDict = new ConcurrentDictionary<int, ITest>(StopTargetTestsToDictionary(options,  longShort));
             ExecuteTests(strat, market, threadSafeDict);
             return threadSafeDict.Values.ToArray();
         }
 
-        private static ITest[] GenerateRandomExitTests( Strategy strat, Market market, RandomExitTestOptions optons, MarketSide longShort)
+        public ITest[] GenerateRandomExitTests( Strategy strat, Market market, RandomExitTestOptions optons, MarketSide longShort)
         {
             var threadSafeDict = new ConcurrentDictionary<int, ITest>(RandomExitTestsToDictionary(optons, longShort));
             ExecuteTests(strat, market, threadSafeDict);
@@ -95,7 +95,7 @@ namespace Logic.Metrics
         }
 
 
-        private static void ExecuteTests(Strategy strat, Market market, ConcurrentDictionary<int, ITest> threadSafeDict)
+        private void ExecuteTests(Strategy strat, Market market, ConcurrentDictionary<int, ITest> threadSafeDict)
         {
             Parallel.For(0, threadSafeDict.Count, (i) =>
             {
@@ -105,14 +105,14 @@ namespace Logic.Metrics
             });
         }
 
-        private static Dictionary<int, ITest> FixedBarTestsToDictionary(FixedBarExitTestOptions options, MarketSide longShort) {
+        private Dictionary<int, ITest> FixedBarTestsToDictionary(FixedBarExitTestOptions options, MarketSide longShort) {
             Dictionary<int, ITest> retval = new Dictionary<int, ITest>();
             for (int i = options.MinimumExitPeriod; i <= options.MaximumExitPeriod; i+= options.Increment) 
                 retval.Add(retval.Count, FixedBarExitTest.PrepareTest(longShort, i));
             return retval;
         }
 
-        private static ITest[] RandomExitTestArrayInitialiser(int maxLength) {
+        private ITest[] RandomExitTestArrayInitialiser(int maxLength) {
             ITest[] myTest = new ITest[2]
             {
                 new LongRandomExitTest(maxLength), 
@@ -121,7 +121,7 @@ namespace Logic.Metrics
             return myTest;
         }
 
-        private static Dictionary<int, ITest> StopTargetTestsToDictionary(FixedStopTargetExitTestOptions options, MarketSide longShort) {
+        private Dictionary<int, ITest> StopTargetTestsToDictionary(FixedStopTargetExitTestOptions options, MarketSide longShort) {
             Dictionary<int, ITest> retval = new Dictionary<int, ITest>();
             for (int i = 0; i <= options.Divisions; i++)
             for (int j = 0; j <= options.Divisions; j++)
@@ -131,7 +131,7 @@ namespace Logic.Metrics
                         options.MinimumStop + i * options.Increment));
             return retval;
         }
-        private static Dictionary<int, ITest> RandomExitTestsToDictionary(RandomExitTestOptions options, MarketSide longShort) {
+        private Dictionary<int, ITest> RandomExitTestsToDictionary(RandomExitTestOptions options, MarketSide longShort) {
             Dictionary<int, ITest> retval = new Dictionary<int, ITest>();
             for (int i = 0; i < options.TestCount; i++)
                 retval.Add(i, RandomExitTest.PrepareTest(longShort, options.MaxBars));

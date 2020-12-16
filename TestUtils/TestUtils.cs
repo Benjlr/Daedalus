@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using DataStructures;
 using Xunit;
 
@@ -9,24 +10,25 @@ namespace TestUtils
 {
     public class TradeTimeMocker
     {
-        private static DateTime _mockTime;
         public static DatedResult[] Mock(double[] vals, double[] drawDowns, DateTime startDate ) {
-            _mockTime  = startDate;
+            long _mockTime  = startDate.Ticks;
             DatedResult[] dateResults = new DatedResult[vals.Length];
-            iterateTime(vals, drawDowns, dateResults);
+            iterateTime(_mockTime, vals, drawDowns, dateResults);
             return dateResults;
         }
 
         public static DatedResult[] Mock(double[] vals) {
-            _mockTime = new DateTime(2020, 01, 01);
+            long _mockTime = new DateTime(2020, 01, 01).Ticks;
             DatedResult[] dateResults = new DatedResult[vals.Length];
-            iterateTime(vals, vals, dateResults);
+            iterateTime(_mockTime ,vals, vals, dateResults);
             return dateResults;
         }
 
-        private static void iterateTime(double[] vals, double[] drawDowns, DatedResult[] dateResults) {
-            for (int i = 0; i < vals.Length; i++)
-                dateResults[i] = new DatedResult(_mockTime.AddDays(i ), vals[i], drawDowns[i]);
+        private static void iterateTime(long startDate, double[] vals, double[] drawDowns, DatedResult[] dateResults) {
+            for (int i = 0; i < vals.Length; i++) {
+                dateResults[i] = new DatedResult(startDate, vals[i], drawDowns[i]);
+                startDate += TimeSpan.FromDays(1).Ticks;
+            }
         }
     }
 
@@ -73,12 +75,15 @@ namespace TestUtils
             Random t = new Random();
             var myMarket = new List<BidAskData>();
             var startDate = new DateTime(1,1,1,0,0,0);
+
+            StringBuilder stringo = new StringBuilder();
+
             for (int i = 0; i < bars; i++)
             {
-                var openPrice = t.NextDouble() * 20 ;
-                var highPrice = openPrice + t.NextDouble() * 2 ;
-                var lowPrice = openPrice - t.NextDouble() * 2;
-                var closePrice = t.NextDouble() * 20 + i;
+                var openPrice = 20+ (t.NextDouble()-0.5) *3  ;
+                var highPrice = openPrice + t.NextDouble() * 3 ;
+                var lowPrice = openPrice - t.NextDouble() * 3;
+                var closePrice = 20 + (t.NextDouble() - 0.5) * 3;
                 if (highPrice < closePrice) closePrice = highPrice;
                 if (lowPrice > closePrice) closePrice = lowPrice;
                 var open = new BidAsk(openPrice, openPrice+0.5, startDate);
@@ -87,8 +92,15 @@ namespace TestUtils
                 var low = new BidAsk(lowPrice, lowPrice+0.5,startDate);
 
                 myMarket.Add(new BidAskData(open,high,low,close,(int)Math.Round(t.NextDouble() *20)));
+
+                stringo.AppendLine($"{open.Ask:0.000},{open.Bid:0.000},{high.Ask:0.000},{high.Bid:0.000},{low.Ask:0.000},{low.Bid:0.000},{close.Ask:0.000},{close.Bid:0.000},{startDate}");
+                
                 startDate = startDate.AddMinutes(5);
+
+
             }
+
+            File.WriteAllText(@"C:\Temp\TSTTSTS.csv", stringo.ToString());
 
             return myMarket.ToArray();
         }

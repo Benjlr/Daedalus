@@ -51,7 +51,7 @@ namespace Logic.Metrics.EntryTests
         }
 
         protected override void ExitTrade(BidAskData data) {
-            _currentTrade.Exit(data.Close.Time, data.Close.Bid);
+            _currentTrade.Exit(data.Close.Time.Ticks, data.Close.Bid);
         }
     }
 
@@ -68,7 +68,7 @@ namespace Logic.Metrics.EntryTests
         }
 
         protected override void ExitTrade(BidAskData data) {
-            _currentTrade.Exit(data.Close.Time, data.Close.Ask);
+            _currentTrade.Exit(data.Close.Time.Ticks, data.Close.Ask);
         }
     }
 }

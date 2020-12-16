@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace DataStructures
@@ -36,7 +35,7 @@ namespace DataStructures
             _index = start;
         }
 
-        public void AddResult(DateTime date, double result, double drawdown) {
+        public void AddResult(long date, double result, double drawdown) {
             _results.Add(new DatedResult(date, result, drawdown < 0 ? drawdown : 0));
         }
 
@@ -47,11 +46,11 @@ namespace DataStructures
 
     public readonly struct DatedResult
     {
-        public DateTime Date { get; }
+        public long Date { get; }
         public double Return { get; }
         public double Drawdown { get; }
 
-        public DatedResult(DateTime date, double result, double drawdown) {
+        public DatedResult(long date, double result, double drawdown) {
             Date = date;
             Return = result;
             Drawdown = drawdown;

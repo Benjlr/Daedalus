@@ -16,7 +16,7 @@ namespace DataStructures.Tests
             longstate.Continue(new BidAskData(new DateTime(2020,01,01),4.5,4.5,5,5, 4.5, 4.5, 4.5,4.5,1 ));
             longstate.Continue(new BidAskData(new DateTime(2020, 01, 01), 9, 9, 10, 10, 4.5, 4.5, 9, 9, 1));
             longstate.Continue(new BidAskData(new DateTime(2020, 01, 01), 5, 5, 8, 8, 4.5, 4.5,5, 5 , 1));
-            longstate.Exit(new DateTime(2020, 01, 01),2);
+            longstate.Exit(new DateTime(2020, 01, 01).Ticks,2);
 
             Assert.Equal(3, trades[0].MarketEnd);
             Assert.Equal(0, trades[0].MarketStart);
@@ -37,7 +37,7 @@ namespace DataStructures.Tests
             shortstate.Continue(new BidAskData(new DateTime(), 15, 15, 15, 15, 15, 15, 15, 15, 1));
             shortstate.Continue(new BidAskData(new DateTime(), 14, 14, 14, 14, 14, 14, 14, 14, 1));
             shortstate.Continue(new BidAskData(new DateTime(), 10, 10, 10, 10, 10, 10, 10, 10, 1));
-            shortstate.Exit(new DateTime(),8);
+            shortstate.Exit(1,8);
 
             Assert.Equal(4, trades[0].MarketEnd);
             Assert.Equal(0, trades[0].MarketStart);

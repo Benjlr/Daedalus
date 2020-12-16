@@ -24,26 +24,31 @@ namespace TestUtils
 
         public static List<Trade> _shortSmallStopTarget = new List<Trade>()
         {
-            new Trade(TradeTimeMocker.Mock( new double[]{
-              1-  (11 / 10.5) ,
-              1-  (11 / 10.5) ,
-              1-  (12/10.5) ,
-              1-  (10.5*1.15/10.5)
-            }, new double[] {1- (11/10.5), 1-(11/10.5), 1-(12/10.5), 1-  (10.5*1.15/10.5)}, new DateTime(1,1,2)), 1),
-            new Trade(TradeTimeMocker.Mock(new double[]{1- (12/11.5) , 1- (11.5*1.15/11.5)}, new double[]{     1- (12/11.5) , 1- (11.5*1.15/11.5) }, new DateTime(1,1,4) ), 3),
-            new Trade(TradeTimeMocker.Mock(new double[]{
-               1- (9.5*1.15/9.5)
-            }, new double[]{1- (9.5*1.15/9.5)} , new DateTime(1,1,6) ), 5),
-            new Trade(TradeTimeMocker.Mock(new double[]{
-              1-  (11/10.5),
-              1-  (10.5*0.85/10.5)
-            }, new double[]{ 1- (11/10.5), 0}, new DateTime(1,1,8)), 7),
-            new Trade(TradeTimeMocker.Mock(new double[]{
-               1- (7.5*1.15/7.5)
-            }, new double[]{1-(7.5*1.15/7.5)}, new DateTime(1,1,10)), 9),
-            new Trade(TradeTimeMocker.Mock(new double[]{
-               1- (6.5*1.15/6.5),
-            }, new double[]{1- (6.5*1.15/6.5)}, new DateTime(1,1,12) ), 11),
+            new Trade(TradeTimeMocker.Mock(new double[]
+            {
+                1 - (11 / 10.5),
+                1 - (11 / 10.5),
+                1 - (12 / 10.5),
+                1 - (10.5 * 1.15 / 10.5)
+            }, new double[] {1 - (11 / 10.5), 1 - (11 / 10.5), 1 - (12 / 10.5), 1 - (10.5 * 1.15 / 10.5)}, new DateTime(1, 1, 2)), 1),
+            new Trade(TradeTimeMocker.Mock(new double[] {1 - (12 / 11.5), 1 - (11.5 * 1.15 / 11.5)}, new double[] {1 - (12 / 11.5), 1 - (11.5 * 1.15 / 11.5)}, new DateTime(1, 1, 4)), 3),
+            new Trade(TradeTimeMocker.Mock(new double[]
+            {
+                1 - (9.5 * 1.15 / 9.5)
+            }, new double[] {1 - (9.5 * 1.15 / 9.5)}, new DateTime(1, 1, 6)), 5),
+            new Trade(TradeTimeMocker.Mock(new double[]
+            {
+                1 - (11 / 10.5),
+                1 - (10.5 * 0.85 / 10.5)
+            }, new double[] {1 - (11 / 10.5), 1 - (11 / 10.5)}, new DateTime(1, 1, 8)), 7),
+            new Trade(TradeTimeMocker.Mock(new double[]
+            {
+                1 - (7.5 * 1.15 / 7.5)
+            }, new double[] {1 - (7.5 * 1.15 / 7.5)}, new DateTime(1, 1, 10)), 9),
+            new Trade(TradeTimeMocker.Mock(new double[]
+            {
+                1 - (6.5 * 1.15 / 6.5),
+            }, new double[] {1 - (6.5 * 1.15 / 6.5)}, new DateTime(1, 1, 12)), 11),
         };
         public static List<Trade> _shortLargerStopTarget = new List<Trade>()
         {
@@ -61,7 +66,7 @@ namespace TestUtils
                 1 - (11 / 11.5),
                 1 - (11 / 11.5),
                 1 - (15 / 11.5),
-            }, new double[] {1 - (12 / 11.5),1 - (14 / 11.5), 0, 1- (15/11.5) }, new DateTime(1,1,4) ), 3),
+            }, new double[] {1 - (12 / 11.5),1 - (14 / 11.5), 1 - (14 / 11.5), 1- (15/11.5) }, new DateTime(1,1,4) ), 3),
             new Trade(TradeTimeMocker.Mock(new double[]
             {
                 1 - (11 / 9.5),
@@ -72,13 +77,13 @@ namespace TestUtils
                 1 - (11 / 10.5),
                 1 - (8 / 10.5),
                 1 - (0.7 * 10.5 / 10.5),
-            }, new double[]{1- (11/10.5), 0,0}, new DateTime(1,1,8) ), 7),
+            }, new double[]{1- (11/10.5), 1 - (11 / 10.5), 1- (11/10.5)}, new DateTime(1,1,8) ), 7),
             new Trade(TradeTimeMocker.Mock(new double[]
             {
                 1 - (8 / 7.5),
                 1 - (6 / 7.5),
                 1 - (7.5 * 1.3 / 7.5),
-            }, new double[]{1-(9/7.5), 1-(8/7.5),1 - (7.5 * 1.3 / 7.5) }, new DateTime(1,1,10) ), 9),
+            }, new double[]{1-(9/7.5), 1 - (9 / 7.5), 1 - (7.5 * 1.3 / 7.5) }, new DateTime(1,1,10) ), 9),
             new Trade(TradeTimeMocker.Mock(new double[]
             {
                 1 - (6.5 * 1.3 / 6.5),
@@ -92,7 +97,7 @@ namespace TestUtils
                 (11.5/11.0) -1, 
                 (11*1.15/11.0) -1,
                 
-            }, new double[]{ (10.5/11) -1, (10.5/11)-1, 0 , 0 },new DateTime(1,1,2)), 1),
+            }, new double[]{ (10.5/11) -1, (10.5/11)-1, (10.5 / 11) - 1, (10.5/11)-1 },new DateTime(1,1,2)), 1),
             new Trade(TradeTimeMocker.Mock(new double[]{
                 (11.5/12) -1,
                 (10.5/12) -1,
@@ -101,7 +106,7 @@ namespace TestUtils
             new Trade(TradeTimeMocker.Mock(new double[]{
                 (10.5/10) - 1,
                 (14.5/10) - 1,
-            } ,new double[]{ (9.5/10) - 1, 0}, new DateTime(1,1,6)), 5),
+            } ,new double[]{ (9.5/10) - 1, (9.5/10) - 1}, new DateTime(1,1,6)), 5),
             new Trade(TradeTimeMocker.Mock(new double[]{
                 (10.5/11) -1,
                 (8.5/11) -1,
@@ -123,7 +128,7 @@ namespace TestUtils
                 (10.5/11.0) -1,
                 (10.5/11.0) -1,
                 (14.5/11.0) -1,
-            } ,new double[]{ (10.5/11)-1, (10.5/11)-1,0,(10.5/11)-1,(9.5/11)-1,0 }, new DateTime(1,1,2)), 1),
+            } ,new double[]{ (10.5/11)-1, (10.5/11)-1, (10.5 / 11) - 1, (10.5/11)-1,(9.5/11)-1,(9.5/11)-1 }, new DateTime(1,1,2)), 1),
             new Trade(TradeTimeMocker.Mock(new double[]{
                 (11.5/12) -1,
                 (10.5/12) -1,
@@ -131,15 +136,15 @@ namespace TestUtils
                 (10.5/12) -1,
                 (10.5/12) -1,
                 (12*0.7/12) -1,
-            }, new double[] {(11.5/12)-1, (10.5/12)-1, (9.5/12)-1,(10.5/12)-1,(10.5/12)-1,(12*0.7/12) -1 }, new DateTime(1,1,4)), 3),
+            }, new double[] {(11.5/12)-1, (10.5/12)-1, (9.5/12)-1, (9.5 / 12) - 1, (9.5 / 12) - 1, (12*0.7/12) -1 }, new DateTime(1,1,4)), 3),
             new Trade(TradeTimeMocker.Mock(new double[]{
                 (10.5/10) - 1,
                 (14.5/10) - 1,
-            }, new double[]{ (9.5/10)-1, 0 }, new DateTime(1,1,6)), 5),
+            }, new double[]{ (9.5/10)-1, (9.5/10)-1 }, new DateTime(1,1,6)), 5),
             new Trade(TradeTimeMocker.Mock(new double[]{
                 (10.5/11) -1,
                 (11*0.7/11) -1,
-            }, new double[]{ (10.5/11)-1, (11*0.7/11)-1 }, new DateTime(1,1,8)), 7),
+            }, new double[]{ (10.5/11)-1, (11*0.7/11) -1}, new DateTime(1,1,8)), 7),
             new Trade(TradeTimeMocker.Mock(new double[]{
                 (7.5/8) -1,
                 (0.7*8/8) -1,
