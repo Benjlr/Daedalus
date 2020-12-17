@@ -1,22 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataStructures;
+﻿using DataStructures;
 using RuleSets;
 using RuleSets.Entry;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using TestUtils;
 using Xunit;
 
 namespace Thought.Tests
 {
+    public class BackTestSpy : Backtest
+    {
+        public List<string> SpyResults { get; set; }
+        public BackTestSpy(Universe markets) : base(markets) {
+        }
+
+    }
 
     public class BackTestFixture
     {
-        private Universe _universeData { get; }
-        public BacktestTests.Backtest TestinObject { get; }
-        public List<Trade> TradesGenerated { get; }
+        public Backtest BackTest { get; private set; }
+        public BackTestSpy BackTestSpy { get; private set; }
+        public List<Trade> TradesGenerated { get; private set; }
+        public List<Trade> SpyTradesGenerated { get; private set; }
+
         public List<Trade> Trades = new List<Trade>()
         {
             new Trade(new DatedResult[]
@@ -49,21 +56,35 @@ namespace Thought.Tests
             }, 0),
         };
 
-        public BackTestFixture()
-        {
-            _universeData  = new Universe(new IRuleSet[1] { new DummyEntries(5, 10000) });
-            _universeData.AddMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(6000), "longTest");
-            _universeData.AddMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(4500), "mediumMarket");
-            _universeData.AddMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(2000), "shortMarket");
+        public BackTestFixture() {
+            GenerateGeneraleBackTest();
+            GenerateBackTestSpy();
+        }
 
-            TestinObject = new BacktestTests.Backtest(_universeData);
-            TradesGenerated = TestinObject.RunBackTest(new StrategyExecuter(MarketSide.Bull, true, new ExitPrices(0.9,1.1)));
+        private void GenerateGeneraleBackTest() {
+            var universeData = new Universe(new IRuleSet[1] {new DummyEntries(5, 10000)});
+            universeData.AddMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(6000), "longTest");
+            universeData.AddMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(4500), "mediumMarket");
+            universeData.AddMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(2000), "shortMarket");
+
+            BackTest = new Backtest(universeData);
+            TradesGenerated = BackTest.RunBackTest(new StrategyExecuter(MarketSide.Bull, true, () => new ExitPrices(0.9, 1.1)));
+        }
+
+        private void GenerateBackTestSpy() {
+            var universeData = new Universe(new IRuleSet[1] { new DummyEntries(1, 10000) });
+            universeData.AddMarket(new RandomBars(new TimeSpan(0, 5, 0)).GenerateRandomMarket(10000), "minuteMarket");
+            universeData.AddMarket(new RandomBars(new TimeSpan(1)).GenerateRandomMarket(3000), "hourMarket");
+            universeData.AddMarket(new RandomBars(new TimeSpan(24)).GenerateRandomMarket(2000), "dayMarket");
+
+            BackTestSpy = new BackTestSpy(universeData);
+            SpyTradesGenerated = BackTestSpy.RunBackTest(new StrategyExecuter(MarketSide.Bull, true, () => new ExitPrices(0.9, 1.1)));
         }
     }
 
     public class BacktestTests : IClassFixture<BackTestFixture>
     {
-        private BackTestFixture _fixture;
+        private readonly BackTestFixture _fixture;
 
         public BacktestTests(BackTestFixture fixt) {
             _fixture = fixt;
@@ -71,17 +92,17 @@ namespace Thought.Tests
 
         [Fact]
         private void GeneratesResults() {
-            var results = _fixture.TestinObject.ParseResults(TimeSpan.FromDays(1), _fixture.TradesGenerated);
+            var results = _fixture.BackTest.ParseResults(TimeSpan.FromDays(1), _fixture.TradesGenerated);
             Assert.True(results.Count > 0);
-            for (int i = 0; i < results.Count; i++) {
-                Assert.True(results[i].Return != 0);
-                Assert.True(results[i].Date != 0);
+            foreach (var trade in results) {
+                Assert.True(trade.Return != 0);
+                Assert.True(trade.Date != 0);
             }
         }
 
         [Fact]
         private void GeneratesResultsForDays() {
-            var results = _fixture.TestinObject.ParseResults(TimeSpan.FromDays(1), _fixture.TradesGenerated);
+            var results = _fixture.BackTest.ParseResults(TimeSpan.FromDays(1), _fixture.TradesGenerated);
 
             Assert.True(results.Count > 0);
             Assert.False(results.All(x => x.Drawdown == 0));
@@ -94,7 +115,7 @@ namespace Thought.Tests
 
         [Fact]
         private void GeneratesResultsForHours() {
-            var results = _fixture.TestinObject.ParseResults(TimeSpan.FromHours(1), _fixture.TradesGenerated);
+            var results = _fixture.BackTest.ParseResults(TimeSpan.FromHours(1), _fixture.TradesGenerated);
 
             Assert.True(results.Count > 0);
             Assert.False(results.All(x => x.Drawdown == 0));
@@ -107,7 +128,7 @@ namespace Thought.Tests
 
         [Fact]
         private void GeneratesResultsForArbitraryTicks() {
-            var results = _fixture.TestinObject.ParseResults(TimeSpan.FromTicks(29556547847), _fixture.TradesGenerated);
+            var results = _fixture.BackTest.ParseResults(TimeSpan.FromTicks(29556547847), _fixture.TradesGenerated);
 
             Assert.True(results.Count > 0);
             Assert.False(results.All(x=>x.Drawdown == 0));
@@ -121,7 +142,7 @@ namespace Thought.Tests
 
         [Fact]
         private void ShouldGenerateResultsInCorrectOrder() {
-            var results = _fixture.TestinObject.ParseResults(TimeSpan.FromDays(10), _fixture.Trades);
+            var results = _fixture.BackTest.ParseResults(TimeSpan.FromDays(10), _fixture.Trades);
             AssertDatedResult(new DatedResult(new DateTime(1, 1, 11).Ticks, 0.15 - 0.05 + 0.1, (-0.3 + -0.2)/3), results[0]);
             AssertDatedResult(new DatedResult(new DateTime(1, 1, 21).Ticks, 0.2 + 0.1, -0.15), results[1]);
             AssertDatedResult(new DatedResult(new DateTime(1, 1, 31).Ticks, 0.25, -0.2), results[2]);
@@ -129,7 +150,7 @@ namespace Thought.Tests
 
         [Fact]
         private void ShouldGenerateResultsInCorrectOrderOnSmallScale() {
-            var results = _fixture.TestinObject.ParseResults(TimeSpan.FromDays(5), _fixture.Trades);
+            var results = _fixture.BackTest.ParseResults(TimeSpan.FromDays(5), _fixture.Trades);
             AssertDatedResult(new DatedResult(new DateTime(1, 1, 6).Ticks, 0.1 + 0.05 + 0.08, (-0.1-0.05 -0.12)/3), results[0]);
             AssertDatedResult(new DatedResult(new DateTime(1, 1, 11).Ticks, 0.15 - 0.05 + 0.1, (-0.15-0.15 -0.2)/3), results[1]);
             AssertDatedResult(new DatedResult(new DateTime(1, 1, 16).Ticks, 0.15 + 0.05, (-0.15-0.15 )/2), results[2]);
@@ -142,83 +163,6 @@ namespace Thought.Tests
             Assert.Equal(expected.Date, results.Date);
             Assert.Equal(expected.Return, results.Return,6);
             Assert.Equal(expected.Drawdown, results.Drawdown,6);
-        }
-
-
-
-        public class Backtest
-        {
-            public Universe Markets { get; }
-
-            public Backtest(Universe markets) {
-                Markets = markets;
-
-            }
-
-            public List<Trade> RunBackTest(StrategyExecuter exec) {
-                var results = new List<Trade>();
-                foreach (var element in Markets.Elements) {
-                    var trades = exec.Execute(element);
-                    foreach (var trade in trades)
-                        results.Add(trade);
-                }
-
-                return results;
-            }
-
-            private List<Trade> _orderedTrades;
-            private List<DatedResult> _categorisedResults;
-            private long _totalSpan;
-
-            public List<DatedResult> ParseResults(TimeSpan time, List<Trade> results) {
-                Initialise(results);
-                for (long i = 0; i < _totalSpan; i += time.Ticks) 
-                    SumAndAdd(ParseTrades(time, i),  i+ time.Ticks);
-                return _categorisedResults;
-            }
-
-            private void Initialise(List<Trade> results) {
-                _orderedTrades = results.OrderBy(x => x.Results.Last().Date).ToList();
-                _totalSpan = (_orderedTrades.Last().Results.Last().Date - _orderedTrades.First().Results.First().Date);
-                _categorisedResults = new List<DatedResult>();
-            }
-
-            private List<DatedResult> ParseTrades(TimeSpan time, long i) {
-                var resultsTw = new List<DatedResult>();
-                foreach (var t in _orderedTrades) {
-                    if (CheckRelevant(time, t, i)) 
-                        continue;
-                    AddRelevantResult(time, t, i, resultsTw);
-                }
-                return resultsTw;
-            }
-
-            private void SumAndAdd(List<DatedResult> resultsTw, long date) {
-                var avgDD = GetDrawdown(resultsTw);
-                var sum = resultsTw.Sum(x => x.Return);
-                _categorisedResults.Add(new DatedResult(date, sum, avgDD));
-            }
-
-            private static double GetDrawdown(List<DatedResult> resultsTw) {
-                if (resultsTw.Any(x => x.Drawdown < 0))
-                    return resultsTw.Where(x => x.Drawdown < 0).Average(x => x.Drawdown);
-                else
-                    return  0;
-            }
-
-            private void AddRelevantResult(TimeSpan time, Trade t, long i, List<DatedResult> resultsTw) {
-                var relevantResult = t.Results.LastOrDefault(x => x.Date < i + time.Ticks);
-                if (relevantResult.Date > 0)
-                    resultsTw.Add(relevantResult);
-            }
-
-            private bool CheckRelevant(TimeSpan time, Trade t, long i) {
-                if (t.Results.Last().Date < i)
-                    return true;
-                if (t.Results.First().Date > i + time.Ticks)
-                    return true;
-                return false;
-            }
         }
     }
 }

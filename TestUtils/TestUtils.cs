@@ -70,10 +70,10 @@ namespace TestUtils
 
     public class RandomBars
     {
-        private Random _rand;
-        private TimeSpan _interval;
+        private readonly Random _rand;
+        private readonly TimeSpan _interval;
+        private readonly List<BidAskData> _myMarket;
         private DateTime _date;
-        private List<BidAskData> _myMarket;
 
         public RandomBars(TimeSpan interval) {
             _rand = new Random(new Random().Next());

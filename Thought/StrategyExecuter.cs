@@ -9,13 +9,13 @@ namespace Thought
     //Add inheristed class that notifies when trade added in order to execute any strategy or portfolio adjustments
     public class StrategyExecuter
     {
-        private readonly MarketSide _side;
-        private readonly List<Trade> _trades;
-        private readonly List<TradeGeneratorInterface> _generators;
-        private readonly bool _canEnterWhenExposed;
-        private ExitPrices _exitPrices;
+        private MarketSide _side { get; }
+        private List<Trade> _trades { get; }
+        private List<TradeGeneratorInterface> _generators { get; }
+        private bool _canEnterWhenExposed { get; }
+        private Func<ExitPrices> _exitPrices { get; }
 
-        public StrategyExecuter(MarketSide side, bool entersAllEntries, ExitPrices myExits) {
+        public StrategyExecuter(MarketSide side, bool entersAllEntries, Func<ExitPrices> myExits) {
             _side = side;
             _canEnterWhenExposed = entersAllEntries;
             _exitPrices = myExits;
@@ -63,7 +63,7 @@ namespace Thought
                 return;
             else
                 _generators.Add(buildGenerator(
-                    new TradePrices(_exitPrices, getEntry(prices[i])), i));
+                    new TradePrices(_exitPrices.Invoke(), getEntry(prices[i])), i));
         }
 
         private void exitActions(BidAskData prices) {

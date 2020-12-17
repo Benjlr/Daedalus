@@ -21,13 +21,13 @@ namespace Thought.Tests
         }
 
         private void exposure() {
-            var executer = new StrategyExecuter(MarketSide.Bull, true, new ExitPrices(0.9,1.1));
+            var executer = new StrategyExecuter(MarketSide.Bull, true, ()=> new ExitPrices(0.9,1.1));
             TradesTrue = executer.Execute(myUniverse);
         }
 
 
         private void noOverExposure() {
-            var executer = new StrategyExecuter(MarketSide.Bull, false, new ExitPrices(0.9,1.1));
+            var executer = new StrategyExecuter(MarketSide.Bull, false, () => new ExitPrices(0.9,1.1));
             TradesFalse = executer.Execute(myUniverse);
         }
 
