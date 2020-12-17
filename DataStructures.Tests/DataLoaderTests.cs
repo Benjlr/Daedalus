@@ -21,7 +21,7 @@ namespace DataStructures.Tests
 
             for (int i = 0; i < myMarket.Length; i++) {
                 var row = myData[i].Split(',');
-                Assert.Equal(DateTime.ParseExact(row[0], "yyyy/MM/dd hh:mm:ss", null), myMarket[i].Close.Time);
+                Assert.Equal(DateTime.ParseExact(row[0], "yyyy/MM/dd hh:mm:ss", null).Ticks, myMarket[i].Close.Ticks);
                 Assert.Equal(double.Parse(row[1]), myMarket[i].Open.Ask);
                 Assert.Equal(double.Parse(row[2]), myMarket[i].Open.Bid);
                 Assert.Equal(double.Parse(row[3]), myMarket[i].High.Ask);
@@ -40,7 +40,7 @@ namespace DataStructures.Tests
             BidAskData[] myMarket = DataLoader.LoadData(GetData("TextData\\TestMarketBidSession.txt"));
             for (int i = 0; i < myMarket.Length; i++) {
                 var row = myData[i].Split(',');
-                Assert.Equal(DateTime.ParseExact(row[0], "yyyy/MM/dd", null), myMarket[i].Close.Time);
+                Assert.Equal(DateTime.ParseExact(row[0], "yyyy/MM/dd", null).Ticks, myMarket[i].Close.Ticks);
                 Assert.Equal(double.Parse(row[1]), myMarket[i].Open.Mid);
                 Assert.Equal(double.Parse(row[2]), myMarket[i].High.Mid);
                 Assert.Equal(double.Parse(row[3]), myMarket[i].Low.Mid);

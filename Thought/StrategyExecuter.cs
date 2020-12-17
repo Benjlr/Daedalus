@@ -1,44 +1,54 @@
 ﻿using DataStructures;
 using System;
 using System.Collections.Generic;
+using Logic;
 
 
 namespace Thought
 {
+    //Add inheristed class that notifies when trade added in order to execute any strategy or portfolio adjustments
     public class StrategyExecuter
     {
         private readonly MarketSide _side;
         private readonly List<Trade> _trades;
         private readonly List<TradeGeneratorInterface> _generators;
         private readonly bool _canEnterWhenExposed;
+        private ExitPrices _exitPrices;
 
-        public StrategyExecuter(MarketSide side, bool entersAllEntries) {
+        public StrategyExecuter(MarketSide side, bool entersAllEntries, ExitPrices myExits) {
             _side = side;
             _canEnterWhenExposed = entersAllEntries;
+            _exitPrices = myExits;
             _trades = new List<Trade>();
             _generators = new List<TradeGeneratorInterface>();
         }
 
         public List<Trade> Execute(UniverseObject uObject) {
-            iterateTime(uObject.Strategy.Entries, uObject.MarketData.RawData);
+            iterateTime(uObject.Strategy, uObject.MarketData.RawData);
             return _trades;
         }
 
-        private void iterateTime(bool[] entries, BidAskData[] prices) {
-            for (int i = 1; i < entries.Length; i++) {
+        private void iterateTime(Strategy strat, BidAskData[] prices) {
+            for (int i = 1; i < prices.Length; i++) {
                 destroyInactiveTraders();
-                progressTrades(prices, i);
-                lookForEntry(entries, prices, i);
+                progressTrades(prices[i]);
+                lookForEntry(strat.Entries[i], prices, i);
+                LookForExits(strat.Exits[i], prices[i]);
             }
         }
 
-        private void lookForEntry(bool[] entries, BidAskData[] prices, int i) {
-            if (entries[i - 1])
-                entryActions(_generators, prices, i);
+        private void LookForExits(bool exit, BidAskData prices) {
+            if (exit)
+                exitActions(prices);
         }
 
-        private void progressTrades(BidAskData[] prices, int i) {
-            _generators.ForEach(x => x.Continue(prices[i]));
+        private void lookForEntry(bool entries, BidAskData[] prices, int i) {
+            if (entries)
+                entryActions(prices, i);
+        }
+
+        private void progressTrades(BidAskData prices) {
+            _generators.ForEach(x => x.Continue(prices));
         }
 
         private void destroyInactiveTraders() {
@@ -48,33 +58,44 @@ namespace Thought
             }
         }
 
-        private void entryActions(List<TradeGeneratorInterface> generators, BidAskData[] prices, int i) {
-            if (generators.Count > 0 && !_canEnterWhenExposed)
+        private void entryActions(BidAskData[] prices, int i) {
+            if (_generators.Count > 0 && !_canEnterWhenExposed)
                 return;
             else
-                generators.Add(buildGenerator(
-                    new TradePrices(new ExitPrices(0.9, 1.1), getEntry(prices, i)), i));
+                _generators.Add(buildGenerator(
+                    new TradePrices(_exitPrices, getEntry(prices[i])), i));
         }
 
-        private double getEntry(BidAskData[] prices, int i) {
+        private void exitActions(BidAskData prices) {
+            foreach (var gen in _generators)
+                switch (_side) {
+                    case MarketSide.Bull: gen.Exit(prices.Open.Ticks, prices.Open.Bid);
+                        break;
+                    case MarketSide.Bear: gen.Exit(prices.Open.Ticks, prices.Open.Ask);
+                        break;
+                }
+        }
+
+        private double getEntry(BidAskData prices) {
             return _side switch
             {
-                MarketSide.Bull => prices[i].Open.Bid,
-                _ => prices[i].Open.Ask
+                MarketSide.Bull => prices.Open.Bid,
+                MarketSide.Bear => prices.Open.Ask,
+                _ => throw new ArgumentOutOfRangeException()
             };
         }
 
         private TradeGeneratorInterface buildGenerator(TradePrices tradeInit, int index) {
             return _side switch
             {
-                MarketSide.Bear => new ShortTradeGenerator(index, tradeInit, new Action<Trade>((x) => addTrade(_trades, x))),
-                MarketSide.Bull => new LongTradeGenerator(index, tradeInit, new Action<Trade>((x) => addTrade(_trades, x))),
+                MarketSide.Bear => new ShortTradeGenerator(index, tradeInit, addTrade),
+                MarketSide.Bull => new LongTradeGenerator(index, tradeInit, addTrade),
                 _ => null,
             };
         }
 
-        private void addTrade(List<Trade> list, Trade trade) {
-            list.Add(trade);
+        private void addTrade(Trade trade) {
+            _trades.Add(trade);
         }
 
     }

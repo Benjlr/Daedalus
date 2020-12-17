@@ -26,18 +26,18 @@ namespace DataStructures.Tests.Calculations
             
             Assert.True(newList.Count == 4);
             for (int i = 0; i < newList.Count; i++) {
-                Assert.Equal(i+1, newList[i].Open.Time.Day);
-                Assert.Equal(i+1, newList[i].Close.Time.Day);
+                Assert.Equal(i+1, newList[i].Open.TicksToTime.Day);
+                Assert.Equal(i+1, newList[i].Close.TicksToTime.Day);
 
-                Assert.Equal(00, newList[i].Open.Time.Hour);
-                Assert.Equal(00, newList[i].Open.Time.Minute);
-                Assert.Equal(23, newList[i].Close.Time.Hour);
-                Assert.Equal(55, newList[i].Close.Time.Minute);
+                Assert.Equal(00, newList[i].Open.TicksToTime.Hour);
+                Assert.Equal(00, newList[i].Open.TicksToTime.Minute);
+                Assert.Equal(23, newList[i].Close.TicksToTime.Hour);
+                Assert.Equal(55, newList[i].Close.TicksToTime.Minute);
 
-                Assert.Equal(12, newList[i].High.Time.Hour);
-                Assert.Equal(5, newList[i].High.Time.Minute);
-                Assert.Equal(13, newList[i].Low.Time.Hour);
-                Assert.Equal(20, newList[i].Low.Time.Minute);
+                Assert.Equal(12, newList[i].High.TicksToTime.Hour);
+                Assert.Equal(5, newList[i].High.TicksToTime.Minute);
+                Assert.Equal(13, newList[i].Low.TicksToTime.Hour);
+                Assert.Equal(20, newList[i].Low.TicksToTime.Minute);
 
                 Assert.Equal(10, newList[i].Open.Mid);
                 Assert.Equal(36, newList[i].High.Mid);
@@ -64,18 +64,18 @@ namespace DataStructures.Tests.Calculations
 
             Assert.True(newList.Count == 4);
             for (int i = 0; i < newList.Count; i++) {
-                Assert.Equal(i + 1, newList[i].Open.Time.Day);
-                Assert.Equal(i + 1, newList[i].Close.Time.Day);
+                Assert.Equal(i + 1, newList[i].Open.TicksToTime.Day);
+                Assert.Equal(i + 1, newList[i].Close.TicksToTime.Day);
 
-                Assert.Equal(10, newList[i].Open.Time.Hour);
-                Assert.Equal(00, newList[i].Open.Time.Minute);
-                Assert.Equal(15, newList[i].Close.Time.Hour);
-                Assert.Equal(55, newList[i].Close.Time.Minute);
+                Assert.Equal(10, newList[i].Open.TicksToTime.Hour);
+                Assert.Equal(00, newList[i].Open.TicksToTime.Minute);
+                Assert.Equal(15, newList[i].Close.TicksToTime.Hour);
+                Assert.Equal(55, newList[i].Close.TicksToTime.Minute);
 
-                Assert.Equal(12, newList[i].High.Time.Hour);
-                Assert.Equal(5, newList[i].High.Time.Minute);
-                Assert.Equal(13, newList[i].Low.Time.Hour);
-                Assert.Equal(20, newList[i].Low.Time.Minute);
+                Assert.Equal(12, newList[i].High.TicksToTime.Hour);
+                Assert.Equal(5, newList[i].High.TicksToTime.Minute);
+                Assert.Equal(13, newList[i].Low.TicksToTime.Hour);
+                Assert.Equal(20, newList[i].Low.TicksToTime.Minute);
 
                 Assert.Equal(10, newList[i].Open.Mid);
                 Assert.Equal(36, newList[i].High.Mid);
@@ -103,11 +103,11 @@ namespace DataStructures.Tests.Calculations
 
             Assert.True(newList.Count == 48);
             for (int i = 0; i < newList.Count; i++) {
-                Assert.Equal(00, newList[i].Open.Time.Minute);
-                Assert.Equal(55, newList[i].Close.Time.Minute);
+                Assert.Equal(00, newList[i].Open.TicksToTime.Minute);
+                Assert.Equal(55, newList[i].Close.TicksToTime.Minute);
 
-                Assert.Equal(15, newList[i].High.Time.Minute);
-                Assert.Equal(20, newList[i].Low.Time.Minute);
+                Assert.Equal(15, newList[i].High.TicksToTime.Minute);
+                Assert.Equal(20, newList[i].Low.TicksToTime.Minute);
 
                 Assert.Equal(10, newList[i].Open.Mid);
                 Assert.Equal(36, newList[i].High.Mid);

@@ -48,7 +48,7 @@ namespace RuleSets.Entry
                     if (data[i].High.Mid > ClosestPivCost - 0.8 * dist)
                     {
                         Satisfied[i] = true;
-                        var currenthrlyIndex = hourly.IndexOf(hourly.First(x => x.Close.Time.Hour == data[i].Open.Time.AddHours(-1).Hour));
+                        var currenthrlyIndex = hourly.IndexOf(hourly.First(x => x.Close.TicksToTime.Hour == data[i].Open.TicksToTime.AddHours(-1).Hour));
                         if (nrwrsHourly[currenthrlyIndex] < -7) Satisfied[i] = true;
                     }
 

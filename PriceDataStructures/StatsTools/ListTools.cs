@@ -99,7 +99,7 @@ namespace DataStructures.StatsTools
 
 
        public static int ReturnHourlyIndex(List<BidAskData> Hourly, BidAskData FiveMinute) {
-            return Hourly.IndexOf(Hourly.First(x => x.Close.Time.Hour == FiveMinute.Open.Time.AddHours(-1).Hour));
+            return Hourly.IndexOf(Hourly.First(x => x.Close.TicksToTime.Hour == FiveMinute.Open.TicksToTime.AddHours(-1).Hour));
         }
 
        public static double GetPositionInRange(List<BidAskData> myInput, double value) {

@@ -17,7 +17,7 @@ namespace RuleSets.Entry
             Satisfied = new bool[data.Count];
             for (int i = 0; i < data.Count; i++)
             {
-                if (data[i].Open.Time.Hour == 10)
+                if (data[i].Open.TicksToTime.Hour == 10)
                 {
                     var prevI = i;
                     i += 10;

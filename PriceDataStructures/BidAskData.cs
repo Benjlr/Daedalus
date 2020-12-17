@@ -26,18 +26,18 @@ namespace DataStructures
         }
 
         public BidAskData(DateTime time, double o_a, double o_b, double h_a, double h_b, double l_a, double l_b, double c_a, double c_b, double vol)  {
-            Open = new BidAsk(o_b,o_a, time);
-            High = new BidAsk(h_b, h_a, time);
-            Low = new BidAsk(l_b, l_a, time);
-            Close = new BidAsk(c_b, c_a, time);
+            Open = new BidAsk(o_b,o_a, time.Ticks);
+            High = new BidAsk(h_b, h_a, time.Ticks);
+            Low = new BidAsk(l_b, l_a, time.Ticks);
+            Close = new BidAsk(c_b, c_a, time.Ticks);
             Volume = vol;
         }
 
         public BidAskData(DateTime time, int vol, double open, double high, double low, double close ) {
-            Open = new BidAsk(open, open, time);
-            High = new BidAsk(high, high, time);
-            Low = new BidAsk(low, low, time);
-            Close = new BidAsk(close, close, time);
+            Open = new BidAsk(open, open, time.Ticks);
+            High = new BidAsk(high, high, time.Ticks);
+            Low = new BidAsk(low, low, time.Ticks);
+            Close = new BidAsk(close, close, time.Ticks);
             Volume = vol;
         }
     }
@@ -46,14 +46,15 @@ namespace DataStructures
     {
         public double Bid { get; set; }
         public double Ask { get; set; }
-        public DateTime Time { get; set; }
+        public long Ticks { get; set; }
 
         public double Mid => ((Ask - Bid) / 2.0) + Bid;
+        public DateTime TicksToTime => new DateTime(Ticks);
 
-        public BidAsk(double bid, double ask, DateTime date) {
+        public BidAsk(double bid, double ask, long date) {
             Bid = bid;
             Ask = ask;
-            Time = date;
+            Ticks = date;
         }
     }
 

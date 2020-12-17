@@ -171,10 +171,10 @@ namespace Thought.Tests
         private void CollateTradesAcrossMarkets(double[] returnsDatum, BidAskData[] dataDatum, double[] returnsToAdd, BidAskData[] dataToReference) {
             for (int i = 0; i < dataToReference.Length; i++) {
                 if (returnsToAdd[i] != 0) {
-                    var date = dataToReference[i].Close.Time;
-                    var relevantDatumItem = dataDatum.OrderBy(x => Math.Abs(x.Close.Time.Ticks - date.Ticks)).First();
+                    var date = dataToReference[i].Close.Ticks;
+                    var relevantDatumItem = dataDatum.OrderBy(x => Math.Abs(x.Close.Ticks - date)).First();
                     for (int j = 0; j < dataDatum.Length; j++)
-                        if (dataDatum[j].Close.Time == relevantDatumItem.Close.Time)
+                        if (dataDatum[j].Close.Ticks == relevantDatumItem.Close.Ticks)
                             returnsDatum[j] += returnsToAdd[i];
                 }
             }

@@ -17,7 +17,7 @@ namespace Logic.StrategyRunners
             var boolOne = ExpectancyCutOff == -1 || stats.MedianExpectancy > ExpectancyCutOff; 
             var boolTwo = WinPercentCutOff == -1 ||  stats.WinPercent > WinPercentCutOff; 
             var boolThree = SpreadCutOff == -1 || data.Open.Ask - data.Open.Bid <= SpreadCutOff ;
-            var boolFour = NoTradePeriods == null || NoTradePeriods.All(x => WithinTradeablePeriod(new DateBoundary(data.Close.Time), x));
+            var boolFour = NoTradePeriods == null || NoTradePeriods.All(x => WithinTradeablePeriod(new DateBoundary(data.Close.TicksToTime), x));
             return boolOne && boolTwo && boolThree && boolFour;
         }
         public bool GoodToEnter(double expectncy, double winPercent, int spread, DateTime time) {
@@ -58,7 +58,7 @@ namespace Logic.StrategyRunners
         }
 
         public bool ShouldExit(TradeStateGenerator previousState, BidAskData data){
-            if(!NoTradePeriods?.All(x => WithinTradeablePeriod(new DateBoundary(data.Close.Time), x)) ?? false) 
+            if(!NoTradePeriods?.All(x => WithinTradeablePeriod(new DateBoundary(data.Close.TicksToTime), x)) ?? false) 
                 //investedState.Returns.Add((data.Open.Bid - previousState.EntryPrice) / previousState.EntryPrice);           
                 return false;
             return false;

@@ -9,7 +9,7 @@ namespace DataStructures.PriceAlgorithms
         public static List<BidAskData> CollateToDaily(List<BidAskData> input) {
             List<BidAskData> returnValue = new List<BidAskData>();
             for (int i = 0; i < input.Count; i++) {
-                if (input[i].Open.Time.TimeOfDay == new TimeSpan(10, 0, 0))
+                if (input[i].Open.TicksToTime.TimeOfDay == new TimeSpan(10, 0, 0))
                     returnValue.Add(BuildSingleSessionFromList(input.GetRange(i, 72)));
             }
 
@@ -18,12 +18,12 @@ namespace DataStructures.PriceAlgorithms
 
         public static List<BidAskData> CollateTo24HrDaily(List<BidAskData> input) {
             List<BidAskData> returnValue = new List<BidAskData>();
-            DayOfWeek day = input[0].Open.Time.DayOfWeek;
+            DayOfWeek day = input[0].Open.TicksToTime.DayOfWeek;
             int start = 0;
             for (int i = 0; i < input.Count; i++) {
-                if (input[i].Open.Time.DayOfWeek != day) {
+                if (input[i].Open.TicksToTime.DayOfWeek != day) {
                     returnValue.Add(BuildSingleSessionFromList(input.GetRange(start, i - start)));
-                    day = input[i].Open.Time.DayOfWeek;
+                    day = input[i].Open.TicksToTime.DayOfWeek;
                     start = i;
                 }
 
@@ -34,12 +34,12 @@ namespace DataStructures.PriceAlgorithms
 
         public static List<BidAskData> CollateToHourly(List<BidAskData> input) {
             List<BidAskData> returnValue = new List<BidAskData>();
-            int day = input[0].Open.Time.Hour;
+            int day = input[0].Open.TicksToTime.Hour;
             int start = 0;
             for (int i = 0; i < input.Count; i++) {
-                if (input[i].Open.Time.Hour != day) {
+                if (input[i].Open.TicksToTime.Hour != day) {
                     returnValue.Add(BuildSingleSessionFromList(input.GetRange(start, i - start)));
-                    day = input[i].Open.Time.Hour;
+                    day = input[i].Open.TicksToTime.Hour;
                     start = i;
                 }
             }
@@ -52,7 +52,7 @@ namespace DataStructures.PriceAlgorithms
             List<BidAskData> returnValue = new List<BidAskData>();
             int start = 0;
             for (int i = 1; i < input.Count; i++) {
-                var lastmin = input[i].Open.Time.Minute;
+                var lastmin = input[i].Open.TicksToTime.Minute;
 
                 if (lastmin == 30 || lastmin == 0) {
                     returnValue.Add(BuildSingleSessionFromList(input.GetRange(start, i - start)));

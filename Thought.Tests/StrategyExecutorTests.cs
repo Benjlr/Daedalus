@@ -1,4 +1,5 @@
-﻿using DataStructures;
+﻿using System;
+using DataStructures;
 using RuleSets;
 using RuleSets.Entry;
 using System.Collections.Generic;
@@ -9,25 +10,27 @@ namespace Thought.Tests
 {
     public class StrategyExecutorTestsFixture
     {
-        public List<Trade> TradesTrue { get; set; }
+        private UniverseObject myUniverse { get; set; }
         public List<Trade> TradesFalse { get; set; }
+        public List<Trade> TradesTrue { get; set; }
 
         public StrategyExecutorTestsFixture() {
+            myUniverse = new UniverseObject("test",Market.MarketBuilder.CreateMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(5000)), new IRuleSet[1] { new DummyEntries(5, 10000) });
             exposure();
             noOverExposure();
         }
 
         private void exposure() {
-            var executer = new StrategyExecuter(MarketSide.Bull, true);
-            var obj = new UniverseObject("test", Market.MarketBuilder.CreateMarket(TradeFlatteningData.longMarket), new IRuleSet[1] {new DummyEntries(5, 40)});
-            TradesTrue = executer.Execute(obj);
+            var executer = new StrategyExecuter(MarketSide.Bull, true, new ExitPrices(0.9,1.1));
+            TradesTrue = executer.Execute(myUniverse);
         }
 
+
         private void noOverExposure() {
-            var executer = new StrategyExecuter(MarketSide.Bull, false);
-            var obj = new UniverseObject("test", Market.MarketBuilder.CreateMarket(TradeFlatteningData.longMarket), new IRuleSet[1] {new DummyEntries(5, 40)});
-            TradesFalse = executer.Execute(obj);
+            var executer = new StrategyExecuter(MarketSide.Bull, false, new ExitPrices(0.9,1.1));
+            TradesFalse = executer.Execute(myUniverse);
         }
+
     }
 
     public class StrategyExecutorTests : IClassFixture<StrategyExecutorTestsFixture>

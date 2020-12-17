@@ -22,8 +22,8 @@ namespace RuleSets.Exit
             {
                 if (dailys[i].High.Mid > dailys[i - 1].High.Mid /*&& dailys[i - 1].High > dailys[i - 2].High*/)
                 {
-                    var start = data.IndexOf(data.First(x => x.Open.Time == dailys[i].Open.Time));
-                    var last = data.IndexOf(data.First(x => x.Close.Time == dailys[i].Close.Time));
+                    var start = data.IndexOf(data.First(x => x.Open.Ticks == dailys[i].Open.Ticks));
+                    var last = data.IndexOf(data.First(x => x.Close.Ticks == dailys[i].Close.Ticks));
 
                     for (int j = start; j < last; j++)
                     {

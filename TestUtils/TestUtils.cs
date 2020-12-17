@@ -70,40 +70,53 @@ namespace TestUtils
 
     public class RandomBars
     {
-        public static BidAskData[] GenerateRandomMarket(int bars)
-        {
-            Random t = new Random();
-            var myMarket = new List<BidAskData>();
-            var startDate = new DateTime(1,1,1,0,0,0);
+        private Random _rand;
+        private TimeSpan _interval;
+        private DateTime _date;
+        private List<BidAskData> _myMarket;
 
-            StringBuilder stringo = new StringBuilder();
-
-            for (int i = 0; i < bars; i++)
-            {
-                var openPrice = 20+ (t.NextDouble()-0.5) *3  ;
-                var highPrice = openPrice + t.NextDouble() * 3 ;
-                var lowPrice = openPrice - t.NextDouble() * 3;
-                var closePrice = 20 + (t.NextDouble() - 0.5) * 3;
-                if (highPrice < closePrice) closePrice = highPrice;
-                if (lowPrice > closePrice) closePrice = lowPrice;
-                var open = new BidAsk(openPrice, openPrice+0.5, startDate);
-                var close = new BidAsk(closePrice, closePrice+0.5,startDate);
-                var high = new BidAsk(highPrice, highPrice+0.5,startDate);
-                var low = new BidAsk(lowPrice, lowPrice+0.5,startDate);
-
-                myMarket.Add(new BidAskData(open,high,low,close,(int)Math.Round(t.NextDouble() *20)));
-
-                stringo.AppendLine($"{open.Ask:0.000},{open.Bid:0.000},{high.Ask:0.000},{high.Bid:0.000},{low.Ask:0.000},{low.Bid:0.000},{close.Ask:0.000},{close.Bid:0.000},{startDate}");
-                
-                startDate = startDate.AddMinutes(5);
-
-
-            }
-
-            File.WriteAllText(@"C:\Temp\TSTTSTS.csv", stringo.ToString());
-
-            return myMarket.ToArray();
+        public RandomBars(TimeSpan interval) {
+            _rand = new Random(new Random().Next());
+            _interval = interval;
+            _myMarket = new List<BidAskData>();
+            _date = new DateTime(1, 1, 1, 0, 0, 1);
         }
 
+        public BidAskData[] GenerateRandomMarket(int bars) {
+            for (int i = 0; i < bars; i++)
+                 GenerateBar();
+            return _myMarket.ToArray();
+        }
+
+        private void GenerateBar() {
+            BidAsk(_date, out var open, out var close, out var high, out var low);
+            _myMarket.Add(new BidAskData(open, high, low, close, (int) Math.Round(_rand.NextDouble() * 20)));
+            _date = _date.Add(_interval);
+        }
+
+        private void BidAsk(DateTime startDate, out BidAsk open, out BidAsk close, out BidAsk high, out BidAsk low ) {
+            var openPrice = GeneratePrice(20,3);
+            var highPrice = openPrice + GenerateHigherPrice(3);
+            var lowPrice = openPrice - GenerateHigherPrice(3);
+            var closePrice = CheckClosePrice(highPrice, GeneratePrice(20, 3), lowPrice);
+            open = new BidAsk(openPrice, openPrice + 0.5, startDate.Ticks);
+            close = new BidAsk(closePrice, closePrice + 0.5, startDate.Ticks);
+            high = new BidAsk(highPrice, highPrice + 0.5, startDate.Ticks);
+            low = new BidAsk(lowPrice, lowPrice + 0.5, startDate.Ticks);
+        }
+
+        private double CheckClosePrice(double highPrice, double closePrice, double lowPrice) {
+            if (highPrice < closePrice) closePrice = highPrice;
+            if (lowPrice > closePrice) closePrice = lowPrice;
+            return closePrice;
+        }
+
+        private double GeneratePrice(int basePrice, double variance) {
+            return basePrice + (_rand.NextDouble() - 0.5) * variance;
+        }
+
+        private double GenerateHigherPrice(double variance) {
+            return _rand.NextDouble() * variance;
+        }
     }
 }

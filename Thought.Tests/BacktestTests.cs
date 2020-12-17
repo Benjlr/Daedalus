@@ -52,12 +52,12 @@ namespace Thought.Tests
         public BackTestFixture()
         {
             _universeData  = new Universe(new IRuleSet[1] { new DummyEntries(5, 10000) });
-            _universeData.AddMarket(RandomBars.GenerateRandomMarket(6000), "longTest");
-            _universeData.AddMarket(RandomBars.GenerateRandomMarket(4500), "mediumMarket");
-            _universeData.AddMarket(RandomBars.GenerateRandomMarket(2000), "shortMarket");
+            _universeData.AddMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(6000), "longTest");
+            _universeData.AddMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(4500), "mediumMarket");
+            _universeData.AddMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(2000), "shortMarket");
 
             TestinObject = new BacktestTests.Backtest(_universeData);
-            TradesGenerated = TestinObject.RunBackTest(new StrategyExecuter(MarketSide.Bull, true));
+            TradesGenerated = TestinObject.RunBackTest(new StrategyExecuter(MarketSide.Bull, true, new ExitPrices(0.9,1.1)));
         }
     }
 
@@ -121,35 +121,6 @@ namespace Thought.Tests
 
         [Fact]
         private void ShouldGenerateResultsInCorrectOrder() {
-            //new Trade(new DatedResult[]
-            //{
-            //    new DatedResult(new DateTime(1,1,1).Ticks, 0.1,-0.1 ),
-            //    new DatedResult(new DateTime(1,1,10).Ticks, 0.15,-0.15 ),
-            //    new DatedResult(new DateTime(1,1,20).Ticks, 0.2,-0.15 ),
-            //    new DatedResult(new DateTime(1,1,30).Ticks, 0.25,-0.2 ),
-            //}, 0),
-            //new Trade(new DatedResult[]
-            //{
-            //    new DatedResult(new DateTime(1,1,1).Ticks, 0.1,-0.05 ),
-            //    new DatedResult(new DateTime(1,1,5).Ticks, 0.05,-0.05 ),
-            //    new DatedResult(new DateTime(1,1,10).Ticks, -0.05,-0.15 ),
-            //    new DatedResult(new DateTime(1,1,15).Ticks, 0.05,-0.15 ),
-            //    new DatedResult(new DateTime(1,1,20).Ticks, 0.1,-0.15 ),
-            //}, 0),
-            //new Trade(new DatedResult[]
-            //{
-            //    new DatedResult(new DateTime(1,1,1).Ticks, 0.1,-0.05 ),
-            //    new DatedResult(new DateTime(1,1,2).Ticks, 0.05,-0.05 ),
-            //    new DatedResult(new DateTime(1,1,3).Ticks, -0.05,-0.1 ),
-            //    new DatedResult(new DateTime(1,1,4).Ticks, 0.05,-0.11 ),
-            //      new DatedResult(new DateTime(1, 1, 5).Ticks, 0.08, -0.12),
-            //      new DatedResult(new DateTime(1, 1, 6).Ticks, 0.12, -0.13),
-            //      new DatedResult(new DateTime(1, 1, 7).Ticks, 0.14, -0.14),
-            //      new DatedResult(new DateTime(1, 1, 8).Ticks, 0.16, -0.15),
-            //      new DatedResult(new DateTime(1, 1, 9).Ticks, 0.1, -0.16),
-            //      new DatedResult(new DateTime(1, 1, 10).Ticks, 0.1, -0.2),
-            //}, 0),
-
             var results = _fixture.TestinObject.ParseResults(TimeSpan.FromDays(10), _fixture.Trades);
             AssertDatedResult(new DatedResult(new DateTime(1, 1, 11).Ticks, 0.15 - 0.05 + 0.1, (-0.3 + -0.2)/3), results[0]);
             AssertDatedResult(new DatedResult(new DateTime(1, 1, 21).Ticks, 0.2 + 0.1, -0.15), results[1]);
@@ -195,34 +166,58 @@ namespace Thought.Tests
                 return results;
             }
 
+            private List<Trade> _orderedTrades;
+            private List<DatedResult> _categorisedResults;
+            private long _totalSpan;
+
             public List<DatedResult> ParseResults(TimeSpan time, List<Trade> results) {
-                var retVal = new List<DatedResult>();
-                var orderedResults = results.OrderBy(x => x.Results.Last().Date).ToList();
-                var totalSpan = (orderedResults.Last().Results.Last().Date - orderedResults.First().Results.First().Date);
-                
-                var iters =  totalSpan / (double)time.Ticks;
-                for (long i = 0; i < totalSpan; i += time.Ticks) {
+                Initialise(results);
+                for (long i = 0; i < _totalSpan; i += time.Ticks) 
+                    SumAndAdd(ParseTrades(time, i),  i+ time.Ticks);
+                return _categorisedResults;
+            }
 
-                    var resultsTw = new List<DatedResult>();
-                    foreach (var t in orderedResults) {
-                        if(t.Results.Last().Date < i)
-                            continue;
-                        if(t.Results.First().Date > i + time.Ticks)
-                            continue;
-                        var relevantResult = t.Results.LastOrDefault(x => x.Date < i + time.Ticks);
-                        if(relevantResult.Date > 0)
-                            resultsTw.Add(relevantResult);
-                    }
+            private void Initialise(List<Trade> results) {
+                _orderedTrades = results.OrderBy(x => x.Results.Last().Date).ToList();
+                _totalSpan = (_orderedTrades.Last().Results.Last().Date - _orderedTrades.First().Results.First().Date);
+                _categorisedResults = new List<DatedResult>();
+            }
 
-
-  
-
-                    var avgDD = resultsTw.Any(x => x.Drawdown < 0) ? resultsTw.Where(x => x.Drawdown < 0).Average(x => x.Drawdown) : 0;
-                    var sum = resultsTw.Sum(x => x.Return);
-                    retVal.Add(new DatedResult((long)time.Ticks + i, sum, avgDD));
+            private List<DatedResult> ParseTrades(TimeSpan time, long i) {
+                var resultsTw = new List<DatedResult>();
+                foreach (var t in _orderedTrades) {
+                    if (CheckRelevant(time, t, i)) 
+                        continue;
+                    AddRelevantResult(time, t, i, resultsTw);
                 }
+                return resultsTw;
+            }
 
-                return retVal;
+            private void SumAndAdd(List<DatedResult> resultsTw, long date) {
+                var avgDD = GetDrawdown(resultsTw);
+                var sum = resultsTw.Sum(x => x.Return);
+                _categorisedResults.Add(new DatedResult(date, sum, avgDD));
+            }
+
+            private static double GetDrawdown(List<DatedResult> resultsTw) {
+                if (resultsTw.Any(x => x.Drawdown < 0))
+                    return resultsTw.Where(x => x.Drawdown < 0).Average(x => x.Drawdown);
+                else
+                    return  0;
+            }
+
+            private void AddRelevantResult(TimeSpan time, Trade t, long i, List<DatedResult> resultsTw) {
+                var relevantResult = t.Results.LastOrDefault(x => x.Date < i + time.Ticks);
+                if (relevantResult.Date > 0)
+                    resultsTw.Add(relevantResult);
+            }
+
+            private bool CheckRelevant(TimeSpan time, Trade t, long i) {
+                if (t.Results.Last().Date < i)
+                    return true;
+                if (t.Results.First().Date > i + time.Ticks)
+                    return true;
+                return false;
             }
         }
     }
