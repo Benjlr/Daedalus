@@ -18,7 +18,10 @@ namespace DataStructures
     public interface TradeGeneratorInterface
     {
         public bool isActive { get; }
+        public double CurrentReturn { get; }
+        public double Drawdown { get; }
         public void Continue(BidAskData data);
+        public void UpdateExits(ExitPrices exitPrices);
         public void Exit(long date, double exitPrice);
 
     }

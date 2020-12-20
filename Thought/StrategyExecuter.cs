@@ -1,7 +1,7 @@
 ﻿using DataStructures;
-using System;
-using System.Collections.Generic;
 using Logic;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 
 namespace Thought
@@ -34,13 +34,13 @@ namespace Thought
         private void iterateTime(BidAskData[] prices) {
             for (int i = 1; i < prices.Length; i++) {
                 destroyInactiveTraders();
-                progressTrades(prices[i]);
+                progressTrades(prices, i);
                 lookForEntry(prices, i);
-                LookForExits(prices, i);
+                lookForExits(prices, i);
             }
         }
 
-        private void LookForExits(BidAskData[] prices, int i) {
+        private void lookForExits(BidAskData[] prices, int i) {
             if (_strat.IsExit(prices[i],i))
                 exitActions(prices[i]);
         }
@@ -50,8 +50,11 @@ namespace Thought
                 entryActions(prices[i], i);
         }
 
-        private void progressTrades(BidAskData prices) {
-            _generators.ForEach(x => x.Continue(prices));
+        private void progressTrades(BidAskData[] prices, int i) {
+            _generators.ForEach(x => {
+                x.Continue(prices[i]);
+                x.UpdateExits(_strat.AdjustPrices(prices[i],i,x.CurrentReturn));
+            });
         }
 
         private void destroyInactiveTraders() {

@@ -1,11 +1,7 @@
-﻿using RuleSets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataStructures;
+﻿using DataStructures;
+using RuleSets;
 using RuleSets.Entry;
+using System;
 using TestUtils;
 using Xunit;
 

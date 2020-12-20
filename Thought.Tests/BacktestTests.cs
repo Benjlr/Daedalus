@@ -85,7 +85,7 @@ namespace Thought.Tests
             universeData.AddMarket(randomMarket, shortStrat);
 
             BackTest = new Backtest(universeData);
-            TradesGenerated = BackTest.RunBackTest();
+            TradesGenerated = BackTest.RunBackTest(new LongStrategyExecuter(true));
         }
 
         private void GenerateBackTestSpy() {
@@ -106,7 +106,7 @@ namespace Thought.Tests
             universeData.AddMarket(market1, market1Strat);
 
             BackTestSpy = new BackTestSpy(universeData);
-            SpyTradesGenerated = BackTestSpy.RunBackTest();
+            SpyTradesGenerated = BackTestSpy.RunBackTest(new LongStrategyExecuter(true));
         }
 
     }

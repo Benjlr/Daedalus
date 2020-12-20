@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Logic;
 
 namespace Thought
 {
@@ -12,14 +11,11 @@ namespace Thought
 
         public Backtest(Universe markets) {
             Markets = markets;
-
         }
 
-        public List<Trade> RunBackTest() {
-            
+        public List<Trade> RunBackTest(StrategyExecuter exec) {
             var results = new List<Trade>();
             foreach (var element in Markets.Elements) {
-                var exec = new LongStrategyExecuter(true);
                 var trades = exec.Execute(element);
                 foreach (var trade in trades)
                     results.Add(trade);
