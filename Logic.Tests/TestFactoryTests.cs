@@ -15,10 +15,10 @@ namespace Logic.Tests
     public class TestFactoryTests
     {
         private Market _market { get; }
-        private Strategy _strat{ get; }
+        private StaticStrategy _strat{ get; }
         public TestFactoryTests() {
-            _market = Market.MarketBuilder.CreateMarket(FSTETestsBars.DataLong);
-            _strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[]
+            _market = new Market(FSTETestsBars.DataLong, "testId");
+            _strat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[]
             {
                 new DummyEntries(2, FSTETestsBars.DataLong.Length),
             }, _market);

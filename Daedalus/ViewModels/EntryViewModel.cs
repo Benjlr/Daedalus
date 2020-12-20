@@ -10,7 +10,6 @@ using System.Linq;
 using DataStructures.PriceAlgorithms;
 using ViewCommon.Models;
 using ViewCommon.Utils;
-using Action = DataStructures.Action;
 using LineAnnotation = OxyPlot.Annotations.LineAnnotation;
 using LinearAxis = OxyPlot.Axes.LinearAxis;
 
@@ -47,14 +46,13 @@ namespace Daedalus.ViewModels
         private void InitialiseData()
         {
 
+            //for (int i = 0; i < ModelSingleton.Instance.MyStrategy.Entries.Length; i++)
+            //    if(ModelSingleton.Instance.MyStrategy.Entries[i])
+            //        EntryPoints.Add(i+1);
 
-            for (int i = 0; i < ModelSingleton.Instance.MyStrategy.Entries.Length; i++)
-                if(ModelSingleton.Instance.MyStrategy.Entries[i])
-                    EntryPoints.Add(i+1);
-
-            for (int i = 0; i < ModelSingleton.Instance.MyStrategy.Exits.Length; i++)
-                if (ModelSingleton.Instance.MyStrategy.Exits[i])
-                    _exitPoint.Add(i + 1);
+            //for (int i = 0; i < ModelSingleton.Instance.MyStrategy.Exits.Length; i++)
+            //    if (ModelSingleton.Instance.MyStrategy.Exits[i])
+            //        _exitPoint.Add(i + 1);
 
             Update(0);
 
@@ -95,8 +93,8 @@ namespace Daedalus.ViewModels
                 MinimumX = entryPoint - 3,
                 MaximumX = entryPoint + 3,
                 Type = LineAnnotationType.Horizontal,
-                Y = ModelSingleton.Instance.MyStrategy.Rules.First(x=>x.Order.Equals(Action.Entry)).Dir == MarketSide.Bull ? 
-                    ModelSingleton.Instance.Mymarket.RawData[EntryPoints[x]].Open.Ask: ModelSingleton.Instance.Mymarket.RawData[EntryPoints[x]].Open.Bid,
+                //Y = ModelSingleton.Instance.MyStrategy.Rules.First(x=>x.Order.Equals(ActionPoint.Entry)).Dir == MarketSide.Bull ? 
+                //    ModelSingleton.Instance.Mymarket.PriceData[EntryPoints[x]].Open.Ask: ModelSingleton.Instance.Mymarket.PriceData[EntryPoints[x]].Open.Bid,
             });
 
             if (_exitPoint.Any(y => y > EntryPoints[x]))
@@ -114,21 +112,21 @@ namespace Daedalus.ViewModels
                     MinimumX = exitPnt -3,
                     MaximumX= exitPnt +3,
                     Type = LineAnnotationType.Horizontal,
-                    Y = ModelSingleton.Instance.MyStrategy.Rules.First(x => x.Order.Equals(Action.Exit)).Dir == MarketSide.Bull ?
-                        ModelSingleton.Instance.Mymarket.RawData[exitPnt].Open.Bid : ModelSingleton.Instance.Mymarket.RawData[exitPnt].Open.Ask,
+                    //Y = ModelSingleton.Instance.MyStrategy.Rules.First(x => x.Order.Equals(ActionPoint.Exit)).Dir == MarketSide.Bull ?
+                    //    ModelSingleton.Instance.Mymarket.PriceData[exitPnt].Open.Bid : ModelSingleton.Instance.Mymarket.PriceData[exitPnt].Open.Ask,
                 });
                 graphEnd = exitPnt + 50;
-                graphEnd = ModelSingleton.Instance.Mymarket.RawData.Length;
+                graphEnd = ModelSingleton.Instance.Mymarket.PriceData.Length;
             }
 
-            var atrpc = AverageTrueRange.CalculateATRPC(ModelSingleton.Instance.Mymarket.RawData.ToList(),2,60);
+            var atrpc = AverageTrueRange.CalculateATRPC(ModelSingleton.Instance.Mymarket.PriceData.ToList(),2,60);
             var retval = new List<Tuple<double, double, double>>();
             var mdpt = new List<double>();
             var dist = 0.1;
 
-            ModelSingleton.Instance.Mymarket.RawData.ToList().ForEach(x => mdpt.Add(x.High.Mid - ((x.High.Mid - x.Low.Mid) / 2.0)));
+            ModelSingleton.Instance.Mymarket.PriceData.ToList().ForEach(x => mdpt.Add(x.High.Mid - ((x.High.Mid - x.Low.Mid) / 2.0)));
 
-            for (var i = 0; i < ModelSingleton.Instance.Mymarket.RawData.Length; i++)
+            for (var i = 0; i < ModelSingleton.Instance.Mymarket.PriceData.Length; i++)
             {
                 retval.Add(new Tuple<double, double, double>
                 (mdpt[i] + (mdpt[i] / 200 * atrpc[i]),
@@ -143,11 +141,11 @@ namespace Daedalus.ViewModels
                 StrokeThickness = 3
             };
 
-            var six= MovingAverage.ExponentialMovingAverage(ModelSingleton.Instance.Mymarket.RawData.Select(x => x.Close.Mid).ToList(),6);
-            var ten = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.RawData.Select(x => x.Close.Mid).ToList(),10);
-            var twenty = MovingAverage.ExponentialMovingAverage(ModelSingleton.Instance.Mymarket.RawData.Select(x => x.Close.Mid).ToList(),20);
-            var fifty = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.RawData.Select(x => x.Close.Mid).ToList(),50);
-            var twoHunMA = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.RawData.Select(x => x.Close.Mid).ToList(), 200);
+            var six= MovingAverage.ExponentialMovingAverage(ModelSingleton.Instance.Mymarket.PriceData.Select(x => x.Close.Mid).ToList(),6);
+            var ten = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.PriceData.Select(x => x.Close.Mid).ToList(),10);
+            var twenty = MovingAverage.ExponentialMovingAverage(ModelSingleton.Instance.Mymarket.PriceData.Select(x => x.Close.Mid).ToList(),20);
+            var fifty = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.PriceData.Select(x => x.Close.Mid).ToList(),50);
+            var twoHunMA = MovingAverage.SimpleMovingAverage(ModelSingleton.Instance.Mymarket.PriceData.Select(x => x.Close.Mid).ToList(), 200);
 
             var sixLine = new OxyPlot.Series.LineSeries()
             {
@@ -193,9 +191,9 @@ namespace Daedalus.ViewModels
             for (int i = graphStart; i < graphEnd; i++)
             {
                 if (i < 0) continue;
-                if (i > ModelSingleton.Instance.Mymarket.RawData.Length - 1) continue;
+                if (i > ModelSingleton.Instance.Mymarket.PriceData.Length - 1) continue;
 
-                var item = ModelSingleton.Instance.Mymarket.RawData[i];
+                var item = ModelSingleton.Instance.Mymarket.PriceData[i];
                 series.Append(new OhlcvItem(i, item.Open.Mid, item.High.Mid, item.Low.Mid, item.Close.Mid, item.Volume));
             }
 
@@ -205,7 +203,7 @@ namespace Daedalus.ViewModels
                 Maximum = graphStart+150,
                 Minimum = graphStart
             };
-            var rane = ModelSingleton.Instance.Mymarket.RawData.ToList().GetRange(graphStart, 150).ToList();
+            var rane = ModelSingleton.Instance.Mymarket.PriceData.ToList().GetRange(graphStart, 150).ToList();
             var yMax = rane.Max(x=>x.High.Mid);
             var yMin = rane.Min(x=>x.Low.Mid);
 

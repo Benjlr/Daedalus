@@ -1,8 +1,7 @@
-﻿using System;
+﻿using DataStructures.PriceAlgorithms;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using DataStructures.PriceAlgorithms;
 using TestUtils;
 using Xunit;
 
@@ -10,7 +9,7 @@ namespace DataStructures.Tests.Calculations
 {
     public class ATRTests
     {
-        private BidAskData[] myArray = new BidAskData[]
+        private readonly BidAskData[] myArray = new BidAskData[]
         {
             new BidAskData(new DateTime(),12,5,6,4,5  ), 
             new BidAskData(new DateTime(),12,10,11,9,10  ), 

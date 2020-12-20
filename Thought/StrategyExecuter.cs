@@ -7,44 +7,47 @@ using Logic;
 namespace Thought
 {
     //Add inheristed class that notifies when trade added in order to execute any strategy or portfolio adjustments
-    public class StrategyExecuter
+    public abstract class StrategyExecuter
     {
-        private MarketSide _side { get; }
-        private List<Trade> _trades { get; }
-        private List<TradeGeneratorInterface> _generators { get; }
+        private List<Trade> _trades { get; set; }
+        protected List<TradeGeneratorInterface> _generators { get; set; }
+        private Strategiser _strat { get; set; }
         private bool _canEnterWhenExposed { get; }
-        private Func<ExitPrices> _exitPrices { get; }
 
-        public StrategyExecuter(MarketSide side, bool entersAllEntries, Func<ExitPrices> myExits) {
-            _side = side;
-            _canEnterWhenExposed = entersAllEntries;
-            _exitPrices = myExits;
+        protected StrategyExecuter(bool enterWhenEntered) {
+            _canEnterWhenExposed = enterWhenEntered;
+
+        }
+
+        public List<Trade> Execute(TradingField greens) {
+            Init(greens.Strategy);
+            iterateTime(greens.MarketData.PriceData);
+            return _trades;
+        }
+
+        private void Init(Strategiser strat) {
+            _strat = strat;
             _trades = new List<Trade>();
             _generators = new List<TradeGeneratorInterface>();
         }
 
-        public List<Trade> Execute(UniverseObject uObject) {
-            iterateTime(uObject.Strategy, uObject.MarketData.RawData);
-            return _trades;
-        }
-
-        private void iterateTime(Strategy strat, BidAskData[] prices) {
+        private void iterateTime(BidAskData[] prices) {
             for (int i = 1; i < prices.Length; i++) {
                 destroyInactiveTraders();
                 progressTrades(prices[i]);
-                lookForEntry(strat.Entries[i], prices, i);
-                LookForExits(strat.Exits[i], prices[i]);
+                lookForEntry(prices, i);
+                LookForExits(prices, i);
             }
         }
 
-        private void LookForExits(bool exit, BidAskData prices) {
-            if (exit)
-                exitActions(prices);
+        private void LookForExits(BidAskData[] prices, int i) {
+            if (_strat.IsExit(prices[i],i))
+                exitActions(prices[i]);
         }
 
-        private void lookForEntry(bool entries, BidAskData[] prices, int i) {
-            if (entries)
-                entryActions(prices, i);
+        private void lookForEntry(BidAskData[] prices, int i) {
+            if (_strat.IsEntry(prices[i],i))
+                entryActions(prices[i], i);
         }
 
         private void progressTrades(BidAskData prices) {
@@ -58,45 +61,61 @@ namespace Thought
             }
         }
 
-        private void entryActions(BidAskData[] prices, int i) {
+        private void entryActions(BidAskData prices, int i) {
             if (_generators.Count > 0 && !_canEnterWhenExposed)
                 return;
             else
                 _generators.Add(buildGenerator(
-                    new TradePrices(_exitPrices.Invoke(), getEntry(prices[i])), i));
+                    new TradePrices(_strat.AdjustPrices(prices,i,0), getEntry(prices)), i));
         }
 
-        private void exitActions(BidAskData prices) {
-            foreach (var gen in _generators)
-                switch (_side) {
-                    case MarketSide.Bull: gen.Exit(prices.Open.Ticks, prices.Open.Bid);
-                        break;
-                    case MarketSide.Bear: gen.Exit(prices.Open.Ticks, prices.Open.Ask);
-                        break;
-                }
-        }
+        protected abstract void exitActions(BidAskData prices);
+        protected abstract double getEntry(BidAskData prices);
+        protected abstract TradeGeneratorInterface buildGenerator(TradePrices tradeInit, int index);
 
-        private double getEntry(BidAskData prices) {
-            return _side switch
-            {
-                MarketSide.Bull => prices.Open.Bid,
-                MarketSide.Bear => prices.Open.Ask,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-        }
-
-        private TradeGeneratorInterface buildGenerator(TradePrices tradeInit, int index) {
-            return _side switch
-            {
-                MarketSide.Bear => new ShortTradeGenerator(index, tradeInit, addTrade),
-                MarketSide.Bull => new LongTradeGenerator(index, tradeInit, addTrade),
-                _ => null,
-            };
-        }
-
-        private void addTrade(Trade trade) {
+        protected void addTrade(Trade trade) {
             _trades.Add(trade);
         }
 
+    }
+
+    public class LongStrategyExecuter : StrategyExecuter
+    {
+        public LongStrategyExecuter(bool enterWhenEntered) 
+            : base(enterWhenEntered) {
+        }
+
+        protected override void exitActions(BidAskData prices) {
+            foreach (var gen in _generators)
+                gen.Exit(prices.Open.Ticks, prices.Open.Bid);
+        }
+
+        protected override double getEntry(BidAskData prices) {
+            return prices.Open.Ask;
+        }
+
+        protected override TradeGeneratorInterface buildGenerator(TradePrices tradeInit, int index) {
+            return new LongTradeGenerator(index, tradeInit, addTrade);
+        }
+    }
+
+    public class ShortStrategyExecuter : StrategyExecuter
+    {
+        public ShortStrategyExecuter(bool enterWhenEntered)
+            : base(enterWhenEntered) {
+        }
+
+        protected override void exitActions(BidAskData prices) {
+            foreach (var gen in _generators)
+                gen.Exit(prices.Open.Ticks, prices.Open.Ask);
+        }
+
+        protected override double getEntry(BidAskData prices) {
+                return prices.Open.Bid;
+        }
+
+        protected override TradeGeneratorInterface buildGenerator(TradePrices tradeInit, int index) {
+            return new ShortTradeGenerator(index, tradeInit, addTrade);
+        }
     }
 }

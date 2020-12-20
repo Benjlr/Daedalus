@@ -10,12 +10,13 @@ namespace RuleSets.Entry
         public BullishMATag()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Entry;
+            Order = ActionPoint.Entry;
         }
 
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
             var twohundredMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 50);
             var six = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 6);
@@ -37,12 +38,13 @@ namespace RuleSets.Entry
         public CrossoverTag()
         {
             Dir = MarketSide.Bear;
-            Order = Action.Entry;
+            Order = ActionPoint.Entry;
         }
 
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             var Atr = AverageTrueRange.Calculate(data);
 
             var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);

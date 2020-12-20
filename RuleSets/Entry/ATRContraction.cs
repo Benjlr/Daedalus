@@ -3,7 +3,6 @@ using DataStructures.PriceAlgorithms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Action = DataStructures.Action;
 
 namespace RuleSets.Entry
 {
@@ -12,7 +11,7 @@ namespace RuleSets.Entry
         public ATRContraction()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Entry;
+            Order = ActionPoint.Entry;
         }
 
         public  void aasass(List<BidAskData> data, BidAskData[] rawData)
@@ -54,8 +53,9 @@ namespace RuleSets.Entry
 
 
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
 
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             Satisfied = new bool[data.Count];
@@ -73,7 +73,7 @@ namespace RuleSets.Entry
     {
         public ATRContractionLong() {
             Dir = MarketSide.Bull;
-            Order = Action.Entry;
+            Order = ActionPoint.Entry;
         }
 
         public double GetPositionInRange(List<double> myInput, double value) {
@@ -81,7 +81,8 @@ namespace RuleSets.Entry
             var Max = myInput.Max();
             return (value - Min) / (Max - Min);
         }
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData) {
+        public override void CalculateBackSeries(BidAskData[] rawData) {
+            var data = rawData.ToList();
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             Satisfied = new bool[data.Count];
             //var sma = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 200);
@@ -97,7 +98,7 @@ namespace RuleSets.Entry
     {
         public ATRContractionShort() {
             Dir = MarketSide.Bear;
-            Order = Action.Entry;
+            Order = ActionPoint.Entry;
         }
 
         public double GetPositionInRange(List<double> myInput, double value) {
@@ -105,7 +106,8 @@ namespace RuleSets.Entry
             var Max = myInput.Max();
             return (value - Min) / (Max - Min);
         }
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData) {
+        public override void CalculateBackSeries(BidAskData[] rawData) {
+            var data = rawData.ToList();
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             var sma = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
             Satisfied = new bool[data.Count];
@@ -123,13 +125,14 @@ namespace RuleSets.Entry
         public ATRExpansion()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Exit;
+            Order = ActionPoint.Exit;
         }
 
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
 
+            var data = rawData.ToList();
 
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             var atr = AverageTrueRange.Calculate(data);

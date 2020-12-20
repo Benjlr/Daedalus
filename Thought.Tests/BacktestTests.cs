@@ -4,6 +4,7 @@ using RuleSets.Entry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Logic;
 using TestUtils;
 using Xunit;
 
@@ -55,31 +56,59 @@ namespace Thought.Tests
                   new DatedResult(new DateTime(1, 1, 10,1,1,1).Ticks, 0.1, -0.2),
             }, 0),
         };
+        private StaticStrategy _strat { get; set; }
+        private StaticStrategy _stratForSpy { get; set; }
 
         public BackTestFixture() {
             GenerateGeneraleBackTest();
             GenerateBackTestSpy();
+            GenerateStrategys();
+        }
+
+        private void GenerateStrategys() {
         }
 
         private void GenerateGeneraleBackTest() {
-            var universeData = new Universe(new IRuleSet[1] {new DummyEntries(5, 10000)});
-            universeData.AddMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(6000), "longTest");
-            universeData.AddMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(4500), "mediumMarket");
-            universeData.AddMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(2000), "shortMarket");
+            var universeData = new Universe();
+            
+            var generateRandomMarket = new Market(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(6000), "longTest");
+            var longStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] {new DummyEntries(5, 10000)}, generateRandomMarket);
+
+            var bidAskDatas = new Market(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(4500), "mediumMarket");
+            var mediumStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] {new DummyEntries(5, 10000)}, generateRandomMarket);
+            
+            var randomMarket = new Market(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(2000), "shortMarket");
+            var shortStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(5, 10000) }, generateRandomMarket);
+            
+            universeData.AddMarket(generateRandomMarket, longStrat);
+            universeData.AddMarket(bidAskDatas, mediumStrat);
+            universeData.AddMarket(randomMarket, shortStrat);
 
             BackTest = new Backtest(universeData);
-            TradesGenerated = BackTest.RunBackTest(new StrategyExecuter(MarketSide.Bull, true, () => new ExitPrices(0.9, 1.1)));
+            TradesGenerated = BackTest.RunBackTest();
         }
 
         private void GenerateBackTestSpy() {
-            var universeData = new Universe(new IRuleSet[1] { new DummyEntries(1, 10000) });
-            universeData.AddMarket(new RandomBars(new TimeSpan(0, 5, 0)).GenerateRandomMarket(10000), "minuteMarket");
-            universeData.AddMarket(new RandomBars(new TimeSpan(1)).GenerateRandomMarket(3000), "hourMarket");
-            universeData.AddMarket(new RandomBars(new TimeSpan(24)).GenerateRandomMarket(2000), "dayMarket");
+            var universeData = new Universe();
+            var markets = new Market(new RandomBars(new TimeSpan(0, 5, 0)).GenerateRandomMarket(10000) , "minuteMarket");
+            var marketsStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(5, 10000) }, markets);
+
+
+            var market = new Market(new RandomBars(new TimeSpan(1)).GenerateRandomMarket(3000), "hourMarket");
+            var marketStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] {new DummyEntries(5, 10000)}, market);
+
+            var market1 = new Market(new RandomBars(new TimeSpan(24)).GenerateRandomMarket(2000), "dayMarket");
+            var market1Strat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(5, 10000) }, market1);
+
+
+            universeData.AddMarket(markets, marketsStrat);
+            universeData.AddMarket(market, marketStrat);
+            universeData.AddMarket(market1, market1Strat);
 
             BackTestSpy = new BackTestSpy(universeData);
-            SpyTradesGenerated = BackTestSpy.RunBackTest(new StrategyExecuter(MarketSide.Bull, true, () => new ExitPrices(0.9, 1.1)));
+            SpyTradesGenerated = BackTestSpy.RunBackTest();
         }
+
     }
 
     public class BacktestTests : IClassFixture<BackTestFixture>

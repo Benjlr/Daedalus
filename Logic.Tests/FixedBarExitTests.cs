@@ -11,7 +11,7 @@ namespace Logic.Tests
     public class FixedBarExitTestsFixture
     {
         private Market _market;
-        private Strategy _strat;
+        private StaticStrategy _strat;
         public List<ITest[]> myTests { get; private set; }
 
         public FixedBarExitTestsFixture() {
@@ -20,8 +20,8 @@ namespace Logic.Tests
         }
 
         private void BuildMarket() {
-            _market = Market.MarketBuilder.CreateMarket(FBETestBars.DataLong);
-            _strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[]
+            _market = new Market(FBETestBars.DataLong, "testId");
+            _strat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[]
             {
                 new DummyEntries(2, FBETestBars.DataLong.Length)
             }, _market);

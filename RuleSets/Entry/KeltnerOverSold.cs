@@ -10,11 +10,12 @@ namespace RuleSets.Entry
         public KeltnerOverSold()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Entry;
+            Order = ActionPoint.Entry;
         }
 
-        public override void CalculateBackSeries(List<BidAskData> myData, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var myData = rawData.ToList();
             Satisfied = new bool[myData.Count];
             var daily = SessionCollate.CollateToHourly(myData);
 

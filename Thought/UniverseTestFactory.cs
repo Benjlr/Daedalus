@@ -12,7 +12,8 @@ namespace Thought
 
         private UniverseTest[] IterateTests(Universe myUniverse, TestOption options) {
             var results = new UniverseTest[myUniverse.Elements.Count];
-            Parallel.For(0, myUniverse.Elements.Count, (i) => {
+            Parallel.For(
+                0, myUniverse.Elements.Count, i => {
                 results[i] = new UniverseTest(myUniverse.Elements[i], options);
             });
             return results;
@@ -25,10 +26,10 @@ namespace Thought
         public ITest[] LongTests { get; }
         public ITest[] ShortTests { get; }
 
-        public UniverseTest(UniverseObject universeIter, TestOption option) {
-            Name = universeIter.Name;
-            LongTests = option.Run(universeIter.Strategy, universeIter.MarketData, MarketSide.Bull);
-            ShortTests = option.Run(universeIter.Strategy, universeIter.MarketData, MarketSide.Bear);
+        public UniverseTest(TradingField market, TestOption option) {
+            Name = market.MarketData.Id;
+            LongTests = option.Run(market.Strategy, market.MarketData, MarketSide.Bull);
+            ShortTests = option.Run(market.Strategy, market.MarketData, MarketSide.Bear);
         }
     }
 }

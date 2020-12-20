@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using DataStructures;
-using Logic;
 using RuleSets.Entry;
+using System.Linq;
 using Xunit;
 
 namespace RuleSets.Tests
@@ -13,45 +10,18 @@ namespace RuleSets.Tests
         [Fact]
         public void ShouldCreateDummyEntries() {
             var dummies = new DummyEntries(2,20);
-            dummies.CalculateBackSeries(_data, _dataBA);
+            dummies.CalculateBackSeries( _dataBA);
             Assert.Equal(10,dummies.Satisfied.Count(x=>x));
         }
 
         [Fact]
         public void ShouldCreateDummyExits() {
             var dummies = new DummyExits(3, 20);
-            dummies.CalculateBackSeries(_data, _dataBA);
+            dummies.CalculateBackSeries( _dataBA);
             Assert.Equal(7, dummies.Satisfied.Count(x => x));
         }
 
-
-        private List<BidAskData> _data = new List<BidAskData>()
-        {
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-            new BidAskData(),
-        };
-        private BidAskData[] _dataBA = new BidAskData[]
+        private readonly BidAskData[] _dataBA = new BidAskData[]
         {
             new BidAskData(),
             new BidAskData(),

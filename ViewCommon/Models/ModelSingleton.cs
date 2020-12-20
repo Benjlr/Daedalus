@@ -14,7 +14,7 @@ namespace ViewCommon.Models
         public static ModelSingleton Instance => _instance ??= new ModelSingleton();
         private static ModelSingleton _instance { get; set; }
         public Market Mymarket { get; set; }
-        public Strategy MyStrategy { get; set; }
+        public StaticStrategy MyStrategy { get; set; }
         private object _lock = new object() ;
 
         private ModelSingleton()
@@ -22,17 +22,17 @@ namespace ViewCommon.Models
             lock (_lock)
             {
                 try {
-                    Mymarket = Market.MarketBuilder.CreateMarket(DataLoader.LoadData(Markets.asx200_cash_5));
+                    Mymarket = new Market(DataLoader.LoadData(Markets.asx200_cash_5), "asx200_cash_5");
                 }
                 catch {
                     var marketData = Directory.GetCurrentDirectory() + "\\Utils\\LocalData\\asx200cash";
-                    Mymarket = Market.MarketBuilder.CreateMarket(DataLoader.LoadData(marketData));
+                    Mymarket = new Market(DataLoader.LoadData(marketData), "asx200cash");
                 }
 
 
 
 
-                MyStrategy = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[]
+                MyStrategy = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[]
                 {
                     //new MAViolation(), 
                     new ThreeLowerLows(),

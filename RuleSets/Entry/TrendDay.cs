@@ -9,11 +9,12 @@ namespace RuleSets.Entry
         public TrendDay()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Entry;
+            Order = ActionPoint.Entry;
         }
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             Satisfied = new bool[data.Count];
             for (int i = 0; i < data.Count; i++)
             {

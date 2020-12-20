@@ -1,6 +1,6 @@
 ﻿using DataStructures;
 using DataStructures.PriceAlgorithms;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace RuleSets.Entry
 {
@@ -9,11 +9,12 @@ namespace RuleSets.Entry
         public PivotExit()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Exit;
+            Order = ActionPoint.Exit;
         }
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             Satisfied = new bool[data.Count];
             var pivots = Pivots.Calculate(data);
             var hourly = SessionCollate.CollateToHourly(data);

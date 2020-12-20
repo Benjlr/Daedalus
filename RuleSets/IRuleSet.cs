@@ -1,13 +1,12 @@
 ﻿using DataStructures;
-using System.Collections.Generic;
 
 namespace RuleSets
 {
     public interface IRuleSet
     {
         MarketSide Dir { get; }
-        Action Order { get; }
+        ActionPoint Order { get; }
         bool[] Satisfied { get; }
-        void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData);
+        void CalculateBackSeries(BidAskData[] rawData);
     }
 }

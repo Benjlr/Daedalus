@@ -3,7 +3,6 @@ using DataStructures.PriceAlgorithms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Action = DataStructures.Action;
 
 namespace RuleSets.Entry
 {
@@ -12,11 +11,12 @@ namespace RuleSets.Entry
         public PivotAndNREntry()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Entry;
+            Order = ActionPoint.Entry;
         }
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             Satisfied = new bool[data.Count];
             var pivots = Pivots.Calculate(data);
             var hourly = SessionCollate.CollateToHourly(data);

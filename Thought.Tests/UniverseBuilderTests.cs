@@ -1,8 +1,11 @@
+using System.IO;
 using DataStructures.StatsTools;
 using Logic.Metrics;
 using RuleSets;
 using RuleSets.Entry;
 using System.Linq;
+using DataStructures;
+using Logic;
 using Xunit;
 
 namespace Thought.Tests
@@ -22,10 +25,21 @@ namespace Thought.Tests
         }
 
         private void BuildUniverse() {
-            _universe = new Universe(new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) });
-            _universe.AddMarket(Markets.futures_wheat_5);
-            _universe.AddMarket(Markets.aud_usd_5);
-            _universe.AddMarket(Markets.ASX20());
+            _universe = new Universe();
+            var marketsWheat = new Market(Markets.futures_wheat_5);
+            var wheatStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) }, marketsWheat);
+            _universe.AddMarket(marketsWheat, wheatStrat);
+
+            var marketsAudUsd = new Market(Markets.aud_usd_5);
+            var audusdStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) }, marketsAudUsd);
+            _universe.AddMarket(marketsAudUsd, audusdStrat);
+
+            var listNames = Markets.ASX20();
+            foreach (var name in listNames) {
+                var market = new Market(name);
+                var marketStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) }, market);
+                _universe.AddMarket(market, marketStrat);
+            }
         }
 
         private void PrepareAndRunTests() {
@@ -50,14 +64,8 @@ namespace Thought.Tests
         }
 
         [Fact]
-        private void ShouldCalculateMultipleStrategyResults() {
-            Assert.True(_fixture._universe.Elements.All(x => x.Strategy.Entries.Any(y => y)));
-            Assert.True(_fixture._universe.Elements.All(x => x.Strategy.Exits.Any(y => y)));
-        }
-
-        [Fact]
         private void ShouldReturnElement() {
-            Assert.True(true);
+            Assert.True(_fixture._universe.GetObject(Path.GetFileNameWithoutExtension(Markets.futures_wheat_5)).MarketData.Id.Equals(Path.GetFileNameWithoutExtension(Markets.futures_wheat_5)));
         }
 
         [Fact]

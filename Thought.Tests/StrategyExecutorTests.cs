@@ -1,7 +1,8 @@
-﻿using System;
-using DataStructures;
+﻿using DataStructures;
+using Logic;
 using RuleSets;
 using RuleSets.Entry;
+using System;
 using System.Collections.Generic;
 using TestUtils;
 using Xunit;
@@ -10,25 +11,27 @@ namespace Thought.Tests
 {
     public class StrategyExecutorTestsFixture
     {
-        private UniverseObject myUniverse { get; set; }
+        private TradingField field { get; set; }
         public List<Trade> TradesFalse { get; set; }
         public List<Trade> TradesTrue { get; set; }
 
         public StrategyExecutorTestsFixture() {
-            myUniverse = new UniverseObject("test",Market.MarketBuilder.CreateMarket(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(5000)), new IRuleSet[1] { new DummyEntries(5, 10000) });
+            var market = new Market(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(5000), "test");
+            var myStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] {new DummyEntries(5, 5000)}, market);
+            field = new TradingField(market,myStrat);
             exposure();
             noOverExposure();
         }
 
         private void exposure() {
-            var executer = new StrategyExecuter(MarketSide.Bull, true, ()=> new ExitPrices(0.9,1.1));
-            TradesTrue = executer.Execute(myUniverse);
+            var executer = new LongStrategyExecuter(true);
+            TradesTrue = executer.Execute(field);
         }
 
 
         private void noOverExposure() {
-            var executer = new StrategyExecuter(MarketSide.Bull, false, () => new ExitPrices(0.9,1.1));
-            TradesFalse = executer.Execute(myUniverse);
+            var executer = new LongStrategyExecuter(false);
+            TradesFalse = executer.Execute(field);
         }
 
     }

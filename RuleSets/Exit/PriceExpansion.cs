@@ -10,13 +10,14 @@ namespace RuleSets.Exit
         public PriceExpansion()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Exit;
+            Order = ActionPoint.Exit;
         }
 
         private double _multiple = 3;
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             Satisfied = new bool[data.Count];
             var sixEMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 6);
             var atr = AverageTrueRange.Calculate(data);

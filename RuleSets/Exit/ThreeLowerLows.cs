@@ -10,11 +10,12 @@ namespace RuleSets.Exit
         public ThreeLowerLows()
         {
             Dir = MarketSide.Bear;
-            Order = Action.Exit;
+            Order = ActionPoint.Exit;
         }
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             Satisfied = new bool[data.Count];
 
             for (int i = 2; i < data.Count; i++)
@@ -30,11 +31,12 @@ namespace RuleSets.Exit
         public MAViolation()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Exit;
+            Order = ActionPoint.Exit;
         }
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
             Satisfied = new bool[data.Count];
 

@@ -10,10 +10,11 @@ namespace RuleSets.Exit
         public KeltnerOverBought()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Exit;
+            Order = ActionPoint.Exit;
         }
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             Satisfied = new bool[data.Count];
 
             var ema20 = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);

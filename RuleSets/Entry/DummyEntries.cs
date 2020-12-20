@@ -1,5 +1,6 @@
 ﻿using DataStructures;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RuleSets.Entry
 {
@@ -13,11 +14,12 @@ namespace RuleSets.Entry
             interval = intervalInput;
             rangeToTest = barsToTest;
             Dir = MarketSide.Bull;
-            Order = Action.Entry;
+            Order = ActionPoint.Entry;
         }
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             Satisfied = new bool[data.Count];
             for (int i = 0; i < rangeToTest && i < Satisfied.Length; i++)
                 if (i % interval == 0) Satisfied[i] = true;
@@ -33,10 +35,11 @@ namespace RuleSets.Entry
             interval = intervalInput;
             rangeToTest = barsToTest;
             Dir = MarketSide.Bull;
-            Order = Action.Exit;
+            Order = ActionPoint.Exit;
         }
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData) {
+        public override void CalculateBackSeries(BidAskData[] rawData) {
+            var data = rawData.ToList();
             Satisfied = new bool[data.Count];
             for (int i = 0; i < rangeToTest && i < Satisfied.Length; i++)
                 if (i % interval == 0) Satisfied[i] = true;

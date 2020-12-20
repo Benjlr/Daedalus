@@ -6,6 +6,7 @@ using RuleSets;
 using RuleSets.Entry;
 using System.Linq;
 using DataStructures.StatsTools;
+using Logic;
 using TestUtils;
 using Xunit;
 
@@ -27,10 +28,19 @@ namespace Thought.Tests
         }
 
         private void BuildUniverse() {
-            _universe = new Universe(new IRuleSet[2] { new DummyEntries(5, 35), new DummyExits(5, 30) });
-            _universe.AddMarket(TradeFlatteningData.longMarket, longMarket);
-            _universe.AddMarket(TradeFlatteningData.mediumMarket, mediumMarket);
-            _universe.AddMarket(TradeFlatteningData.shortMarket, shortMarket);
+            _universe = new Universe();
+            var marketOne = new Market(TradeFlatteningData.longMarket, longMarket);
+            var stratOne = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(5, 35), new DummyExits(5, 30) }, marketOne);
+
+            var marketTwo = new Market(TradeFlatteningData.mediumMarket, mediumMarket);
+            var stratTwo = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(5, 35), new DummyExits(5, 30) }, marketTwo);
+          
+            var marketThree = new Market(TradeFlatteningData.shortMarket, shortMarket);
+            var stratThree = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(5, 35), new DummyExits(5, 30) }, marketThree);
+            
+            _universe.AddMarket(marketOne, stratOne);
+            _universe.AddMarket(marketTwo, stratTwo);
+            _universe.AddMarket(marketThree, stratThree);
         }
 
         private void PrepareAndRunTests() {
@@ -57,14 +67,17 @@ namespace Thought.Tests
 
         [Fact]
         private void ShouldFlattenOneTradeResults() {
-            Universe newUniverse = new Universe(new IRuleSet[]{new DummyEntries(4,1) });
-            newUniverse.AddMarket(new BidAskData[]
+            Universe newUniverse = new Universe();
+            var market = new Market( new BidAskData[]
             {
                 new BidAskData(new DateTime(),30,10,10,10,10 ),
                 new BidAskData(new DateTime(),20,20,20,20,20 ),
                 new BidAskData(new DateTime(),20,30,30,30,30 ),
                 new BidAskData(new DateTime(),20,40,40,40,40 ),
             }, "test");
+            var stratMarket = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(4,1) }, market);
+
+            newUniverse.AddMarket(market , stratMarket);
             UniverseTest t = new UniverseTest(newUniverse.GetObject("test"), new TestFactory.FixedBarExitTestOptions(5,7,1));
             var myArray = newUniverse.GetArrayForReturns("test");
             PrintTradesToReturnTimeLine(t.LongTests[0].Trades, myArray);
@@ -76,14 +89,18 @@ namespace Thought.Tests
 
         [Fact]
         private void ShouldFlattenTwoTradeResults() {
-            Universe newUniverse = new Universe(new IRuleSet[] { new DummyEntries(1, 10) });
-            newUniverse.AddMarket(new BidAskData[]
+            Universe newUniverse = new Universe();
+            var market = new Market(new BidAskData[]
             {
                 new BidAskData(new DateTime(),30,10,10,10,10 ),
                 new BidAskData(new DateTime(),20,20,20,20,20 ),
                 new BidAskData(new DateTime(),20,30,30,30,30 ),
                 new BidAskData(new DateTime(),20,40,40,40,40 ),
             }, "test");
+            var stratMarket = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(1,10) }, market);
+
+
+            newUniverse.AddMarket(market , stratMarket);
             UniverseTest t = new UniverseTest(newUniverse.GetObject("test"), new TestFactory.FixedBarExitTestOptions(5,7, 1));
             var myArray = newUniverse.GetArrayForReturns("test");
             PrintTradesToReturnTimeLine(t.LongTests[0].Trades, myArray);
@@ -119,8 +136,8 @@ namespace Thought.Tests
             var shortMarketArray = _fixt._universe.GetArrayForReturns(_fixt.shortMarket);
             PrintTradesToReturnTimeLine(TradeFlatteningData.shortMarketTrades, shortMarketArray);
 
-            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.RawData, shortMarketArray, 
-                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.RawData);
+            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.PriceData, shortMarketArray, 
+                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.PriceData);
 
             Asserters.ArrayDoublesEqual(TradeFlatteningData.LongAndShortResults, longMarketArray);
         }
@@ -132,8 +149,8 @@ namespace Thought.Tests
             var mediumMarketArray = _fixt._universe.GetArrayForReturns(_fixt.mediumMarket);
             PrintTradesToReturnTimeLine(TradeFlatteningData.mediumMarketTrades, mediumMarketArray);
 
-            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.RawData, mediumMarketArray, 
-                _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.RawData);
+            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.PriceData, mediumMarketArray, 
+                _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.PriceData);
 
             Asserters.ArrayDoublesEqual(TradeFlatteningData.LongAndMediumResults, longMarketArray);
         }
@@ -145,8 +162,8 @@ namespace Thought.Tests
             var shortMarketArray = _fixt._universe.GetArrayForReturns(_fixt.shortMarket);
             PrintTradesToReturnTimeLine(TradeFlatteningData.shortMarketTrades, shortMarketArray);
 
-            CollateTradesAcrossMarkets(mediumMarketArray, _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.RawData, shortMarketArray, 
-                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.RawData);
+            CollateTradesAcrossMarkets(mediumMarketArray, _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.PriceData, shortMarketArray, 
+                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.PriceData);
 
             Asserters.ArrayDoublesEqual(TradeFlatteningData.ShortAndMediumResults, mediumMarketArray);
         }
@@ -160,10 +177,10 @@ namespace Thought.Tests
             var shortMarketArray = _fixt._universe.GetArrayForReturns(_fixt.shortMarket);
             PrintTradesToReturnTimeLine(TradeFlatteningData.shortMarketTrades, shortMarketArray);
 
-            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.RawData, mediumMarketArray,
-                _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.RawData);
-            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.RawData, shortMarketArray, 
-                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.RawData);
+            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.PriceData, mediumMarketArray,
+                _fixt._universe.GetObject(_fixt.mediumMarket).MarketData.PriceData);
+            CollateTradesAcrossMarkets(longMarketArray, _fixt._universe.GetObject(_fixt.longMarket).MarketData.PriceData, shortMarketArray, 
+                _fixt._universe.GetObject(_fixt.shortMarket).MarketData.PriceData);
 
             Asserters.ArrayDoublesEqual(TradeFlatteningData.LongShortAndMediumResults, longMarketArray);
         }

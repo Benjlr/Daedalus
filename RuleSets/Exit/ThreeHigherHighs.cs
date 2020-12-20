@@ -10,11 +10,12 @@ namespace RuleSets.Exit
         public ThreeHigherHighs()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Exit;
+            Order = ActionPoint.Exit;
         }
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             var dailys = SessionCollate.CollateTo24HrDaily(data);
             Satisfied = new bool[data.Count];
 

@@ -1,7 +1,6 @@
 ﻿using DataStructures;
 using System;
-using System.Collections.Generic;
-using Action = DataStructures.Action;
+using System.Linq;
 
 namespace RuleSets.Entry
 {
@@ -10,11 +9,12 @@ namespace RuleSets.Entry
         public FiftyFiftyEntry()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Entry;
+            Order = ActionPoint.Entry;
         }
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries( BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             Satisfied = new bool[data.Count];
             Random rand = new Random();
             for (int i = 0; i < data.Count; i++)

@@ -12,7 +12,7 @@ namespace Logic.Tests
     public class StopTargetExitTestsFixture
     {
         private Market _market;
-        private Strategy _strat;
+        private StaticStrategy _strat;
         public List<ITest[]> myTests { get; private set; }
 
         public StopTargetExitTestsFixture() {
@@ -29,8 +29,8 @@ namespace Logic.Tests
         }
 
         private void BuildMarket() {
-            _market = Market.MarketBuilder.CreateMarket(FSTETestsBars.DataLong);
-            _strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[]
+            _market = new Market(FSTETestsBars.DataLong, "testId");
+            _strat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[]
             {
                 new DummyEntries(2, FSTETestsBars.DataLong.Length)
             }, _market);
@@ -39,7 +39,7 @@ namespace Logic.Tests
 
     public class StopTargetExitTests : IClassFixture<StopTargetExitTestsFixture>
     {
-        private StopTargetExitTestsFixture _fixture;
+        private readonly StopTargetExitTestsFixture _fixture;
 
         public StopTargetExitTests(StopTargetExitTestsFixture fixt) {
             _fixture = fixt;

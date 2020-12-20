@@ -14,15 +14,15 @@ namespace Logic.Tests
         public List<ITest[]> myTests { get; private set; }
 
         public TestBaseFixture() {
-            var market = Market.MarketBuilder.CreateMarket(FBETestBars.DataLong);
-            var strat = Strategy.StrategyBuilder.CreateStrategy(new IRuleSet[] {
+            var market = new Market(FBETestBars.DataLong, "testId");
+            var strat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[] {
                 new DummyEntries(2, FBETestBars.DataLong.Length)
             }, market);
 
             PrepareTests(strat, market);
         }
 
-        private void PrepareTests(Strategy strat, Market market) {
+        private void PrepareTests(StaticStrategy strat, Market market) {
             var longSide = new TestFactory.FixedBarExitTestOptions(2, 4, 2).Run(strat, market, MarketSide.Bull);
             var shortSide = new TestFactory.FixedBarExitTestOptions(2, 4, 2).Run(strat, market, MarketSide.Bear);
             collate(longSide, shortSide);

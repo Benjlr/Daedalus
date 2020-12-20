@@ -10,12 +10,13 @@ namespace RuleSets.Exit
         public PriceContraction()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Exit;
+            Order = ActionPoint.Exit;
         }
 
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             var atrs = AverageTrueRange.Calculate(data, 3);
             var ten = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 10);
             var twety = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);

@@ -1,5 +1,6 @@
 ﻿using DataStructures;
 using DataStructures.StatsTools;
+using System;
 using System.Collections.Generic;
 
 namespace Logic.Metrics
@@ -8,21 +9,23 @@ namespace Logic.Metrics
     {
         public List<Trade> Trades { get; protected set; }
         public ExtendedStats Stats { get; protected set; }
-        protected TradeGeneratorInterface _currentTrade { get; set; }
-
-        public void Run(BidAskData[] data, bool[] entries, List<BidAskData> myInputs = null) {
+        public void Run(BidAskData[] data, Func<BidAskData, int, bool> entries, List<BidAskData> myInputs = null) {
             initLists(data.Length);
             IterateEntries(data, entries);
             GenerateStats();
         }
 
+        protected TradeGeneratorInterface _currentTrade { get; set; }
+
+  
+
         protected void initLists(int length) {
             Trades=new List<Trade>();
         }
 
-        protected void IterateEntries(BidAskData[] data, bool[] entries) {
-            for (int i = 1; i < entries.Length; i++) 
-                if (entries[i - 1])
+        protected void IterateEntries(BidAskData[] data, Func<BidAskData, int, bool> entries) {
+            for (int i = 1; i < data.Length; i++) 
+                if (entries(data[i],i))
                     PerformEntryActions(data, i);
         }
 

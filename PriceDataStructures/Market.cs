@@ -1,24 +1,24 @@
-﻿using DataStructures.StatsTools;
+﻿using System.IO;
+using DataStructures.StatsTools;
 
 namespace DataStructures
 {
     public readonly struct Market
     {
-        public BidAskData[] RawData { get; }
+        public string Id { get; }
+        public BidAskData[] PriceData { get; }
+        public Market(BidAskData[] data, string id) {
+            Id = id;
+            PriceData = data;
+        }
 
-        private Market(BidAskData[] data) {
-            RawData = data;
+        public Market(string name) {
+            Id = Path.GetFileNameWithoutExtension(name);
+            PriceData = DataLoader.LoadData(name);
         }
 
         public Market Slice(int startIndex, int endIndex) {
-            return new Market(ListTools.GetNewArrayByIndex(RawData, startIndex, endIndex));
-        }
-
-        public class MarketBuilder
-        {
-            public static Market CreateMarket(BidAskData[] data) {
-                return new Market(data);
-            }
+            return new Market(ListTools.GetNewArrayByIndex(PriceData, startIndex, endIndex), this.Id);
         }
     }
 }

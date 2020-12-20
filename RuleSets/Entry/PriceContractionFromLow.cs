@@ -10,12 +10,11 @@ namespace RuleSets.Entry
         public PriceContractionFromLow()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Entry;
+            Order = ActionPoint.Entry;
         }
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
-        {
-
+        public override void CalculateBackSeries(BidAskData[] rawData) {
+            var data = rawData.ToList();
             Satisfied = new bool[data.Count];
             var nrwRs = NRWRBars.Calculate(data);
             int lookback = 20;

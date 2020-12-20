@@ -3,7 +3,6 @@ using DataStructures.PriceAlgorithms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Action = DataStructures.Action;
 
 namespace RuleSets.Entry
 {
@@ -12,7 +11,7 @@ namespace RuleSets.Entry
         public InvestorBotEntry()
         {
             Dir = MarketSide.Bull;
-            Order = Action.Entry;
+            Order = ActionPoint.Entry;
         }
 
         private double atrnum = 3;
@@ -21,8 +20,9 @@ namespace RuleSets.Entry
         private int endLook = 5;
         private double spread = 2;
 
-        public override void CalculateBackSeries(List<BidAskData> data, BidAskData[] rawData)
+        public override void CalculateBackSeries(BidAskData[] rawData)
         {
+            var data = rawData.ToList();
             Satisfied = new bool[data.Count];
             var twentyEMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
             var tenSMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 10);

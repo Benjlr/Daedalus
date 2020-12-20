@@ -6,7 +6,7 @@
         Bear
     }
 
-    public enum Action
+    public enum ActionPoint
     {
         Entry,
         Exit,
