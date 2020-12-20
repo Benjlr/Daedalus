@@ -13,7 +13,7 @@ namespace Thought
             Markets = markets;
         }
 
-        public List<Trade> RunBackTest(StrategyExecuter exec) {
+        public virtual List<Trade> RunBackTest(StrategyExecuter exec) {
             var results = new List<Trade>();
             foreach (var element in Markets.Elements) {
                 var trades = exec.Execute(element);
@@ -78,6 +78,5 @@ namespace Thought
             return false;
         }
     }
-
 
 }

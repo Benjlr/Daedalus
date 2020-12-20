@@ -1,6 +1,5 @@
 ﻿using DataStructures;
 using DataStructures.PriceAlgorithms;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace RuleSets.Exit
@@ -9,7 +8,7 @@ namespace RuleSets.Exit
     {
         public ThreeLowerLows()
         {
-            Dir = MarketSide.Bear;
+            Dir = MarketSide.Bull;
             Order = ActionPoint.Exit;
         }
 
@@ -19,10 +18,8 @@ namespace RuleSets.Exit
             Satisfied = new bool[data.Count];
 
             for (int i = 2; i < data.Count; i++)
-            {
-                if (data[i].Low.Mid < data[i - 1].Low.Mid && data[i - 1].Low.Mid < data[i - 2].Low.Mid) Satisfied[i] = true;
-            }
-
+                if (data[i].Low.Mid < data[i - 1].Low.Mid && data[i - 1].Low.Mid < data[i - 2].Low.Mid) 
+                    Satisfied[i] = true;
         }
     }
 

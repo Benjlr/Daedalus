@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DataStructures
@@ -29,6 +30,8 @@ namespace DataStructures
     public class ArrayBuilder{
         private List<DatedResult> _results { get; set; }
         private int _index { get; set; }
+        public static Action<Trade> Callback;
+
 
         public void Init(int start) {
             _results = new List<DatedResult>();
@@ -40,7 +43,9 @@ namespace DataStructures
         }
 
         public Trade CompileTrade() {
-            return new Trade(_results.ToArray(), _index);
+            var trade= new Trade(_results.ToArray(), _index);
+            Callback?.Invoke(trade);
+            return trade;
         }
     }
 

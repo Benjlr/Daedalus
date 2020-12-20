@@ -38,8 +38,7 @@ namespace RuleSets.Entry
                     for (int j = i - startLook; j < i - endLook; j++)
                     {
                         if (nrwRs[j] > gapSize &&
-                            data[i].Close.Mid < sixEMA[i] &&
-                            rawData[i].Open.Ask - rawData[i].Open.Bid <= spread)
+                            data[i].Close.Mid < sixEMA[i])
                         {
                             Satisfied[i] = true;
                         }

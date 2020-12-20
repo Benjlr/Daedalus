@@ -1,12 +1,10 @@
 ﻿using DataStructures;
 using Logic;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 
 
 namespace Thought
 {
-    //Add inheristed class that notifies when trade added in order to execute any strategy or portfolio adjustments
     public abstract class StrategyExecuter
     {
         private List<Trade> _trades { get; set; }
@@ -47,13 +45,13 @@ namespace Thought
 
         private void lookForEntry(BidAskData[] prices, int i) {
             if (_strat.IsEntry(prices[i],i))
-                entryActions(prices[i], i);
+                entryActions(prices, i);
         }
 
         private void progressTrades(BidAskData[] prices, int i) {
             _generators.ForEach(x => {
                 x.Continue(prices[i]);
-                x.UpdateExits(_strat.AdjustPrices(prices[i],i,x.CurrentReturn));
+                x.UpdateExits(_strat.AdjustPrices(prices, i,x.CurrentReturn));
             });
         }
 
@@ -64,12 +62,12 @@ namespace Thought
             }
         }
 
-        private void entryActions(BidAskData prices, int i) {
+        private void entryActions(BidAskData[] prices, int i) {
             if (_generators.Count > 0 && !_canEnterWhenExposed)
                 return;
             else
                 _generators.Add(buildGenerator(
-                    new TradePrices(_strat.AdjustPrices(prices,i,0), getEntry(prices)), i));
+                    new TradePrices(_strat.AdjustPrices(prices,i,0), getEntry(prices[i])), i));
         }
 
         protected abstract void exitActions(BidAskData prices);

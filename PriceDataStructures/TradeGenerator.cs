@@ -17,6 +17,7 @@ namespace DataStructures
 
     public interface TradeGeneratorInterface
     {
+        public TradePrices TradeLimits { get;  }
         public bool isActive { get; }
         public double CurrentReturn { get; }
         public double Drawdown { get; }
@@ -29,6 +30,8 @@ namespace DataStructures
     public abstract class TradeStateGenerator : TradeGeneratorInterface
     {
         private Action<Trade> onExit { get; }
+        private double highestReturn { get;  set; }
+
         protected ArrayBuilder _tradeBuilder { get; set; }
         public TradePrices TradeLimits { get; private set; }
         public double CurrentReturn { get; protected set; }
@@ -49,7 +52,8 @@ namespace DataStructures
         }
 
         public void UpdateExits(ExitPrices exitPrices) {
-            TradeLimits = new TradePrices(exitPrices, TradeLimits.EntryPrice);
+            if(CurrentReturn == highestReturn)
+                TradeLimits = new TradePrices(exitPrices, TradeLimits.EntryPrice);
         }
 
         public void Exit(long date, double exitPrice) {
@@ -66,6 +70,8 @@ namespace DataStructures
 
         private void GetReturnAndDrawdown(double data, double low) {
             CurrentReturn = CalculateReturn(data);
+            if (CurrentReturn > highestReturn)
+                highestReturn = CurrentReturn;
             var dd = CalculateReturn(low);
             if (Drawdown > dd)
                 Drawdown = dd;

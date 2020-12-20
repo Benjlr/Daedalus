@@ -1,6 +1,5 @@
 ﻿using DataStructures;
 using DataStructures.PriceAlgorithms;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace RuleSets.Exit

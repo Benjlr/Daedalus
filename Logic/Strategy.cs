@@ -2,6 +2,8 @@
 using DataStructures;
 using RuleSets;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using DataStructures.PriceAlgorithms;
 using DataStructures.StatsTools;
 
 namespace Logic
@@ -24,8 +26,21 @@ namespace Logic
             return Exits[i - 1];
         }
 
-        public ExitPrices AdjustPrices(BidAskData data, int i, double currentReturn) {
-            return new ExitPrices(0.9, 1.1);
+        private List<double> atr;
+
+        public ExitPrices AdjustPrices(BidAskData[] data, int i, double currentReturn) {
+
+            if (atr == null)
+                atr = AverageTrueRange.Calculate(data.ToList());
+            var exit = (data[i - 1].Close.Mid - (6 * atr[i - 1])) / data[i - 1].Close.Mid;
+            var target = data[i - 1].Close.Mid + (1.5 * atr[i - 1]);
+
+
+
+            //return ExitPrices.StopOnly(exit + currentReturn);
+
+
+            return new ExitPrices(0.98,1.05);
         }
 
         public Strategiser Slice(int startIndex, int endIndex) {
@@ -67,7 +82,7 @@ namespace Logic
     {
         public bool IsEntry(BidAskData data, int i);
         public bool IsExit(BidAskData data, int i);
-        public ExitPrices AdjustPrices(BidAskData data, int i, double currentReturn);
+        public ExitPrices AdjustPrices(BidAskData[] data, int i, double currentReturn);
         public Strategiser Slice(int startIndex, int endIndex);
     }
 

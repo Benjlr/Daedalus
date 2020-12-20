@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Thought\Thought.csproj" />
     <ProjectReference Include="..\ViewCommon\ViewCommon.csproj" />
   </ItemGroup>
 
