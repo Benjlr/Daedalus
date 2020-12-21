@@ -18,7 +18,6 @@ namespace RuleSets.Entry
         private int gapSize = 8;
         private int startLook = 8;
         private int endLook = 5;
-        private double spread = 2;
 
         public override void CalculateBackSeries(BidAskData[] rawData)
         {

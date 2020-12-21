@@ -15,7 +15,7 @@ namespace Logic
         private StaticStrategy(bool[] entries, bool[] exits) {
             Entries = entries;
             Exits = exits;
-            ExitPrices = ExitPrices.StopOnly(0.98);
+            ExitPrices = new ExitPrices(0.96,1.1);
         }
 
         public bool IsEntry(BidAskData data, int i) {
@@ -27,8 +27,10 @@ namespace Logic
         }
 
         public ExitPrices AdjustStopTarget(TradePrices initial, DatedResult current) {
+            return ExitPrices;
+            
             if (current.Return+1 - (initial.StopPrice / initial.EntryPrice) > 0.02)
-                ExitPrices = new ExitPrices(current.Return +0.98 ,initial.TargetPrice);
+                ExitPrices = new ExitPrices(current.Return +0.99 ,1.1);
             return ExitPrices;
         }
 

@@ -122,7 +122,6 @@ namespace Daedalus.ViewModels
             var atrpc = AverageTrueRange.CalculateATRPC(ModelSingleton.Instance.Mymarket.PriceData.ToList(),2,60);
             var retval = new List<Tuple<double, double, double>>();
             var mdpt = new List<double>();
-            var dist = 0.1;
 
             ModelSingleton.Instance.Mymarket.PriceData.ToList().ForEach(x => mdpt.Add(x.High.Mid - ((x.High.Mid - x.Low.Mid) / 2.0)));
 
