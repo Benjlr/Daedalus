@@ -51,7 +51,7 @@ namespace Thought
         private void progressTrades(BidAskData[] prices, int i) {
             _generators.ForEach(x => {
                 x.Continue(prices[i]);
-                x.UpdateExits(_strat.AdjustPrices(prices, i,x.CurrentReturn));
+                x.UpdateExits(_strat.AdjustStopTarget(x.TradeLimits, x.LastResult));
             });
         }
 
@@ -67,7 +67,7 @@ namespace Thought
                 return;
             else
                 _generators.Add(buildGenerator(
-                    new TradePrices(_strat.AdjustPrices(prices,i,0), getEntry(prices[i])), i));
+                    new TradePrices(_strat.AdjustStopTarget(new TradePrices(),new DatedResult()), getEntry(prices[i])), i));
         }
 
         protected abstract void exitActions(BidAskData prices);

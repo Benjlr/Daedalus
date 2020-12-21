@@ -5,6 +5,7 @@ using Xunit;
 
 namespace DataStructures.Tests
 {
+
     public class TradeStateTests
     {
         [Fact]
@@ -88,9 +89,11 @@ namespace DataStructures.Tests
                 new TradePrices(new ExitPrices(0.7, 1.3), 11),
                 new Action<Trade>((x) => { }));
             state.Continue(new BidAskData(new DateTime(), 10, 10, 10, 10, 10, 10, 10, 10, 1));
+            state.Continue(new BidAskData(new DateTime(), 10, 10, 10, 10, 5, 5, 10, 10, 1));
 
             Assert.Equal(11, state.TradeLimits.EntryPrice);
-            Assert.Equal((10/11.0)-1, state.CurrentReturn);
+            Assert.Equal((10/11.0)-1, state.LastResult.Return);
+            Assert.Equal((5/11.0)-1 , state.LastResult.Drawdown);
             Assert.Equal(11 * 0.7, state.TradeLimits.StopPrice);
             Assert.Equal(11 * 1.3, state.TradeLimits.TargetPrice);
         }
@@ -102,9 +105,11 @@ namespace DataStructures.Tests
                 new Action<Trade>((x) => { }));
 
             state.Continue(new BidAskData(new DateTime(), 16, 16, 16, 16, 16, 16, 16, 16, 1));
+            state.Continue(new BidAskData(new DateTime(), 16, 16, 16, 16, 16, 16, 16, 16, 1));
 
             Assert.Equal(15, state.TradeLimits.EntryPrice);
-            Assert.Equal((16/15.0)-1, state.CurrentReturn);
+            Assert.Equal((16/15.0)-1, state.LastResult.Return);
+            Assert.Equal(0 , state.LastResult.Drawdown);
             Assert.Equal(15 * 0.9, state.TradeLimits.StopPrice);
             Assert.Equal(15 * 1.1, state.TradeLimits.TargetPrice);
         }
@@ -115,10 +120,12 @@ namespace DataStructures.Tests
                 new TradePrices(new ExitPrices(1.05, 0.95), 100),
                 new Action<Trade>((x) => { }));
 
+            state.Continue(new BidAskData(new DateTime(), 98, 98, 102, 102, 98, 98, 98, 98, 1));
             state.Continue(new BidAskData(new DateTime(), 98, 98, 98, 98, 98, 98, 98, 98, 1));
 
             Assert.Equal(100, state.TradeLimits.EntryPrice);
-            Assert.Equal(1- (98/100.0), state.CurrentReturn);
+            Assert.Equal(1- (98/100.0), state.LastResult.Return);
+            Assert.Equal(1 - (102 / 100.0), state.LastResult.Drawdown);
             Assert.Equal(100 * 1.05, state.TradeLimits.StopPrice);
             Assert.Equal(100 * 0.95, state.TradeLimits.TargetPrice);
         }
@@ -132,7 +139,8 @@ namespace DataStructures.Tests
             state.Continue(new BidAskData(new DateTime(), 42, 42, 42, 42, 42, 42, 42, 42, 1));
 
             Assert.Equal(35, state.TradeLimits.EntryPrice);
-            Assert.Equal(1-(42/ 35.0) , state.CurrentReturn);
+            Assert.Equal(1-(42/ 35.0) , state.LastResult.Return);
+            Assert.Equal(1 - (42 / 35.0), state.LastResult.Drawdown);
             Assert.Equal(35 * 1.5, state.TradeLimits.StopPrice);
             Assert.Equal(35 * 0.6, state.TradeLimits.TargetPrice);
         }

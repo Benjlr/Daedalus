@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using DataStructures;
-using RuleSets;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using DataStructures.PriceAlgorithms;
+﻿using DataStructures;
 using DataStructures.StatsTools;
+using RuleSets;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Logic
 {
@@ -12,10 +10,12 @@ namespace Logic
     {
         private bool[] Entries { get; }
         private bool[] Exits { get; }
+        private ExitPrices ExitPrices { get; set; }
 
         private StaticStrategy(bool[] entries, bool[] exits) {
             Entries = entries;
             Exits = exits;
+            ExitPrices = ExitPrices.StopOnly(0.98);
         }
 
         public bool IsEntry(BidAskData data, int i) {
@@ -26,21 +26,10 @@ namespace Logic
             return Exits[i - 1];
         }
 
-        private List<double> atr;
-
-        public ExitPrices AdjustPrices(BidAskData[] data, int i, double currentReturn) {
-
-            if (atr == null)
-                atr = AverageTrueRange.Calculate(data.ToList());
-            var exit = (data[i - 1].Close.Mid - (6 * atr[i - 1])) / data[i - 1].Close.Mid;
-            var target = data[i - 1].Close.Mid + (1.5 * atr[i - 1]);
-
-
-
-            //return ExitPrices.StopOnly(exit + currentReturn);
-
-
-            return new ExitPrices(0.98,1.05);
+        public ExitPrices AdjustStopTarget(TradePrices initial, DatedResult current) {
+            if (current.Return+1 - (initial.StopPrice / initial.EntryPrice) > 0.02)
+                ExitPrices = new ExitPrices(current.Return +0.98 ,initial.TargetPrice);
+            return ExitPrices;
         }
 
         public Strategiser Slice(int startIndex, int endIndex) {
@@ -82,8 +71,27 @@ namespace Logic
     {
         public bool IsEntry(BidAskData data, int i);
         public bool IsExit(BidAskData data, int i);
-        public ExitPrices AdjustPrices(BidAskData[] data, int i, double currentReturn);
+        public ExitPrices AdjustStopTarget(TradePrices initial, DatedResult current);
         public Strategiser Slice(int startIndex, int endIndex);
     }
 
+
+    public class DynamicStrategy : Strategiser
+    {
+        public ExitPrices AdjustStopTarget(TradePrices initial, DatedResult current) {
+            throw new System.NotImplementedException();
+        }
+
+        public bool IsEntry(BidAskData data, int i) {
+            throw new System.NotImplementedException();
+        }
+
+        public bool IsExit(BidAskData data, int i) {
+            throw new System.NotImplementedException();
+        }
+
+        public Strategiser Slice(int startIndex, int endIndex) {
+            throw new System.NotImplementedException();
+        }
+    }
 }

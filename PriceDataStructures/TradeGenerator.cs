@@ -18,9 +18,8 @@ namespace DataStructures
     public interface TradeGeneratorInterface
     {
         public TradePrices TradeLimits { get;  }
+        public DatedResult LastResult { get; }
         public bool isActive { get; }
-        public double CurrentReturn { get; }
-        public double Drawdown { get; }
         public void Continue(BidAskData data);
         public void UpdateExits(ExitPrices exitPrices);
         public void Exit(long date, double exitPrice);
@@ -30,13 +29,10 @@ namespace DataStructures
     public abstract class TradeStateGenerator : TradeGeneratorInterface
     {
         private Action<Trade> onExit { get; }
-        private double highestReturn { get;  set; }
-
         protected ArrayBuilder _tradeBuilder { get; set; }
         public TradePrices TradeLimits { get; private set; }
-        public double CurrentReturn { get; protected set; }
-        public double Drawdown { get; protected set; }
         public bool isActive { get; private set; }
+        public DatedResult LastResult => _tradeBuilder.LastAdded;
 
         protected TradeStateGenerator(int marketIndex, TradePrices tradeInit, Action<Trade> exiting) {
             _tradeBuilder = new ArrayBuilder();
@@ -52,29 +48,17 @@ namespace DataStructures
         }
 
         public void UpdateExits(ExitPrices exitPrices) {
-            if(CurrentReturn == highestReturn)
-                TradeLimits = new TradePrices(exitPrices, TradeLimits.EntryPrice);
+            TradeLimits = new TradePrices(exitPrices, TradeLimits.EntryPrice);
         }
 
         public void Exit(long date, double exitPrice) {
-            GetReturnAndDrawdown(exitPrice, exitPrice);
-            _tradeBuilder.AddResult(date, CurrentReturn, Drawdown);
+            _tradeBuilder.AddResult(date, CalculateReturn(exitPrice), CalculateReturn(exitPrice));
             onExit?.Invoke(_tradeBuilder.CompileTrade());
             isActive = false;
         }
         
-        protected void AddTradeBuilderStats(long date, double data, double low) {
-            GetReturnAndDrawdown(data, low);
-            this._tradeBuilder.AddResult(date, CurrentReturn, Drawdown);
-        }
-
-        private void GetReturnAndDrawdown(double data, double low) {
-            CurrentReturn = CalculateReturn(data);
-            if (CurrentReturn > highestReturn)
-                highestReturn = CurrentReturn;
-            var dd = CalculateReturn(low);
-            if (Drawdown > dd)
-                Drawdown = dd;
+        protected virtual void AddTradeBuilderStats(long date, double data, double low) {
+            this._tradeBuilder.AddResult(date, CalculateReturn(data), CalculateReturn(low));
         }
 
         protected abstract void CheckStopsAndTargets(BidAskData data);
@@ -155,5 +139,7 @@ namespace DataStructures
             return 1- ( data / this.TradeLimits.EntryPrice) ;
         }
     }
+
+
 }
 

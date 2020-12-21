@@ -28,10 +28,11 @@ namespace DataStructures
     }
     
     public class ArrayBuilder{
-        private List<DatedResult> _results { get; set; }
         private int _index { get; set; }
-        public static Action<Trade> Callback;
+        private List<DatedResult> _results { get; set; }
+        public DatedResult LastAdded { get; private set; }
 
+        public static Action<Trade> Callback;
 
         public void Init(int start) {
             _results = new List<DatedResult>();
@@ -39,7 +40,8 @@ namespace DataStructures
         }
 
         public void AddResult(long date, double result, double drawdown) {
-            _results.Add(new DatedResult(date, result, drawdown < 0 ? drawdown : 0));
+            LastAdded = new DatedResult(date, result, drawdown < 0 ? drawdown : 0);
+            _results.Add(LastAdded);
         }
 
         public Trade CompileTrade() {
