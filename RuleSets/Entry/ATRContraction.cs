@@ -60,9 +60,18 @@ namespace RuleSets.Entry
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             Satisfied = new bool[data.Count];
             var volavg = rawData.Select(x => x.Volume).ToList();
-            for (int i = 30; i < data.Count; i++) {
+            var doubles = data.Select(x => x.Close.Mid).ToList();
+
+
+            for (int i = 21; i < data.Count; i++) {
+                //var yesList = new List<bool>();
+                //for (int j = 1; j < 90; j++) {
+                //    if(GetPositionInRange(doubles.GetRange(i - j, j),data[i].Close.Mid)<0.7 ) yesList.Add(true);
+                //}
+
+
                 var myVOl = GetPositionInRange(volavg.GetRange(i - 20, 20), volavg[i]);
-                if (atrPC[i] == 0.0 && myVOl < 0.2  ) 
+                if (atrPC[i] == 0.0 && myVOl < 0.2  /*&& yesList.Count > 30*/) 
                     Satisfied[i] = true; }
 
         }

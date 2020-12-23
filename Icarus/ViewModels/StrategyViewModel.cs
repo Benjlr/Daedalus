@@ -1,4 +1,5 @@
-﻿using DataStructures.StatsTools;
+﻿using DataStructures;
+using DataStructures.StatsTools;
 using Logic;
 using OxyPlot;
 using OxyPlot.Annotations;
@@ -6,17 +7,12 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using RuleSets;
 using RuleSets.Entry;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using DataStructures;
-using RuleSets.Exit;
 using Thought;
-using ViewCommon.Models;
 using ViewCommon.Utils;
 using ArrayBuilder = DataStructures.ArrayBuilder;
 
@@ -24,6 +20,7 @@ namespace Icarus.ViewModels
 {
     public class StrategyViewModel : ViewModelBase
     {
+        public StatsViewModel Stats { get; set; }
         public LineSeries mySeries { get; set; }
         public PlotModel MyResults { get; set; }
         private ICommand _clickCommand;
@@ -32,6 +29,7 @@ namespace Icarus.ViewModels
 
         public StrategyViewModel()
         {
+            Stats = new StatsViewModel();
             MyResults = new PlotModel();
             MyResults.Axes.Add(new LinearAxis()
             {
@@ -55,27 +53,30 @@ namespace Icarus.ViewModels
             MyResults.Annotations.Add(new LineAnnotation() { Type = LineAnnotationType.Vertical, X = 0 });
         }
 
-        double capital = 10000;
+        double capital = 7000;
         double results = 0;
         public void Update(Trade myTrade) {
 
+            Stats.UpdateStats(myTrade);
 
-
+            results += myTrade.FinalResult;
             //Trace.Write(myTrade.FinalResult);
 
             Application.Current.Dispatcher.Invoke(() => {
-                for (int i = 0; i < myTrade.ResultArray.Length; i++) {
-                    var resulto = capital * (myTrade.ResultArray[i] + 1);
+                //for (int i = 0; i < myTrade.ResultArray.Length; i++) {
+                //    var resulto = capital * (myTrade.ResultArray[i] + 1);
 
-                    mySeries.Points.Add(new DataPoint(mySeries.Points.Count + 1, resulto));
+                //    mySeries.Points.Add(new DataPoint(mySeries.Points.Count + 1, resulto));
 
-                }
+                //}
+                capital += (myTrade.FinalResult+1) *((capital*0.02));
+                mySeries.Points.Add(new DataPoint(mySeries.Points.Count + 1, results));
                 MyResults.Axes.First(x => x.Tag == "xaxis").Maximum = mySeries.Points.Count + 5;
-                MyResults.InvalidatePlot(true);
-                NotifyPropertyChanged($"MyResults");
-    
+
+                
             });
-                capital *= (myTrade.FinalResult + 1);
+            MyResults.InvalidatePlot(true);
+            NotifyPropertyChanged($"MyResults");
         }
 
         public void Start() {
@@ -86,13 +87,20 @@ namespace Icarus.ViewModels
             ArrayBuilder.Callback = Update;
 
             Universe myunivers = new Universe();
-            var stocks = Markets.ASX300();
+            var stocks = Markets.ASX200();
             for(int i = 0; i< stocks.Count(); i++ ){
-                var stock = new Market(stocks[i]);
-                var stratto = new StaticStrategy.StrategyBuilder().
-                CreateStrategy(new IRuleSet[] {  new ATRContraction(),   }, stock);
+                try {
+                    var stock = new Market(stocks[i]);
+                    var stratto = new StaticStrategy.StrategyBuilder().
+                        CreateStrategy(new IRuleSet[] { new ATRContraction(), }, stock);
 
-                myunivers.AddMarket(stock, stratto);
+                    myunivers.AddMarket(stock, stratto);
+                }
+                catch (Exception e) {
+                    Console.WriteLine(e);
+                    //throw;
+                }
+          
 
             }
 

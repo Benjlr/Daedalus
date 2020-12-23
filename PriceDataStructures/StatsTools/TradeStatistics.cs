@@ -58,6 +58,10 @@ namespace DataStructures.StatsTools
 
     public class ExtendedStats : TradeStatistics
     {
+        public double AverageTimeWinners { get; private set; }
+        public double AverageTimeLosers { get; private set; }
+        public double MedianTimeWinners { get; private set; }
+        public double MedianTimeLosers { get; private set; }
         public double AverageDrawdown { get; private set; }
         public double AverageDrawdownWinners { get; private set; }
         public double MedianDrawDown { get; private set; }
@@ -69,6 +73,23 @@ namespace DataStructures.StatsTools
             results = results.Where(x => x < 0).ToList();
             CalculateDrawdown(results);
             CalculateDrawdownWinners(trades);
+            CalculateTimeInTrade(trades);
+        }
+
+        private void CalculateTimeInTrade(List<Trade> trades) {
+            var winners = trades.Where(x => x.FinalResult > 0).ToList();
+            var losers = trades.Where(x => x.FinalResult < 0).ToList();
+
+            if (winners.Count > 0) {
+                AverageTimeWinners = winners.Average(x => x.Duration);
+                MedianTimeWinners = winners.Median(x => x.Duration);
+            }
+
+            if (losers.Count > 0) {
+                AverageTimeLosers = losers.Average(x => x.Duration);
+                MedianTimeLosers = losers.Median(x => x.Duration);
+            }
+
         }
 
         private void CalculateDrawdown(List<double> results) {
@@ -89,7 +110,8 @@ namespace DataStructures.StatsTools
         private List<double> GetWinningTradeDrawdowns(List<Trade> trades) {
             var drawdowns = new List<double>();
             foreach (var t in trades)
-                if (t.FinalResult > 0) drawdowns.Add(t.FinalDrawdown);
+                if (t.FinalResult > 0) 
+                    drawdowns.Add(t.FinalDrawdown);
             return drawdowns;
         }
     }

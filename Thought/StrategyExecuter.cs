@@ -1,6 +1,7 @@
 ﻿using DataStructures;
 using Logic;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace Thought
@@ -30,7 +31,9 @@ namespace Thought
         }
 
         private void iterateTime(BidAskData[] prices) {
+            
             for (int i = 1; i < prices.Length; i++) {
+                if(prices[i].Open.TicksToTime.Year < 2019 ) continue;
                 destroyInactiveTraders();
                 progressTrades(prices, i);
                 lookForEntry(prices, i);
