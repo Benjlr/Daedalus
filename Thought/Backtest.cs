@@ -16,9 +16,8 @@ namespace Thought
         public virtual List<Trade> RunBackTest(StrategyExecuter exec) {
             var results = new List<Trade>();
             foreach (var element in Markets.Elements) {
-                var trades = exec.Execute(element);
-                foreach (var trade in trades)
-                    results.Add(trade);
+                exec.Init(element);
+                results.AddRange(exec.ExecuteAll());
             }
 
             return results;
@@ -36,8 +35,8 @@ namespace Thought
         }
 
         private void Initialise(List<Trade> results) {
-            _orderedTrades = results.OrderBy(x => x.Results.Last().Date).ToList();
-            _totalSpan = (_orderedTrades.Last().Results.Last().Date - _orderedTrades.First().Results.First().Date);
+            _orderedTrades = results.OrderBy(x => x.ResultTimeline.Last().Date).ToList();
+            _totalSpan = (_orderedTrades.Last().ResultTimeline.Last().Date - _orderedTrades.First().ResultTimeline.First().Date);
             _categorisedResults = new List<DatedResult>();
         }
 
@@ -65,15 +64,15 @@ namespace Thought
         }
 
         protected void AddRelevantResult(TimeSpan time, Trade t, long i, List<DatedResult> resultsTw) {
-            var relevantResult = t.Results.LastOrDefault(x => x.Date < i + time.Ticks);
+            var relevantResult = t.ResultTimeline.LastOrDefault(x => x.Date < i + time.Ticks);
             if (relevantResult.Date > 0)
                 resultsTw.Add(relevantResult);
         }
 
         protected bool CheckRelevant(TimeSpan time, Trade t, long i) {
-            if (t.Results.Last().Date < i)
+            if (t.ResultTimeline.Last().Date < i)
                 return true;
-            if (t.Results.First().Date > i + time.Ticks)
+            if (t.ResultTimeline.First().Date > i + time.Ticks)
                 return true;
             return false;
         }

@@ -14,7 +14,6 @@ using System.Windows;
 using System.Windows.Input;
 using Thought;
 using ViewCommon.Utils;
-using ArrayBuilder = DataStructures.ArrayBuilder;
 
 namespace Icarus.ViewModels
 {
@@ -84,7 +83,7 @@ namespace Icarus.ViewModels
         }
 
         private void Dowork(object callback) {
-            ArrayBuilder.Callback = Update;
+            TradeCompiler.Callback = Update;
 
             Universe myunivers = new Universe();
             var stocks = Markets.ASX200();
@@ -92,7 +91,8 @@ namespace Icarus.ViewModels
                 try {
                     var stock = new Market(stocks[i]);
                     var stratto = new StaticStrategy.StrategyBuilder().
-                        CreateStrategy(new IRuleSet[] { new ATRContraction(), }, stock);
+                        CreateStrategy(new IRuleSet[] { new ATRContraction(), }, stock, 
+                            new StaticStopTarget(new ExitPrices(0.95,1.35)));
 
                     myunivers.AddMarket(stock, stratto);
                 }

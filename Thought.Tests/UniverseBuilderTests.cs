@@ -27,17 +27,20 @@ namespace Thought.Tests
         private void BuildUniverse() {
             _universe = new Universe();
             var marketsWheat = new Market(Markets.futures_wheat_5);
-            var wheatStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) }, marketsWheat);
+            var wheatStrat = new StaticStrategy.StrategyBuilder().CreateStrategy
+                (new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) }, marketsWheat, new StaticStopTarget(ExitPrices.NoStopTarget()));
             _universe.AddMarket(marketsWheat, wheatStrat);
 
             var marketsAudUsd = new Market(Markets.aud_usd_5);
-            var audusdStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) }, marketsAudUsd);
+            var audusdStrat = new StaticStrategy.StrategyBuilder().CreateStrategy
+                (new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) }, marketsAudUsd, new StaticStopTarget(ExitPrices.NoStopTarget()));
             _universe.AddMarket(marketsAudUsd, audusdStrat);
 
             var listNames = Markets.ASX20();
             foreach (var name in listNames) {
                 var market = new Market(name);
-                var marketStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) }, market);
+                var marketStrat = new StaticStrategy.StrategyBuilder().CreateStrategy
+                    (new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) }, market, new StaticStopTarget(ExitPrices.NoStopTarget()));
                 _universe.AddMarket(market, marketStrat);
             }
         }

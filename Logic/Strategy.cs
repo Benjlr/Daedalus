@@ -10,13 +10,14 @@ namespace Logic
     {
         private bool[] Entries { get; }
         private bool[] Exits { get; }
-        private ExitPrices ExitPrices { get; set; }
+        public ExitInterface Stops { get; }
 
-        private StaticStrategy(bool[] entries, bool[] exits) {
+        private StaticStrategy(bool[] entries, bool[] exits, ExitInterface stops) {
             Entries = entries;
             Exits = exits;
-            ExitPrices = new ExitPrices(0.95,1.25);
+            Stops = stops;
         }
+
 
         public bool IsEntry(BidAskData data, int i) {
             return Entries[i - 1];
@@ -26,29 +27,9 @@ namespace Logic
             return Exits[i - 1];
         }
 
-        public ExitPrices AdjustStopTarget(TradePrices initial, DatedResult current) {
-            if (current.Return > 1.15 && ExitPrices.StopPercentage < 0.97) {
-                ExitPrices = new ExitPrices(1.05, 1.25);
-                return ExitPrices;
-            }
-            //else if (current.Return > 0.2 && ExitPrices.StopPercentage <= 0.98) {
-            //    ExitPrices = new ExitPrices(1.08, 1.55);
-            //    return ExitPrices;
-            //}
-            //else if (current.Return > 0.35 && ExitPrices.StopPercentage <= 1.09) {
-            //    ExitPrices = new ExitPrices(1.2, 1.55);
-            //    return ExitPrices;
-            //}
-            return ExitPrices;
-            
-            if (current.Return+1 - (initial.StopPrice / initial.EntryPrice) > 0.02)
-                ExitPrices = new ExitPrices(current.Return +0.99 ,1.1);
-            return ExitPrices;
-        }
-
         public Strategiser Slice(int startIndex, int endIndex) {
             return new StaticStrategy(ListTools.GetNewArrayByIndex(Entries, startIndex, endIndex),
-                ListTools.GetNewArrayByIndex(Exits, startIndex, endIndex));
+                ListTools.GetNewArrayByIndex(Exits, startIndex, endIndex), this.Stops);
         }
 
         public class StrategyBuilder
@@ -56,11 +37,11 @@ namespace Logic
             private List<IRuleSet> _entryRules { get; set; }
             private List<IRuleSet> _exitRules { get; set; }
 
-            public StaticStrategy CreateStrategy(IRuleSet[] myRules, Market myMarket) {
+            public StaticStrategy CreateStrategy(IRuleSet[] myRules, Market myMarket, ExitInterface stops) {
                 foreach (var t in myRules)
                     t.CalculateBackSeries(myMarket.PriceData);
                 InitRules(myRules);
-                return Iterate(myMarket);
+                return Iterate(myMarket, stops);
             }
 
             private void InitRules(IRuleSet[] myRules) {
@@ -68,7 +49,7 @@ namespace Logic
                 _exitRules = myRules.Where(x => x.Order.Equals(ActionPoint.Exit)).ToList();
             }
 
-            private StaticStrategy Iterate(Market myMarket) {
+            private StaticStrategy Iterate(Market myMarket, ExitInterface stops) {
                 var _entries = new bool[myMarket.PriceData.Length];
                 var _exits = new bool[myMarket.PriceData.Length];
                 for (int i = 0; i < myMarket.PriceData.Length; i++) {
@@ -76,16 +57,16 @@ namespace Logic
                     if (_exitRules.Any(x => x.Satisfied[i])) _exits[i] = true;
                 }
 
-                return new StaticStrategy(_entries, _exits);
+                return new StaticStrategy(_entries, _exits, stops);
             }
         }
     }
 
     public interface Strategiser
     {
+        public ExitInterface Stops { get; }
         public bool IsEntry(BidAskData data, int i);
         public bool IsExit(BidAskData data, int i);
-        public ExitPrices AdjustStopTarget(TradePrices initial, DatedResult current);
         public Strategiser Slice(int startIndex, int endIndex);
     }
 
@@ -95,6 +76,8 @@ namespace Logic
         public ExitPrices AdjustStopTarget(TradePrices initial, DatedResult current) {
             throw new System.NotImplementedException();
         }
+
+        public ExitInterface Stops { get; }
 
         public bool IsEntry(BidAskData data, int i) {
             throw new System.NotImplementedException();

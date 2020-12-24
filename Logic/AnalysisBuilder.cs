@@ -106,7 +106,7 @@ namespace Logic
         private List<double> resultList(ITest results) {
             return results.Trades.
                 SelectMany(x=>x.
-                    Results.Select(y=>y.Return)).ToList();
+                    ResultTimeline.Select(y=>y.Return)).ToList();
         }
     }
 

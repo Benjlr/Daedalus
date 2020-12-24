@@ -2,63 +2,46 @@
 
 namespace DataStructures
 {
-    public readonly struct TradePrices
-    {
-        public double EntryPrice { get; }
-        public double StopPrice { get; }
-        public double TargetPrice { get; }
-
-        public TradePrices(ExitPrices exits, double entryPrice) {
-            EntryPrice = entryPrice;
-            StopPrice = entryPrice * exits.StopPercentage;
-            TargetPrice = entryPrice * exits.TargetPercentage;
-        }
-    }
-
     public interface TradeGeneratorInterface
     {
-        public TradePrices TradeLimits { get;  }
-        public DatedResult LastResult { get; }
+        public TradeCompiler TradeBuilder { get; }
+        public TradePrices StopEntryTarget { get; }
         public bool isActive { get; }
         public void Continue(BidAskData data);
         public void UpdateExits(ExitPrices exitPrices);
         public void Exit(long date, double exitPrice);
-
     }
 
     public abstract class TradeStateGenerator : TradeGeneratorInterface
     {
         private Action<Trade> onExit { get; }
-        protected ArrayBuilder _tradeBuilder { get; set; }
-        public TradePrices TradeLimits { get; private set; }
+        public TradePrices StopEntryTarget { get; private set; }
+        public TradeCompiler TradeBuilder { get; private set; }
         public bool isActive { get; private set; }
-        public DatedResult LastResult => _tradeBuilder.LastAdded;
 
         protected TradeStateGenerator(int marketIndex, TradePrices tradeInit, Action<Trade> exiting) {
-            _tradeBuilder = new ArrayBuilder();
-            _tradeBuilder.Init(marketIndex);
-            TradeLimits = tradeInit;
+            TradeBuilder = new TradeCompiler(marketIndex);
             onExit = exiting;
             isActive = true;
+            StopEntryTarget = tradeInit;
         }
-
 
         public void Continue(BidAskData data) {
             CheckStopsAndTargets(data);
         }
 
         public void UpdateExits(ExitPrices exitPrices) {
-            TradeLimits = new TradePrices(exitPrices, TradeLimits.EntryPrice);
+            StopEntryTarget = new TradePrices(exitPrices, StopEntryTarget.EntryPrice);
         }
 
         public void Exit(long date, double exitPrice) {
-            _tradeBuilder.AddResult(date, CalculateReturn(exitPrice), CalculateReturn(exitPrice));
-            onExit?.Invoke(_tradeBuilder.CompileTrade());
+            TradeBuilder.AddResult(date, CalculateReturn(exitPrice), CalculateReturn(exitPrice));
+            onExit?.Invoke(TradeBuilder.CompileTrade());
             isActive = false;
         }
         
         protected virtual void AddTradeBuilderStats(long date, double data, double low) {
-            this._tradeBuilder.AddResult(date, CalculateReturn(data), CalculateReturn(low));
+            this.TradeBuilder.AddResult(date, CalculateReturn(data), CalculateReturn(low));
         }
 
         protected abstract void CheckStopsAndTargets(BidAskData data);
@@ -77,10 +60,10 @@ namespace DataStructures
         }
 
         private bool CheckTargets(BidAskData data) {
-            if (data.High.Bid > TradeLimits.TargetPrice) {
-                if (data.Open.Bid > TradeLimits.TargetPrice)
+            if (data.High.Bid > StopEntryTarget.TargetPrice) {
+                if (data.Open.Bid > StopEntryTarget.TargetPrice)
                     Exit(data.Open.Ticks, data.Open.Bid);
-                else Exit(data.High.Ticks, TradeLimits.TargetPrice);
+                else Exit(data.High.Ticks, StopEntryTarget.TargetPrice);
                 return true;
             }
 
@@ -88,10 +71,10 @@ namespace DataStructures
         }
 
         private bool CheckStops(BidAskData data) {
-            if (data.Low.Bid < TradeLimits.StopPrice) {
-                if (data.Open.Bid < TradeLimits.StopPrice)
+            if (data.Low.Bid < StopEntryTarget.StopPrice) {
+                if (data.Open.Bid < StopEntryTarget.StopPrice)
                     Exit(data.Open.Ticks, data.Open.Bid);
-                else Exit(data.Low.Ticks, TradeLimits.StopPrice);
+                else Exit(data.Low.Ticks, StopEntryTarget.StopPrice);
                 return true;
             }
 
@@ -99,7 +82,7 @@ namespace DataStructures
         }
 
         protected override double CalculateReturn(double data) {
-            return (data / this.TradeLimits.EntryPrice) - 1;
+            return (data / this.StopEntryTarget.EntryPrice) - 1;
         }
     }
 
@@ -114,10 +97,10 @@ namespace DataStructures
         }
 
         private bool CheckStops(BidAskData data) {
-            if (data.High.Ask > TradeLimits.StopPrice) {
-                if (data.Open.Ask > TradeLimits.StopPrice)
+            if (data.High.Ask > StopEntryTarget.StopPrice) {
+                if (data.Open.Ask > StopEntryTarget.StopPrice)
                     Exit(data.Open.Ticks, data.Open.Ask);
-                else Exit(data.High.Ticks, TradeLimits.StopPrice);
+                else Exit(data.High.Ticks, StopEntryTarget.StopPrice);
                 return true;
             }
 
@@ -125,10 +108,10 @@ namespace DataStructures
         }
 
         private bool CheckTargets(BidAskData data) {
-            if (data.Low.Ask < TradeLimits.TargetPrice) {
-                if (data.Open.Ask < TradeLimits.TargetPrice)
+            if (data.Low.Ask < StopEntryTarget.TargetPrice) {
+                if (data.Open.Ask < StopEntryTarget.TargetPrice)
                     Exit(data.Open.Ticks, data.Open.Ask);
-                else Exit(data.Low.Ticks, TradeLimits.TargetPrice);
+                else Exit(data.Low.Ticks, StopEntryTarget.TargetPrice);
                 return true;
             }
 
@@ -136,7 +119,7 @@ namespace DataStructures
         }
 
         protected override double CalculateReturn(double data) {
-            return 1- ( data / this.TradeLimits.EntryPrice) ;
+            return 1- ( data / this.StopEntryTarget.EntryPrice) ;
         }
     }
 

@@ -21,7 +21,7 @@ namespace Logic.Tests
             _strat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[]
             {
                 new DummyEntries(2, FSTETestsBars.DataLong.Length),
-            }, _market);
+            }, _market, new StaticStopTarget(ExitPrices.NoStopTarget()));
         }
 
         [Fact]

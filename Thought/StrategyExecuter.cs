@@ -1,60 +1,66 @@
 ﻿using DataStructures;
 using Logic;
 using System.Collections.Generic;
-using System.Linq;
 
 
 namespace Thought
 {
     public abstract class StrategyExecuter
     {
-        private List<Trade> _trades { get; set; }
+        protected List<Trade> _trades { get; set; }
+        protected BidAskData[] _prices { get; set; }
         protected List<TradeGeneratorInterface> _generators { get; set; }
-        private Strategiser _strat { get; set; }
-        private bool _canEnterWhenExposed { get; }
+        protected Strategiser _strat { get; set; }
+        protected bool _canEnterWhenExposed { get; }
+        protected int _counter { get; set; } 
 
         protected StrategyExecuter(bool enterWhenEntered) {
             _canEnterWhenExposed = enterWhenEntered;
-
         }
 
-        public List<Trade> Execute(TradingField greens) {
-            Init(greens.Strategy);
-            iterateTime(greens.MarketData.PriceData);
+        public List<Trade> ExecuteAll() {
+            for (_counter = 1; _counter < _prices.Length; _counter++)
+                IterationActions();
             return _trades;
         }
+        public List<Trade> ExecuteStep() {
+            if(_counter >= _prices.Length)
+                return _trades;
 
-        private void Init(Strategiser strat) {
-            _strat = strat;
+            IterationActions();
+            _counter++;
+            return new List<Trade>();
+        }
+
+        public void Init(TradingField field) {
+            _strat = field.Strategy;
+            _prices = field.MarketData.PriceData;
             _trades = new List<Trade>();
             _generators = new List<TradeGeneratorInterface>();
+            _counter = 1;
+        }
+        
+        private void IterationActions() {
+            destroyInactiveTraders();
+            progressTrades();
+            lookForEntry();
+            lookForExits();
         }
 
-        private void iterateTime(BidAskData[] prices) {
-            
-            for (int i = 1; i < prices.Length; i++) {
-                if(prices[i].Open.TicksToTime.Year < 2019 ) continue;
-                destroyInactiveTraders();
-                progressTrades(prices, i);
-                lookForEntry(prices, i);
-                lookForExits(prices, i);
-            }
+        private void lookForExits() {
+            if (_strat.IsExit(_prices[_counter], _counter))
+                exitActions();
         }
 
-        private void lookForExits(BidAskData[] prices, int i) {
-            if (_strat.IsExit(prices[i],i))
-                exitActions(prices[i]);
+        private void lookForEntry() {
+            if (_strat.IsEntry(_prices[_counter], _counter))
+                entryActions();
         }
 
-        private void lookForEntry(BidAskData[] prices, int i) {
-            if (_strat.IsEntry(prices[i],i))
-                entryActions(prices, i);
-        }
-
-        private void progressTrades(BidAskData[] prices, int i) {
+        private void progressTrades() {
             _generators.ForEach(x => {
-                x.Continue(prices[i]);
-                x.UpdateExits(_strat.AdjustStopTarget(x.TradeLimits, x.LastResult));
+                x.Continue(_prices[_counter]);
+                x.UpdateExits(_strat.Stops.NewExit(x.TradeBuilder.CompileTrade(), _prices, _counter));
             });
         }
 
@@ -65,16 +71,16 @@ namespace Thought
             }
         }
 
-        private void entryActions(BidAskData[] prices, int i) {
+        private void entryActions() {
             if (_generators.Count > 0 && !_canEnterWhenExposed)
                 return;
             else
                 _generators.Add(buildGenerator(
-                    new TradePrices(_strat.AdjustStopTarget(new TradePrices(),new DatedResult()), getEntry(prices[i])), i));
+                    new TradePrices(_strat.Stops.InitialExit, getEntry()), _counter));
         }
 
-        protected abstract void exitActions(BidAskData prices);
-        protected abstract double getEntry(BidAskData prices);
+        protected abstract void exitActions();
+        protected abstract double getEntry();
         protected abstract TradeGeneratorInterface buildGenerator(TradePrices tradeInit, int index);
 
         protected void addTrade(Trade trade) {
@@ -85,17 +91,17 @@ namespace Thought
 
     public class LongStrategyExecuter : StrategyExecuter
     {
-        public LongStrategyExecuter(bool enterWhenEntered) 
-            : base(enterWhenEntered) {
+        public LongStrategyExecuter( bool enterWhenEntered) 
+            : base( enterWhenEntered) {
         }
 
-        protected override void exitActions(BidAskData prices) {
+        protected override void exitActions() {
             foreach (var gen in _generators)
-                gen.Exit(prices.Open.Ticks, prices.Open.Bid);
+                gen.Exit(_prices[_counter].Open.Ticks, _prices[_counter].Open.Bid);
         }
 
-        protected override double getEntry(BidAskData prices) {
-            return prices.Open.Ask;
+        protected override double getEntry() {
+            return _prices[_counter].Open.Ask;
         }
 
         protected override TradeGeneratorInterface buildGenerator(TradePrices tradeInit, int index) {
@@ -105,21 +111,23 @@ namespace Thought
 
     public class ShortStrategyExecuter : StrategyExecuter
     {
-        public ShortStrategyExecuter(bool enterWhenEntered)
-            : base(enterWhenEntered) {
+        public ShortStrategyExecuter( bool enterWhenEntered)
+            : base( enterWhenEntered) {
         }
 
-        protected override void exitActions(BidAskData prices) {
+        protected override void exitActions() {
             foreach (var gen in _generators)
-                gen.Exit(prices.Open.Ticks, prices.Open.Ask);
+                gen.Exit(_prices[_counter].Open.Ticks, _prices[_counter].Open.Ask);
         }
 
-        protected override double getEntry(BidAskData prices) {
-                return prices.Open.Bid;
+        protected override double getEntry() {
+                return _prices[_counter].Open.Bid;
         }
 
         protected override TradeGeneratorInterface buildGenerator(TradePrices tradeInit, int index) {
             return new ShortTradeGenerator(index, tradeInit, addTrade);
         }
     }
+
+
 }

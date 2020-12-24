@@ -17,7 +17,7 @@ namespace Logic.Tests
             var market = new Market(FBETestBars.DataLong, "testId");
             var strat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[] {
                 new DummyEntries(2, FBETestBars.DataLong.Length)
-            }, market);
+            }, market, new StaticStopTarget(ExitPrices.NoStopTarget()));
 
             PrepareTests(strat, market);
         }

@@ -6,7 +6,7 @@ namespace DataStructures
 {
     public readonly struct Trade
     {
-        public DatedResult[] Results { get; }
+        public DatedResult[] ResultTimeline { get; }
         public double FinalResult { get; }
         public double FinalDrawdown { get; }
         public int MarketStart { get; }
@@ -15,7 +15,7 @@ namespace DataStructures
 
 
         public Trade(DatedResult[] results, int startIndex) {
-            Results = results;
+            ResultTimeline = results;
             MarketStart = startIndex;
             MarketEnd = results.Length + startIndex-1;
             FinalResult = results.Last().Return;
@@ -24,30 +24,44 @@ namespace DataStructures
         }
 
         public int Duration => MarketEnd - MarketStart+1;
-        public double[] ResultArray => Results.Select(x => x.Return).ToArray();
+        public double[] ResultArray => ResultTimeline.Select(x => x.Return).ToArray();
     }
     
-    public class ArrayBuilder{
-        private int _index { get; set; }
-        private List<DatedResult> _results { get; set; }
-        public DatedResult LastAdded { get; private set; }
+    public readonly struct TradeCompiler
+    {
+        private int _index { get;  }
+        public List<DatedResult> ResultTimeline { get;  }
 
-        public static Action<Trade> Callback;
-
-        public void Init(int start) {
-            _results = new List<DatedResult>();
+        public TradeCompiler(int start) {
+            ResultTimeline = new List<DatedResult>();
             _index = start;
         }
 
         public void AddResult(long date, double result, double drawdown) {
-            LastAdded = new DatedResult(date, result, drawdown < 0 ? drawdown : 0);
-            _results.Add(LastAdded);
+            ResultTimeline.Add(new DatedResult(date, result, drawdown < 0 ? drawdown : 0));
         }
 
-        public Trade CompileTrade() {
-            var trade= new Trade(_results.ToArray(), _index);
-            Callback?.Invoke(trade);
+        public Trade CompileTrade(bool callback = false) {
+            var trade= new Trade(ResultTimeline.ToArray(), _index);
+            if(callback)
+               Callback?.Invoke(trade);
             return trade;
+        }
+
+        public static Action<Trade> Callback;
+    }
+
+    public readonly struct TradePrices
+    {
+        
+        public double EntryPrice { get; }
+        public double StopPrice { get; }
+        public double TargetPrice { get; }
+
+        public TradePrices(ExitPrices exits, double entryPrice) {
+            EntryPrice = entryPrice;
+            StopPrice = entryPrice * exits.StopPercentage;
+            TargetPrice = entryPrice * exits.TargetPercentage;
         }
     }
 

@@ -1,9 +1,9 @@
 ﻿namespace DataStructures
 {
-    public struct ExitPrices
+    public readonly struct ExitPrices
     {
-        public double StopPercentage { get; set; }
-        public double TargetPercentage { get; set; }
+        public double StopPercentage { get; }
+        public double TargetPercentage { get; }
 
         public ExitPrices(double stop, double target) {
             StopPercentage = stop;

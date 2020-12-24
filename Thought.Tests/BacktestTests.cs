@@ -72,13 +72,16 @@ namespace Thought.Tests
             var universeData = new Universe();
             
             var generateRandomMarket = new Market(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(6000), "longTest");
-            var longStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] {new DummyEntries(5, 10000)}, generateRandomMarket);
+            var longStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] {new DummyEntries(5, 10000)}, generateRandomMarket,
+                new StaticStopTarget(ExitPrices.NoStopTarget()));
 
             var bidAskDatas = new Market(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(4500), "mediumMarket");
-            var mediumStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] {new DummyEntries(5, 10000)}, generateRandomMarket);
+            var mediumStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] {new DummyEntries(5, 10000)}, generateRandomMarket,
+                new StaticStopTarget(ExitPrices.NoStopTarget()));
             
             var randomMarket = new Market(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(2000), "shortMarket");
-            var shortStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(5, 10000) }, generateRandomMarket);
+            var shortStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(5, 10000) }, generateRandomMarket,
+                new StaticStopTarget(ExitPrices.NoStopTarget()));
             
             universeData.AddMarket(generateRandomMarket, longStrat);
             universeData.AddMarket(bidAskDatas, mediumStrat);
@@ -91,14 +94,17 @@ namespace Thought.Tests
         private void GenerateBackTestSpy() {
             var universeData = new Universe();
             var markets = new Market(new RandomBars(new TimeSpan(0, 5, 0)).GenerateRandomMarket(10000) , "minuteMarket");
-            var marketsStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(5, 10000) }, markets);
+            var marketsStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(5, 10000) }, markets,
+                new StaticStopTarget(ExitPrices.NoStopTarget()));
 
 
             var market = new Market(new RandomBars(new TimeSpan(1)).GenerateRandomMarket(3000), "hourMarket");
-            var marketStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] {new DummyEntries(5, 10000)}, market);
+            var marketStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] {new DummyEntries(5, 10000)}, market,
+                new StaticStopTarget(ExitPrices.NoStopTarget()));
 
             var market1 = new Market(new RandomBars(new TimeSpan(24)).GenerateRandomMarket(2000), "dayMarket");
-            var market1Strat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(5, 10000) }, market1);
+            var market1Strat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(5, 10000) }, market1,
+                new StaticStopTarget(ExitPrices.NoStopTarget()));
 
 
             universeData.AddMarket(markets, marketsStrat);

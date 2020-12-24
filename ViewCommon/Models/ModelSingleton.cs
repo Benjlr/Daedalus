@@ -61,7 +61,7 @@ namespace ViewCommon.Models
 
                     //new CrossoverTag(),
 
-                }, Mymarket);
+                }, Mymarket , new StaticStopTarget(new ExitPrices(0.8,1.2)));
 
             }
 

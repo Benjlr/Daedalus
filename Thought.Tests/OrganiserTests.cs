@@ -30,13 +30,16 @@ namespace Thought.Tests
         private void BuildUniverse() {
             _universe = new Universe();
             var marketOne = new Market(TradeFlatteningData.longMarket, longMarket);
-            var stratOne = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(5, 35), new DummyExits(5, 30) }, marketOne);
+            var stratOne = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(5, 35), new DummyExits(5, 30) }, marketOne,
+                new StaticStopTarget(ExitPrices.NoStopTarget()));
 
             var marketTwo = new Market(TradeFlatteningData.mediumMarket, mediumMarket);
-            var stratTwo = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(5, 35), new DummyExits(5, 30) }, marketTwo);
+            var stratTwo = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(5, 35), new DummyExits(5, 30) }, marketTwo,
+                new StaticStopTarget(ExitPrices.NoStopTarget()));
           
             var marketThree = new Market(TradeFlatteningData.shortMarket, shortMarket);
-            var stratThree = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(5, 35), new DummyExits(5, 30) }, marketThree);
+            var stratThree = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[2] { new DummyEntries(5, 35), new DummyExits(5, 30) }, marketThree,
+                new StaticStopTarget(ExitPrices.NoStopTarget()));
             
             _universe.AddMarket(marketOne, stratOne);
             _universe.AddMarket(marketTwo, stratTwo);
@@ -75,7 +78,8 @@ namespace Thought.Tests
                 new BidAskData(new DateTime(),20,30,30,30,30 ),
                 new BidAskData(new DateTime(),20,40,40,40,40 ),
             }, "test");
-            var stratMarket = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(4,1) }, market);
+            var stratMarket = new StaticStrategy.StrategyBuilder().CreateStrategy
+                (new IRuleSet[1] { new DummyEntries(4,1) }, market, new StaticStopTarget(ExitPrices.NoStopTarget()));
 
             newUniverse.AddMarket(market , stratMarket);
             UniverseTest t = new UniverseTest(newUniverse.GetObject("test"), new TestFactory.FixedBarExitTestOptions(5,7,1));
@@ -97,7 +101,8 @@ namespace Thought.Tests
                 new BidAskData(new DateTime(),20,30,30,30,30 ),
                 new BidAskData(new DateTime(),20,40,40,40,40 ),
             }, "test");
-            var stratMarket = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(1,10) }, market);
+            var stratMarket = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[1] { new DummyEntries(1,10) },
+                market, new StaticStopTarget(ExitPrices.NoStopTarget()));
 
 
             newUniverse.AddMarket(market , stratMarket);
@@ -200,8 +205,8 @@ namespace Thought.Tests
 
         private void PrintTradesToReturnTimeLine(List<Trade> test, double[] market) {
             foreach (var t in test)
-                for (int j = 0; j < t.Results.Length; j++)
-                    market[t.MarketStart + j] += t.Results[j].Return;
+                for (int j = 0; j < t.ResultTimeline.Length; j++)
+                    market[t.MarketStart + j] += t.ResultTimeline[j].Return;
         }
     }
 }
