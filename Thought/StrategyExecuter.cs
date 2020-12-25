@@ -60,7 +60,7 @@ namespace Thought
         private void progressTrades() {
             _generators.ForEach(x => {
                 x.Continue(_prices[_counter]);
-                x.UpdateExits(_strat.Stops.NewExit(x.TradeBuilder.CompileTrade(), _prices, _counter));
+                x.UpdateExits(_strat.Stops.NewExit(x.TradeBuilder.ResultTimeline[^1], _prices, _counter));
             });
         }
 

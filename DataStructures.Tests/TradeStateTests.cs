@@ -130,7 +130,7 @@ namespace DataStructures.Tests
 
             Assert.Equal(100, state.StopEntryTarget.EntryPrice);
             Assert.Equal(1- (98/100.0), trade.FinalResult);
-            Assert.Equal(0, trade.FinalDrawdown);
+            Assert.Equal(1 - (102 / 100.0), trade.FinalDrawdown);
             Assert.Equal(100 * 1.05, state.StopEntryTarget.StopPrice);
             Assert.Equal(100 * 0.95, state.StopEntryTarget.TargetPrice);
         }

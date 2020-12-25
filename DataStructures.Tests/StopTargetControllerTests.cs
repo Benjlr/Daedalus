@@ -13,8 +13,8 @@ namespace DataStructures.Tests
             var Exits = new ExitPrices(0.7,1.3);
             StaticStopTarget testObject = new StaticStopTarget(Exits);
 
-            Assert.Equal(Exits.StopPercentage , testObject.NewExit(new Trade(), new BidAskData[0],0 ).StopPercentage);
-            Assert.Equal(Exits.TargetPercentage, testObject.NewExit(new Trade(), new BidAskData[0] ,0).TargetPercentage);
+            Assert.Equal(Exits.StopPercentage , testObject.NewExit(new DatedResult(), new BidAskData[0],0 ).StopPercentage);
+            Assert.Equal(Exits.TargetPercentage, testObject.NewExit(new DatedResult(), new BidAskData[0] ,0).TargetPercentage);
         }
 
         [Fact]
@@ -30,31 +30,31 @@ namespace DataStructures.Tests
             var longstate = new LongTradeGenerator(0, new TradePrices(stop.InitialExit, 100), null);
 
             longstate.Continue(bars[0]);
-            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.CompileTrade(), bars, 0));
+            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.ResultTimeline[^1], bars, 0));
                 
             Assert.Equal(98, longstate.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, longstate.StopEntryTarget.TargetPrice);
 
             longstate.Continue(bars[1]);
-            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.CompileTrade(), bars, 1));
+            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.ResultTimeline[^1], bars, 1));
 
             Assert.Equal(100, longstate.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, longstate.StopEntryTarget.TargetPrice);
             
             longstate.Continue(bars[2]);
-            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.CompileTrade(), bars, 2));
+            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.ResultTimeline[^1], bars, 2));
 
             Assert.Equal(101, longstate.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, longstate.StopEntryTarget.TargetPrice);
 
             longstate.Continue(bars[3]);
-            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.CompileTrade(), bars, 3));
+            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.ResultTimeline[^1], bars, 3));
 
             Assert.Equal(102, longstate.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, longstate.StopEntryTarget.TargetPrice);
 
             longstate.Continue(bars[2]);
-            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.CompileTrade(), bars, 2));
+            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.ResultTimeline[^1], bars, 2));
 
             Assert.Equal(102, longstate.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, longstate.StopEntryTarget.TargetPrice);
@@ -73,31 +73,31 @@ namespace DataStructures.Tests
             var shortState = new ShortTradeGenerator(0, new TradePrices(ExitPrices.NoStopTarget(), 100), null);
 
             shortState.Continue(bars[0]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.CompileTrade(), bars, 0));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.ResultTimeline[^1], bars, 0));
 
             Assert.Equal(102, shortState.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, shortState.StopEntryTarget.TargetPrice);
 
             shortState.Continue(bars[1]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.CompileTrade(), bars, 1));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.ResultTimeline[^1], bars, 1));
 
             Assert.Equal(100, shortState.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, shortState.StopEntryTarget.TargetPrice);
 
             shortState.Continue(bars[2]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.CompileTrade(), bars, 2));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.ResultTimeline[^1], bars, 2));
 
             Assert.Equal(99, shortState.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, shortState.StopEntryTarget.TargetPrice);
 
             shortState.Continue(bars[3]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.CompileTrade(), bars, 3));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.ResultTimeline[^1], bars, 3));
 
             Assert.Equal(98, shortState.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, shortState.StopEntryTarget.TargetPrice);
 
             shortState.Continue(bars[2]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.CompileTrade(), bars, 2));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.ResultTimeline[^1], bars, 2));
 
             Assert.Equal(98, shortState.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, shortState.StopEntryTarget.TargetPrice);

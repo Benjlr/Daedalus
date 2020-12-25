@@ -12,39 +12,46 @@ namespace DataStructures
         public int MarketStart { get; }
         public int MarketEnd { get; }
         public bool Win { get; }
-
-
+        
         public Trade(DatedResult[] results, int startIndex) {
             ResultTimeline = results;
             MarketStart = startIndex;
             MarketEnd = results.Length + startIndex-1;
-            FinalResult = results.Last().Return;
+            FinalResult = results[^1].Return;
             FinalDrawdown = results.Min(x=>x.Drawdown);
-            Win = results.Last().Return > 0;
+            Win = results[^1].Return > 0;
         }
 
         public int Duration => MarketEnd - MarketStart+1;
         public double[] ResultArray => ResultTimeline.Select(x => x.Return).ToArray();
     }
     
-    public readonly struct TradeCompiler
+    public class TradeCompiler
     {
         private int _index { get;  }
+        private double _currentDrawdown { get; set; }
+
         public List<DatedResult> ResultTimeline { get;  }
 
         public TradeCompiler(int start) {
             ResultTimeline = new List<DatedResult>();
             _index = start;
+            _currentDrawdown = 0;
         }
 
         public void AddResult(long date, double result, double drawdown) {
-            ResultTimeline.Add(new DatedResult(date, result, drawdown < 0 ? drawdown : 0));
+            ResultTimeline.Add(new DatedResult(date, result, CheckDrawdown(drawdown)));
         }
 
-        public Trade CompileTrade(bool callback = false) {
+        private double CheckDrawdown(double drawdown) {
+            if (drawdown < _currentDrawdown)
+                _currentDrawdown = drawdown;
+            return _currentDrawdown;
+        }
+
+        public Trade CompileTrade() {
             var trade= new Trade(ResultTimeline.ToArray(), _index);
-            if(callback)
-               Callback?.Invoke(trade);
+            Callback?.Invoke(trade);
             return trade;
         }
 
@@ -53,7 +60,6 @@ namespace DataStructures
 
     public readonly struct TradePrices
     {
-        
         public double EntryPrice { get; }
         public double StopPrice { get; }
         public double TargetPrice { get; }

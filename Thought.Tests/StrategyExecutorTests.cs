@@ -16,9 +16,9 @@ namespace Thought.Tests
         public List<Trade> TradesTrue { get; set; }
 
         public StrategyExecutorTestsFixture() {
-            var market = new Market(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(5000), "test");
+            var market = new Market(new RandomBars(new TimeSpan(0, 0, 5)).GenerateRandomMarket(500), "test");
             var myStrat = new StaticStrategy.StrategyBuilder().CreateStrategy
-                (new IRuleSet[1] {new DummyEntries(5, 5000)}, market, new StaticStopTarget(ExitPrices.NoStopTarget()));
+                (new IRuleSet[1] {new DummyEntries(5, 500)}, market, new StaticStopTarget(new ExitPrices(0.85, 1.15)));
             field = new TradingField(market,myStrat);
             exposure();
             noOverExposure();
@@ -36,7 +36,6 @@ namespace Thought.Tests
             executer.Init(field);
             TradesFalse = executer.ExecuteAll();
         }
-
     }
 
     public class StrategyExecutorTests : IClassFixture<StrategyExecutorTestsFixture>

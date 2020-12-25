@@ -28,28 +28,25 @@ namespace Thought.Tests
             _universe = new Universe();
             var marketsWheat = new Market(Markets.futures_wheat_5);
             var wheatStrat = new StaticStrategy.StrategyBuilder().CreateStrategy
-                (new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) }, marketsWheat, new StaticStopTarget(ExitPrices.NoStopTarget()));
+                (new IRuleSet[2] { new DummyEntries(40, 500), new DummyExits(31, 500) }, marketsWheat, new StaticStopTarget(ExitPrices.NoStopTarget()));
             _universe.AddMarket(marketsWheat, wheatStrat);
 
             var marketsAudUsd = new Market(Markets.aud_usd_5);
             var audusdStrat = new StaticStrategy.StrategyBuilder().CreateStrategy
-                (new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) }, marketsAudUsd, new StaticStopTarget(ExitPrices.NoStopTarget()));
+                (new IRuleSet[2] { new DummyEntries(40, 500), new DummyExits(31, 500) }, marketsAudUsd, new StaticStopTarget(ExitPrices.NoStopTarget()));
             _universe.AddMarket(marketsAudUsd, audusdStrat);
 
-            var listNames = Markets.ASX20();
-            foreach (var name in listNames) {
-                var market = new Market(name);
-                var marketStrat = new StaticStrategy.StrategyBuilder().CreateStrategy
-                    (new IRuleSet[2] { new DummyEntries(40, 1000), new DummyExits(31, 500) }, market, new StaticStopTarget(ExitPrices.NoStopTarget()));
-                _universe.AddMarket(market, marketStrat);
-            }
+            var asxIndex = new Market(Markets.bitcoin_5);
+            var asxIndexStrat = new StaticStrategy.StrategyBuilder().CreateStrategy
+                (new IRuleSet[2] { new DummyEntries(40, 500), new DummyExits(31, 500) }, asxIndex, new StaticStopTarget(ExitPrices.NoStopTarget()));
+            _universe.AddMarket(asxIndex, asxIndexStrat);
         }
 
         private void PrepareAndRunTests() {
             _testFactory = new UniverseTestFactory();
-            _fbeTests = _testFactory.RunTests(_universe, new TestFactory.FixedBarExitTestOptions(5, 40, 5));
-            _fsteTests = _testFactory.RunTests(_universe, new TestFactory.FixedStopTargetExitTestOptions(0.05, 0.05, 0.1, 15));
-            _randomExitests = _testFactory.RunTests(_universe, new TestFactory.RandomExitTestOptions(20, 15));
+            _fbeTests = _testFactory.RunTests(_universe, new TestFactory.FixedBarExitTestOptions(10, 20, 5));
+            _fsteTests = _testFactory.RunTests(_universe, new TestFactory.FixedStopTargetExitTestOptions(0.05, 0.05, 0.1, 5));
+            _randomExitests = _testFactory.RunTests(_universe, new TestFactory.RandomExitTestOptions(20, 30));
         }
     }
 
@@ -63,7 +60,7 @@ namespace Thought.Tests
 
         [Fact]
         private void ShouldOpenMultipleMarkets() {
-            Assert.Equal(22, _fixture._universe.Elements.Count);
+            Assert.Equal(3, _fixture._universe.Elements.Count);
         }
 
         [Fact]
@@ -73,9 +70,9 @@ namespace Thought.Tests
 
         [Fact]
         private void ShouldRunTestsOnUniverse() {
-            Assert.Equal(22, _fixture._fbeTests.Length);
-            Assert.Equal(22, _fixture._randomExitests.Length);
-            Assert.Equal(22, _fixture._fsteTests.Length);
+            Assert.Equal(3, _fixture._fbeTests.Length);
+            Assert.Equal(3, _fixture._randomExitests.Length);
+            Assert.Equal(3, _fixture._fsteTests.Length);
         }
 
         [Fact]
