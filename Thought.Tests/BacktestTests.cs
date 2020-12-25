@@ -10,6 +10,32 @@ using Xunit;
 
 namespace Thought.Tests
 {
+    public class BackTestSpy : Backtest
+    {
+        public BackTestSpy(Universe markets) : base(markets)
+        {
+        }
+
+        public List<long> ExecutionDates{get;set;} = new List<long>();
+
+  
+
+        public override List<Trade> RunBackTest(StrategyExecuter exec)
+        {
+            return base.RunBackTest(exec);
+        }
+
+        public override List<Trade> RunBackTestByDates(List<StrategyExecuter> exec)
+        {
+            return base.RunBackTestByDates(exec);
+        }
+
+        protected override void IterateThroughMarkets(){
+            ExecutionDates.Add(laggardDate);
+            base.IterateThroughMarkets();
+            return;
+        }
+    }
 
     public class BackTestFixture
     {
@@ -52,10 +78,6 @@ namespace Thought.Tests
 
         public BackTestFixture() {
             GenerateGeneraleBackTest();
-            GenerateStrategys();
-        }
-
-        private void GenerateStrategys() {
         }
 
         private void GenerateGeneraleBackTest() {
@@ -158,6 +180,31 @@ namespace Thought.Tests
             AssertDatedResult(new DatedResult(new DateTime(1, 1, 21).Ticks, 0.2 + 0.1 , (-0.15- 0.15) /2), results[3]);
             AssertDatedResult(new DatedResult(new DateTime(1, 1, 26).Ticks, 0.2, (-0.15)/1), results[4]);
             AssertDatedResult(new DatedResult(new DateTime(1, 1, 31).Ticks, 0.25, (-0.2)/1), results[5]);
+        }
+
+        [Fact]
+        private void ShouldExecuteBackTestsByDates(){
+            var minuteMarket = new Market(new RandomBars(new TimeSpan(0,1,0)).GenerateRandomMarket(400),"shortMarket");
+            var fiveminuteMarket = new Market(new RandomBars(new TimeSpan(0,5,0)).GenerateRandomMarket(80),"medMarket");
+            var tenminuteMarket = new Market(new RandomBars(new TimeSpan(0,10,0)).GenerateRandomMarket(40),"longMarket");
+
+            var rules = new IRuleSet[]{new DummyEntries(5,1000), new DummyExits(5,1000)};
+            var exits = ExitPrices.NoStopTarget();
+            var minuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, minuteMarket, new StaticStopTarget(exits));
+            var fiveminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, fiveminuteMarket, new StaticStopTarget(exits));
+            var tenminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, tenminuteMarket, new StaticStopTarget(exits));
+            var univers = new Universe();
+            univers.AddMarket(minuteMarket, minuteStrat);
+            univers.AddMarket(fiveminuteMarket, fiveminuteStrat);
+            univers.AddMarket(tenminuteMarket, tenminuteStrat);
+
+            var backtester = new BackTestSpy(univers);
+            var trades = backtester.RunBackTestByDates(new List<StrategyExecuter>()
+            {new LongStrategyExecuter(false), new LongStrategyExecuter(false), new LongStrategyExecuter(false)});
+            Assert.True(trades.Count > 0);
+            for(int i =1; i < backtester.ExecutionDates.Count; i++){
+                Assert.True(backtester.ExecutionDates[i-1] <= backtester.ExecutionDates[i]);
+            }
         }
 
         private void AssertDatedResult(DatedResult expected, DatedResult results) {
