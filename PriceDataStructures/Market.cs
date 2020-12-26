@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using DataStructures.StatsTools;
 
 namespace DataStructures
@@ -15,6 +17,15 @@ namespace DataStructures
         public Market(string name) {
             Id = Path.GetFileNameWithoutExtension(name);
             PriceData = DataLoader.LoadData(name);
+
+            var myTicks = new DateTime(2019,05,01).Ticks;
+            var myPriceList = PriceData.ToList();
+            for (int i = myPriceList .Count- 1; i >=0; i--) {
+                if(myPriceList[i].Open.Ticks < myTicks)
+                    myPriceList.RemoveAt(i);
+            }
+
+            PriceData = myPriceList.ToArray();
         }
 
         public Market Slice(int startIndex, int endIndex) {

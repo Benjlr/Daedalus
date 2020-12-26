@@ -8,6 +8,7 @@ using OxyPlot.Series;
 using RuleSets;
 using RuleSets.Entry;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -21,6 +22,7 @@ namespace Icarus.ViewModels
     {
         public StatsViewModel Stats { get; set; }
         public LineSeries mySeries { get; set; }
+        public LineSeries mySeries2 { get; set; }
         public PlotModel MyResults { get; set; }
         private ICommand _clickCommand;
         public ICommand ClickCommand => _clickCommand ??= new Commandler(Start, () => CanExecute);
@@ -48,28 +50,42 @@ namespace Icarus.ViewModels
                 LineStyle = LineStyle.Solid,
                 InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
             };
+
+            mySeries2 = new LineSeries()
+            {
+                Color = OxyColors.Blue,
+                LineStyle = LineStyle.Solid,
+                InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline
+            };
             MyResults.Series.Add(mySeries);
+            MyResults.Series.Add(mySeries2);
             MyResults.Annotations.Add(new LineAnnotation() { Type = LineAnnotationType.Vertical, X = 0 });
         }
 
         double capital = 7000;
         double results = 0;
+        double allResults = 0;
+        List<Trade> tardeos = new List<Trade>();
+        List<double> stats = new List<double>();
+
         public void Update(Trade myTrade) {
 
-            Stats.UpdateStats(myTrade);
+            tardeos.Add(myTrade);
+            allResults += myTrade.FinalResult;
+            if (stats.Count > 5) {
+                var stat = new TradeStatistics(stats.Skip(stats.Count - 5).ToList());
+                if (stat.AverageExpectancy > 0) {
+                    Stats.UpdateStats(myTrade);
+                    results += myTrade.FinalResult;
+                }
+            }
 
-            results += myTrade.FinalResult;
-            //Trace.Write(myTrade.FinalResult);
+            stats.Add(myTrade.FinalResult);
 
             Application.Current.Dispatcher.Invoke(() => {
-                //for (int i = 0; i < myTrade.ResultArray.Length; i++) {
-                //    var resulto = capital * (myTrade.ResultArray[i] + 1);
-
-                //    mySeries.Points.Add(new DataPoint(mySeries.Points.Count + 1, resulto));
-
-                //}
-                capital += (myTrade.FinalResult+1) *((capital*0.02));
+                //capital += (myTrade.FinalResult+1) *((capital*0.02));
                 mySeries.Points.Add(new DataPoint(mySeries.Points.Count + 1, results));
+                mySeries2.Points.Add(new DataPoint(mySeries2.Points.Count + 1, allResults));
                 MyResults.Axes.First(x => x.Tag == "xaxis").Maximum = mySeries.Points.Count + 5;
 
                 
@@ -86,13 +102,13 @@ namespace Icarus.ViewModels
             TradeCompiler.Callback = Update;
 
             Universe myunivers = new Universe();
-            var stocks = Markets.ASX200();
+            var stocks = Markets.ASX300();
             for(int i = 0; i< stocks.Count(); i++ ){
                 try {
                     var stock = new Market(stocks[i]);
                     var stratto = new StaticStrategy.StrategyBuilder().
                         CreateStrategy(new IRuleSet[] { new ATRContraction(), }, stock, 
-                            new StaticStopTarget(new ExitPrices(0.95,1.35)));
+                            new TrailingStopPercentage(new ExitPrices(0.93,1.35),0.15));
 
                     myunivers.AddMarket(stock, stratto);
                 }
@@ -120,10 +136,11 @@ namespace Icarus.ViewModels
           //  myunivers.AddMarket(bitcoin, stratBitcoin);
            // myunivers.AddMarket(sp500, stratSp500);
 
-            var backTest = new Backtest(myunivers);
-            backTest.RunBackTest(new LongStrategyExecuter(false));
+            //var backTest = new LinearBacktest(myunivers, new LongStrategyExecuter(false));
+            //var trades = backTest.RunBackTest();
 
-
+            var backTest = new Backtest(myunivers, MarketSide.Bull, true);
+            var trades = backTest.RunBackTestByDates();
         }
 
     }

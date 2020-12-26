@@ -63,15 +63,15 @@ namespace RuleSets.Entry
             var doubles = data.Select(x => x.Close.Mid).ToList();
 
 
-            for (int i = 21; i < data.Count; i++) {
+            for (int i = 60; i < data.Count; i++) {
                 //var yesList = new List<bool>();
                 //for (int j = 1; j < 90; j++) {
                 //    if(GetPositionInRange(doubles.GetRange(i - j, j),data[i].Close.Mid)<0.7 ) yesList.Add(true);
                 //}
 
 
-                var myVOl = GetPositionInRange(volavg.GetRange(i - 20, 20), volavg[i]);
-                if (atrPC[i] == 0.0 && myVOl < 0.2  /*&& yesList.Count > 30*/) 
+                var myVOl = GetPositionInRange(volavg.GetRange(i - 30, 30), volavg[i]);
+                if (atrPC[i] == 0.0 && myVOl < 0.1  /*&& yesList.Count > 30*/) 
                     Satisfied[i] = true; }
 
         }

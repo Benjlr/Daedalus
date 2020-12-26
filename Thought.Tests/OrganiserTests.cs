@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using DataStructures;
+﻿using DataStructures;
+using Logic;
 using Logic.Metrics;
 using RuleSets;
 using RuleSets.Entry;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using DataStructures.StatsTools;
-using Logic;
 using TestUtils;
 using Xunit;
 
