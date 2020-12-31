@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.VisualBasic;
 
 namespace DataStructures
 {
@@ -39,6 +38,14 @@ namespace DataStructures
             Low = new BidAsk(low, low, time.Ticks);
             Close = new BidAsk(close, close, time.Ticks);
             Volume = vol;
+        }
+
+        public BidAskData(int price) {
+            Open = new BidAsk(price, price, 1);
+            High = new BidAsk(price, price, 1);
+            Low = new BidAsk(price, price, 1);
+            Close = new BidAsk(price, price, 1);
+            Volume = 1;
         }
     }
 

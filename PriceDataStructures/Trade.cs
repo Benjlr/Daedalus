@@ -63,11 +63,13 @@ namespace DataStructures
         public double EntryPrice { get; }
         public double StopPrice { get; }
         public double TargetPrice { get; }
+        public ExitPrices CurrentExits { get; }
 
         public TradePrices(ExitPrices exits, double entryPrice) {
             EntryPrice = entryPrice;
             StopPrice = entryPrice * exits.StopPercentage;
             TargetPrice = entryPrice * exits.TargetPercentage;
+            CurrentExits = exits;
         }
     }
 

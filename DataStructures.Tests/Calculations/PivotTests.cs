@@ -10,7 +10,7 @@ namespace DataStructures.Tests.Calculations
     {
         [Fact]
         private void ShouldCalculatePivotCorrectly() {
-            var pivs = Pivots.Calculate(data);
+            var pivs = Pivots.Calculate(data.ToArray());
             Assert.Equal(new List<PivotStruct>()
             {
                 new PivotStruct(1,1,1),

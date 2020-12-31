@@ -4,9 +4,8 @@ namespace DataStructures
 {
     public abstract class PriceExitCalculator : ExitInterface
     {
-        protected ExitPrices _currentExit { get; set; }
         public ExitPrices InitialExit { get; protected set; }
-        public abstract ExitPrices NewExit(DatedResult trade, BidAskData[] prices, int index);
+        public abstract ExitPrices NewExit(DatedResult trade, ExitPrices currentExit, BidAskData[] prices, int index);
     }
 
     public class TrailingStopPercentage : PriceExitCalculator
@@ -16,7 +15,6 @@ namespace DataStructures
         public TrailingStopPercentage(ExitPrices initialExits, double trailingPercent) {
             GetDir(initialExits);
             InitialExit = initialExits;
-            _currentExit = initialExits;
             _trailingPercentage = trailingPercent;
         }
 
@@ -27,16 +25,50 @@ namespace DataStructures
                 _side = MarketSide.Bull;
         }
 
-        public override ExitPrices NewExit(DatedResult trade, BidAskData[] prices, int index) {
+        public override ExitPrices NewExit(DatedResult trade, ExitPrices currentExit, BidAskData[] prices, int index) {
             switch (_side) {
                 case MarketSide.Bull:
-                    if ((trade.Return + 1) - _currentExit.StopPercentage > _trailingPercentage)
-                        _currentExit = new ExitPrices((trade.Return + 1) - _trailingPercentage, _currentExit.TargetPercentage);
-                    return _currentExit;
+                    if ((trade.Return + 1) - currentExit.StopPercentage > _trailingPercentage && (trade.Return + 1) - _trailingPercentage > currentExit.StopPercentage) 
+                        currentExit = new ExitPrices((trade.Return + 1) - _trailingPercentage, currentExit.TargetPercentage);
+                    return currentExit;
                 case MarketSide.Bear:
-                    if (1-_currentExit.StopPercentage - (trade.Return)   < -_trailingPercentage)
-                        _currentExit = new ExitPrices((1-trade.Return) + _trailingPercentage, _currentExit.TargetPercentage);
-                    return _currentExit;
+                    if (1- currentExit.StopPercentage - (trade.Return)   < -_trailingPercentage)
+                        currentExit = new ExitPrices((1-trade.Return) + _trailingPercentage, currentExit.TargetPercentage);
+                    return currentExit;
+                default: throw new Exception("What dir idiot?");
+            }
+        }
+    }
+
+    public class VariableTrailingStopPercentage : PriceExitCalculator
+    {
+        private MarketSide _side { get; set; }
+        private double _trailingPercentage { get; }
+        public VariableTrailingStopPercentage(ExitPrices initialExits, double trailingPercent) {
+            GetDir(initialExits);
+            InitialExit = initialExits;
+            _trailingPercentage = trailingPercent;
+        }
+
+        private void GetDir(ExitPrices initialExits) {
+            if (initialExits.StopPercentage > 1)
+                _side = MarketSide.Bear;
+            else
+                _side = MarketSide.Bull;
+        }
+
+        public override ExitPrices NewExit(DatedResult trade, ExitPrices currentExit, BidAskData[] prices, int index) {
+            switch (_side) {
+                case MarketSide.Bull:
+                    var variableTrailing = (1 - (trade.Return/(currentExit.TargetPercentage - 1))) * _trailingPercentage;
+                    if ((trade.Return + 1) - currentExit.StopPercentage > variableTrailing && (trade.Return + 1) - variableTrailing > currentExit.StopPercentage) 
+                        currentExit = new ExitPrices((trade.Return + 1) - variableTrailing, currentExit.TargetPercentage);
+                    return currentExit;
+                case MarketSide.Bear:
+                    variableTrailing = (1 + (trade.Return / (currentExit.TargetPercentage - 1))) * _trailingPercentage;
+                    if (currentExit.StopPercentage - (1-trade.Return )  > variableTrailing && (1-trade.Return) + variableTrailing < currentExit.StopPercentage)
+                        currentExit = new ExitPrices((1-trade.Return ) + variableTrailing, currentExit.TargetPercentage);
+                    return currentExit;
                 default: throw new Exception("What dir idiot?");
             }
         }
@@ -47,17 +79,15 @@ namespace DataStructures
 
         public StaticStopTarget(ExitPrices initialExits) {
             InitialExit = initialExits;
-            _currentExit = initialExits;
         }
-        public override ExitPrices NewExit(DatedResult trade, BidAskData[] prices, int index) {
-            _currentExit = InitialExit;
-            return _currentExit;
+        public override ExitPrices NewExit(DatedResult trade, ExitPrices currentExit, BidAskData[] prices, int index) {
+            return currentExit;
         }
     }
 
     public interface ExitInterface
     {
         ExitPrices InitialExit { get;  }
-        ExitPrices NewExit(DatedResult trade, BidAskData[] prices, int index);
+        ExitPrices NewExit(DatedResult trade, ExitPrices currentExit, BidAskData[] prices, int index);
     }
 }

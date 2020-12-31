@@ -70,11 +70,12 @@ namespace Logic.Tests
 
         [Fact]
         private void ShouldGenerateInitialStopTarget() {
+            var originalExit = ExitPrices.StopOnly(0.98);
             var bars = new RandomBars(TimeSpan.FromDays(1)).GenerateRandomMarket(1);
             var strat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[0], new Market(bars, "name"),
-                new StaticStopTarget(ExitPrices.StopOnly(0.98)));
-            Assert.Equal(ExitPrices.StopOnly(0.98).StopPercentage, strat.Stops.NewExit(new DatedResult(),new BidAskData[0],  0).StopPercentage);
-            Assert.Equal(ExitPrices.StopOnly(0.98).TargetPercentage, strat.Stops.NewExit(new DatedResult(), new BidAskData[0], 0).TargetPercentage);
+                new StaticStopTarget(originalExit));
+            Assert.Equal(ExitPrices.StopOnly(0.98).StopPercentage, strat.Stops.NewExit(new DatedResult(), originalExit,new BidAskData[0],  0).StopPercentage);
+            Assert.Equal(ExitPrices.StopOnly(0.98).TargetPercentage, strat.Stops.NewExit(new DatedResult(), originalExit, new BidAskData[0], 0).TargetPercentage);
         }
     }
 }

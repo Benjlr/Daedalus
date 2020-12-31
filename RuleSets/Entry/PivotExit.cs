@@ -12,16 +12,14 @@ namespace RuleSets.Entry
             Order = ActionPoint.Exit;
         }
 
-        public override void CalculateBackSeries(BidAskData[] rawData)
-        {
-            var data = rawData.ToList();
-            Satisfied = new bool[data.Count];
-            var pivots = Pivots.Calculate(data);
-            var hourly = SessionCollate.CollateToHourly(data);
+        public override void CalculateBackSeries(BidAskData[] rawData) {
+            Satisfied = new bool[rawData.Length];
+            var pivots = Pivots.Calculate(rawData);
+            var hourly = SessionCollate.CollateToHourly(rawData.ToList());
             var nrwrsHourly = NRWRBars.Calculate(hourly);
 
 
-            for (int i = 2; i < data.Count; i++)
+            for (int i = 2; i < rawData.Length; i++)
             {
                 var lastHighPiv = -1;
 
@@ -34,9 +32,9 @@ namespace RuleSets.Entry
                     }
                 }
 
-                var lastHighPivCost = data[lastHighPiv].High.Mid;
+                var lastHighPivCost = rawData[lastHighPiv].High.Mid;
 
-                if (data[i].High.Mid > lastHighPivCost)
+                if (rawData[i].High.Mid > lastHighPivCost)
                 {
                     //var currenthrlyIndex = hourly.IndexOf(hourly.First(x => x.Close.Time.Hour == data[i].Open.Time.AddHours(-1).Hour));
                     //if (nrwrsHourly[currenthrlyIndex] < -6)

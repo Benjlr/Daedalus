@@ -60,7 +60,7 @@ namespace Thought
                 if (Markets.Elements[i].MarketData.PriceData[0].Open.Ticks < _earliestDate)
                     _earliestDate = Markets.Elements[i].MarketData.PriceData[0].Close.Ticks;
 
-            while (!_results.Select(x=>x.Finished).All(x => x))
+            while (_results.Any(x=>!x.Finished) && _earliestDate != long.MaxValue)
                 IterateThroughMarkets();
             return Results;
         }

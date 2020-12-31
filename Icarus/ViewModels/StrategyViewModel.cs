@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.TextFormatting;
 using Thought;
 using ViewCommon.Utils;
 
@@ -62,29 +63,42 @@ namespace Icarus.ViewModels
             MyResults.Annotations.Add(new LineAnnotation() { Type = LineAnnotationType.Vertical, X = 0 });
         }
 
-        double capital = 7000;
+        double capital = 0;
+        double risk = 7000*0.02;
         double results = 0;
         double allResults = 0;
         List<Trade> tardeos = new List<Trade>();
-        List<double> stats = new List<double>();
 
         public void Update(Trade myTrade) {
+            List<double> stats2 = new List<double>();
 
-            tardeos.Add(myTrade);
-            allResults += myTrade.FinalResult;
-            if (stats.Count > 5) {
-                var stat = new TradeStatistics(stats.Skip(stats.Count - 5).ToList());
-                if (stat.AverageExpectancy > 0) {
-                    Stats.UpdateStats(myTrade);
-                    results += myTrade.FinalResult;
-                }
+            var tradeStart = myTrade.ResultTimeline[0].Date;
+            var amount = 20;
+            var goodAmount = 0.3;
+            var cutoffAmount = 15;
+
+            var validTardes = tardeos.Where(x => x.ResultTimeline.Any(y => y.Date < tradeStart) && x.ResultTimeline.Any(y => y.Date > tradeStart)).ToList();
+            var actualLast5 = validTardes.Skip(validTardes.Count - amount).ToList().OrderBy(x => x.ResultTimeline[^1].Date).ToList();
+            for (int i = 0; i < actualLast5.Count; i++) {
+                stats2.Add(actualLast5[i].ResultTimeline.Last(x => x.Date < tradeStart).Return);
             }
 
-            stats.Add(myTrade.FinalResult);
+
+
+            tardeos.Add(myTrade);
+            //allResults += myTrade.FinalResult;
+            if (actualLast5.Count >= cutoffAmount) {
+                if (stats2.Count(x=>x>0) / (double)stats2.Count > goodAmount) {
+                    Stats.UpdateStats(myTrade);
+                    results += myTrade.FinalResult;
+                    capital += (600) * myTrade.FinalResult;
+                }
+            }
+            allResults += (600) * myTrade.FinalResult;
+
 
             Application.Current.Dispatcher.Invoke(() => {
-                //capital += (myTrade.FinalResult+1) *((capital*0.02));
-                mySeries.Points.Add(new DataPoint(mySeries.Points.Count + 1, results));
+                mySeries.Points.Add(new DataPoint(mySeries.Points.Count + 1, capital));
                 mySeries2.Points.Add(new DataPoint(mySeries2.Points.Count + 1, allResults));
                 MyResults.Axes.First(x => x.Tag == "xaxis").Maximum = mySeries.Points.Count + 5;
 
@@ -102,13 +116,13 @@ namespace Icarus.ViewModels
             TradeCompiler.Callback = Update;
 
             Universe myunivers = new Universe();
-            var stocks = Markets.ASX300();
-            for(int i = 0; i< stocks.Count(); i++ ){
+            var stocks = Markets.ASX200();
+            for (int i = 0; i < stocks.Count(); i++) {
                 try {
                     var stock = new Market(stocks[i]);
                     var stratto = new StaticStrategy.StrategyBuilder().
-                        CreateStrategy(new IRuleSet[] { new ATRContraction(), }, stock, 
-                            new TrailingStopPercentage(new ExitPrices(0.93,1.35),0.15));
+                        CreateStrategy(new IRuleSet[] { new PivotPoint() ,   }, stock,
+                            new TrailingStopPercentage(new ExitPrices(0.93, 2), 0.15));
 
                     myunivers.AddMarket(stock, stratto);
                 }
@@ -116,30 +130,35 @@ namespace Icarus.ViewModels
                     Console.WriteLine(e);
                     //throw;
                 }
-          
+
 
             }
 
 
-          //  Market aumarket = new Market(Markets.asx200_cash_5);
-          //  Market audUdsd = new Market(Markets.aud_usd_5);
-           // Market bitcoin = new Market(Markets.bitcoin_5);
+            //Market aumarket = new Market(Markets.asx200_cash_5);
+            //Market audUdsd = new Market(Markets.aud_usd_5);
+            //Market bitcoin = new Market(Markets.bitcoin_5);
             //Market sp500 = new Market(Markets.sp500_cash_5);
 
-           // var strataumarket = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[] { new InvestorBotEntry(), new ATRContraction(),   }, aumarket);
-           // var stratAudUSd = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[] {new InvestorBotEntry(),new ATRContraction(), }, audUdsd);
-           // var stratBitcoin = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[] {new InvestorBotEntry(),new ATRContraction(), }, bitcoin);
-           // var stratSp500 = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[] {new InvestorBotEntry(),new ATRContraction(), }, sp500);
+            //var strataumarket = new StaticStrategy.StrategyBuilder().
+            //    CreateStrategy(new IRuleSet[] { new ATRContraction(), }, aumarket,
+            //        new TrailingStopPercentage(new ExitPrices(0.95, 1.2), 0.01));
+            //var stratAudUSd = new StaticStrategy.StrategyBuilder().
+            //    CreateStrategy(new IRuleSet[] { new ATRContraction(), }, audUdsd,
+            //        new TrailingStopPercentage(new ExitPrices(0.98, 1.2), 0.0001));
+            //var stratBitcoin = new StaticStrategy.StrategyBuilder().
+            //    CreateStrategy(new IRuleSet[] { new ATRContraction(), }, bitcoin,
+            //        new TrailingStopPercentage(new ExitPrices(0.98, 1.2), 0.0001));
+            //var stratSp500 = new StaticStrategy.StrategyBuilder().
+            //    CreateStrategy(new IRuleSet[] { new ATRContraction(), }, sp500,
+            //        new TrailingStopPercentage(new ExitPrices(0.98, 1.2), 0.0001));
 
-        //    myunivers.AddMarket(aumarket, strataumarket);
-         //   myunivers.AddMarket(audUdsd, stratAudUSd);
-          //  myunivers.AddMarket(bitcoin, stratBitcoin);
-           // myunivers.AddMarket(sp500, stratSp500);
+            //myunivers.AddMarket(aumarket, strataumarket);
+            //myunivers.AddMarket(audUdsd, stratAudUSd);
+            //myunivers.AddMarket(bitcoin, stratBitcoin);
+            //myunivers.AddMarket(sp500, stratSp500);
 
-            //var backTest = new LinearBacktest(myunivers, new LongStrategyExecuter(false));
-            //var trades = backTest.RunBackTest();
-
-            var backTest = new Backtest(myunivers, MarketSide.Bull, true);
+            var backTest = new Backtest(myunivers, MarketSide.Bull, false);
             var trades = backTest.RunBackTestByDates();
         }
 

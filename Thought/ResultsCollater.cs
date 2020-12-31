@@ -56,8 +56,8 @@ namespace Thought
         private bool CheckRelevant(TimeSpan time, Trade t, long i) {
             if (t.ResultTimeline.Last().Date < i)
                 return true;
-            if (t.ResultTimeline.First().Date > i + time.Ticks)
-                return true;
+            //if (t.ResultTimeline.First().Date > i + time.Ticks)
+            //    return true;
             return false;
         }
 

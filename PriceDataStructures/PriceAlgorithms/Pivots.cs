@@ -20,11 +20,11 @@ namespace DataStructures.PriceAlgorithms
     public class Pivots
     {
 
-        public static List<PivotStruct> Calculate(List<BidAskData> tlist) {
+        public static List<PivotStruct> Calculate(BidAskData[] tlist) {
             
             var calcedPivs = new List<PivotStruct>();
             int order = 1;
-            for (var i = 1; i < tlist.Count - 1; i++) {
+            for (var i = 1; i < tlist.Length - 1; i++) {
                 var higher = false;
                 var lower = false;
 

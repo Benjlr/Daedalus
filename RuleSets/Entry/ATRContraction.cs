@@ -8,41 +8,32 @@ namespace RuleSets.Entry
 {
     public class ATRContraction : RuleBase
     {
-        public ATRContraction()
-        {
+        public ATRContraction() {
             Dir = MarketSide.Bull;
             Order = ActionPoint.Entry;
         }
 
-        public  void aasass(List<BidAskData> data, BidAskData[] rawData)
-        {
-            var atrPC = AverageTrueRange.CalculateATRPC(data);
-            var atr = AverageTrueRange.Calculate(data, 20);
-            var twentyMa = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
-            var fissy = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 50);
-            var tenMA = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 10);
-            var SixMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 6);
+        public  void CalculateBackSeridsdes(BidAskData[] rawData) {
+            var atrPC = AverageTrueRange.CalculateATRPC(rawData.ToList());
+            var atr = AverageTrueRange.Calculate(rawData.ToList());
+            var twentyMa = MovingAverage.ExponentialMovingAverage(rawData.Select(x => x.Close.Mid).ToList(), 20);
+            var fissy = MovingAverage.SimpleMovingAverage(rawData.Select(x => x.Close.Mid).ToList(), 50);
+            var tenMA = MovingAverage.SimpleMovingAverage(rawData.Select(x => x.Close.Mid).ToList(), 10);
+            var SixMA = MovingAverage.ExponentialMovingAverage(rawData.Select(x => x.Close.Mid).ToList(), 6);
 
-            Satisfied = new bool[data.Count];
+            Satisfied = new bool[rawData.Length];
             var coun = 0;
 
-            for (int i = 50; i < data.Count; i++)
+            for (int i = 50; i < rawData.Length; i++)
             {
                 var sixtoTen = Math.Abs(SixMA[i] - tenMA[i]);
 
                 if (sixtoTen < atr[i] * 0.5) {
                     coun++;
-                    if (coun > 7 && twentyMa[i] > fissy[i] && atrPC[i - 1] == 0.0 && atrPC[i] != 0.0 && rawData[i].Open.Ask - rawData[i].Open.Bid <= 3) Satisfied[i] = true;
+                    if (coun > 7 && twentyMa[i] > fissy[i] && atrPC[i - 1] == 0.0 && atrPC[i] != 0.0 ) Satisfied[i] = true;
                 }
                 else coun = 0;
             }
-
-            //var atrPC = AverageTrueRange.CalculateATRPC(data);
-
-            //for (int i = 50; i < data.Count; i++)
-            //{
-            //    if (atrPC[i - 1] == 0.0 && atrPC[i] != 0.0 && twentyMa[i] > fissy[i] ) Satisfied[i] = true;
-            //}
         }
         public double GetPositionInRange(List<double> myInput, double value) {
             var Min = myInput.Min();
@@ -50,32 +41,17 @@ namespace RuleSets.Entry
             return (value - Min) / (Max - Min);
         }
 
-
-
-
-        public override void CalculateBackSeries(BidAskData[] rawData)
-        {
+        public override void CalculateBackSeries(BidAskData[] rawData) {
             var data = rawData.ToList();
-
-            var atrPC = AverageTrueRange.CalculateATRPC(data);
+            var atrPC = AverageTrueRange.CalculateATRPC(data,2,30);
+            var volavg = MovingAverage.SimpleMovingAverage(rawData.Select(x => x.Volume).ToList(), 40);
             Satisfied = new bool[data.Count];
-            var volavg = rawData.Select(x => x.Volume).ToList();
-            var doubles = data.Select(x => x.Close.Mid).ToList();
 
-
-            for (int i = 60; i < data.Count; i++) {
-                //var yesList = new List<bool>();
-                //for (int j = 1; j < 90; j++) {
-                //    if(GetPositionInRange(doubles.GetRange(i - j, j),data[i].Close.Mid)<0.7 ) yesList.Add(true);
-                //}
-
-
-                var myVOl = GetPositionInRange(volavg.GetRange(i - 30, 30), volavg[i]);
-                if (atrPC[i] == 0.0 && myVOl < 0.1  /*&& yesList.Count > 30*/) 
-                    Satisfied[i] = true; }
-
+            for (int i = 40; i < data.Count; i++) {
+                var myVOl = GetPositionInRange(volavg, data[i].Volume);
+                if (atrPC[i] == 0.0 && myVOl < 0.6  ) Satisfied[i] = true;
+            }
         }
-
     }
 
     public class ATRContractionLong : RuleBase
@@ -94,11 +70,10 @@ namespace RuleSets.Entry
             var data = rawData.ToList();
             var atrPC = AverageTrueRange.CalculateATRPC(data);
             Satisfied = new bool[data.Count];
-            //var sma = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close).ToList(), 200);
             var volavg = rawData.Select(x => x.Volume).ToList();
             for (int i = 30; i < data.Count; i++) {
                 var myVOl = GetPositionInRange(volavg.GetRange(i - 20, 20), volavg[i]);
-                if (/*sma[i - 1] < data[i - 1].Close &&*/ atrPC[i] == 0.0 && myVOl < 0.1 && rawData[i].Open.Ask - rawData[i].Open.Bid <= 4)
+                if (atrPC[i] == 0.0 && myVOl < 0.1 && rawData[i].Open.Ask - rawData[i].Open.Bid <= 4)
                     Satisfied[i] = true;
             }
         }

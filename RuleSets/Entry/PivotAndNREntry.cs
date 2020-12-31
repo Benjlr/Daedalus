@@ -1,7 +1,7 @@
 ﻿using DataStructures;
 using DataStructures.PriceAlgorithms;
+using DataStructures.StatsTools;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace RuleSets.Entry
@@ -14,30 +14,61 @@ namespace RuleSets.Entry
             Order = ActionPoint.Entry;
         }
 
-        public override void CalculateBackSeries(BidAskData[] rawData)
-        {
-            var data = rawData.ToList();
-            Satisfied = new bool[data.Count];
-            var pivots = Pivots.Calculate(data);
-            var hourly = SessionCollate.CollateToHourly(data);
-            var nrwrsHourly = NRWRBars.Calculate(hourly);
+        public override void CalculateBackSeries(BidAskData[] rawData) {
+            Satisfied = new bool[rawData.Length];
+            var pivots = Pivots.Calculate(rawData).Where(x=>x.HighPivot > 1 || x.LowPivot >1).ToList();
+
+            var endPive = pivots[^1].HighPivot > 1 ? 1 : -1;
+
+            for (int i = pivots.Count-2; i >= 0; i--) {
+                if (endPive == -1) {
+                    if (pivots[i].HighPivot < 2) {
+                        pivots.RemoveAt(i);
+                    }
+                    else endPive = 1;
+                }
+                else {
+                    if (pivots[i].LowPivot < 2) {
+                        pivots.RemoveAt(i);
+                    }
+                    else endPive = -1;
+                }
+            }
 
 
-            for (int i = 2; i < data.Count; i++)
-            {
-                var pivs = pivots.GetRange(0, i).Where(x => x.HighPivot > 0 && x.LowPivot > 0).ToList();
+            var startpive = pivots[0].HighPivot > 1 ? 1 : -1;
+            for (int i = 1; i < pivots.Count; i++) {
+                if (startpive == -1) {
+                    if (pivots[i].HighPivot < 2) {
+                        String a = "";
+                    }
+                    else startpive = 1;
+                }
+                else {
+                    if (pivots[i].LowPivot < 2) {
+                        String a = "";
+                    }
+                    else startpive = -1;
+                }
+
+            }
+
+
+
+            for (int i = 3; i < pivots.Count; i++) {
+                var pivs = ListTools.GetNewListByEndIndexAndCount(pivots, i, 3);
                 if (pivs.Count < 3) continue;
                 var closestPiv = pivots[pivs.Count - 1];
                 var seondclosestPiv = pivots[pivs.Count - 2];
                 var furthestPiv = pivots[pivs.Count - 3];
 
-                if (closestPiv.HighPivot == 0) continue;
-                if (seondclosestPiv.LowPivot == 0) continue;
-                if (furthestPiv.HighPivot == 0) continue;
+                if (closestPiv.HighPivot < 2) continue;
+                if (seondclosestPiv.LowPivot < 2) continue;
+                if (furthestPiv.HighPivot < 2) continue;
 
-                var ClosestPivCost = data[closestPiv.Index].High.Mid;
-                var seondclosestPivCXot = data[seondclosestPiv.Index].Low.Mid;
-                var furthestpivcost = data[furthestPiv.Index].High.Mid;
+                var ClosestPivCost = rawData[closestPiv.Index].High.Mid;
+                var seondclosestPivCXot = rawData[seondclosestPiv.Index].Low.Mid;
+                var furthestpivcost = rawData[furthestPiv.Index].High.Mid;
 
                 if (ClosestPivCost > furthestpivcost &&
                     ClosestPivCost > seondclosestPivCXot)
@@ -45,11 +76,8 @@ namespace RuleSets.Entry
 
                     var dist = Math.Abs(ClosestPivCost - seondclosestPivCXot);
 
-                    if (data[i].High.Mid > ClosestPivCost - 0.8 * dist)
-                    {
+                    if (rawData[i].High.Mid > ClosestPivCost - 0.5 * dist) {
                         Satisfied[i] = true;
-                        var currenthrlyIndex = hourly.IndexOf(hourly.First(x => x.Close.TicksToTime.Hour == data[i].Open.TicksToTime.AddHours(-1).Hour));
-                        if (nrwrsHourly[currenthrlyIndex] < -7) Satisfied[i] = true;
                     }
 
 

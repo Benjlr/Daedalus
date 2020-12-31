@@ -52,12 +52,16 @@ namespace Logic
             private StaticStrategy Iterate(Market myMarket, ExitInterface stops) {
                 var _entries = new bool[myMarket.PriceData.Length];
                 var _exits = new bool[myMarket.PriceData.Length];
-                for (int i = 0; i < myMarket.PriceData.Length; i++) {
-                    if (_entryRules.Any(x => x.Satisfied[i])) _entries[i] = true;
-                    if (_exitRules.Any(x => x.Satisfied[i])) _exits[i] = true;
-                }
-
+                for (int i = 0; i < myMarket.PriceData.Length; i++) 
+                    GetRules(i, _entries, _exits);
                 return new StaticStrategy(_entries, _exits, stops);
+            }
+
+            private void GetRules(int i, bool[] _entries, bool[] _exits) {
+                if (_entryRules.All(x => x.Satisfied[i])
+                    && _entryRules.Any()) _entries[i] = true;
+                if (_exitRules.All(x => x.Satisfied[i])
+                    && _exitRules.Any()) _exits[i] = true;
             }
         }
     }

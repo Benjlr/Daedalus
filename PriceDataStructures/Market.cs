@@ -18,7 +18,7 @@ namespace DataStructures
             Id = Path.GetFileNameWithoutExtension(name);
             PriceData = DataLoader.LoadData(name);
 
-            var myTicks = new DateTime(2019,05,01).Ticks;
+            var myTicks = new DateTime(2017,9,01).Ticks;
             var myPriceList = PriceData.ToList();
             for (int i = myPriceList .Count- 1; i >=0; i--) {
                 if(myPriceList[i].Open.Ticks < myTicks)
