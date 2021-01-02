@@ -12,7 +12,7 @@ namespace Thought.Tests
 {
     public class BackTestSpy : Backtest
     {
-        public BackTestSpy(Universe markets) : base(markets, MarketSide.Bull, false)
+        public BackTestSpy(Universe markets, ITradeCollator collator) : base(markets, MarketSide.Bull, collator, false)
         {
         }
 
@@ -26,10 +26,14 @@ namespace Thought.Tests
 
     public class BackTestFixture
     {
-        public BackTestSpy BackTestSpyOne { get; private set; }
-        public BackTestSpy BackTestSpyTwo { get; private set; }
-        public BackTestSpy BackTestSpyThree { get; private set; }
+        public BackTestSpy BackTestSpyOne { get; set; }
+        public BackTestSpy BackTestSpyTwo { get;  set; }
+        public BackTestSpy BackTestSpyThree { get; set; }
         
+        public ITradeCollator CollatorOne { get; set; }
+        public ITradeCollator CollatorTwo { get; set; }
+        public ITradeCollator CollatorThree { get; set; }
+
         public BackTestFixture() {
             GenerateBacktestSpies();
         }
@@ -45,34 +49,36 @@ namespace Thought.Tests
             var fiveminuteMarket = new Market(new RandomBars(new TimeSpan(0, 10, 0)).GenerateRandomMarket(80), "medMarket");
             var tenminuteMarket = new Market(new RandomBars(new TimeSpan(0, 15, 0)).GenerateRandomMarket(40), "longMarket");
 
-            var rules = new IRuleSet[] { new DummyEntries(5, 1000), new DummyExits(5, 1000) };
+            var rules = new IRuleSet[] { new DummyEntries(5, 1000) };
             var exits = ExitPrices.NoStopTarget();
-            var minuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, minuteMarket, new StaticStopTarget(exits));
-            var fiveminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, fiveminuteMarket, new StaticStopTarget(exits));
-            var tenminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, tenminuteMarket, new StaticStopTarget(exits));
+            var minuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, minuteMarket, new TimedExit(exits, MarketSide.Bull, 3));
+            var fiveminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, fiveminuteMarket, new TimedExit(exits, MarketSide.Bull, 3));
+            var tenminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, tenminuteMarket, new TimedExit(exits, MarketSide.Bull, 3));
             var univers = new Universe();
             univers.AddMarket(minuteMarket, minuteStrat);
             univers.AddMarket(fiveminuteMarket, fiveminuteStrat);
             univers.AddMarket(tenminuteMarket, tenminuteStrat);
 
-            BackTestSpyOne = new BackTestSpy(univers);
+            CollatorOne = new SimpleCollator();
+            BackTestSpyOne = new BackTestSpy(univers, CollatorOne);
         }
         private void SpyTwo() {
             var minuteMarket = new Market(new RandomBars(new TimeSpan(0, 5, 0)).GenerateRandomMarket(50), "shortMarket");
             var fiveminuteMarket = new Market(new RandomBars(new TimeSpan(0, 19, 0)).GenerateRandomMarket(110), "medMarket");
             var tenminuteMarket = new Market(new RandomBars(new TimeSpan(0, 35, 0)).GenerateRandomMarket(200), "longMarket");
 
-            var rules = new IRuleSet[] { new DummyEntries(5, 1000), new DummyExits(5, 1000) };
+            var rules = new IRuleSet[] { new DummyEntries(5, 1000) };
             var exits = ExitPrices.NoStopTarget();
-            var minuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, minuteMarket, new StaticStopTarget(exits));
-            var fiveminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, fiveminuteMarket, new StaticStopTarget(exits));
-            var tenminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, tenminuteMarket, new StaticStopTarget(exits));
+            var minuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, minuteMarket, new TimedExit(exits, MarketSide.Bull, 3));
+            var fiveminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, fiveminuteMarket, new TimedExit(exits, MarketSide.Bull, 3));
+            var tenminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, tenminuteMarket, new TimedExit(exits, MarketSide.Bull, 3));
             var univers = new Universe();
             univers.AddMarket(minuteMarket, minuteStrat);
             univers.AddMarket(fiveminuteMarket, fiveminuteStrat);
             univers.AddMarket(tenminuteMarket, tenminuteStrat);
 
-            BackTestSpyTwo = new BackTestSpy(univers);
+            CollatorTwo = new SimpleCollator();
+            BackTestSpyTwo = new BackTestSpy(univers, CollatorTwo);
         }
         private void SpyThree() {
             var m1 = new Market(new RandomBars(new TimeSpan(123564)).GenerateRandomMarket(224), "shortMarket");
@@ -81,13 +87,13 @@ namespace Thought.Tests
             var m4 = new Market(new RandomBars(new TimeSpan(123354)).GenerateRandomMarket(700), "otherma");
             var m5 = new Market(new RandomBars(new TimeSpan(4561)).GenerateRandomMarket(1000), "anotherM!!");
 
-            var rules = new IRuleSet[] { new DummyEntries(5, 1000), new DummyExits(5, 1000) };
+            var rules = new IRuleSet[] { new DummyEntries(5, 1000) };
             var exits = ExitPrices.NoStopTarget();
-            var minuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, m1, new StaticStopTarget(exits));
-            var fiveminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, m2, new StaticStopTarget(exits));
-            var tenminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, m3, new StaticStopTarget(exits));
-            var fiftminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, m4, new StaticStopTarget(exits));
-            var twentminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, m5, new StaticStopTarget(exits));
+            var minuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, m1, new TimedExit(exits, MarketSide.Bull, 3));
+            var fiveminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, m2, new TimedExit(exits, MarketSide.Bull, 3));
+            var tenminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, m3, new TimedExit(exits, MarketSide.Bull, 3));
+            var fiftminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, m4, new TimedExit(exits, MarketSide.Bull, 3));
+            var twentminuteStrat = new StaticStrategy.StrategyBuilder().CreateStrategy(rules, m5, new TimedExit(exits, MarketSide.Bull, 3));
             var univers = new Universe();
             univers.AddMarket(m1, minuteStrat);
             univers.AddMarket(m2, fiveminuteStrat);
@@ -95,7 +101,8 @@ namespace Thought.Tests
             univers.AddMarket(m4, fiftminuteStrat);
             univers.AddMarket(m5, twentminuteStrat);
 
-            BackTestSpyThree = new BackTestSpy(univers);
+            CollatorThree = new SimpleCollator();
+            BackTestSpyThree = new BackTestSpy(univers, CollatorThree);
         }
     }
 
@@ -110,8 +117,8 @@ namespace Thought.Tests
 
         [Fact]
         private void ShouldExecuteBackTestsByDates(){
-            var trades = _fixture.BackTestSpyOne.RunBackTestByDates();
-            Assert.Equal(520/5, trades.Count);
+            _fixture.BackTestSpyOne.RunBackTestByDates();
+            Assert.Equal(104, _fixture.CollatorOne.Results.SelectMany(x=>x.Trades).Count());
             for(int i =1; i < _fixture.BackTestSpyOne.ExecutionDates.Count; i++){
                 Assert.True(_fixture.BackTestSpyOne.ExecutionDates[i-1] <= _fixture.BackTestSpyOne.ExecutionDates[i]);
             }
@@ -119,16 +126,16 @@ namespace Thought.Tests
 
         [Fact]
         private void ShouldExecuteBackTestsByOutOfSyncDates() {
-            var trades = _fixture.BackTestSpyTwo.RunBackTestByDates();
-            Assert.Equal( 360/5, trades.Count);
+            _fixture.BackTestSpyTwo.RunBackTestByDates();
+            Assert.Equal( 72, _fixture.CollatorTwo.Results.SelectMany(x => x.Trades).Count());
             for (int i = 1; i < _fixture.BackTestSpyTwo.ExecutionDates.Count; i++)
                 Assert.True(_fixture.BackTestSpyTwo.ExecutionDates[i - 1] <= _fixture.BackTestSpyTwo.ExecutionDates[i]);
         }
 
         [Fact]
         private void ShouldExecuteBackTestsByRandomishDates() {
-            var trades = _fixture.BackTestSpyThree.RunBackTestByDates();
-            Assert.Equal((2731 / 5)+1, trades.Count);
+            _fixture.BackTestSpyThree.RunBackTestByDates();
+            Assert.Equal(546, _fixture.CollatorThree.Results.SelectMany(x => x.Trades).Count());
             for (int i = 1; i < _fixture.BackTestSpyThree.ExecutionDates.Count; i++) {
                 Assert.True(_fixture.BackTestSpyThree.ExecutionDates[i - 1] <= _fixture.BackTestSpyThree.ExecutionDates[i]);
             }

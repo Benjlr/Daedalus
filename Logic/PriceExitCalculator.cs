@@ -1,6 +1,7 @@
 ﻿using System;
+using DataStructures;
 
-namespace DataStructures
+namespace Logic
 {
     public abstract class PriceExitCalculator : ExitInterface
     {
@@ -84,6 +85,31 @@ namespace DataStructures
             return currentExit;
         }
     }
+
+    public class TimedExit : PriceExitCalculator
+    {
+        private int _interval { get; set; }
+        private int _index { get; set; }
+        private MarketSide _side { get; set; }
+
+        public TimedExit(ExitPrices initialExits, MarketSide dir, int interval, int startIndex) {
+            InitialExit = initialExits;
+            _interval = interval;
+            _side = dir;
+        }
+        public override ExitPrices NewExit(DatedResult trade, ExitPrices currentExit, BidAskData[] prices, int index) {
+            if (index >= _interval-1) {
+                switch (_side) {
+                    case MarketSide.Bull:
+                        return new ExitPrices(double.MaxValue,double.MaxValue);
+                    case MarketSide.Bear:
+                        return new ExitPrices(0, 0);
+                }
+            }
+            return currentExit;
+        }
+    }
+
 
     public interface ExitInterface
     {

@@ -29,18 +29,20 @@ namespace DataStructures
     public class TradeCompiler
     {
         private int _index { get;  }
+        private List<DatedResult> ResultTimeline { get;  }
         private double _currentDrawdown { get; set; }
-
-        public List<DatedResult> ResultTimeline { get;  }
+        public DatedResult Status { get; private set; }
+        public int Count { get; private set; }
 
         public TradeCompiler(int start) {
             ResultTimeline = new List<DatedResult>();
             _index = start;
-            _currentDrawdown = 0;
         }
 
         public void AddResult(long date, double result, double drawdown) {
-            ResultTimeline.Add(new DatedResult(date, result, CheckDrawdown(drawdown)));
+            Status = new DatedResult(date, result, CheckDrawdown(drawdown));
+            Count++;
+            ResultTimeline.Add(Status);
         }
 
         private double CheckDrawdown(double drawdown) {

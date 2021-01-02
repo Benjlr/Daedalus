@@ -34,7 +34,7 @@ namespace Logic.Metrics.EntryTests
         protected override void SetResult(BidAskData[] data, int i) {
             GenerateExit(i, data.Length -1);
             _currentTrade = new LongTradeGenerator(
-                i, new TradePrices(ExitPrices.NoStopTarget(), data[i].Open.Ask), AddTrade);
+                i, new TradePrices(ExitPrices.NoStopTarget(), data[i].Open.Ask), AddTrade, null);
 
             for (int j = i; j < _randomExit + i && j < data.Length; j++)
                 _currentTrade.Continue(data[j]);
@@ -55,7 +55,7 @@ namespace Logic.Metrics.EntryTests
         protected override void SetResult(BidAskData[] data, int i) {
             GenerateExit(i, data.Length - 1);
             _currentTrade = new ShortTradeGenerator(
-                i, new TradePrices(ExitPrices.NoStopTarget(), data[i].Open.Bid), AddTrade);
+                i, new TradePrices(ExitPrices.NoStopTarget(), data[i].Open.Bid), AddTrade, null);
 
             for (int j = i; j < _randomExit + i && j < data.Length; j++)
                 _currentTrade.Continue(data[j]);

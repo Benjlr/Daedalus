@@ -25,16 +25,18 @@ namespace Thought.Tests
         }
 
         private void exposure() {
-            var executer = new LongStrategyExecuter(true);
+            TradesTrue = new List<Trade>();
+            var executer = new LongStrategyExecuter(true, (x, y) => TradesTrue.Add(y), null);
             executer.Init(field);
-            TradesTrue = executer.ExecuteAll();
+            executer.ExecuteAll();
         }
 
 
         private void noOverExposure() {
-            var executer = new LongStrategyExecuter(false);
+            TradesFalse = new List<Trade>();
+            var executer = new LongStrategyExecuter(false, (x, y) => TradesFalse.Add(y), null);
             executer.Init(field);
-            TradesFalse = executer.ExecuteAll();
+            executer.ExecuteAll();
         }
     }
 

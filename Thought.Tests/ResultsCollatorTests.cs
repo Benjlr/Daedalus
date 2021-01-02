@@ -9,8 +9,7 @@ using TestUtils;
 using Xunit;
 
 namespace Thought.Tests
-{
-
+{ 
     public class ResultsCollatorTestsFixture
     {
         private LinearBacktest BackTest { get; set; }
@@ -24,6 +23,7 @@ namespace Thought.Tests
         }
 
         private void GenerateGeneraleBackTest() {
+            TradesGenerated = new List<Trade>();
             var universeData = new Universe();
 
             var generateRandomMarket = new Market(new RandomBars(new TimeSpan(0, 20, 0)).GenerateRandomMarket(1000), "longTest");
@@ -42,8 +42,8 @@ namespace Thought.Tests
             universeData.AddMarket(bidAskDatas, mediumStrat);
             universeData.AddMarket(randomMarket, shortStrat);
 
-            BackTest = new LinearBacktest(universeData, new LongStrategyExecuter(true));
-            TradesGenerated = BackTest.RunBackTest();
+            BackTest = new LinearBacktest(universeData, new LongStrategyExecuter(true, (x,y)=>TradesGenerated.Add(y), null));
+            BackTest.RunBackTest();
         }
 
 

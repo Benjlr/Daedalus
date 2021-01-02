@@ -47,7 +47,7 @@ namespace Logic.Metrics.EntryTests
             _currentTrade = new LongTradeGenerator(
                 i,
                 new TradePrices(new ExitPrices(StopDistance, TargetDistance), data.Open.Ask),
-                AddTrade);
+                AddTrade, null);
         }
 
         protected override void ExitTrade(BidAskData data) {
@@ -63,8 +63,8 @@ namespace Logic.Metrics.EntryTests
         protected override void InitialiseTradeGenerator(BidAskData data, int i) {
             _currentTrade = new ShortTradeGenerator(
                 i, 
-                new TradePrices(new ExitPrices(StopDistance,TargetDistance),data.Open.Bid ), 
-                AddTrade );
+                new TradePrices(new ExitPrices(StopDistance,TargetDistance),data.Open.Bid ),
+                AddTrade, null);
         }
 
         protected override void ExitTrade(BidAskData data) {

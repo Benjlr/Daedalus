@@ -2,67 +2,79 @@
 using DataStructures;
 using System.Collections.Generic;
 using System.Linq;
-using DataStructures.StatsTools;
 
 namespace Thought
 {
 
     public class BackTestItem
     {
-        public BidAskData[] Prices { get; set; }
+        private ITradeCollator _collator { get; set; }
+        public string _name { get; }
+        private int _counter { get; set; }
+        public long[] Times { get; set; }
         public StrategyExecuter Executor { get; set; }
-        public int Counter { get; set; }
         public bool Finished { get; set; }
 
         public long LastTick() {
-            if(Counter < Prices.Length)
-                return Prices[Counter].Close.Ticks;
+            if (_counter < Times.Length)
+                return Times[_counter];
             return long.MaxValue;
-        } 
+        }
 
-        public BackTestItem(TradingField field, MarketSide dir, bool increaseExposure) {
-            Prices = field.MarketData.PriceData;
-            Counter = 0;
+        public BackTestItem(TradingField field, MarketSide dir, ITradeCollator collator, bool increaseExposure) {
+            Times = field.MarketData.PriceData.Select(x => x.Close.Ticks).ToArray();
+            _name = field.MarketData.Id;
+            _counter = 0;
             Finished = false;
+            _collator = collator;
             GenerateExecutor(dir, increaseExposure);
             Executor.Init(field);
         }
 
-        public List<Trade> ExecuteStep() {
-            var trades= Executor.ExecuteStep();
-            Counter++;
-            Finished = trades.Count > 0;
-            return trades;
+        public void ExecuteStep() {
+            Finished = Executor.ExecuteStep();
+            _counter++;
         }
 
         private void GenerateExecutor(MarketSide dir, bool increaseExposure) {
-            if (dir.Equals(MarketSide.Bull)) Executor = new LongStrategyExecuter(increaseExposure);
-            else Executor = new ShortStrategyExecuter(increaseExposure);
+            if (dir.Equals(MarketSide.Bull)) Executor = new LongStrategyExecuter(increaseExposure, AddTrade, AddResult);
+            else Executor = new ShortStrategyExecuter(increaseExposure, AddTrade, AddResult);
         }
+
+        private void AddTrade(Guid id, Trade trade) {
+            _collator.AddTrade(trade,id, _name);
+        }
+
+        private void AddResult(Guid id, DatedResult result) {
+            _collator.AddExposureItem(result,id, _name);
+        }
+
     }
 
     public class Backtest
     {
-        List<BackTestItem> _results { get; set; }
+        private List<BackTestItem> _results { get; set; }
+        private Universe _markets { get; }
         protected long _earliestDate { get; set; }
-        Universe Markets { get; }
         public List<Trade> Results { get; set; }
 
 
-        public Backtest(Universe markets, MarketSide dir, bool increaseExposure) {
-            Markets = markets;
+        public Backtest(Universe markets, MarketSide dir, ITradeCollator collator, bool increaseExposure) {
+            _markets = markets;
             InitLists();
-            GenerateStrategies(markets, dir, increaseExposure);
+            GenerateStrategies(markets, dir, collator, increaseExposure);
         }
         
-        public List<Trade> RunBackTestByDates() {
-            for (int i = 0; i < Markets.Elements.Count; i++)
-                if (Markets.Elements[i].MarketData.PriceData[0].Open.Ticks < _earliestDate)
-                    _earliestDate = Markets.Elements[i].MarketData.PriceData[0].Close.Ticks;
-
+        public void RunBackTestByDates() {
+            GetEarliestDate();
             while (_results.Any(x=>!x.Finished) && _earliestDate != long.MaxValue)
                 IterateThroughMarkets();
-            return Results;
+        }
+
+        private void GetEarliestDate() {
+            foreach (var element in _markets.Elements)
+                if (element.MarketData.PriceData[0].Open.Ticks < _earliestDate)
+                    _earliestDate = element.MarketData.PriceData[0].Close.Ticks;
         }
 
         private void InitLists() {
@@ -71,9 +83,9 @@ namespace Thought
             _earliestDate = long.MaxValue;
         }
 
-        private void GenerateStrategies(Universe markets, MarketSide dir, bool increaseExposure) {
+        private void GenerateStrategies(Universe markets, MarketSide dir, ITradeCollator collator, bool increaseExposure) {
             foreach (var market in markets.Elements) 
-                _results.Add(new BackTestItem(market, dir, increaseExposure));
+                _results.Add(new BackTestItem(market, dir, collator, increaseExposure));
         }
         
         protected virtual void IterateThroughMarkets() {
@@ -89,7 +101,7 @@ namespace Thought
                 return newlaggardDate;
 
             if (item.LastTick() <= _earliestDate)
-                Results.AddRange(item.ExecuteStep());
+                item.ExecuteStep();
 
             if (item.LastTick() < newlaggardDate)
                 newlaggardDate = item.LastTick();
@@ -99,23 +111,19 @@ namespace Thought
 
     public class LinearBacktest
     {
-        protected List<Trade> _results { get; set; }
         private StrategyExecuter _executor { get; set; }
         public Universe Markets { get; }
 
         public LinearBacktest(Universe markets, StrategyExecuter exec) {
             Markets = markets;
-            _results = new List<Trade>();
             _executor = exec;
         }
 
-        public List<Trade> RunBackTest() {
+        public void RunBackTest() {
             foreach (var element in Markets.Elements) {
                 _executor.Init(element);
-                _results.AddRange(_executor.ExecuteAll());
+                _executor.ExecuteAll();
             }
-
-            return _results;
         }
     }
 }

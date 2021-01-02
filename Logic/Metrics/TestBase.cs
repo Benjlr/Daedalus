@@ -33,7 +33,7 @@ namespace Logic.Metrics
             SetResult(data, i);
         }
 
-        protected void AddTrade(Trade myTrade) {
+        protected void AddTrade(Guid id, Trade myTrade) {
             Trades.Add(myTrade);
         }
         

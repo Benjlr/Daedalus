@@ -1,6 +1,7 @@
 ﻿using System;
+using DataStructures;
 
-namespace DataStructures
+namespace Logic
 {
     public interface TradeGeneratorInterface
     {
@@ -14,20 +15,26 @@ namespace DataStructures
 
     public abstract class TradeStateGenerator : TradeGeneratorInterface
     {
-        private Action<Trade> onExit { get; }
+        private Guid _id { get; set; }
+        private Action<Guid, Trade> _onExit { get; }
+        private Action<Guid, DatedResult> _onContinue { get; }
         public TradePrices StopEntryTarget { get; private set; }
         public TradeCompiler TradeBuilder { get; private set; }
         public bool isActive { get; private set; }
 
-        protected TradeStateGenerator(int marketIndex, TradePrices tradeInit, Action<Trade> exiting) {
+        protected TradeStateGenerator(int marketIndex, TradePrices tradeInit, Action<Guid,Trade> onExit, Action<Guid,DatedResult> onContinue) {
             TradeBuilder = new TradeCompiler(marketIndex);
-            onExit = exiting;
+            _id = Guid.NewGuid();
+            _onExit = onExit;
+            _onContinue = onContinue;
             isActive = true;
             StopEntryTarget = tradeInit;
         }
 
         public void Continue(BidAskData data) {
             CheckStopsAndTargets(data);
+            if(isActive)
+                _onContinue?.Invoke(_id,TradeBuilder.Status);
         }
 
         public void UpdateExits(ExitPrices exitPrices) {
@@ -35,12 +42,12 @@ namespace DataStructures
         }
 
         public void Exit(long date, double exitPrice) {
-            TradeBuilder.AddResult(date, CalculateReturn(exitPrice), CalculateReturn(exitPrice));
-            onExit?.Invoke(TradeBuilder.CompileTrade());
+            AddTradeBuilderStats(date, exitPrice, exitPrice);
+            _onExit?.Invoke(_id,TradeBuilder.CompileTrade());
             isActive = false;
         }
         
-        protected virtual void AddTradeBuilderStats(long date, double data, double low) {
+        protected void AddTradeBuilderStats(long date, double data, double low) {
             this.TradeBuilder.AddResult(date, CalculateReturn(data), CalculateReturn(low));
         }
 
@@ -51,7 +58,7 @@ namespace DataStructures
 
     public class LongTradeGenerator : TradeStateGenerator
     {
-        public LongTradeGenerator(int marketIndex, TradePrices tradeInit, Action<Trade> exiting) : base(marketIndex, tradeInit, exiting) {
+        public LongTradeGenerator(int marketIndex, TradePrices tradeInit, Action<Guid, Trade> onExit, Action<Guid, DatedResult> onContinue) : base(marketIndex, tradeInit, onExit, onContinue) {
         }
 
         protected override void CheckStopsAndTargets(BidAskData data) {
@@ -88,7 +95,7 @@ namespace DataStructures
 
     public class ShortTradeGenerator : TradeStateGenerator
     {
-        public ShortTradeGenerator(int marketIndex, TradePrices tradeInit, Action<Trade> exiting) : base(marketIndex, tradeInit, exiting) {
+        public ShortTradeGenerator(int marketIndex, TradePrices tradeInit, Action<Guid, Trade> onExit, Action<Guid, DatedResult> onContinue) : base(marketIndex, tradeInit, onExit, onContinue) {
         }
 
         protected override void CheckStopsAndTargets(BidAskData data) {

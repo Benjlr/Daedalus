@@ -72,28 +72,13 @@ namespace Icarus.ViewModels
         public void Update(Trade myTrade) {
             List<double> stats2 = new List<double>();
 
-            var tradeStart = myTrade.ResultTimeline[0].Date;
-            var amount = 20;
-            var goodAmount = 0.3;
-            var cutoffAmount = 15;
-
-            var validTardes = tardeos.Where(x => x.ResultTimeline.Any(y => y.Date < tradeStart) && x.ResultTimeline.Any(y => y.Date > tradeStart)).ToList();
-            var actualLast5 = validTardes.Skip(validTardes.Count - amount).ToList().OrderBy(x => x.ResultTimeline[^1].Date).ToList();
-            for (int i = 0; i < actualLast5.Count; i++) {
-                stats2.Add(actualLast5[i].ResultTimeline.Last(x => x.Date < tradeStart).Return);
-            }
-
-
 
             tardeos.Add(myTrade);
             //allResults += myTrade.FinalResult;
-            if (actualLast5.Count >= cutoffAmount) {
-                if (stats2.Count(x=>x>0) / (double)stats2.Count > goodAmount) {
                     Stats.UpdateStats(myTrade);
                     results += myTrade.FinalResult;
                     capital += (600) * myTrade.FinalResult;
-                }
-            }
+            
             allResults += (600) * myTrade.FinalResult;
 
 
@@ -101,8 +86,6 @@ namespace Icarus.ViewModels
                 mySeries.Points.Add(new DataPoint(mySeries.Points.Count + 1, capital));
                 mySeries2.Points.Add(new DataPoint(mySeries2.Points.Count + 1, allResults));
                 MyResults.Axes.First(x => x.Tag == "xaxis").Maximum = mySeries.Points.Count + 5;
-
-                
             });
             MyResults.InvalidatePlot(true);
             NotifyPropertyChanged($"MyResults");
@@ -121,7 +104,7 @@ namespace Icarus.ViewModels
                 try {
                     var stock = new Market(stocks[i]);
                     var stratto = new StaticStrategy.StrategyBuilder().
-                        CreateStrategy(new IRuleSet[] { new PivotPoint() ,   }, stock,
+                        CreateStrategy(new IRuleSet[] { new PivotPoint() }, stock,
                             new TrailingStopPercentage(new ExitPrices(0.93, 2), 0.15));
 
                     myunivers.AddMarket(stock, stratto);
@@ -130,8 +113,6 @@ namespace Icarus.ViewModels
                     Console.WriteLine(e);
                     //throw;
                 }
-
-
             }
 
 
@@ -158,8 +139,8 @@ namespace Icarus.ViewModels
             //myunivers.AddMarket(bitcoin, stratBitcoin);
             //myunivers.AddMarket(sp500, stratSp500);
 
-            var backTest = new Backtest(myunivers, MarketSide.Bull, false);
-            var trades = backTest.RunBackTestByDates();
+            //var backTest = new Backtest(myunivers, MarketSide.Bull, false);
+            //var trades = backTest.RunBackTestByDates();
         }
 
     }

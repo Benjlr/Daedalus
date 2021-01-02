@@ -8,6 +8,7 @@ namespace Thought
         public Market MarketData { get; }
         public Strategiser Strategy { get; }
 
+
         public TradingField(Market market, Strategiser strat) {
             MarketData = market;
             Strategy = strat;

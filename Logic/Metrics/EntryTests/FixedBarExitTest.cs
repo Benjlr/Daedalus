@@ -33,7 +33,7 @@ namespace Logic.Metrics.EntryTests
                 new LongTradeGenerator(i,
                     new TradePrices(ExitPrices.NoStopTarget(),
                     data[i].Open.Ask), 
-                    AddTrade);
+                    AddTrade, null);
 
             for (int j = i; j < (BarsToWait) + i && j < data.Length-1; j++)
                 _currentTrade.Continue(data[j]);
@@ -56,7 +56,7 @@ namespace Logic.Metrics.EntryTests
                 new ShortTradeGenerator(i,
                     new TradePrices(ExitPrices.NoStopTarget(),
                         data[i].Open.Bid),
-                    AddTrade);
+                    AddTrade, null);
 
             for (int j = i; j < (BarsToWait) + i && j < data.Length - 1; j++)
                 _currentTrade.Continue(data[j]);
