@@ -14,6 +14,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.TextFormatting;
+using DataStructures.PriceAlgorithms;
 using Thought;
 using ViewCommon.Utils;
 
@@ -63,30 +64,16 @@ namespace Icarus.ViewModels
             MyResults.Annotations.Add(new LineAnnotation() { Type = LineAnnotationType.Vertical, X = 0 });
         }
 
-        double capital = 0;
-        double risk = 7000*0.02;
-        double results = 0;
-        double allResults = 0;
-        List<Trade> tardeos = new List<Trade>();
+
 
         public void Update(Trade myTrade) {
-            List<double> stats2 = new List<double>();
-
-
-            tardeos.Add(myTrade);
-            //allResults += myTrade.FinalResult;
-                    Stats.UpdateStats(myTrade);
-                    results += myTrade.FinalResult;
-                    capital += (600) * myTrade.FinalResult;
-            
-            allResults += (600) * myTrade.FinalResult;
-
 
             Application.Current.Dispatcher.Invoke(() => {
-                mySeries.Points.Add(new DataPoint(mySeries.Points.Count + 1, capital));
-                mySeries2.Points.Add(new DataPoint(mySeries2.Points.Count + 1, allResults));
+                mySeries.Points.Add(new DataPoint(mySeries.Points.Count + 1, myPortfolio.Cash ));
+                //mySeries2.Points.Add(new DataPoint(mySeries2.Points.Count + 1, myPortfolio.CurrentExposure.Count));
                 MyResults.Axes.First(x => x.Tag == "xaxis").Maximum = mySeries.Points.Count + 5;
             });
+            Stats.UpdateStats(myTrade);
             MyResults.InvalidatePlot(true);
             NotifyPropertyChanged($"MyResults");
         }
@@ -95,19 +82,26 @@ namespace Icarus.ViewModels
             ThreadPool.QueueUserWorkItem(new WaitCallback(Dowork));
         }
 
+        private Portfolio myPortfolio;
         private void Dowork(object callback) {
             TradeCompiler.Callback = Update;
-
+            myPortfolio = new Portfolio(7000,0.03, false);
             Universe myunivers = new Universe();
-            var stocks = Markets.ASX200();
+            var stocks = Markets.AllASX();
             for (int i = 0; i < stocks.Count(); i++) {
                 try {
-                    var stock = new Market(stocks[i]);
-                    var stratto = new StaticStrategy.StrategyBuilder().
-                        CreateStrategy(new IRuleSet[] { new PivotPoint() }, stock,
-                            new TrailingStopPercentage(new ExitPrices(0.93, 2), 0.15));
 
-                    myunivers.AddMarket(stock, stratto);
+
+                    var stock = new Market(stocks[i]);
+                    if (LiquidityFilter.IsLiquid(stock.PriceData.Select(x => x.Close.Mid).ToList(), stock.PriceData.Select(x => x.Volume).ToList())) {
+
+                        var stratto = new StaticStrategy.StrategyBuilder().
+                            CreateStrategy(new IRuleSet[] { new PivotPoint() }, stock,
+                                new TwentyMAViolation(new ExitPrices(0.93, 3), MarketSide.Bull));
+
+                        myunivers.AddMarket(stock, stratto);
+                    }
+
                 }
                 catch (Exception e) {
                     Console.WriteLine(e);
@@ -139,8 +133,8 @@ namespace Icarus.ViewModels
             //myunivers.AddMarket(bitcoin, stratBitcoin);
             //myunivers.AddMarket(sp500, stratSp500);
 
-            //var backTest = new Backtest(myunivers, MarketSide.Bull, false);
-            //var trades = backTest.RunBackTestByDates();
+            var backTest = new Backtest(myunivers, MarketSide.Bull, myPortfolio);
+            backTest.RunBackTestByDates();
         }
 
     }

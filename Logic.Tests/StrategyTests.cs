@@ -35,7 +35,7 @@ namespace Logic.Tests
             var bars = new RandomBars(TimeSpan.FromDays(1)).GenerateRandomMarket(50);
             var strat = new StaticStrategy.StrategyBuilder().CreateStrategy(ruleSet, new Market(bars, "name"),
                 new StaticStopTarget(ExitPrices.NoStopTarget()));
-            for (int i = 1; i < bars.Length; i++) {
+            for (int i = 1; i < bars.Length-2; i++) {
                 if ((i-1) % 5 == 0)
                     Assert.True(strat.IsEntry(bars[i], i));
                 else
@@ -49,7 +49,7 @@ namespace Logic.Tests
             var bars = new RandomBars(TimeSpan.FromDays(1)).GenerateRandomMarket(50);
             var strat = new StaticStrategy.StrategyBuilder().CreateStrategy(ruleSet, new Market(bars, "name"),
                 new StaticStopTarget(ExitPrices.NoStopTarget()));
-            for (int i = 1; i < bars.Length; i++) {
+            for (int i = 1; i < bars.Length-2; i++) {
                 if ((i - 1) % 5 == 0)
                     Assert.True(strat.IsExit(bars[i], i));
                 else
@@ -62,7 +62,7 @@ namespace Logic.Tests
             var bars = new RandomBars(TimeSpan.FromDays(1)).GenerateRandomMarket(50);
             var strat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[0], new Market(bars, "name"),
                 new StaticStopTarget(ExitPrices.NoStopTarget()));
-            for (int i = 1; i < bars.Length; i++) {
+            for (int i = 1; i < bars.Length-2; i++) {
                 Assert.False(strat.IsEntry(bars[i], i));
                 Assert.False(strat.IsExit(bars[i], i));
             }
@@ -71,11 +71,11 @@ namespace Logic.Tests
         [Fact]
         private void ShouldGenerateInitialStopTarget() {
             var originalExit = ExitPrices.StopOnly(0.98);
-            var bars = new RandomBars(TimeSpan.FromDays(1)).GenerateRandomMarket(1);
+            var bars = new RandomBars(TimeSpan.FromDays(1)).GenerateRandomMarket(5);
             var strat = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[0], new Market(bars, "name"),
                 new StaticStopTarget(originalExit));
-            Assert.Equal(ExitPrices.StopOnly(0.98).StopPercentage, strat.Stops.NewExit(new DatedResult(), originalExit,new BidAskData[0],  0).StopPercentage);
-            Assert.Equal(ExitPrices.StopOnly(0.98).TargetPercentage, strat.Stops.NewExit(new DatedResult(), originalExit, new BidAskData[0], 0).TargetPercentage);
+            Assert.Equal(ExitPrices.StopOnly(0.98).StopPercentage, strat.Stops.NewExit(new DatedResult(), originalExit,new BidAskData[0],  0,0).StopPercentage);
+            Assert.Equal(ExitPrices.StopOnly(0.98).TargetPercentage, strat.Stops.NewExit(new DatedResult(), originalExit, new BidAskData[0], 0,0).TargetPercentage);
         }
     }
 }

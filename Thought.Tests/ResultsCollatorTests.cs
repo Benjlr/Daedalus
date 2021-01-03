@@ -42,7 +42,7 @@ namespace Thought.Tests
             universeData.AddMarket(bidAskDatas, mediumStrat);
             universeData.AddMarket(randomMarket, shortStrat);
 
-            BackTest = new LinearBacktest(universeData, new LongStrategyExecuter(true, (x,y)=>TradesGenerated.Add(y), null));
+            BackTest = new LinearBacktest(universeData, new LongStrategyExecuter((x,y)=>TradesGenerated.Add(y), null, null));
             BackTest.RunBackTest();
         }
 

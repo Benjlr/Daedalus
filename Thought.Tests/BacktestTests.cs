@@ -12,7 +12,7 @@ namespace Thought.Tests
 {
     public class BackTestSpy : Backtest
     {
-        public BackTestSpy(Universe markets, ITradeCollator collator) : base(markets, MarketSide.Bull, collator, false)
+        public BackTestSpy(Universe markets, ITradeCollator collator) : base(markets, MarketSide.Bull, collator)
         {
         }
 
@@ -59,7 +59,7 @@ namespace Thought.Tests
             univers.AddMarket(fiveminuteMarket, fiveminuteStrat);
             univers.AddMarket(tenminuteMarket, tenminuteStrat);
 
-            CollatorOne = new SimpleCollator();
+            CollatorOne = new SimpleCollator(false);
             BackTestSpyOne = new BackTestSpy(univers, CollatorOne);
         }
         private void SpyTwo() {
@@ -77,7 +77,7 @@ namespace Thought.Tests
             univers.AddMarket(fiveminuteMarket, fiveminuteStrat);
             univers.AddMarket(tenminuteMarket, tenminuteStrat);
 
-            CollatorTwo = new SimpleCollator();
+            CollatorTwo = new SimpleCollator(false);
             BackTestSpyTwo = new BackTestSpy(univers, CollatorTwo);
         }
         private void SpyThree() {
@@ -101,7 +101,7 @@ namespace Thought.Tests
             univers.AddMarket(m4, fiftminuteStrat);
             univers.AddMarket(m5, twentminuteStrat);
 
-            CollatorThree = new SimpleCollator();
+            CollatorThree = new SimpleCollator(false);
             BackTestSpyThree = new BackTestSpy(univers, CollatorThree);
         }
     }
@@ -118,7 +118,7 @@ namespace Thought.Tests
         [Fact]
         private void ShouldExecuteBackTestsByDates(){
             _fixture.BackTestSpyOne.RunBackTestByDates();
-            Assert.Equal(104, _fixture.CollatorOne.Results.SelectMany(x=>x.Trades).Count());
+            Assert.Equal(107, _fixture.CollatorOne.Results.SelectMany(x=>x.Trades).Count());
             for(int i =1; i < _fixture.BackTestSpyOne.ExecutionDates.Count; i++){
                 Assert.True(_fixture.BackTestSpyOne.ExecutionDates[i-1] <= _fixture.BackTestSpyOne.ExecutionDates[i]);
             }
@@ -127,7 +127,7 @@ namespace Thought.Tests
         [Fact]
         private void ShouldExecuteBackTestsByOutOfSyncDates() {
             _fixture.BackTestSpyTwo.RunBackTestByDates();
-            Assert.Equal( 72, _fixture.CollatorTwo.Results.SelectMany(x => x.Trades).Count());
+            Assert.Equal( 75, _fixture.CollatorTwo.Results.SelectMany(x => x.Trades).Count());
             for (int i = 1; i < _fixture.BackTestSpyTwo.ExecutionDates.Count; i++)
                 Assert.True(_fixture.BackTestSpyTwo.ExecutionDates[i - 1] <= _fixture.BackTestSpyTwo.ExecutionDates[i]);
         }
@@ -135,12 +135,9 @@ namespace Thought.Tests
         [Fact]
         private void ShouldExecuteBackTestsByRandomishDates() {
             _fixture.BackTestSpyThree.RunBackTestByDates();
-            Assert.Equal(546, _fixture.CollatorThree.Results.SelectMany(x => x.Trades).Count());
-            for (int i = 1; i < _fixture.BackTestSpyThree.ExecutionDates.Count; i++) {
+            Assert.Equal(550, _fixture.CollatorThree.Results.SelectMany(x => x.Trades).Count());
+            for (int i = 1; i < _fixture.BackTestSpyThree.ExecutionDates.Count; i++) 
                 Assert.True(_fixture.BackTestSpyThree.ExecutionDates[i - 1] <= _fixture.BackTestSpyThree.ExecutionDates[i]);
-            }
         }
-
-
     }
 }

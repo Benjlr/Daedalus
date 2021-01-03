@@ -8,26 +8,27 @@ namespace Thought
 {
     public abstract class StrategyExecuter
     {
+        private Func<string, bool> _portfolioAllowsEntries { get; set; }
         private Action<Guid, Trade> _tradeGenerated { get; set; }
         private Action<Guid, DatedResult> _cyclePassed { get; set; }
         protected List<TradeGeneratorInterface> _generators { get; set; }
-        protected BidAskData[] _prices { get; set; }
+        protected Market _prices { get; set; }
         protected Strategiser _strat { get; set; }
-        protected bool _canEnterWhenExposed { get; }
         protected int _counter { get; set; } 
 
-        protected StrategyExecuter(bool enterWhenEntered, Action<Guid, Trade> onExit, Action<Guid, DatedResult> onContinue) {
-            _canEnterWhenExposed = enterWhenEntered;
+
+        protected StrategyExecuter(Action<Guid, Trade> onExit, Action<Guid, DatedResult> onContinue, Func<string, bool> portfolioCheck ) {
             _tradeGenerated = onExit;
             _cyclePassed = onContinue;
+            _portfolioAllowsEntries = portfolioCheck;
         }
 
         public void ExecuteAll() {
-            for (_counter = 1; _counter < _prices.Length; _counter++)
+            for (_counter = 1; _counter < _prices.PriceData.Length; _counter++)
                 IterationActions();
         }
         public bool ExecuteStep() {
-            if(_counter >= _prices.Length)
+            if(_counter >= _prices.PriceData.Length)
                 return true;
 
             IterationActions();
@@ -37,7 +38,7 @@ namespace Thought
 
         public void Init(TradingField field) {
             _strat = field.Strategy;
-            _prices = field.MarketData.PriceData;
+            _prices = field.MarketData;
             _generators = new List<TradeGeneratorInterface>();
             _counter = 1;
         }
@@ -50,19 +51,21 @@ namespace Thought
         }
 
         private void lookForExits() {
-            if (_strat.IsExit(_prices[_counter], _counter))
+            if (_strat.IsExit(_prices.PriceData[_counter], _counter) ||
+                _counter == _prices.PriceData.Length -1)
                 exitActions();
+            
         }
 
         private void lookForEntry() {
-            if (_strat.IsEntry(_prices[_counter], _counter))
+            if (_strat.IsEntry(_prices.PriceData[_counter], _counter) && (_portfolioAllowsEntries?.Invoke(_prices.Id) ?? true))
                 entryActions();
         }
 
         private void progressTrades() {
             _generators.ForEach(x => {
-                x.Continue(_prices[_counter]);
-                x.UpdateExits(_strat.Stops.NewExit(x.TradeBuilder.Status, x.StopEntryTarget.CurrentExits, _prices, _counter));
+                x.Continue(_prices.PriceData[_counter]);
+                x.UpdateExits(_strat.Stops.NewExit(x.TradeBuilder.Status, x.StopEntryTarget.CurrentExits, _prices.PriceData, _counter, x.TradeBuilder.Count));
             });
         }
 
@@ -74,10 +77,7 @@ namespace Thought
         }
 
         private void entryActions() {
-            if (_generators.Count > 0 && !_canEnterWhenExposed)
-                return;
-            else
-                _generators.Add(buildGenerator(
+            _generators.Add(buildGenerator(
                     new TradePrices(_strat.Stops.InitialExit, getEntry()), _counter, _tradeGenerated, _cyclePassed));
         }
 
@@ -89,17 +89,17 @@ namespace Thought
 
     public class LongStrategyExecuter : StrategyExecuter
     {
-        public LongStrategyExecuter( bool enterWhenEntered, Action<Guid, Trade> onExit, Action<Guid, DatedResult> onContinue) 
-            : base(enterWhenEntered, onExit, onContinue) {
+        public LongStrategyExecuter(Action<Guid, Trade> onExit, Action<Guid, DatedResult> onContinue, Func<string, bool> portfolioCheck) 
+            : base(onExit, onContinue, portfolioCheck) {
         }
 
         protected override void exitActions() {
             foreach (var gen in _generators)
-                gen.Exit(_prices[_counter].Open.Ticks, _prices[_counter].Open.Bid);
+                gen.Exit(_prices.PriceData[_counter].Open.Ticks, _prices.PriceData[_counter].Open.Bid);
         }
 
         protected override double getEntry() {
-            return _prices[_counter].Open.Ask;
+            return _prices.PriceData[_counter].Open.Ask;
         }
 
         protected override TradeGeneratorInterface buildGenerator(TradePrices tradeInit, int index, Action<Guid,Trade> onExit, Action<Guid, DatedResult> onContinue) {
@@ -109,17 +109,17 @@ namespace Thought
 
     public class ShortStrategyExecuter : StrategyExecuter
     {
-        public ShortStrategyExecuter( bool enterWhenEntered, Action<Guid, Trade> onExit, Action<Guid, DatedResult> onContinue)
-            : base( enterWhenEntered, onExit, onContinue) {
+        public ShortStrategyExecuter(  Action<Guid, Trade> onExit, Action<Guid, DatedResult> onContinue, Func<string, bool> portfolioCheck)
+            : base(  onExit, onContinue, portfolioCheck) {
         }
 
         protected override void exitActions() {
             foreach (var gen in _generators)
-                gen.Exit(_prices[_counter].Open.Ticks, _prices[_counter].Open.Ask);
+                gen.Exit(_prices.PriceData[_counter].Open.Ticks, _prices.PriceData[_counter].Open.Ask);
         }
 
         protected override double getEntry() {
-                return _prices[_counter].Open.Bid;
+                return _prices.PriceData[_counter].Open.Bid;
         }
 
         protected override TradeGeneratorInterface buildGenerator(TradePrices tradeInit, int index, Action<Guid, Trade> onExit, Action<Guid, DatedResult> onContinue) {

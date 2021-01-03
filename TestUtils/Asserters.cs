@@ -28,6 +28,13 @@ namespace TestUtils
         }
 
 
+        public static void ListDoublesEqual(List<int> expected, List<int> actual) {
+            Assert.Equal(expected.Count, actual.Count);
+            for (int i = 0; i < expected.Count; i++)
+                Assert.Equal(expected[i], actual[i]);
+        }
+
+
         public static void ListListDoubleEquals(List<List<double>> expected, List<List<double>> actual) {
             Assert.Equal(expected.Count, actual.Count);
             for (int i = 0; i < expected.Count; i++) 

@@ -12,8 +12,8 @@ namespace Logic.Tests
             var Exits = new ExitPrices(0.7,1.3);
             StaticStopTarget testObject = new StaticStopTarget(Exits);
 
-            Assert.Equal(Exits.StopPercentage , testObject.NewExit(new DatedResult(), Exits, new BidAskData[0],0 ).StopPercentage);
-            Assert.Equal(Exits.TargetPercentage, testObject.NewExit(new DatedResult(), Exits, new BidAskData[0] ,0).TargetPercentage);
+            Assert.Equal(Exits.StopPercentage , testObject.NewExit(new DatedResult(), Exits, new BidAskData[0],0 ,0).StopPercentage);
+            Assert.Equal(Exits.TargetPercentage, testObject.NewExit(new DatedResult(), Exits, new BidAskData[0] ,0,0).TargetPercentage);
         }
 
         [Fact]
@@ -29,31 +29,31 @@ namespace Logic.Tests
             var longstate = new LongTradeGenerator(0, new TradePrices(stop.InitialExit, 100), null, null);
 
             longstate.Continue(bars[0]);
-            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.Status, longstate.StopEntryTarget.CurrentExits, bars, 0));
+            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.Status, longstate.StopEntryTarget.CurrentExits, bars, 0, longstate.TradeBuilder.Count));
                 
             Assert.Equal(98, longstate.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, longstate.StopEntryTarget.TargetPrice);
 
             longstate.Continue(bars[1]);
-            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.Status, longstate.StopEntryTarget.CurrentExits, bars, 1));
+            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.Status, longstate.StopEntryTarget.CurrentExits, bars, 1, longstate.TradeBuilder.Count));
 
             Assert.Equal(100, longstate.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, longstate.StopEntryTarget.TargetPrice);
             
             longstate.Continue(bars[2]);
-            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.Status, longstate.StopEntryTarget.CurrentExits, bars, 2));
+            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.Status, longstate.StopEntryTarget.CurrentExits, bars, 2, longstate.TradeBuilder.Count));
 
             Assert.Equal(101, longstate.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, longstate.StopEntryTarget.TargetPrice);
 
             longstate.Continue(bars[3]);
-            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.Status, longstate.StopEntryTarget.CurrentExits, bars, 3));
+            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.Status, longstate.StopEntryTarget.CurrentExits, bars, 3, longstate.TradeBuilder.Count));
 
             Assert.Equal(102, longstate.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, longstate.StopEntryTarget.TargetPrice);
 
             longstate.Continue(bars[2]);
-            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.Status, longstate.StopEntryTarget.CurrentExits, bars, 2));
+            longstate.UpdateExits(stop.NewExit(longstate.TradeBuilder.Status, longstate.StopEntryTarget.CurrentExits, bars, 2, longstate.TradeBuilder.Count));
 
             Assert.Equal(102, longstate.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, longstate.StopEntryTarget.TargetPrice);
@@ -72,31 +72,31 @@ namespace Logic.Tests
             var shortState = new ShortTradeGenerator(0, new TradePrices(stop.InitialExit, 100), null, null);
 
             shortState.Continue(bars[0]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 0));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 0, shortState.TradeBuilder.Count));
 
             Assert.Equal(102, shortState.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, shortState.StopEntryTarget.TargetPrice);
 
             shortState.Continue(bars[1]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 1));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 1, shortState.TradeBuilder.Count));
 
             Assert.Equal(100, shortState.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, shortState.StopEntryTarget.TargetPrice);
 
             shortState.Continue(bars[2]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 2));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 2, shortState.TradeBuilder.Count));
 
             Assert.Equal(99, shortState.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, shortState.StopEntryTarget.TargetPrice);
 
             shortState.Continue(bars[3]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 3));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 3, shortState.TradeBuilder.Count));
 
             Assert.Equal(98, shortState.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, shortState.StopEntryTarget.TargetPrice);
 
             shortState.Continue(bars[2]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 2));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 2, shortState.TradeBuilder.Count));
 
             Assert.Equal(98, shortState.StopEntryTarget.StopPrice);
             Assert.Equal(double.NaN, shortState.StopEntryTarget.TargetPrice);
@@ -114,25 +114,25 @@ namespace Logic.Tests
             var longState = new LongTradeGenerator(0, new TradePrices(stop.InitialExit, 100), null, null);
 
             longState.Continue(bars[5]);
-            longState.UpdateExits(stop.NewExit(longState.TradeBuilder.Status, longState.StopEntryTarget.CurrentExits, bars, 0));
+            longState.UpdateExits(stop.NewExit(longState.TradeBuilder.Status, longState.StopEntryTarget.CurrentExits, bars, 0, longState.TradeBuilder.Count));
 
             Assert.Equal(102.5, longState.StopEntryTarget.StopPrice,6);
             Assert.Equal(110, longState.StopEntryTarget.TargetPrice,6);
 
             longState.Continue(bars[6]);
-            longState.UpdateExits(stop.NewExit(longState.TradeBuilder.Status, longState.StopEntryTarget.CurrentExits, bars, 1));
+            longState.UpdateExits(stop.NewExit(longState.TradeBuilder.Status, longState.StopEntryTarget.CurrentExits, bars, 1, longState.TradeBuilder.Count));
 
             Assert.Equal(104, longState.StopEntryTarget.StopPrice,6);
             Assert.Equal(110, longState.StopEntryTarget.TargetPrice,6);
 
             longState.Continue(bars[7]);
-            longState.UpdateExits(stop.NewExit(longState.TradeBuilder.Status, longState.StopEntryTarget.CurrentExits, bars, 2));
+            longState.UpdateExits(stop.NewExit(longState.TradeBuilder.Status, longState.StopEntryTarget.CurrentExits, bars, 2, longState.TradeBuilder.Count));
 
             Assert.Equal(105.5, longState.StopEntryTarget.StopPrice,6);
             Assert.Equal(110, longState.StopEntryTarget.TargetPrice,6);
 
             longState.Continue(bars[1]);
-            longState.UpdateExits(stop.NewExit(longState.TradeBuilder.Status, longState.StopEntryTarget.CurrentExits, bars, 3));
+            longState.UpdateExits(stop.NewExit(longState.TradeBuilder.Status, longState.StopEntryTarget.CurrentExits, bars, 3, longState.TradeBuilder.Count));
 
             Assert.Equal(105.5, longState.StopEntryTarget.StopPrice,6);
             Assert.Equal(110, longState.StopEntryTarget.TargetPrice,6);
@@ -150,25 +150,25 @@ namespace Logic.Tests
             var shortState = new ShortTradeGenerator(0, new TradePrices(stop.InitialExit, 100), null, null);
 
             shortState.Continue(bars[5]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 0));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 0, shortState.TradeBuilder.Count));
 
             Assert.Equal(97.5, shortState.StopEntryTarget.StopPrice, 6);
             Assert.Equal(90, shortState.StopEntryTarget.TargetPrice, 6);
 
             shortState.Continue(bars[6]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 1));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 1, shortState.TradeBuilder.Count));
 
             Assert.Equal(96, shortState.StopEntryTarget.StopPrice, 6);
             Assert.Equal(90, shortState.StopEntryTarget.TargetPrice, 6);
 
             shortState.Continue(bars[7]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 2));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 2, shortState.TradeBuilder.Count));
 
             Assert.Equal(94.5, shortState.StopEntryTarget.StopPrice, 6);
             Assert.Equal(90, shortState.StopEntryTarget.TargetPrice, 6);
 
             shortState.Continue(bars[1]);
-            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 3));
+            shortState.UpdateExits(stop.NewExit(shortState.TradeBuilder.Status, shortState.StopEntryTarget.CurrentExits, bars, 3, shortState.TradeBuilder.Count));
 
             Assert.Equal(94.5, shortState.StopEntryTarget.StopPrice, 6);
             Assert.Equal(90, shortState.StopEntryTarget.TargetPrice, 6);
@@ -184,19 +184,19 @@ namespace Logic.Tests
                 bars[i] = new BidAskData(100 + i);
 
             var stop = new TimedExit(ExitPrices.NoStopTarget(), MarketSide.Bull, 3);
-            var longTradeGenerator = new LongTradeGenerator(0, new TradePrices(stop.InitialExit, 100), (x,y)=>Trade.Add(y), null);
+            var longTradeGenerator = new LongTradeGenerator(4, new TradePrices(stop.InitialExit, 100), (x,y)=>Trade.Add(y), null);
 
-            for (int i = 0; i < 3; i++) {
+            for (int i = 4; i < 6; i++) {
                 longTradeGenerator.Continue(bars[i]);
-                longTradeGenerator.UpdateExits(stop.NewExit(longTradeGenerator.TradeBuilder.Status, longTradeGenerator.StopEntryTarget.CurrentExits, bars, i));
+                longTradeGenerator.UpdateExits(stop.NewExit(longTradeGenerator.TradeBuilder.Status, longTradeGenerator.StopEntryTarget.CurrentExits, bars, i, longTradeGenerator.TradeBuilder.Count));
                 Assert.True(longTradeGenerator.isActive);
             }
 
-            longTradeGenerator.Continue(bars[3]);
-            longTradeGenerator.UpdateExits(stop.NewExit(longTradeGenerator.TradeBuilder.Status, longTradeGenerator.StopEntryTarget.CurrentExits, bars, 3));
+            longTradeGenerator.Continue(bars[6]);
+            longTradeGenerator.UpdateExits(stop.NewExit(longTradeGenerator.TradeBuilder.Status, longTradeGenerator.StopEntryTarget.CurrentExits, bars, 6, longTradeGenerator.TradeBuilder.Count));
 
             Assert.False(longTradeGenerator.isActive);
-            Assert.Equal(4, Trade[0].Duration);
+            Assert.Equal(3, Trade[0].Duration);
 
         }
 
@@ -210,17 +210,17 @@ namespace Logic.Tests
             var stop = new TimedExit(ExitPrices.NoStopTarget(), MarketSide.Bull, 12);
             var longTradeGenerator = new LongTradeGenerator(0, new TradePrices(stop.InitialExit, 100), (x, y) => Trade.Add(y), null);
 
-            for (int i = 0; i < 12; i++) {
+            for (int i = 0; i < 11; i++) {
                 longTradeGenerator.Continue(bars[i]);
-                longTradeGenerator.UpdateExits(stop.NewExit(longTradeGenerator.TradeBuilder.Status, longTradeGenerator.StopEntryTarget.CurrentExits, bars, i));
+                longTradeGenerator.UpdateExits(stop.NewExit(longTradeGenerator.TradeBuilder.Status, longTradeGenerator.StopEntryTarget.CurrentExits, bars, i, longTradeGenerator.TradeBuilder.Count));
                 Assert.True(longTradeGenerator.isActive);
             }
 
-            longTradeGenerator.Continue(bars[12]);
-            longTradeGenerator.UpdateExits(stop.NewExit(longTradeGenerator.TradeBuilder.Status, longTradeGenerator.StopEntryTarget.CurrentExits, bars, 12));
+            longTradeGenerator.Continue(bars[11]);
+            longTradeGenerator.UpdateExits(stop.NewExit(longTradeGenerator.TradeBuilder.Status, longTradeGenerator.StopEntryTarget.CurrentExits, bars, 11, longTradeGenerator.TradeBuilder.Count));
 
             Assert.False(longTradeGenerator.isActive);
-            Assert.Equal(13, Trade[0].Duration);
+            Assert.Equal(12, Trade[0].Duration);
 
 
         }
@@ -233,19 +233,19 @@ namespace Logic.Tests
                 bars[i] = new BidAskData(100 + i);
 
             var stop = new TimedExit(ExitPrices.NoStopTarget(), MarketSide.Bear, 3);
-            var shortGen = new ShortTradeGenerator(0, new TradePrices(stop.InitialExit, 100), (x, y) => Trade.Add(y), null);
+            var shortGen = new ShortTradeGenerator(5, new TradePrices(stop.InitialExit, 100), (x, y) => Trade.Add(y), null);
 
-            for (int i = 0; i < 3; i++) {
+            for (int i = 5; i < 7; i++) {
                 shortGen.Continue(bars[i]);
-                shortGen.UpdateExits(stop.NewExit(shortGen.TradeBuilder.Status, shortGen.StopEntryTarget.CurrentExits, bars, i));
+                shortGen.UpdateExits(stop.NewExit(shortGen.TradeBuilder.Status, shortGen.StopEntryTarget.CurrentExits, bars, i, shortGen.TradeBuilder.Count));
                 Assert.True(shortGen.isActive);
             }
 
-            shortGen.Continue(bars[3]);
-            shortGen.UpdateExits(stop.NewExit(shortGen.TradeBuilder.Status, shortGen.StopEntryTarget.CurrentExits, bars, 3));
+            shortGen.Continue(bars[7]);
+            shortGen.UpdateExits(stop.NewExit(shortGen.TradeBuilder.Status, shortGen.StopEntryTarget.CurrentExits, bars, 7, shortGen.TradeBuilder.Count));
 
             Assert.False(shortGen.isActive);
-            Assert.Equal(4, Trade[0].Duration);
+            Assert.Equal(3, Trade[0].Duration);
         }
 
         [Fact]
@@ -258,17 +258,17 @@ namespace Logic.Tests
             var stop = new TimedExit(ExitPrices.NoStopTarget(), MarketSide.Bear, 12);
             var shortGen = new ShortTradeGenerator(0, new TradePrices(stop.InitialExit, 100), (x, y) => Trade.Add(y), null);
 
-            for (int i = 0; i < 12; i++) {
+            for (int i = 0; i < 11; i++) {
                 shortGen.Continue(bars[i]);
-                shortGen.UpdateExits(stop.NewExit(shortGen.TradeBuilder.Status, shortGen.StopEntryTarget.CurrentExits, bars, i));
+                shortGen.UpdateExits(stop.NewExit(shortGen.TradeBuilder.Status, shortGen.StopEntryTarget.CurrentExits, bars, i, shortGen.TradeBuilder.Count));
                 Assert.True(shortGen.isActive);
             }
 
-            shortGen.Continue(bars[12]);
-            shortGen.UpdateExits(stop.NewExit(shortGen.TradeBuilder.Status, shortGen.StopEntryTarget.CurrentExits, bars, 12));
+            shortGen.Continue(bars[11]);
+            shortGen.UpdateExits(stop.NewExit(shortGen.TradeBuilder.Status, shortGen.StopEntryTarget.CurrentExits, bars, 11, shortGen.TradeBuilder.Count));
 
             Assert.False(shortGen.isActive);
-            Assert.Equal(13, Trade[0].Duration);
+            Assert.Equal(12, Trade[0].Duration);
 
         }
     }

@@ -59,9 +59,11 @@ namespace Logic
 
             private void GetRules(int i, bool[] _entries, bool[] _exits) {
                 if (_entryRules.All(x => x.Satisfied[i])
-                    && _entryRules.Any()) _entries[i] = true;
+                    && _entryRules.Any()) 
+                    _entries[i] = true;
                 if (_exitRules.All(x => x.Satisfied[i])
-                    && _exitRules.Any()) _exits[i] = true;
+                    && _exitRules.Any()) 
+                    _exits[i] = true;
             }
         }
     }

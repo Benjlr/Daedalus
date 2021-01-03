@@ -21,13 +21,13 @@ namespace Thought
             return long.MaxValue;
         }
 
-        public BackTestItem(TradingField field, MarketSide dir, ITradeCollator collator, bool increaseExposure) {
+        public BackTestItem(TradingField field, MarketSide dir, ITradeCollator collator) {
             Times = field.MarketData.PriceData.Select(x => x.Close.Ticks).ToArray();
             _name = field.MarketData.Id;
             _counter = 0;
             Finished = false;
             _collator = collator;
-            GenerateExecutor(dir, increaseExposure);
+            GenerateExecutor(dir);
             Executor.Init(field);
         }
 
@@ -36,9 +36,9 @@ namespace Thought
             _counter++;
         }
 
-        private void GenerateExecutor(MarketSide dir, bool increaseExposure) {
-            if (dir.Equals(MarketSide.Bull)) Executor = new LongStrategyExecuter(increaseExposure, AddTrade, AddResult);
-            else Executor = new ShortStrategyExecuter(increaseExposure, AddTrade, AddResult);
+        private void GenerateExecutor(MarketSide dir) {
+            if (dir.Equals(MarketSide.Bull)) Executor = new LongStrategyExecuter(AddTrade, AddResult, _collator.CanEnter);
+            else Executor = new ShortStrategyExecuter(AddTrade, AddResult, _collator.CanEnter);
         }
 
         private void AddTrade(Guid id, Trade trade) {
@@ -46,7 +46,7 @@ namespace Thought
         }
 
         private void AddResult(Guid id, DatedResult result) {
-            _collator.AddExposureItem(result,id, _name);
+            _collator.AddExposureItem(new MarketExposure(_name, result), id);
         }
 
     }
@@ -59,10 +59,10 @@ namespace Thought
         public List<Trade> Results { get; set; }
 
 
-        public Backtest(Universe markets, MarketSide dir, ITradeCollator collator, bool increaseExposure) {
+        public Backtest(Universe markets, MarketSide dir, ITradeCollator collator) {
             _markets = markets;
             InitLists();
-            GenerateStrategies(markets, dir, collator, increaseExposure);
+            GenerateStrategies(markets, dir, collator);
         }
         
         public void RunBackTestByDates() {
@@ -83,9 +83,9 @@ namespace Thought
             _earliestDate = long.MaxValue;
         }
 
-        private void GenerateStrategies(Universe markets, MarketSide dir, ITradeCollator collator, bool increaseExposure) {
+        private void GenerateStrategies(Universe markets, MarketSide dir, ITradeCollator collator) {
             foreach (var market in markets.Elements) 
-                _results.Add(new BackTestItem(market, dir, collator, increaseExposure));
+                _results.Add(new BackTestItem(market, dir, collator));
         }
         
         protected virtual void IterateThroughMarkets() {
