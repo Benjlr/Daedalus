@@ -15,7 +15,7 @@ using LinearAxis = OxyPlot.Axes.LinearAxis;
 
 namespace Daedalus.ViewModels
 {
-    public class EntryViewModel : ViewModelBase
+    public class PriceChartViewModel : ViewModelBase
     {
         public PlotModel PlotModel { get; set; }
         public PlotController ControllerModel { get; set; }
@@ -38,7 +38,7 @@ namespace Daedalus.ViewModels
         }
 
         private List<int> _exitPoint { get; set; } = new List<int >();
-        public EntryViewModel() : base()
+        public PriceChartViewModel() : base()
         {
             this.InitialiseData();
         }

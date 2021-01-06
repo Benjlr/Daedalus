@@ -16,18 +16,40 @@ namespace RuleSets.Entry
         public override void CalculateBackSeries(BidAskData[] rawData)
         {
             var data = rawData.ToList();
-            //var twoHundred = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 200);
-            var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
-            var FiftyMa = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 50);
-            var six = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 6);
+            var twoHundred = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 200);
+            //var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
+            //var FiftyMa = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 50);
+            //var six = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 6);
 
             Satisfied = new bool[data.Count];
 
             for (int i = 60; i < data.Count; i++)
             {
-                if (twentyMA[i] > FiftyMa[i] &&
-                    data[i].Close.Mid > twentyMA[i] &&
-                    data[i].Close.Mid <= six[i]) Satisfied[i] = true;
+                if (data[i-1].Close.Mid < twoHundred[i-1] && data[i].Close.Mid > twoHundred[i]) Satisfied[i] = true;
+            }
+
+        }
+    }
+
+    public class BearishTage : RuleBase
+    {
+        public BearishTage() {
+            Dir = MarketSide.Bull;
+            Order = ActionPoint.Exit;
+        }
+
+
+        public override void CalculateBackSeries(BidAskData[] rawData) {
+            var data = rawData.ToList();
+            var twoHundred = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 200);
+            //var twentyMA = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 20);
+            //var FiftyMa = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 50);
+            //var six = MovingAverage.ExponentialMovingAverage(data.Select(x => x.Close.Mid).ToList(), 6);
+
+            Satisfied = new bool[data.Count];
+
+            for (int i = 60; i < data.Count; i++) {
+                if (data[i - 1].Close.Mid > twoHundred[i - 1] && data[i].Close.Mid < twoHundred[i]) Satisfied[i] = true;
             }
 
         }

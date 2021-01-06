@@ -122,7 +122,8 @@ namespace Logic
             _side = dir;
         }
         public override ExitPrices NewExit(DatedResult trade, ExitPrices currentExit, BidAskData[] prices, int index, int duration) {
-            _twentyMA = MovingAverage.ExponentialMovingAverage(prices.Select(x => x.Close.Mid).ToList(), 20);
+            if(_twentyMA == null)
+                _twentyMA = MovingAverage.ExponentialMovingAverage(prices.Select(x => x.Close.Mid).ToList(), 20);
 
             if (prices[index-1].Close.Mid < _twentyMA[index-1] && prices[index].Low.Mid < prices[index-1].Low.Mid) {
                 var newExitPrices = prices[index].Low.Mid - prices[index].Close.Mid * 0.02;

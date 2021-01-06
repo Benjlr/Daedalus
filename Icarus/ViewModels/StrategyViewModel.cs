@@ -87,20 +87,20 @@ namespace Icarus.ViewModels
             TradeCompiler.Callback = Update;
             myPortfolio = new Portfolio(7000,0.03, false);
             Universe myunivers = new Universe();
-            var stocks = Markets.AllASX();
+            var stocks = Markets.ASX300();
             for (int i = 0; i < stocks.Count(); i++) {
                 try {
 
 
                     var stock = new Market(stocks[i]);
-                    if (LiquidityFilter.IsLiquid(stock.PriceData.Select(x => x.Close.Mid).ToList(), stock.PriceData.Select(x => x.Volume).ToList())) {
+                    //if (LiquidityFilter.IsLiquid(stock.PriceData.Select(x => x.Close.Mid).ToList(), stock.PriceData.Select(x => x.Volume).ToList())) {
 
                         var stratto = new StaticStrategy.StrategyBuilder().
-                            CreateStrategy(new IRuleSet[] { new PivotPoint() }, stock,
-                                new TwentyMAViolation(new ExitPrices(0.93, 3), MarketSide.Bull));
+                            CreateStrategy(new IRuleSet[] { new KeltnerOverSold(),  }, stock,
+                                new StaticStopTarget(new ExitPrices(0.9, 1.2)));
 
                         myunivers.AddMarket(stock, stratto);
-                    }
+                    //}
 
                 }
                 catch (Exception e) {
@@ -119,8 +119,8 @@ namespace Icarus.ViewModels
             //    CreateStrategy(new IRuleSet[] { new ATRContraction(), }, aumarket,
             //        new TrailingStopPercentage(new ExitPrices(0.95, 1.2), 0.01));
             //var stratAudUSd = new StaticStrategy.StrategyBuilder().
-            //    CreateStrategy(new IRuleSet[] { new ATRContraction(), }, audUdsd,
-            //        new TrailingStopPercentage(new ExitPrices(0.98, 1.2), 0.0001));
+            //    CreateStrategy(new IRuleSet[] { new BullishMATag(), new BearishMATage(),  }, audUdsd,
+            //        new StaticStopTarget(ExitPrices.NoStopTarget()));
             //var stratBitcoin = new StaticStrategy.StrategyBuilder().
             //    CreateStrategy(new IRuleSet[] { new ATRContraction(), }, bitcoin,
             //        new TrailingStopPercentage(new ExitPrices(0.98, 1.2), 0.0001));

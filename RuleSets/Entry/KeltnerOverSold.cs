@@ -17,25 +17,25 @@ namespace RuleSets.Entry
         {
             var myData = rawData.ToList();
             Satisfied = new bool[myData.Count];
-            var daily = SessionCollate.CollateToHourly(myData);
+            //var daily = SessionCollate.CollateToHourly(myData);
 
 
-            var ema20 = MovingAverage.ExponentialMovingAverage(daily.Select(x => x.Close.Mid).ToList(), 20);
+            var ema20 = MovingAverage.ExponentialMovingAverage(myData.Select(x => x.Close.Mid).ToList(), 20);
             var atr = AverageTrueRange.Calculate(myData);
 
 
             var lower = new List<double>();
             var upper = new List<double>();
 
-            for (int i = 0; i < daily.Count; i++)
+            for (int i = 0; i < myData.Count; i++)
             {
-                lower.Add(ema20[i] - (3 * atr[i]));
-                upper.Add(ema20[i] + (3 * atr[i]));
+                lower.Add(ema20[i] - (4 * atr[i]));
+                upper.Add(ema20[i] + (4 * atr[i]));
             }
 
-            for (int i = 10; i < daily.Count; i++)
+            for (int i = 10; i < myData.Count; i++)
             {
-                if (daily[i].Low.Mid < lower[i])
+                if (myData[i-1].Low.Mid < lower[i-1] )
                 {
 
                     Satisfied[i] = true;

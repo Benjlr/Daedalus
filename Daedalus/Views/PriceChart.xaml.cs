@@ -3,9 +3,9 @@
 namespace Daedalus.Views
 {
 
-    public partial class EntryViewers : UserControl
+    public  partial class PriceChart : UserControl
     {
-        public EntryViewers()
+        public PriceChart()
         {
             InitializeComponent();
 

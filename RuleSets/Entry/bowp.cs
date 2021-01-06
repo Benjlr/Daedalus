@@ -52,7 +52,7 @@ namespace RuleSets.Entry
             var FiftyMa = MovingAverage.SimpleMovingAverage(data.Select(x => x.Close.Mid).ToList(), 50);
             Satisfied = new bool[data.Count];
 
-            for (int i = 70; i < data.Count; i++) {
+            for (int i = 40; i < data.Count; i++) {
                 if (ListTools.GetPositionInRange(volAvg, rawData[i].Volume) < 0.6
                 && (rawData[i].Close.Mid / twentyMA[i]) -1 < 0.015 
                 && Math.Abs((rawData[i].Open.Mid / rawData[i].Close.Mid) -1) < 0.025
