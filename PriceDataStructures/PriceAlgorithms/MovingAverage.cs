@@ -12,10 +12,15 @@ namespace DataStructures.PriceAlgorithms
             var multiplier = 2.0 / (period + 1);
 
             retval.Add(input[0]);
-            for (var i = 1; i < input.Count; i++) retval.Add((input[i] - retval.Last()) * multiplier + retval.Last());
+            for (var i = 1; i < input.Count; i++) 
+                retval.Add((input[i] - retval.Last()) * multiplier + retval.Last());
             return retval;
-
         }
+
+        //public static double ExponentialMovingAverage(double inputPrice, double lastValue, int period) {
+        //    var multiplier = 2.0 / (period + 1);
+        //    return (inputPrice - lastValue) * multiplier + lastValue;
+        //}
 
         public static List<double> SimpleMovingAverage(List<double> input, int period) {
             var retval = new List<double>();
