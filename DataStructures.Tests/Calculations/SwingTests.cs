@@ -1,9 +1,5 @@
-﻿using System;
+﻿using DataStructures.PriceAlgorithms;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataStructures.PriceAlgorithms;
 using Xunit;
 
 namespace DataStructures.Tests.Calculations
@@ -14,458 +10,256 @@ namespace DataStructures.Tests.Calculations
         private void ShouldCalculateUpSwingWithtwoConsecutive() {
 
         }
+
+        [Fact]
+        private void ShouldDetectConsecutiveHighs (){
+            var barOne = new BidAskData(5);
+            var barTwo = new BidAskData(6);
+            var barThree = new BidAskData(7);
+
+            var swings = new Swings();
+            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() {barOne, barTwo},  1,0));
+            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne, barThree },  1, 0));
+            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barThree, barOne },  1, 0));
+            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barThree, barOne,barTwo },  1, 0));
+            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barThree, barOne,barTwo,barOne }, 1, 0));
+
+        }
+
+        [Fact]
+        private void ShouldDetectMultipleConsecutiveHighs() {
+            var barOne = new BidAskData(5);
+            var barTwo = new BidAskData(6);
+            var barThree = new BidAskData(7);
+            var barFive = new BidAskData(9);
+
+            var swings = new Swings();
+            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne, barTwo, barThree }, 2, 0));
+            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne, barThree,barFive },  2, 0));
+            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne, barThree, barOne, barThree,barOne },  2, 0));
+        }
+
+        [Fact]
+        private void ShouldDetectManyConsecutiveHighs() {
+            var bidaskList = new List<BidAskData>();
+            for (int i = 0; i < 100; i++) {
+                bidaskList.Add(new BidAskData(i));
+            }
+
+            var swings = new Swings();
+            Assert.True(swings.CheckForConsecutiveHighs(bidaskList, 50, 0));
+            Assert.True(swings.CheckForConsecutiveHighs(bidaskList, 75, 0));
+            Assert.True(swings.CheckForConsecutiveHighs(bidaskList, 99, 0));
+        }
+
+        [Fact]
+        private void ShouldDetectConsecutiveHighsWithNeighbourAllowance() {
+            var barOne = new BidAskData(5);
+            var barTwo = new BidAskData(6);
+            var barThree = new BidAskData(7);
+
+            var swings = new Swings();
+            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne, barTwo, barThree }, 1,1));
+            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne,barThree, barOne}, 1,1));
+            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barTwo,barOne, barThree }, 2,1));
+            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barThree, barTwo, barOne }, 1,1));
+        }
+
+        [Fact]
+        private void ShouldDetectMultipleConsecutiveHighsWithNeighbourAllowance() {
+            var barOne = new BidAskData(5);
+            var barTwo = new BidAskData(6);
+            var barThree = new BidAskData(7);
+            var barFour = new BidAskData(9);
+            var barFive = new BidAskData(10);
+            var barSix = new BidAskData(11);
+            var barSeven = new BidAskData(12);
+
+            var swings = new Swings();
+            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() {barThree, barOne, barOne, barFour, barOne, barOne, barFive, barOne, barOne, barSix,barOne,barOne,barSeven }, 4, 2));
+            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barThree, barTwo, barFour,barOne,barFive }, 3, 1));
+
+            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne, barThree, barOne }, 4, 4));
+            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barSix,barFive, barFour, barThree,barTwo,barOne}, 4, 4));
+            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barThree,barFour,barFive, barSix, barOne,barOne,barSeven}, 4, 1));
+        }
+
+        [Fact]
+        private void ShouldDetectConsecutiveLows() {
+            var barOne = new BidAskData(7);
+            var barTwo = new BidAskData(6);
+            var barThree = new BidAskData(5);
+
+            var swings = new Swings();
+            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barTwo }, 1, 0));
+            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barThree }, 1, 0));
+            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barOne }, 1, 0));
+            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barOne, barTwo }, 1, 0));
+            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barOne, barTwo, barOne }, 1, 0));
+
+        }
+
+        [Fact]
+        private void ShouldDetectMultipleConsecutiveLows() {
+            var barOne = new BidAskData(9);
+            var barTwo = new BidAskData(7);
+            var barThree = new BidAskData(6);
+            var barFive = new BidAskData(5);
+
+            var swings = new Swings();
+            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barTwo, barThree }, 2, 0));
+            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barThree, barFive }, 2, 0));
+            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barThree, barOne, barThree, barOne }, 2, 0));
+        }
+
+        [Fact]
+        private void ShouldDetectManyConsecutiveLows() {
+            var bidaskList = new List<BidAskData>();
+            for (int i = 100; i > 0; i--) {
+                bidaskList.Add(new BidAskData(i));
+            }
+
+            var swings = new Swings();
+            Assert.True(swings.CheckForConsecutiveLows(bidaskList, 50, 0));
+            Assert.True(swings.CheckForConsecutiveLows(bidaskList, 75, 0));
+            Assert.True(swings.CheckForConsecutiveLows(bidaskList, 99, 0));
+        }
+
+        [Fact]
+        private void ShouldDetectConsecutiveLowsWithNeighbourAllowance() {
+            var barOne = new BidAskData(7);
+            var barTwo = new BidAskData(6);
+            var barThree = new BidAskData(5);
+
+            var swings = new Swings();
+            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barTwo, barThree }, 1, 1));
+            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barThree, barOne }, 1, 1));
+            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barTwo, barOne, barThree }, 2, 1));
+            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barTwo, barOne }, 1, 1));
+        }
+
+        [Fact]
+        private void ShouldDetectMultipleConsecutiveLowsWithNeighbourAllowance() {
+            var barOne = new BidAskData(12);
+            var barTwo = new BidAskData(11);
+            var barThree = new BidAskData(10);
+            var barFour = new BidAskData(9);
+            var barFive = new BidAskData(7);
+            var barSix = new BidAskData(6);
+            var barSeven = new BidAskData(5);
+
+            var swings = new Swings();
+            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barOne, barOne, barFour, barOne, barOne, barFive, barOne, barOne, barSix, barOne, barOne, barSeven }, 4, 2));
+            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barTwo, barFour, barOne, barFive }, 3, 1));
+
+            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barThree, barOne }, 4, 4));
+            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barSix, barFive, barFour, barThree, barTwo, barOne }, 4, 4));
+            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barFour, barFive, barSix, barOne, barOne, barSeven }, 4, 1));
+        }
+
     }
 
     public class Swings
     {
-        /// <summary>
-        /// Finds the swings in the price
-        /// </summary>
-        /// <param name="prices"></param>
-        /// <param name="atrLimit">The minimum amount the price must move before a continuation is considered</param>
-        /// <param name="continuationLimit">The number of (non)-consecutive extreme bars that can occur before a pivot is declared</param>
-        /// <param name="isolationLimit">The number of bars that can lie between basr counted as part of the continuation</param>
-        protected void Calculate(List<BidAskData> prices, double atrLimit, int continuationLimit, int isolationLimit) {
+        private double _atrLimitHighs { get; set; }
+        private double _atrLimitLows { get; set; }
+        private int _consecutiveHighExtremes { get; set; }
+        private int _consecutiveLowExtremes { get; set; }
+        private int _neighboursAllowedHigh { get; set; }
+        private int _neighboursAllowedLow { get; set; }
+
+        public Swings(double atrLimitHigh, int consecutiveHighs, int neighboursAllowedHigh, double atrLimitLow, int consecutiveLows, int neighboursAllowedLows) {
+            _atrLimitHighs = atrLimitHigh;
+            _atrLimitLows = atrLimitLow;
+            _consecutiveExtremes = consecutiveHighsOrLows
+        }
+
+        public void Calculate(BidAskData price, ) {
             var baseAtrs = AverageTrueRange.Calculate(prices);
             var atrReversals = new double[prices.Count];
-            var peaks = new bool[prices.Count];
-            var troughs = new bool[prices.Count];
+            var swings = new List<Swing>();
+
             for (var i = 0; i < prices.Count; i++)
                 atrReversals[i] = baseAtrs[i] * atrLimit;
 
-            int higherHighs = 0;
-            int lowerLows = 0;
-            var lastLowPrice = prices[0].Low.Mid;
-            var lastHighPrice = prices[0].High.Mid;
+            int currentTrend = 0;
+            double lastHigh = 0.0;
+            double lastLow = 0.0;
+
+
             for (int i = 1; i < prices.Count; i++) {
-
-                bool newHigh=false;
-                bool newLow=false;
-                for (int j = i; j >= i-isolationLimit; j--) {
-                    if (prices[i].High.Mid > prices[j].High.Mid) 
-                        newHigh = true;
-
-                    if (prices[i].Low.Mid < prices[j].Low.Mid) 
-                        newLow = true;
+                if (currentTrend == 0) {
+                    if(CheckForConsecutiveHighs(prices))
                 }
 
-                if (newHigh)
-                    higherHighs++;
-                else
-                    higherHighs = 0;
 
-                if (newLow)
-                    lowerLows++;
-                else 
-                    lowerLows = 0;
 
-                if (higherHighs >= continuationLimit) {
-                    var atrDiffHigh = (prices[i].High.Mid - lastLowPrice);
-                    if (atrDiffHigh > atrReversals[i] && prices[i].High.Mid >= lastHighPrice) {
-                        peaks[i] = true;
-                        lastHighPrice = prices[i].High.Mid;
+                if (currentTrend == 1) {
+                    if (prices[i].High.Mid > prices[i - 1].High.Mid) {
+                        if (prices[i].High.Mid > lastHigh) {
+                            if (CheckForConsecutiveHighs(prices,  i,isolationLimit)) {
+
+                            }
+                        }
+
                     }
                 }
 
-                if (lowerLows >= continuationLimit) {
-                    
-                    var atrDiffLow = (lastHighPrice - prices[i].Low.Mid);
-                    if (atrDiffLow > atrReversals[i] && prices[i].Low.Mid <= lastLowPrice) {
-                        troughs[i] = true;
-                        lastLowPrice = prices[i].Low.Mid;
-                    }
-                }
 
             }
 
-            //for (int i = 0; i < pric; i++) {
-                
-            //}
+        }
 
+        public bool CheckForConsecutiveHighs(List<BidAskData> prices, int consecutiveHighs, int skipsAllowed) {
+            var end = prices.Count - 1 - consecutiveHighs - skipsAllowed;
+
+            for (int j = prices.Count - 1; j > end && j > 0; j--) {
+                bool consecutiveHigh = false;
+                    for (int i = j; i < prices.Count && i - (j + 1) < skipsAllowed; i++)
+                        if (prices[i].High.Mid > prices[j - 1].High.Mid) {
+                            consecutiveHigh = true;
+                            break;
+                        }
+                if (!consecutiveHigh) 
+                        return false;
+            }
+            return true;
+        }
+
+        public bool CheckForConsecutiveLows(List<BidAskData> prices, int consecutiveHighs, int skipsAllowed) {
+            var end = prices.Count - 1 - consecutiveHighs - skipsAllowed;
+
+            for (int j = prices.Count - 1; j > end && j > 0; j--) {
+                bool consecutivelow = false;
+                for (int i = j; i < prices.Count && i - (j + 1) < skipsAllowed; i++)
+                    if (prices[i].Low.Mid < prices[j - 1].Low.Mid) {
+                        consecutivelow = true;
+                        break;
+                    }
+                if (!consecutivelow)
+                    return false;
+            }
+            return true;
         }
 
 
-        public static void CalculateAlgoSwings(List<double> input, int startPoint = 1000, double reversalLimit = 2.1, bool lookBack = true) {
-            //if (StartPoint > Input.Count) StartPoint = Input.Count - 1;
-            //var Templist = Input.Skip(Input.Count - StartPoint);
-
-            //var firstOrDefault = Templist.FirstOrDefault(x => x.HighPivot > 0 || x.LowPivot > 0);
-
-            //if (firstOrDefault != null && LookBack)
-            //    {
-            //        int z = firstOrDefault.Index - 1;
-            //        if (z > -1)
-            //        {
-            //            if (Input[z].HighPivot > 0 && Input[z].LowPivot > 0)
-            //                Input[z].ReversalPoint = Reversal.PeakTrough;
-            //            else if (Input[z].HighPivot > 0) Input[z].ReversalPoint = Reversal.Peak;
-            //            else if (Input[z].LowPivot > 0) Input[z].ReversalPoint = Reversal.Trough;
-
-
-            //            while (z < Input.Count)
-            //            {
-
-
-            //            var last = Input.LastOrDefault(
-            //                    x => (x.ReversalPoint.Equals(Reversal.Trough) ||
-            //                          x.ReversalPoint.Equals(Reversal.Peak) ||
-            //                          x.ReversalPoint.Equals(Reversal.PeakTrough)) && x.Index - 1 <= z);
-            //                int direction = 0;
-            //                if (last.ReversalPoint.Equals(Reversal.PeakTrough))
-            //                {
-            //                    var Lastlast =
-            //                        Input.LastOrDefault(
-            //                            x => (x.ReversalPoint.Equals(Reversal.Trough) ||
-            //                                  x.ReversalPoint.Equals(Reversal.Peak)) && x.Index <= last.Index);
-            //                    if (Lastlast != null && Lastlast.ReversalPoint.Equals(Reversal.Peak))
-            //                        direction = 1;
-            //                    else if (Lastlast != null && Lastlast.ReversalPoint.Equals(Reversal.Trough))
-            //                        direction = -1;
-            //                    else if (Lastlast == null)
-            //                    {
-            //                        if (last.UpBar) direction = 1;
-            //                        else direction = -1;
-            //                    }
-            //                }
-            //                else if (last.ReversalPoint.Equals(Reversal.Peak)) direction = 1;
-            //                else if (last.ReversalPoint.Equals(Reversal.Trough)) direction = -1;
-
-
-            //                var next = Input.FirstOrDefault(
-            //                    x => (x.HighPivot > 0 || x.LowPivot > 0) && x.Index - 1 > z);
-            //                if (next != null)
-            //                {
-
-
-            //                if (direction > 0)
-            //                    {
-            //                    if (next.LowPivot > 0)
-            //                    {
-            //                        if (last.High - next.Low > ReversalLimit * next.ATR) next.ReversalPoint = Reversal.Trough;
-            //                    }
-
-            //                        if (next.HighPivot > 0)
-            //                        {
-
-
-            //                        if (next.ReversalPoint.Equals(Reversal.Trough) &&
-            //                                (next.High - next.Low > ReversalLimit * next.ATR))
-            //                                next.ReversalPoint = Reversal.PeakTrough;
-            //                            else
-            //                            {
-            //                                if (next.High >= last.High)
-            //                                {
-            //                                    if (last.ReversalPoint == Reversal.PeakTrough) last.ReversalPoint = Reversal.Trough;
-            //                                    else last.ReversalPoint = Reversal.notDefined;
-
-            //                                    next.ReversalPoint = Reversal.Peak;
-            //                                }
-            //                            }
-            //                        }
-            //                    }
-            //                    if (direction < 0)
-            //                    {
-            //                        if (next.HighPivot > 0)
-            //                        {
-            //                        if (next.High - last.Low > ReversalLimit * next.ATR)
-            //                                next.ReversalPoint = Reversal.Peak;
-            //                        }
-
-            //                        if (next.LowPivot > 0)
-            //                        {
-
-            //                        if (next.ReversalPoint.Equals(Reversal.Peak) &&
-            //                                (next.High - next.Low > ReversalLimit * next.ATR))
-            //                                next.ReversalPoint = Reversal.PeakTrough;
-            //                            else
-            //                            {
-            //                                if (next.Low <= last.Low)
-            //                                {
-            //                                    if(last.ReversalPoint.Equals(Reversal.PeakTrough)) last.ReversalPoint = Reversal.Peak;
-            //                                  else  last.ReversalPoint = Reversal.notDefined;
-            //                                    next.ReversalPoint = Reversal.Trough;
-            //                                }
-            //                            }
-            //                        }
-            //                    }
-
-            //                next.PotentialReversal = next.ReversalPoint;
-            //                    z = next.Index - 1;
-            //                }
-            //                else z = Input.Count;
-            //            }
-            //        }
-            //    }         
-            //else if (firstOrDefault != null && !LookBack)
-            //{
-            //    int z = firstOrDefault.Index - 1;
-            //    if (z > -1)
-            //    {
-            //        if (Input[z].HighPivot > 0 && Input[z].LowPivot > 0)
-            //            Input[z].ReversalPoint = Reversal.PeakTrough;
-            //        else if (Input[z].HighPivot > 0) Input[z].ReversalPoint = Reversal.Peak;
-            //        else if (Input[z].LowPivot > 0) Input[z].ReversalPoint = Reversal.Trough;
-
-
-            //        while (z < Input.Count)
-            //        {
-            //            var last = Input.LastOrDefault(
-            //                x => (x.ReversalPoint.Equals(Reversal.Trough) ||
-            //                      x.ReversalPoint.Equals(Reversal.Peak) ||
-            //                      x.ReversalPoint.Equals(Reversal.PeakTrough)) && x.Index - 1 <= z);
-
-
-            //            int direction = 0;
-            //            if (last.ReversalPoint.Equals(Reversal.PeakTrough))
-            //            {
-            //                var Lastlast =
-            //                    Input.LastOrDefault(x => (x.ReversalPoint.Equals(Reversal.Trough) ||
-            //                                              x.ReversalPoint.Equals(Reversal.Peak)) &&
-            //                                             x.Index <= last.Index);
-            //                if (Lastlast != null && Lastlast.ReversalPoint.Equals(Reversal.Peak)) direction = 1;
-            //                else if (Lastlast != null && Lastlast.ReversalPoint.Equals(Reversal.Trough))
-            //                    direction = -1;
-            //                else if (Lastlast == null)
-            //                {
-            //                    if (last.UpBar) direction = 1;
-            //                    else direction = -1;
-            //                }
-            //            }
-            //            else if (last.ReversalPoint.Equals(Reversal.Peak)) direction = 1;
-            //            else if (last.ReversalPoint.Equals(Reversal.Trough)) direction = -1;
-
-
-            //            var next = Input.FirstOrDefault(x => (x.HighPivot > 0 || x.LowPivot > 0) && x.Index - 1 > z);
-            //            if (next != null)
-            //            {
-            //                if (direction > 0)
-            //                {
-            //                    if (next.LowPivot > 0)
-            //                    {
-            //                        if (last.High - next.Low > ReversalLimit * last.ATR)
-            //                            next.ReversalPoint = Reversal.Trough;
-            //                    }
-
-            //                    if (next.HighPivot > 0)
-            //                    {
-
-            //                        if (next.ReversalPoint.Equals(Reversal.Trough) &&
-            //                            (next.High - next.Low > ReversalLimit * last.ATR))
-            //                            next.ReversalPoint = Reversal.PeakTrough;
-            //                        else
-            //                        {
-            //                            if (next.High >= last.High)
-            //                            {
-            //                                last.ReversalPoint = last.ReversalPoint.Equals(Reversal.PeakTrough) ? Reversal.Trough : Reversal.notDefined;
-            //                                next.ReversalPoint = Reversal.Peak;
-            //                            }
-            //                        }
-            //                    }
-            //                }
-            //                if (direction < 0)
-            //                {
-            //                    if (next.HighPivot > 0)
-            //                    {
-
-            //                        if (next.High - last.Low > ReversalLimit * last.ATR)
-            //                            next.ReversalPoint = Reversal.Peak;
-            //                    }
-
-            //                    if (next.LowPivot > 0)
-            //                    {
-
-
-            //                        if (next.ReversalPoint.Equals(Reversal.Peak) &&
-            //                            (next.High - next.Low > ReversalLimit * last.ATR))
-            //                            next.ReversalPoint = Reversal.PeakTrough;
-            //                        else
-            //                        {
-            //                            if (next.Low <= last.Low)
-            //                            {
-            //                                last.ReversalPoint = last.ReversalPoint.Equals(Reversal.PeakTrough) ? Reversal.Peak : Reversal.notDefined;
-            //                                next.ReversalPoint = Reversal.Trough;
-            //                            }
-            //                        }
-            //                    }
-            //                }
-            //                next.PotentialReversal = next.ReversalPoint;
-
-            //                z = next.Index - 1;
-            //            }
-            //            else z = Input.Count;
-            //        }
-            //    }
-            //}
-        }
-
-
-        public static void DefineTrends(List<Session> input) {
-            //List<Session> Swingers = DeepCopySwings(Input);
-            //if (Swingers.Count < 4) return ;
-
-            //TrendState CurrentState  = TrendState.notDefined;
-            //int LastChange = 0;
-
-            //for (int i = 3; i < Swingers.Count; i++)
-            //{
-            //    if (i == Swingers.Count - 1)
-            //    {
-            //        string a = "";
-            //    }
-            //    var First = Swingers[i - 3];
-            //    var Second = Swingers[i - 2];
-            //    var Third = Swingers[i - 1];
-            //    var Fourth = Swingers[i];
-
-            //    if (First.ReversalPoint.Equals(Reversal.Peak))
-            //    {
-            //        if (Third.High > First.High)
-            //        {
-            //            if (CurrentState.Equals(TrendState.DownTrend))
-            //            {
-            //                var Cuurr = Input.First(x => x.Index >= Second.Index && x.Index <= Third.Index &&
-            //                                             x.High > First.High);
-            //                Input.Where(x=>x.Index - 1 >= LastChange && x.Index <= Cuurr.Index ).ToList().ForEach(x => x.Trend = CurrentState);
-
-            //                LastChange = Cuurr.Index - 1;
-            //                CurrentState = TrendState.Range;
-            //            }
-
-            //            if (Second.Low < Fourth.Low)
-            //            {
-            //                if (CurrentState.Equals(TrendState.Range) || CurrentState.Equals(TrendState.notDefined))
-            //                {
-            //                    var Cuurr = Fourth;
-            //                    Input.Where(x => x.Index - 1 >= LastChange && x.Index <= Cuurr.Index).ToList()
-            //                        .ForEach(x => x.Trend = CurrentState);
-
-            //                    LastChange = Cuurr.Index - 1;
-            //                    CurrentState = TrendState.UpTrend;
-            //                }
-            //            }
-
-            //        }
-
-            //        if (Third.High < First.High)
-            //        {
-            //            if (CurrentState.Equals(TrendState.UpTrend))
-            //            {
-            //                var Cuurr = Third;
-            //                Input.Where(x => x.Index - 1 >= LastChange && x.Index <= Cuurr.Index).ToList().ForEach(x => x.Trend = CurrentState);
-
-            //                LastChange = Cuurr.Index - 1;
-            //                CurrentState = TrendState.Range;
-            //            }
-
-            //            if (Second.Low > Fourth.Low)
-            //            {
-            //                if (CurrentState.Equals(TrendState.Range) || CurrentState.Equals(TrendState.notDefined))
-            //                {
-            //                    var Cuurr = Input.First(x => x.Index >= Third.Index && x.Index <= Fourth.Index && 
-            //                             x.Low < Second.Low);
-            //                    Input.Where(x => x.Index - 1 >= LastChange && x.Index <= Cuurr.Index).ToList().ForEach(x => x.Trend = CurrentState);
-
-            //                    LastChange = Cuurr.Index - 1;
-            //                    CurrentState = TrendState.DownTrend;
-            //                }
-            //            }
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (Third.Low > First.Low)
-            //        {
-            //            if (CurrentState.Equals(TrendState.DownTrend))
-            //            {
-            //                var Cuurr = Third;
-            //                Input.Where(x => x.Index - 1 >= LastChange && x.Index <= Cuurr.Index).ToList().ForEach(x => x.Trend = CurrentState);
-
-            //                LastChange = Cuurr.Index - 1;
-            //                CurrentState = TrendState.Range;
-            //            }
-
-            //            if (Second.High < Fourth.High)
-            //            {
-            //                if (CurrentState.Equals(TrendState.Range) || CurrentState.Equals(TrendState.notDefined))
-            //                {
-            //                    var Cuurr = Input.First(x => x.Index >= Third.Index && x.Index <= Fourth.Index &&
-            //                                                 x.High > Second.High);
-            //                    Input.Where(x => x.Index - 1 >= LastChange && x.Index <= Cuurr.Index).ToList().ForEach(x => x.Trend = CurrentState);
-
-            //                    LastChange = Cuurr.Index - 1;
-            //                    CurrentState = TrendState.UpTrend;
-            //                }
-            //            }
-            //        }
-
-            //        if (Third.Low < First.Low)
-            //        {
-            //            if (CurrentState.Equals(TrendState.UpTrend))
-            //            {
-            //                var Cuurr = Input.First(x => x.Index >= Second.Index && x.Index <= Third.Index &&
-            //                                             x.Low < First.Low);
-            //                Input.Where(x => x.Index - 1 >= LastChange && x.Index <= Cuurr.Index).ToList().ForEach(x => x.Trend = CurrentState);
-
-            //                LastChange = Cuurr.Index - 1;
-            //                CurrentState = TrendState.Range;
-            //            }
-
-            //            if (Second.High > Fourth.High)
-            //            {
-            //                if (CurrentState.Equals(TrendState.Range) || CurrentState.Equals(TrendState.notDefined))
-            //                {
-            //                    var Cuurr = Fourth;
-            //                    Input.Where(x => x.Index - 1 >= LastChange && x.Index <= Cuurr.Index).ToList().ForEach(x => x.Trend = CurrentState);
-
-            //                    LastChange = Cuurr.Index - 1;
-            //                    CurrentState = TrendState.DownTrend;
-            //                }
-            //            }
-
-            //        }
-            //    }
-
-            //}
-
-            //Input.Where(x => x.Index - 1 >= LastChange && x.Index <= Swingers.Last().Index).ToList().ForEach(x => x.Trend = CurrentState);
-        }
-
-
-        public static TrendState DefineRegion(List<Session> inputs) {
-            //if(!Inputs.Any(x => x.ReversalPoint.Equals(Reversal.Peak) ||
-            //                    x.ReversalPoint.Equals(Reversal.Trough) ||
-            //                    x.ReversalPoint.Equals(Reversal.PeakTrough))) return TrendState.Range;
-
-            //var t = Inputs.Where(x => x.ReversalPoint.Equals(Reversal.Peak) ||
-            //                          x.ReversalPoint.Equals(Reversal.Trough) ||
-            //                          x.ReversalPoint.Equals(Reversal.PeakTrough)).ToList();
-
-            //int last = t.Count - 1;
-
-            //if(last < 3) return TrendState.Range;
-            //if (Inputs[last].ReversalPoint.Equals(Reversal.Peak))
-            //{
-            //    if (Inputs[last].High > Inputs[last-2].High && Inputs[last - 1].Low > Inputs[last - 3].Low) return TrendState.UpTrend;
-            //    if (Inputs[last].High < Inputs[last-2].High && Inputs[last - 1].Low < Inputs[last - 3].Low ) return TrendState.DownTrend;
-            //    else return TrendState.Range;
-            //}
-            //else
-            //{
-            //    if (Inputs[last].Low > Inputs[last - 2].Low  && Inputs[last-1].High > Inputs[last - 3].High) return TrendState.UpTrend;
-            //    if (Inputs[last].Low < Inputs[last-2].Low && Inputs[last-1].High < Inputs[last - 3].High) return TrendState.DownTrend;
-            //    else return TrendState.Range;
-            //}
-
-            return TrendState.NotDefined;
-        }
-
-        public enum TrendState
-        {
-            NotDefined,
-            UpTrend,
-            DownTrend,
-            Range
-        }
+    }
+    public enum SwingPoint
+    {
+        continuation,
+        peak,
+        trough,
+        Range
     }
 
+    public readonly struct Swing
+    {
+        public SwingPoint SwingDir { get; }
+        public int Index { get; }
+
+        public Swing(SwingPoint swingpoint, int index) {
+            SwingDir = swingpoint;
+            Index = index;
+        }
+    }
 }
