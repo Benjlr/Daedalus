@@ -6,10 +6,6 @@ namespace DataStructures.Tests.Calculations
 {
     public class SwingTests
     {
-        [Fact]
-        private void ShouldCalculateUpSwingWithtwoConsecutive() {
-
-        }
 
         [Fact]
         private void ShouldDetectConsecutiveHighs (){
@@ -17,12 +13,12 @@ namespace DataStructures.Tests.Calculations
             var barTwo = new BidAskData(6);
             var barThree = new BidAskData(7);
 
-            var swings = new Swings();
-            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() {barOne, barTwo},  1,0));
-            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne, barThree },  1, 0));
-            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barThree, barOne },  1, 0));
-            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barThree, barOne,barTwo },  1, 0));
-            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barThree, barOne,barTwo,barOne }, 1, 0));
+            var swings = new Swings(0, 0, 0, 0, 0, 0);
+            Assert.True(swings.CheckForConsecutiveHighs(new BidAskData[2] {barOne, barTwo},  1,0));
+            Assert.True(swings.CheckForConsecutiveHighs(new BidAskData[] { barOne, barThree },  1, 0));
+            Assert.False(swings.CheckForConsecutiveHighs(new BidAskData[] { barThree, barOne },  1, 0));
+            Assert.True(swings.CheckForConsecutiveHighs(new BidAskData[] { barThree, barOne,barTwo },  1, 0));
+            Assert.False(swings.CheckForConsecutiveHighs(new BidAskData[] { barThree, barOne,barTwo,barOne }, 1, 0));
 
         }
 
@@ -33,20 +29,19 @@ namespace DataStructures.Tests.Calculations
             var barThree = new BidAskData(7);
             var barFive = new BidAskData(9);
 
-            var swings = new Swings();
-            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne, barTwo, barThree }, 2, 0));
-            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne, barThree,barFive },  2, 0));
-            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne, barThree, barOne, barThree,barOne },  2, 0));
+            var swings = new Swings(0, 0, 0, 0, 0, 0);
+            Assert.True(swings.CheckForConsecutiveHighs(new BidAskData[] { barOne, barTwo, barThree }, 2, 0));
+            Assert.True(swings.CheckForConsecutiveHighs(new BidAskData[] { barOne, barThree,barFive },  2, 0));
+            Assert.False(swings.CheckForConsecutiveHighs(new BidAskData[] { barOne, barThree, barOne, barThree,barOne },  2, 0));
         }
 
         [Fact]
         private void ShouldDetectManyConsecutiveHighs() {
-            var bidaskList = new List<BidAskData>();
-            for (int i = 0; i < 100; i++) {
-                bidaskList.Add(new BidAskData(i));
-            }
+            var bidaskList = new BidAskData[100];
+            for (int i = 0; i < 100; i++) 
+                bidaskList[i] = new BidAskData(i);            
 
-            var swings = new Swings();
+            var swings = new Swings(0, 0, 0, 0, 0, 0);
             Assert.True(swings.CheckForConsecutiveHighs(bidaskList, 50, 0));
             Assert.True(swings.CheckForConsecutiveHighs(bidaskList, 75, 0));
             Assert.True(swings.CheckForConsecutiveHighs(bidaskList, 99, 0));
@@ -58,11 +53,11 @@ namespace DataStructures.Tests.Calculations
             var barTwo = new BidAskData(6);
             var barThree = new BidAskData(7);
 
-            var swings = new Swings();
-            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne, barTwo, barThree }, 1,1));
-            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne,barThree, barOne}, 1,1));
-            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barTwo,barOne, barThree }, 2,1));
-            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barThree, barTwo, barOne }, 1,1));
+            var swings = new Swings(0, 0, 0, 0, 0, 0);
+            Assert.True(swings.CheckForConsecutiveHighs(new BidAskData[] { barOne, barTwo, barThree }, 1,1));
+            Assert.False(swings.CheckForConsecutiveHighs(new BidAskData[] { barOne,barThree, barOne}, 1,1));
+            Assert.True(swings.CheckForConsecutiveHighs(new BidAskData[] { barTwo,barOne, barThree }, 2,1));
+            Assert.False(swings.CheckForConsecutiveHighs(new BidAskData[] { barThree, barTwo, barOne }, 1,1));
         }
 
         [Fact]
@@ -75,13 +70,13 @@ namespace DataStructures.Tests.Calculations
             var barSix = new BidAskData(11);
             var barSeven = new BidAskData(12);
 
-            var swings = new Swings();
-            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() {barThree, barOne, barOne, barFour, barOne, barOne, barFive, barOne, barOne, barSix,barOne,barOne,barSeven }, 4, 2));
-            Assert.True(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barThree, barTwo, barFour,barOne,barFive }, 3, 1));
+            var swings = new Swings(0, 0, 0, 0, 0, 0);
+            Assert.True(swings.CheckForConsecutiveHighs(new BidAskData[] { barThree, barOne, barOne, barFour, barOne, barOne, barFive, barOne, barOne, barSix,barOne,barOne,barSeven }, 4, 2));
+            Assert.True(swings.CheckForConsecutiveHighs(new BidAskData[] { barThree, barTwo, barFour,barOne,barFive }, 3, 1));
 
-            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barOne, barThree, barOne }, 4, 4));
-            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barSix,barFive, barFour, barThree,barTwo,barOne}, 4, 4));
-            Assert.False(swings.CheckForConsecutiveHighs(new List<BidAskData>() { barThree,barFour,barFive, barSix, barOne,barOne,barSeven}, 4, 1));
+            Assert.False(swings.CheckForConsecutiveHighs(new BidAskData[] { barOne, barThree, barOne }, 4, 4));
+            Assert.False(swings.CheckForConsecutiveHighs(new BidAskData[] { barSix,barFive, barFour, barThree,barTwo,barOne}, 4, 4));
+            Assert.False(swings.CheckForConsecutiveHighs(new BidAskData[] { barThree,barFour,barFive, barSix, barOne,barOne,barSeven}, 4, 1));
         }
 
         [Fact]
@@ -90,12 +85,12 @@ namespace DataStructures.Tests.Calculations
             var barTwo = new BidAskData(6);
             var barThree = new BidAskData(5);
 
-            var swings = new Swings();
-            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barTwo }, 1, 0));
-            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barThree }, 1, 0));
-            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barOne }, 1, 0));
-            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barOne, barTwo }, 1, 0));
-            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barOne, barTwo, barOne }, 1, 0));
+            var swings = new Swings(0, 0, 0, 0, 0, 0);
+            Assert.True(swings.CheckForConsecutiveLows(new BidAskData[] { barOne, barTwo }, 1, 0));
+            Assert.True(swings.CheckForConsecutiveLows(new BidAskData[] { barOne, barThree }, 1, 0));
+            Assert.False(swings.CheckForConsecutiveLows(new BidAskData[] { barThree, barOne }, 1, 0));
+            Assert.True(swings.CheckForConsecutiveLows(new BidAskData[] { barThree, barOne, barTwo }, 1, 0));
+            Assert.False(swings.CheckForConsecutiveLows(new BidAskData[] { barThree, barOne, barTwo, barOne }, 1, 0));
 
         }
 
@@ -106,20 +101,19 @@ namespace DataStructures.Tests.Calculations
             var barThree = new BidAskData(6);
             var barFive = new BidAskData(5);
 
-            var swings = new Swings();
-            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barTwo, barThree }, 2, 0));
-            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barThree, barFive }, 2, 0));
-            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barThree, barOne, barThree, barOne }, 2, 0));
+            var swings = new Swings(0, 0, 0, 0, 0, 0);
+            Assert.True(swings.CheckForConsecutiveLows(new BidAskData[] { barOne, barTwo, barThree }, 2, 0));
+            Assert.True(swings.CheckForConsecutiveLows(new BidAskData[] { barOne, barThree, barFive }, 2, 0));
+            Assert.False(swings.CheckForConsecutiveLows(new BidAskData[] { barOne, barThree, barOne, barThree, barOne }, 2, 0));
         }
 
         [Fact]
         private void ShouldDetectManyConsecutiveLows() {
-            var bidaskList = new List<BidAskData>();
-            for (int i = 100; i > 0; i--) {
-                bidaskList.Add(new BidAskData(i));
-            }
+            var bidaskList = new BidAskData[100];
+            for (int i = 99; i >= 0; i--) 
+                bidaskList[i] = new BidAskData(100-i);            
 
-            var swings = new Swings();
+            var swings = new Swings(0, 0, 0, 0, 0, 0);
             Assert.True(swings.CheckForConsecutiveLows(bidaskList, 50, 0));
             Assert.True(swings.CheckForConsecutiveLows(bidaskList, 75, 0));
             Assert.True(swings.CheckForConsecutiveLows(bidaskList, 99, 0));
@@ -131,11 +125,11 @@ namespace DataStructures.Tests.Calculations
             var barTwo = new BidAskData(6);
             var barThree = new BidAskData(5);
 
-            var swings = new Swings();
-            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barTwo, barThree }, 1, 1));
-            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barThree, barOne }, 1, 1));
-            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barTwo, barOne, barThree }, 2, 1));
-            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barTwo, barOne }, 1, 1));
+            var swings = new Swings(0, 0, 0, 0, 0, 0);
+            Assert.True(swings.CheckForConsecutiveLows(new BidAskData[] { barOne, barTwo, barThree }, 1, 1));
+            Assert.False(swings.CheckForConsecutiveLows(new BidAskData[] { barOne, barThree, barOne }, 1, 1));
+            Assert.True(swings.CheckForConsecutiveLows(new BidAskData[] { barTwo, barOne, barThree }, 2, 1));
+            Assert.False(swings.CheckForConsecutiveLows(new BidAskData[] { barThree, barTwo, barOne }, 1, 1));
         }
 
         [Fact]
@@ -148,13 +142,13 @@ namespace DataStructures.Tests.Calculations
             var barSix = new BidAskData(6);
             var barSeven = new BidAskData(5);
 
-            var swings = new Swings();
-            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barOne, barOne, barFour, barOne, barOne, barFive, barOne, barOne, barSix, barOne, barOne, barSeven }, 4, 2));
-            Assert.True(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barTwo, barFour, barOne, barFive }, 3, 1));
+            var swings = new Swings(0,0,0,0,0,0);
+            Assert.True(swings.CheckForConsecutiveLows(new BidAskData[] { barThree, barOne, barOne, barFour, barOne, barOne, barFive, barOne, barOne, barSix, barOne, barOne, barSeven }, 4, 2));
+            Assert.True(swings.CheckForConsecutiveLows(new BidAskData[] { barThree, barTwo, barFour, barOne, barFive }, 3, 1));
 
-            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barOne, barThree, barOne }, 4, 4));
-            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barSix, barFive, barFour, barThree, barTwo, barOne }, 4, 4));
-            Assert.False(swings.CheckForConsecutiveLows(new List<BidAskData>() { barThree, barFour, barFive, barSix, barOne, barOne, barSeven }, 4, 1));
+            Assert.False(swings.CheckForConsecutiveLows(new BidAskData[] { barOne, barThree, barOne }, 4, 4));
+            Assert.False(swings.CheckForConsecutiveLows(new BidAskData[] { barSix, barFive, barFour, barThree, barTwo, barOne }, 4, 4));
+            Assert.False(swings.CheckForConsecutiveLows(new BidAskData[] { barThree, barFour, barFive, barSix, barOne, barOne, barSeven }, 4, 1));
         }
 
     }
@@ -171,51 +165,83 @@ namespace DataStructures.Tests.Calculations
         public Swings(double atrLimitHigh, int consecutiveHighs, int neighboursAllowedHigh, double atrLimitLow, int consecutiveLows, int neighboursAllowedLows) {
             _atrLimitHighs = atrLimitHigh;
             _atrLimitLows = atrLimitLow;
-            _consecutiveExtremes = consecutiveHighsOrLows
+            _consecutiveHighExtremes = consecutiveHighs;
+            _consecutiveLowExtremes = consecutiveLows;
+            _neighboursAllowedHigh = neighboursAllowedHigh;
+            _neighboursAllowedLow = neighboursAllowedLows;
+            _prevValues = new BidAskData[20];
+
         }
+                
+        private double _atr { get; set; }
+        private BidAskData[] _prevValues { get; set; }
+        private int currentTrend  { get; set; }
+        private double lastHigh  { get; set; }
+        private double lastLow  { get; set; }
+        private int _index = 0;
 
-        public void Calculate(BidAskData price, ) {
-            var baseAtrs = AverageTrueRange.Calculate(prices);
-            var atrReversals = new double[prices.Count];
-            var swings = new List<Swing>();
+        public Swing Calculate(BidAskData price) {
+            _atr = AverageTrueRange.Calculate(price, _prevValues[^1].Close.Mid, _atr);
+            var atrReversalHigh = _atr * _atrLimitHighs;
+            var atrReversalLow = _atr * _atrLimitLows;
+            SwingPoint mySwing = SwingPoint.continuation;
 
-            for (var i = 0; i < prices.Count; i++)
-                atrReversals[i] = baseAtrs[i] * atrLimit;
+            InitialiseTrend(atrReversalHigh, atrReversalLow, price);
 
-            int currentTrend = 0;
-            double lastHigh = 0.0;
-            double lastLow = 0.0;
-
-
-            for (int i = 1; i < prices.Count; i++) {
-                if (currentTrend == 0) {
-                    if(CheckForConsecutiveHighs(prices))
+            if (currentTrend == 1) {
+                if (price.High.Mid > lastHigh) {
+                    lastHigh = price.High.Mid;
+                    mySwing = SwingPoint.peak;
                 }
 
 
-
-                if (currentTrend == 1) {
-                    if (prices[i].High.Mid > prices[i - 1].High.Mid) {
-                        if (prices[i].High.Mid > lastHigh) {
-                            if (CheckForConsecutiveHighs(prices,  i,isolationLimit)) {
-
-                            }
-                        }
-
+                if (CheckForConsecutiveLows(_prevValues, _consecutiveLowExtremes, _neighboursAllowedLow)) {
+                    if (atrReversalLow < lastHigh - price.Low.Mid) {
+                        lastLow = price.Low.Mid;
+                        currentTrend = -1;
+                        mySwing = SwingPoint.trough;
                     }
                 }
-
-
             }
 
+            if (currentTrend == -1) {
+                if (price.Low.Mid < lastLow) {
+                    lastLow = price.Low.Mid;
+                    mySwing = SwingPoint.trough;
+                }
+
+                if (CheckForConsecutiveHighs(_prevValues, _consecutiveHighExtremes, _neighboursAllowedHigh)) {
+                    if (atrReversalHigh < lastHigh - price.Low.Mid) {
+                        lastHigh = price.High.Mid;
+                        currentTrend = 1;
+                        mySwing = SwingPoint.peak;
+                    }
+                }
+            }
+
+            return new Swing(mySwing, _index++);
+        }
+        
+        public void InitialiseTrend(double atrReversalHigh, double atrReversalLow, BidAskData price) {
+            if (currentTrend == 0) {
+                if (CheckForConsecutiveHighs(_prevValues, _consecutiveHighExtremes, _neighboursAllowedHigh)) {
+                    if (atrReversalHigh < price.High.Mid - lastLow)
+                        currentTrend = 1;
+                }
+                else if (CheckForConsecutiveLows(_prevValues, _consecutiveLowExtremes, _neighboursAllowedLow)) {
+                    if (atrReversalLow < lastHigh - price.Low.Mid)
+                        currentTrend = -1;
+                }
+            }
         }
 
-        public bool CheckForConsecutiveHighs(List<BidAskData> prices, int consecutiveHighs, int skipsAllowed) {
-            var end = prices.Count - 1 - consecutiveHighs - skipsAllowed;
 
-            for (int j = prices.Count - 1; j > end && j > 0; j--) {
+        public bool CheckForConsecutiveHighs(BidAskData[] prices, int consecutiveHighs, int skipsAllowed) {
+            var end = prices.Length - 1 - consecutiveHighs - skipsAllowed;
+
+            for (int j = prices.Length - 1; j > end && j > 0; j--) {
                 bool consecutiveHigh = false;
-                    for (int i = j; i < prices.Count && i - (j + 1) < skipsAllowed; i++)
+                    for (int i = j; i < prices.Length && i - (j + 1) < skipsAllowed; i++)
                         if (prices[i].High.Mid > prices[j - 1].High.Mid) {
                             consecutiveHigh = true;
                             break;
@@ -226,12 +252,12 @@ namespace DataStructures.Tests.Calculations
             return true;
         }
 
-        public bool CheckForConsecutiveLows(List<BidAskData> prices, int consecutiveHighs, int skipsAllowed) {
-            var end = prices.Count - 1 - consecutiveHighs - skipsAllowed;
+        public bool CheckForConsecutiveLows(BidAskData[] prices, int consecutiveHighs, int skipsAllowed) {
+            var end = prices.Length - 1 - consecutiveHighs - skipsAllowed;
 
-            for (int j = prices.Count - 1; j > end && j > 0; j--) {
+            for (int j = prices.Length - 1; j > end && j > 0; j--) {
                 bool consecutivelow = false;
-                for (int i = j; i < prices.Count && i - (j + 1) < skipsAllowed; i++)
+                for (int i = j; i < prices.Length && i - (j + 1) < skipsAllowed; i++)
                     if (prices[i].Low.Mid < prices[j - 1].Low.Mid) {
                         consecutivelow = true;
                         break;
@@ -248,8 +274,7 @@ namespace DataStructures.Tests.Calculations
     {
         continuation,
         peak,
-        trough,
-        Range
+        trough
     }
 
     public readonly struct Swing
