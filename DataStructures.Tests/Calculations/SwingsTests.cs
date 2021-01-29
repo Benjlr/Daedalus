@@ -1,33 +1,30 @@
-﻿using System;
+﻿using DataStructures.PriceAlgorithms;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataStructures.PriceAlgorithms;
 using Xunit;
 
 namespace DataStructures.Tests.Calculations
 {
     public  class SwingsTests
     {
-        List<BidAskData> myData = new List<BidAskData>()
-        {
-            new BidAskData(5),
-            new BidAskData(6),
-            new BidAskData(7),
-            new BidAskData(6),
-            new BidAskData(5),
-            new BidAskData(6),
-        };
-
 
         [Fact]
         private void ShouldFindPeak() {
+
+            var myData = new List<BidAskData>()
+            {
+                new BidAskData(5),
+                new BidAskData(6),
+                new BidAskData(7),
+                new BidAskData(6),
+                new BidAskData(5),
+                new BidAskData(6),
+            };
+
             var sings  = new Swings(0, new ExtremesFinder(false,1,0),0, new ExtremesFinder(true, 1, 0));
             var results = new List<Swing>();
-            for (int i = 0; i < myData.Count; i++) 
-                results.Add(sings.Calculate(myData[i]));
-            
+            foreach (var t in myData)
+                results.Add(sings.Calculate(t));
+
             Assert.Equal(new List<Swing>()
             {
                 new Swing(SwingPoint.peak,0),
