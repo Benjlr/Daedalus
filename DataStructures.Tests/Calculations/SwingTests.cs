@@ -170,19 +170,18 @@ namespace DataStructures.Tests.Calculations
             _consecutiveLowExtremes = consecutiveLows;
             _neighboursAllowedHigh = neighboursAllowedHigh;
             _neighboursAllowedLow = neighboursAllowedLows;
+            _prevValues = new List<BidAskData>();
         }
 
         private double _atr { get; set; }
-
-        public void Calculate(BidAskData price) {
-            //var baseAtrs = AverageTrueRange.Calculate(price,);
-            //var atrReversals = new double[prices.Count];
-            //var swings = new List<Swing>();
-
-            //for (var i = 0; i < prices.Count; i++)
-            //    atrReversals[i] = baseAtrs[i] * atrLimit;
+        private List<BidAskData> _prevValues { get; set; }
+        private int currentTrend { get; set; }
+        private double lastHigh { get; set; }
+        private double lastLow { get; set; }
+        private int _index = 0;
 
         public Swing Calculate(BidAskData price) {
+            _prevValues.Add(price);
             _atr = AverageTrueRange.Calculate(price, _prevValues[^1].Close.Mid, _atr);
             var atrReversalHigh = _atr * _atrLimitHighs;
             var atrReversalLow = _atr * _atrLimitLows;
@@ -197,7 +196,7 @@ namespace DataStructures.Tests.Calculations
                 }
 
 
-                if (CheckForConsecutiveLows(_prevValues, _consecutiveLowExtremes, _neighboursAllowedLow)) {
+                if (CheckForConsecutiveLows(_consecutiveLowExtremes, _neighboursAllowedLow, _prevValues.ToArray())) {
                     if (atrReversalLow < lastHigh - price.Low.Mid) {
                         lastLow = price.Low.Mid;
                         currentTrend = -1;
@@ -212,7 +211,7 @@ namespace DataStructures.Tests.Calculations
                     mySwing = SwingPoint.trough;
                 }
 
-                if (CheckForConsecutiveHighs(_prevValues, _consecutiveHighExtremes, _neighboursAllowedHigh)) {
+                if (CheckForConsecutiveHighs(_consecutiveHighExtremes, _neighboursAllowedHigh, _prevValues.ToArray())) {
                     if (atrReversalHigh < lastHigh - price.Low.Mid) {
                         lastHigh = price.High.Mid;
                         currentTrend = 1;
@@ -226,11 +225,11 @@ namespace DataStructures.Tests.Calculations
         
         public void InitialiseTrend(double atrReversalHigh, double atrReversalLow, BidAskData price) {
             if (currentTrend == 0) {
-                if (CheckForConsecutiveHighs(_prevValues, _consecutiveHighExtremes, _neighboursAllowedHigh)) {
+                if (CheckForConsecutiveHighs(_consecutiveHighExtremes, _neighboursAllowedHigh, _prevValues.ToArray())) {
                     if (atrReversalHigh < price.High.Mid - lastLow)
                         currentTrend = 1;
                 }
-                else if (CheckForConsecutiveLows(_prevValues, _consecutiveLowExtremes, _neighboursAllowedLow)) {
+                else if (CheckForConsecutiveLows(_consecutiveLowExtremes, _neighboursAllowedLow, _prevValues.ToArray())) {
                     if (atrReversalLow < lastHigh - price.Low.Mid)
                         currentTrend = -1;
                 }
