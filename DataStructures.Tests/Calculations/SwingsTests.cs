@@ -30,11 +30,12 @@ namespace DataStructures.Tests.Calculations
             
             Assert.Equal(new List<Swing>()
             {
-                new Swing(SwingPoint.continuation,0),
-                new Swing(SwingPoint.continuation,1),
+                new Swing(SwingPoint.peak,0),
+                new Swing(SwingPoint.peak,1),
                 new Swing(SwingPoint.peak,2),
-                new Swing(SwingPoint.continuation,3),
-                new Swing(SwingPoint.trough,4)
+                new Swing(SwingPoint.trough,3),
+                new Swing(SwingPoint.trough,4),
+                new Swing(SwingPoint.peak,5)
             }, results);
         }
     }
@@ -59,7 +60,7 @@ namespace DataStructures.Tests.Calculations
         private double lastHigh { get; set; }
         private double lastLow { get; set; }
 
-        private int _index = -1;
+        private int _index = 0;
 
         public Swing Calculate(BidAskData price) {
             _atr = AverageTrueRange.Calculate(price, _prevValue.Close.Mid, _atr);
@@ -71,30 +72,31 @@ namespace DataStructures.Tests.Calculations
                 InitialiseTrend(atrReversalHigh, atrReversalLow, price);
 
             if (currentTrend == 1) {
-                if (price.High.Mid > lastHigh)
+                if (price.High.Mid > lastHigh) {
                     lastHigh = price.High.Mid;
-                else
                     mySwing = SwingPoint.peak;
+                }
 
                 if (_lows.CheckExtreme(price.Low.Mid)) {
                     if (atrReversalLow < lastHigh - price.Low.Mid) {
                         lastLow = price.Low.Mid;
                         currentTrend = -1;
-                        //mySwing = SwingPoint.trough;
+                        mySwing = SwingPoint.trough;
                     }
                 }
             }
             else {
-                if (price.Low.Mid < lastLow) 
+                if (price.Low.Mid < lastLow) {
                     lastLow = price.Low.Mid;
-                else
                     mySwing = SwingPoint.trough;
+                }
+
 
                 if (_highs.CheckExtreme(price.High.Mid)) {
                     if (atrReversalHigh < lastHigh - price.Low.Mid) {
                         lastHigh = price.High.Mid;
                         currentTrend = 1;
-                        //mySwing = SwingPoint.peak;
+                        mySwing = SwingPoint.peak;
                     }
                 }
             }
