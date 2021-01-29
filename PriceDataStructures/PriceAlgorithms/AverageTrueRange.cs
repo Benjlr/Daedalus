@@ -23,6 +23,19 @@ namespace DataStructures.PriceAlgorithms
             return atr;
         }
 
+        public static double Calculate(BidAskData input, double lastClose, double lastATR, int period = 20) {
+            if (lastATR == 0 && lastClose == 0)
+                return input.High.Mid - input.Low.Mid;
+
+            var trueRangeVals = new double[3]
+            {
+                input.High.Mid - input.Low.Mid,
+                Math.Abs(input.High.Mid - lastClose),
+                Math.Abs(input.Low.Mid - lastClose)
+            };
+            return ((lastATR * (period - 1.0)) + trueRangeVals.Max()) / period;
+        }
+
         public static List<double> CalculateATRPC(List<BidAskData> input, int atrLB = 2, int ATRPCLB = 55) {
             var atr = Calculate(input, atrLB);
             var atrPC = new List<double>();

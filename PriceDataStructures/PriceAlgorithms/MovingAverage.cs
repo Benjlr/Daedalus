@@ -17,10 +17,10 @@ namespace DataStructures.PriceAlgorithms
             return retval;
         }
 
-        //public static double ExponentialMovingAverage(double inputPrice, double lastValue, int period) {
-        //    var multiplier = 2.0 / (period + 1);
-        //    return (inputPrice - lastValue) * multiplier + lastValue;
-        //}
+        public static double ExponentialMovingAverage(double inputPrice, double lastValue, int period) {
+            var multiplier = 2.0 / (period + 1);
+            return (inputPrice - lastValue) * multiplier + lastValue;
+        }
 
         public static List<double> SimpleMovingAverage(List<double> input, int period) {
             var retval = new List<double>();
