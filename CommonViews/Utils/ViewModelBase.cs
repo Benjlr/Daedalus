@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace ViewCommon.Utils
+namespace CommonViews.Utils
 {
     public class ViewModelBase : INotifyPropertyChanged
     {

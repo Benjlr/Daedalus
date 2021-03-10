@@ -1,16 +1,14 @@
-﻿using Logic;
+﻿using CommonViews.Utils;
+using DataStructures;
+using Logic;
 using Logic.Metrics;
 using OxyPlot;
-using RuleSets;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Windows;
-using DataStructures;
-using ViewCommon.Charts;
 using ViewCommon.Models;
-using ViewCommon.Utils;
 
 namespace Daedalus.ViewModels
 {

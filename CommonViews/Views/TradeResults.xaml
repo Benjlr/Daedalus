@@ -1,0 +1,52 @@
+﻿<Window x:Class="CommonViews.Views.TradeResults"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="TradeResults" Height="450" Width="800">
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Visible" CanContentScroll="False">
+            <StackPanel ScrollViewer.CanContentScroll="True">
+                <ListView Name="Portfolio" ItemsSource="{Binding MyTrades}" ScrollViewer.CanContentScroll="True"
+                          SelectedIndex="{Binding Iterator}" FontFamily="Roboto" FontWeight="Thin" FontSize="12"
+                          VerticalAlignment="Top">
+                    <ListView.Resources>
+                        <Style TargetType="GridViewColumnHeader">
+                            <Setter Property="Padding" Value="5,0" />
+                        </Style>
+                    </ListView.Resources>
+                    <ListView.View>
+                        <GridView x:Name="MainGridView">
+                            <GridViewColumn x:Name="DateInvestedCol"
+                                                DisplayMemberBinding="{Binding History.DateInvested, StringFormat=dd/MMM/yy HH:mm:ss}"
+                                                Width="auto">
+                                <GridViewColumn.Header>
+                                    <GridViewColumnHeader Tag="History.DateInvested" Click="sort_click">DateIn</GridViewColumnHeader>
+                                </GridViewColumn.Header>
+                            </GridViewColumn>
+                            <GridViewColumn x:Name="DaysHeldCol"
+                                                DisplayMemberBinding="{Binding DaysHeld, StringFormat=0}" Width="auto">
+                                <GridViewColumn.Header>
+                                    <GridViewColumnHeader Tag="DaysHeld" Click="sort_click">TimeIn</GridViewColumnHeader>
+                                </GridViewColumn.Header>
+                            </GridViewColumn>
+                            <GridViewColumn x:Name="InvestedStockInfoCol"
+                                                DisplayMemberBinding="{Binding  Details.Ticker}" Width="auto">
+                                <GridViewColumn.Header>
+                                    <GridViewColumnHeader Tag="Details.Ticker" Click="sort_click">Ticker</GridViewColumnHeader>
+                                </GridViewColumn.Header>
+                            </GridViewColumn>
+                            <GridViewColumn x:Name="ReturnInfoCol"
+                                            DisplayMemberBinding="{Binding  Details.Ticker}" Width="auto">
+                                <GridViewColumn.Header>
+                                    <GridViewColumnHeader Tag="Details.Ticker" Click="sort_click">Return</GridViewColumnHeader>
+                                </GridViewColumn.Header>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

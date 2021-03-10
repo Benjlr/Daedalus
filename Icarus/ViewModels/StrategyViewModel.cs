@@ -1,4 +1,5 @@
-﻿using DataStructures;
+﻿using CommonViews.Utils;
+using DataStructures;
 using DataStructures.StatsTools;
 using Logic;
 using OxyPlot;
@@ -8,15 +9,13 @@ using OxyPlot.Series;
 using RuleSets;
 using RuleSets.Entry;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.TextFormatting;
-using DataStructures.PriceAlgorithms;
+using CommonViews.ViewModels;
+using CommonViews.Views;
 using Thought;
-using ViewCommon.Utils;
 
 namespace Icarus.ViewModels
 {
@@ -135,6 +134,9 @@ namespace Icarus.ViewModels
 
             var backTest = new Backtest(myunivers, MarketSide.Bull, myPortfolio);
             backTest.RunBackTestByDates();
+
+            var resultWindow = new TradeResults() {DataContext = new TradeResultViewModel(backTest.Results)};
+
         }
 
     }

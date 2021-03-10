@@ -1,4 +1,5 @@
-﻿using DataStructures;
+﻿using CommonViews.Utils;
+using DataStructures.PriceAlgorithms;
 using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
@@ -7,9 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using DataStructures.PriceAlgorithms;
 using ViewCommon.Models;
-using ViewCommon.Utils;
 using LineAnnotation = OxyPlot.Annotations.LineAnnotation;
 using LinearAxis = OxyPlot.Axes.LinearAxis;
 
