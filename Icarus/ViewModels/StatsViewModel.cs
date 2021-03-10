@@ -3,8 +3,7 @@ using DataStructures.StatsTools;
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using ViewCommon.Utils;
-
+using CommonViews.Utils;
 namespace Icarus.ViewModels
 {
     public class StatsViewModel : ViewModelBase

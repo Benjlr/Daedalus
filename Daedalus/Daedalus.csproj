@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CommonViews\CommonViews.csproj" />
     <ProjectReference Include="..\Logic\Logic.csproj" />
-    <ProjectReference Include="..\ViewCommon\ViewCommon.csproj" />
   </ItemGroup>
 
   <ItemGroup>

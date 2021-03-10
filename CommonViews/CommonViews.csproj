@@ -1,14 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <OutputType>Library</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Utils\LocalData\asx200cash" />
     <None Remove="Utils\LocalData\AUDUSD" />
     <None Remove="Utils\LocalData\sp500cash" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="Views\StockWindow.xaml" />
+    <Page Remove="Views\TradeResults.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,21 +29,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OxyPlot.Core" Version="2.0.0" />
-    <PackageReference Include="System.ObjectModel" Version="4.3.0" />
+    <None Include="Views\StockWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Include="Views\TradeResults.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Logic\Logic.csproj" />
+    <PackageReference Include="OxyPlot.Wpf" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="StockWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="TradeResults.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
+    <ProjectReference Include="..\PriceDataStructures\DataStructures.csproj" />
+    <ProjectReference Include="..\RuleSets\RuleSets.csproj" />
   </ItemGroup>
 
 </Project>
