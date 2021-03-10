@@ -7,10 +7,10 @@
         private int _neighoursPermitted { get; }
 
 
-        private int consecutiveCount = 0;
-        private int neighbourCount = 0;
-        private int neighbourReset = 0;
-        private double lastValue = double.MinValue;
+        private int consecutiveCount { get; set; }
+        private int neighbourCount { get; set; }
+        private int neighbourReset { get; set; }
+        private double lastValue { get; set; } = double.MinValue;
 
         public ExtremesFinder(bool mirror, int consecutivesThreshold, int neighoursPermitted) {
             _mirror = mirror;
@@ -33,14 +33,14 @@
 
         private void ExtremeActions(double currentValue) {
             lastValue = currentValue;
-            consecutiveCount++;
-            neighbourReset++;
+            consecutiveCount+=1;
+            neighbourReset+=1;
             if (neighbourReset >= _consecutiveThreshold)
                 neighbourCount = 0;
         }
 
         private void CheckReset(double currentValue) {
-            neighbourCount++;
+            neighbourCount+=1;
             neighbourReset = 0;
             if (neighbourCount <= _neighoursPermitted)
                 return;

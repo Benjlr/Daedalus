@@ -2,6 +2,7 @@
 using DataStructures.StatsTools;
 using RuleSets;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Logic
@@ -38,6 +39,8 @@ namespace Logic
             private List<IRuleSet> _exitRules { get; set; }
 
             public StaticStrategy CreateStrategy(IRuleSet[] myRules, Market myMarket, ExitInterface stops) {
+                Trace.TraceInformation($"{myMarket.Id}");
+
                 foreach (var t in myRules)
                     t.CalculateBackSeries(myMarket.PriceData);
                 InitRules(myRules);

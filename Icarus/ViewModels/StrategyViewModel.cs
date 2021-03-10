@@ -87,7 +87,7 @@ namespace Icarus.ViewModels
             TradeCompiler.Callback = Update;
             myPortfolio = new Portfolio(7000,0.03, false);
             Universe myunivers = new Universe();
-            var stocks = Markets.ASX300();
+            var stocks = Markets.ASXAllOrds();
             for (int i = 0; i < stocks.Count(); i++) {
                 try {
 
@@ -96,8 +96,8 @@ namespace Icarus.ViewModels
                     //if (LiquidityFilter.IsLiquid(stock.PriceData.Select(x => x.Close.Mid).ToList(), stock.PriceData.Select(x => x.Volume).ToList())) {
 
                         var stratto = new StaticStrategy.StrategyBuilder().
-                            CreateStrategy(new IRuleSet[] { new KeltnerOverSold(),  }, stock,
-                                new StaticStopTarget(new ExitPrices(0.9, 1.2)));
+                            CreateStrategy(new IRuleSet[] { new PivotPoint() }, stock,
+                                new TrailingStopPercentage(ExitPrices.StopOnly(0.93), 0.07 ));
 
                         myunivers.AddMarket(stock, stratto);
                     //}

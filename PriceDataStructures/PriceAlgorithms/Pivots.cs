@@ -28,8 +28,8 @@ namespace DataStructures.PriceAlgorithms
                 var higher = false;
                 var lower = false;
 
-                if (tlist[i].High.Mid >= tlist[i - 1].High.Mid && tlist[i].High.Mid >= tlist[i + 1].High.Mid) higher = true;
-                if (tlist[i].Low.Mid <= tlist[i - 1].Low.Mid && tlist[i].Low.Mid <= tlist[i + 1].Low.Mid) lower = true;
+                if (tlist[i].High.Mid > tlist[i - 1].High.Mid && tlist[i].High.Mid >= tlist[i + 1].High.Mid) higher = true;
+                if (tlist[i].Low.Mid < tlist[i - 1].Low.Mid && tlist[i].Low.Mid <= tlist[i + 1].Low.Mid) lower = true;
                 
                 if (higher && lower) calcedPivs.Add( new PivotStruct(1,1,i));
                 else if (higher) calcedPivs.Add(new PivotStruct(1, 0, i));
@@ -43,14 +43,14 @@ namespace DataStructures.PriceAlgorithms
                 var lowPivs = calcedPivs.Where(x => x.LowPivot == order).ToList();
 
                 for (int i = 1; i < highPivs.Count-1; i++) 
-                    if (tlist[highPivs[i].Index].High.Mid >= tlist[highPivs[i - 1].Index].High.Mid
+                    if (tlist[highPivs[i].Index].High.Mid > tlist[highPivs[i - 1].Index].High.Mid
                         && tlist[highPivs[i].Index].High.Mid >= tlist[highPivs[i + 1].Index].High.Mid) {
                         var preExistingPiv = calcedPivs[calcedPivs.IndexOf(calcedPivs.First(c=>c.Index == highPivs[i].Index))];
                         calcedPivs[calcedPivs.IndexOf(calcedPivs.First(c => c.Index == highPivs[i].Index))] =  new PivotStruct(preExistingPiv.HighPivot+1, preExistingPiv.LowPivot, preExistingPiv.Index);
                     }
 
                 for (int i = 1; i < lowPivs.Count - 1; i++)
-                    if (tlist[lowPivs[i].Index].Low.Mid <= tlist[lowPivs[i - 1].Index].Low.Mid
+                    if (tlist[lowPivs[i].Index].Low.Mid < tlist[lowPivs[i - 1].Index].Low.Mid
                         && tlist[lowPivs[i].Index].Low.Mid <= tlist[lowPivs[i + 1].Index].Low.Mid) {
                         var preExistingPiv = calcedPivs[calcedPivs.IndexOf(calcedPivs.First(c => c.Index == lowPivs[i].Index))];
                         calcedPivs[calcedPivs.IndexOf(calcedPivs.First(c => c.Index == lowPivs[i].Index))] = new PivotStruct(preExistingPiv.HighPivot, preExistingPiv.LowPivot+1, preExistingPiv.Index);

@@ -8,8 +8,7 @@ namespace DataStructures.Tests.Calculations
     {
 
         [Fact]
-        private void ShouldFindPeak() {
-
+        private void ShouldFindPeakSmallReverse() {
             var myData = new List<BidAskData>()
             {
                 new BidAskData(5),
@@ -34,6 +33,93 @@ namespace DataStructures.Tests.Calculations
                 new Swing(SwingPoint.trough,4),
                 new Swing(SwingPoint.peak,5)
             }, results);
+        }
+
+        [Fact]
+        private void ShouldFindPeakLargerReverse() {
+            var myData = new List<BidAskData>()
+            {
+                new BidAskData(6),
+                new BidAskData(7),
+                new BidAskData(8),
+                new BidAskData(9),
+                new BidAskData(10),
+                new BidAskData(9),
+                new BidAskData(8),
+                new BidAskData(7),
+                new BidAskData(6),
+                new BidAskData(5),
+                new BidAskData(4),
+                new BidAskData(5),
+                new BidAskData(6),
+                new BidAskData(7),
+                new BidAskData(8),
+            };
+
+            var sings = new Swings(0, new ExtremesFinder(false, 4, 0), 0, new ExtremesFinder(true, 4, 0));
+            var results = new List<Swing>();
+            foreach (var t in myData)
+                results.Add(sings.Calculate(t));
+
+            Assert.Equal(new List<Swing>()
+            {
+                new Swing(SwingPoint.peak,0),
+                new Swing(SwingPoint.peak,1),
+                new Swing(SwingPoint.peak,2),
+                new Swing(SwingPoint.peak,3),
+                new Swing(SwingPoint.peak,4),
+                new Swing(SwingPoint.continuation,5),
+                new Swing(SwingPoint.continuation,6),
+                new Swing(SwingPoint.continuation,7),
+                new Swing(SwingPoint.trough,8),
+                new Swing(SwingPoint.trough,9),
+                new Swing(SwingPoint.trough,10),
+                new Swing(SwingPoint.continuation,11),
+                new Swing(SwingPoint.continuation,12),
+                new Swing(SwingPoint.continuation,13),
+                new Swing(SwingPoint.continuation,14),
+            }, results);
+        }
+
+
+        [Fact]
+        private void ShouldFindPeakATR() {
+            var myData = new List<BidAskData>()
+            {
+                new BidAskData(10),
+                new BidAskData(6),
+                new BidAskData(7),
+                new BidAskData(8),
+                new BidAskData(9),
+                new BidAskData(10),
+                new BidAskData(11),
+                new BidAskData(12),
+                new BidAskData(12),
+                new BidAskData(12),
+                new BidAskData(12),
+                new BidAskData(6),
+                new BidAskData(5),
+                new BidAskData(6),
+            };
+
+            var sings = new Swings(0, new ExtremesFinder(false, 1, 0), 0, new ExtremesFinder(true, 1, 0));
+            var results = new List<Swing>();
+            foreach (var t in myData)
+                results.Add(sings.Calculate(t));
+
+            Assert.Equal(new List<Swing>()
+            {
+                new Swing(SwingPoint.peak,0),
+                new Swing(SwingPoint.peak,1),
+                new Swing(SwingPoint.peak,2),
+                new Swing(SwingPoint.trough,3),
+                new Swing(SwingPoint.trough,4),
+                new Swing(SwingPoint.peak,5)
+            }, results);
+        }
+
+        private double FindPriceForAtr(double desiredATR, double prevATR) {
+            return 20 * desiredATR - 19 * 20 * prevATR;
         }
     }
 
