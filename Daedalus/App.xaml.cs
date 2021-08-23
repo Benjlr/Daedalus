@@ -10,7 +10,7 @@ namespace Daedalus
     {
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            var t  = ModelSingleton.Instance.Mymarket;
+            //var t  = ModelSingleton.Instance.Mymarket;
         }
     }
 }

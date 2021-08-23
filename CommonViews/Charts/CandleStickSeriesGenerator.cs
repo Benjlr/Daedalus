@@ -3,6 +3,7 @@ using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using Thought;
 
 namespace CommonViews.Charts
 {
@@ -13,11 +14,12 @@ namespace CommonViews.Charts
             OxyColors.Pink,
             OxyColors.Blue,
             OxyColors.Gold,
+            OxyColors.Turquoise,
             OxyColors.Black,
         };
 
 
-        public static PlotModel Generate(Model data) {
+        public static PlotModel Generate(MarketTrade data) {
             var myModel = new PlotModel();
 
             AddAxesAndMainSeries(data, myModel);
@@ -27,20 +29,20 @@ namespace CommonViews.Charts
             return myModel;
         }
 
-        private static void AddAverages(Model data, PlotModel myModel) {
+        private static void AddAverages(MarketTrade data, PlotModel myModel) {
             for (int i = 0; i < data.MovingAverages.Length; i++) {
                 var line = new LineSeries() {
                     Color = _colourList[i],
                     StrokeThickness = 1
                 };
                 for (int j = 0; j < data.MovingAverages[i].Length; j++)
-                    line.Points.Add(new DataPoint(i, data.MovingAverages[i][j]));
+                    line.Points.Add(new DataPoint(1+j, data.MovingAverages[i][j]));
 
                 myModel.Series.Add(line);
             }
         }
 
-        private static void AddEntryExitAnnotations(Model data, PlotModel myModel) {
+        private static void AddEntryExitAnnotations(MarketTrade data, PlotModel myModel) {
             myModel.Annotations.Add(new LineAnnotation() {
                 Type = LineAnnotationType.Vertical,
                 X = data.EntryIndex,
@@ -49,7 +51,7 @@ namespace CommonViews.Charts
                 MinimumX = data.EntryIndex - 3,
                 MaximumX = data.EntryIndex + 3,
                 Type = LineAnnotationType.Horizontal,
-                Y = data.EntryPrice,
+                //Y = data.EntryPrice,
             });
 
             myModel.Annotations.Add(new LineAnnotation() {
@@ -61,11 +63,11 @@ namespace CommonViews.Charts
                 MinimumX = data.ExitIndex - 3,
                 MaximumX = data.ExitIndex + 3,
                 Type = LineAnnotationType.Horizontal,
-                Y = data.ExitPrice,
+                //Y = data.ExitPrice,
             });
         }
 
-        private static void AddAxesAndMainSeries(Model data, PlotModel myModel) {
+        private static void AddAxesAndMainSeries(MarketTrade data, PlotModel myModel) {
             myModel.Axes.Add(new LinearAxis() {
                 Position = AxisPosition.Bottom,
             });
@@ -73,20 +75,21 @@ namespace CommonViews.Charts
                 Position = AxisPosition.Left,
             });
 
-            var series = new CandleStickAndVolumeSeries {
+            var series = new CandleStickAndVolumeSeries
+            {
                 PositiveColor = OxyColors.SeaGreen,
                 NegativeColor = OxyColors.DarkRed,
                 PositiveHollow = false,
                 NegativeHollow = false,
                 StrokeThickness = 1.3,
                 RenderInLegend = false,
-                VolumeStyle = VolumeStyle.None,
+                VolumeStyle = VolumeStyle.Stacked,
                 //CandleWidth = 0.92,
             };
 
-            for (int i = 0; i < data.Prices.Length; i++) 
-                series.Append(new OhlcvItem(i, data.Prices[i][0], data.Prices[i][1], data.Prices[i][2], data.Prices[i][3],
-                    data.Prices[i][4]));
+            for (int i = 0; i < data.Prices.Length; i++)
+                series.Append(new OhlcvItem(i + 1, data.Prices[i].Open.Mid, data.Prices[i].High.Mid, data.Prices[i].Low.Mid, data.Prices[i].Close.Mid,
+                    data.Prices[i].Volume));
 
             myModel.Series.Add(series);
         }

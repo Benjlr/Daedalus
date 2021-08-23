@@ -18,7 +18,15 @@ namespace DataStructures
 
             for (int i = 0; i < lines.Length; i++) {
                 var myLine = lines[i].Split(',');
-                var date = DateTime.ParseExact(myLine[0], "yyyy/MM/dd", null).Ticks;
+                long date = 0;
+                //try {
+                //    date = DateTime.ParseExact(myLine[0], "yyyy/MM/dd", null).Ticks;
+
+                //}
+                //catch {
+                    date = DateTime.ParseExact(myLine[0], "d/MM/yyyy HH:mm", null).Ticks;
+
+                //}
 
                 myArray[i] = new BidAskData(
                     new BidAsk(double.Parse(myLine[1]), double.Parse(myLine[1]),date),

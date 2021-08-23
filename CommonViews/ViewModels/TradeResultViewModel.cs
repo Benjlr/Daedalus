@@ -1,24 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using CommonViews.Models;
 using CommonViews.Utils;
 using CommonViews.Views;
+using DataStructures;
+using Thought;
 using ViewCommon;
-using Viewer;
 
 namespace CommonViews.ViewModels
 {
     public class TradeResultViewModel : ViewModelBase
     {
-        public ObservableCollection<Trades> MyTrades { get; set; }
+        public ObservableCollection<Trade> MyTrades { get; set; }
 
-        private List<Model> _myModels { get; set; }
-        private StockWindow _stockWindow { get; set; }
+        private List<MarketTrade> _myModels { get; set; }
+        private TradeContextView _stockWindow { get; set; }
 
 
-        public TradeResultViewModel(List<Trades> results, List<Model> models) {
-            MyTrades = new ObservableCollection<Trades>(results);
-            _myModels = new List<Model>(models);
+        public TradeResultViewModel(List<Trade> results, List<MarketTrade> models) {
+            MyTrades = new ObservableCollection<Trade>(results);
+            _myModels = new List<MarketTrade>(models);
             Iterator = 0;
             NotifyPropertyChanged($"MyTrades");
         }
@@ -30,8 +30,11 @@ namespace CommonViews.ViewModels
             set {
                 _iterator = value;
                 if (MyTrades.Count > 0) {
-                    _stockWindow = new StockWindow() { DataContext = new StockWindowViewModel(_myModels[_iterator]) };
+                    _stockWindow = new TradeContextView();
+                    (_stockWindow.DataContext as StockWindowViewModel).Update(_myModels[_iterator]);
                     _stockWindow.Show();
+                    //var newContext = new StockWindowViewModel(_myModels[_iterator]);
+
                 }
             }
         }

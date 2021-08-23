@@ -12,11 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Remove="Views\StockWindow.xaml" />
-    <Page Remove="Views\TradeResults.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="Utils\LocalData\asx200cash">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -29,23 +24,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Views\StockWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Include="Views\TradeResults.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="OxyPlot.Wpf" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Logic\Logic.csproj" />
     <ProjectReference Include="..\PriceDataStructures\DataStructures.csproj" />
     <ProjectReference Include="..\RuleSets\RuleSets.csproj" />
+    <ProjectReference Include="..\Thought\Thought.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\TradeResults.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

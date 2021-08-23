@@ -1,24 +1,36 @@
 ﻿using CommonViews.Charts;
 using CommonViews.Utils;
+using CommonViews.Views;
 using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
+using Thought;
 
-namespace Viewer
+namespace CommonViews.ViewModels
 {
     public class StockWindowViewModel : ViewModelBase
     {
-        private Model _model { get; }
-        public PlotModel PlotModel { get; set; }
-        public PlotController ControllerModel { get; set; }
+        private MarketTrade _model { get; set; }
+        public PlotModel MyPlotModel { get; set; }
+        public PlotController MyControllerModel { get; set; }
 
 
 
-        public StockWindowViewModel(Model model) {
+        public StockWindowViewModel() {
+        }
+
+        public void Update(MarketTrade model) {
             _model = model;
-            PlotModel = CandleStickSeriesGenerator.Generate(_model);
-            PlotModel.InvalidatePlot(true);
-            ControllerModel = new PlotController();
-            NotifyPropertyChanged($"PlotModel");
-            NotifyPropertyChanged($"ControllerModel");
+            MyPlotModel = CandleStickSeriesGenerator.Generate(_model);
+            MyControllerModel = new PlotController();
+
+            MyPlotModel.InvalidatePlot(true);
+            NotifyPropertyChanged($"MyPlotModel");
+            NotifyPropertyChanged($"MyControllerModel");
+            MyPlotModel.InvalidatePlot(true);
+            MyPlotModel.InvalidatePlot(true);
+            NotifyPropertyChanged($"MyPlotModel");
+            NotifyPropertyChanged($"MyControllerModel");
         }
     }
 }

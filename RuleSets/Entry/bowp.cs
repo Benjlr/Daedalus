@@ -48,14 +48,15 @@ namespace RuleSets.Entry
         public override void CalculateBackSeries(BidAskData[] rawData) {
             var data = rawData.ToList();
             var volAvg = MovingAverage.SimpleMovingAverage(rawData.Select(x => x.Volume).ToList(),40);
+            var twenty = MovingAverage.SimpleMovingAverage(rawData.Select(x => x.Close.Mid).ToList(),20);
             var pivs = Pivots.Calculate(rawData);
             
 
             Satisfied = new bool[data.Count];
 
-            for (int i = 40; i < data.Count; i++) {
+            for (int i = 201; i < data.Count; i++) {
 
-                if (rawData[i].Volume * 2 < volAvg[i] && Math.Abs((rawData[i].Open.Mid / rawData[i].Close.Mid) - 1) < 0.025) {
+                if (rawData[i].Volume * 2 < volAvg[i] && Math.Abs((rawData[i].Open.Mid / rawData[i].Close.Mid) - 1) < 0.01 && rawData[i].Close.Mid > twenty[i]) {
                     var lastPos = ListTools.GetPositionInRange(rawData.ToList().GetRange(i - 30, 30), rawData[i-30].Close.Mid);
                     var currentPos = ListTools.GetPositionInRange(rawData.ToList().GetRange(i - 40, 40), rawData[i].Close.Mid);
                     var perc = Math.Abs(lastPos - currentPos);
@@ -69,18 +70,18 @@ namespace RuleSets.Entry
 
                     //lastHighPIvs.Reverse();
                     //lastHighPIvs = lastHighPIvs.Take(3).ToList();
-                    if (lowpivs.Count < 3) continue;
+                    //if (lowpivs.Count < 3) continue;
 
-                    bool lowpiv = true;
-                    bool highpiv = true;
+                    //bool lowpiv = true;
+                    //bool highpiv = true;
 
-                    for (int j = 0; j < 3 && j + 1 < lowpivs.Count ; j++)
-                        if (rawData[lowpivs[j].Index].Low.Mid < rawData[lowpivs[j + 1].Index].Low.Mid)
-                            lowpiv = false;
+                    //for (int j = 0; j < 3 && j + 1 < lowpivs.Count ; j++)
+                    //    if (rawData[lowpivs[j].Index].Low.Mid < rawData[lowpivs[j + 1].Index].Low.Mid)
+                    //        lowpiv = false;
 
 
-                    if (!lowpiv)
-                        break;
+                    //if (!lowpiv)
+                    //    break;
 
                     //for (int j = 0; j < 2; j++) {
                     //    if (rawData[lastHighPIvs[i].Index].High.Mid / rawData[lastHighPIvs[i + 1].Index].High.Mid < 0.05)
@@ -89,12 +90,12 @@ namespace RuleSets.Entry
 
                     //if (!highpiv)
                     //    break;
-                    if (lastPos > 0.85 && currentPos > 0.85) {
-                        Trace.TraceInformation($"{rawData[lowpivs[0].Index].Low.Mid:0.000}, {rawData[lowpivs[1].Index].Low.Mid:0.000}, {rawData[lowpivs[2].Index].Low.Mid:0.000}");
-                        Trace.TraceInformation($"{rawData[lowpivs[0].Index].Low.TicksToTime}, {rawData[lowpivs[1].Index].Low.TicksToTime}, {rawData[lowpivs[2].Index].Low.TicksToTime}");
-                        Trace.TraceInformation($"{rawData[i].Open.TicksToTime}");
+                    //if (lastPos > 0.85 && currentPos > 0.85) {
+                    //    Trace.TraceInformation($"{rawData[lowpivs[0].Index].Low.Mid:0.000}, {rawData[lowpivs[1].Index].Low.Mid:0.000}, {rawData[lowpivs[2].Index].Low.Mid:0.000}");
+                    //    Trace.TraceInformation($"{rawData[lowpivs[0].Index].Low.TicksToTime}, {rawData[lowpivs[1].Index].Low.TicksToTime}, {rawData[lowpivs[2].Index].Low.TicksToTime}");
+                    //    Trace.TraceInformation($"{rawData[i].Open.TicksToTime}");
                         Satisfied[i] = true;
-                    }
+                    //}
 
                 }
 

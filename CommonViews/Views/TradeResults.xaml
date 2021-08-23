@@ -26,7 +26,7 @@
                                 </GridViewColumn.Header>
                             </GridViewColumn>
                             <GridViewColumn x:Name="DaysHeldCol"
-                                                DisplayMemberBinding="{Binding DaysHeld, StringFormat=0}" Width="auto">
+                                                DisplayMemberBinding="{Binding Duration, StringFormat=0}" Width="auto">
                                 <GridViewColumn.Header>
                                     <GridViewColumnHeader Tag="DaysHeld" Click="sort_click">TimeIn</GridViewColumnHeader>
                                 </GridViewColumn.Header>
@@ -38,7 +38,7 @@
                                 </GridViewColumn.Header>
                             </GridViewColumn>
                             <GridViewColumn x:Name="ReturnInfoCol"
-                                            DisplayMemberBinding="{Binding  Details.Ticker}" Width="auto">
+                                            DisplayMemberBinding="{Binding  FinalResult, StringFormat=0.00%}" Width="auto">
                                 <GridViewColumn.Header>
                                     <GridViewColumnHeader Tag="Details.Ticker" Click="sort_click">Return</GridViewColumnHeader>
                                 </GridViewColumn.Header>

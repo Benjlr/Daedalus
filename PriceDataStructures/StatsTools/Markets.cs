@@ -23,6 +23,11 @@ namespace DataStructures.StatsTools
         public static string CBA_Daily => @"C:\Applications\Trading Data\CSV\Equities\CBA.csv";
         public static string test_data => GetDropboxLocation() + "\\Testing\\testdata";
 
+
+        public static List<string> AllASX15Min() {
+            return Directory.EnumerateFiles(@"C:\Temp\Data\AustIntraday").ToList();
+        }
+
         public static List<string> ASX300() {
             var vals = File.ReadAllLines(@"C:\Applications\Trading Data\Stocks\ASX\Lists\S&P ASX 300.asx.txt").ToList();
             var myList = new List<string>();
@@ -86,11 +91,16 @@ namespace DataStructures.StatsTools
             throw new Exception("Dropbox hasn't been set up");
         }
 
+        private static object _lock = new object() { };
+
         private static string ReturnDropBoxLocation(string jsonFileLocation) {
-            using var textReader = new StreamReader(new FileStream(jsonFileLocation, FileMode.Open));
-            var jobj = JObject.Load(new JsonTextReader(textReader));
-            var f = jobj?.First?.First?.Value<string>("path");
-            return f;
+            lock (_lock) {
+                using var textReader = new StreamReader(new FileStream(jsonFileLocation, FileMode.Open));
+                var jobj = JObject.Load(new JsonTextReader(textReader));
+                var f = jobj?.First?.First?.Value<string>("path");
+                return f;
+            }
+
         }
     }
 }

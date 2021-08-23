@@ -9,12 +9,14 @@ using OxyPlot.Series;
 using RuleSets;
 using RuleSets.Entry;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using CommonViews.ViewModels;
 using CommonViews.Views;
+using DataStructures.PriceAlgorithms;
 using Thought;
 
 namespace Icarus.ViewModels
@@ -29,8 +31,7 @@ namespace Icarus.ViewModels
         public ICommand ClickCommand => _clickCommand ??= new Commandler(Start, () => CanExecute);
         public bool CanExecute => true;
 
-        public StrategyViewModel()
-        {
+        public StrategyViewModel() {
             Stats = new StatsViewModel();
             MyResults = new PlotModel();
             MyResults.Axes.Add(new LinearAxis()
@@ -60,7 +61,7 @@ namespace Icarus.ViewModels
             };
             MyResults.Series.Add(mySeries);
             MyResults.Series.Add(mySeries2);
-            MyResults.Annotations.Add(new LineAnnotation() { Type = LineAnnotationType.Vertical, X = 0 });
+            MyResults.Annotations.Add(new LineAnnotation() {Type = LineAnnotationType.Vertical, X = 0});
         }
 
 
@@ -68,9 +69,9 @@ namespace Icarus.ViewModels
         public void Update(Trade myTrade) {
 
             Application.Current.Dispatcher.Invoke(() => {
-                mySeries.Points.Add(new DataPoint(mySeries.Points.Count + 1, myPortfolio.Cash ));
+                mySeries.Points.Add(new DataPoint(mySeries.Points.Count + 1, myPortfolio.Cash));
                 //mySeries2.Points.Add(new DataPoint(mySeries2.Points.Count + 1, myPortfolio.CurrentExposure.Count));
-                MyResults.Axes.First(x => x.Tag == "xaxis").Maximum = mySeries.Points.Count + 5;
+                MyResults.Axes.First(x => (string)x.Tag == "xaxis").Maximum = mySeries.Points.Count + 5;
             });
             Stats.UpdateStats(myTrade);
             MyResults.InvalidatePlot(true);
@@ -82,29 +83,25 @@ namespace Icarus.ViewModels
         }
 
         private Portfolio myPortfolio;
+
         private void Dowork(object callback) {
             TradeCompiler.Callback = Update;
-            myPortfolio = new Portfolio(7000,0.03, false);
+            myPortfolio = new Portfolio(7000, 0.03, false);
             Universe myunivers = new Universe();
-            var stocks = Markets.ASXAllOrds();
+            var stocks = Markets.AllASX15Min();
             for (int i = 0; i < stocks.Count(); i++) {
                 try {
-
-
                     var stock = new Market(stocks[i]);
-                    //if (LiquidityFilter.IsLiquid(stock.PriceData.Select(x => x.Close.Mid).ToList(), stock.PriceData.Select(x => x.Volume).ToList())) {
+                    if (LiquidityFilter.IsLiquid(stock.PriceData.Select(x => x.Close.Mid).ToList(), stock.PriceData.Select(x => x.Volume).ToList())) {
+                        Trace.WriteLine(stocks[i]);
+                        var stratto = new StaticStrategy.StrategyBuilder().CreateStrategy(new IRuleSet[] {new PivotPoint()}, stock,
+                        new TrailingStopPercentage(ExitPrices.StopOnly(0.94), 0.05));
 
-                        var stratto = new StaticStrategy.StrategyBuilder().
-                            CreateStrategy(new IRuleSet[] { new PivotPoint() }, stock,
-                                new TrailingStopPercentage(ExitPrices.StopOnly(0.93), 0.07 ));
-
-                        myunivers.AddMarket(stock, stratto);
-                    //}
-
+                    myunivers.AddMarket(stock, stratto);
+                    }
                 }
                 catch (Exception e) {
                     Console.WriteLine(e);
-                    //throw;
                 }
             }
 
@@ -135,9 +132,14 @@ namespace Icarus.ViewModels
             var backTest = new Backtest(myunivers, MarketSide.Bull, myPortfolio);
             backTest.RunBackTestByDates();
 
-            var resultWindow = new TradeResults() {DataContext = new TradeResultViewModel(backTest.Results)};
+            Application.Current.Dispatcher.Invoke(() => {
 
+                    var resultWindow = new TradeResults()
+                        {DataContext = new TradeResultViewModel(myPortfolio.Results.SelectMany(x => x.Trades).ToList(), PlaceTradesInContext.GenerateMarketTradesFromResulst(myPortfolio.Results, myunivers))};
+                    resultWindow.Show();
+
+                }
+            );
         }
-
     }
 }

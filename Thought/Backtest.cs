@@ -8,7 +8,7 @@ namespace Thought
 
     public class BackTestItem
     {
-        private ITradeCollator _collator { get; set; }
+        private ITradeCollator _collator { get;  }
         public string _name { get; }
         private int _counter { get; set; }
         public long[] Times { get; set; }
@@ -70,6 +70,7 @@ namespace Thought
             while (_results.Any(x=>!x.Finished) && _earliestDate != long.MaxValue)
                 IterateThroughMarkets();
         }
+
 
         private void GetEarliestDate() {
             foreach (var element in _markets.Elements)

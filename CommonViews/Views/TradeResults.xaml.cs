@@ -22,8 +22,8 @@ namespace CommonViews.Views
             if (!(sender is GridViewColumnHeader column)) return;
             var sortBy = column.Tag.ToString();
             if (listViewSortCol != null) {
-                AdornerLayer.GetAdornerLayer(listViewSortCol).Remove(listViewSortAdorner);
-                Portfolio.Items.SortDescriptions.Clear();
+                AdornerLayer.GetAdornerLayer(listViewSortCol)?.Remove(listViewSortAdorner);
+                //Portfolio.Items.SortDescriptions.Clear();
             }
 
             var newDir = ListSortDirection.Ascending;
@@ -32,11 +32,11 @@ namespace CommonViews.Views
 
             listViewSortCol = column;
             listViewSortAdorner = new SortAdorner(listViewSortCol, newDir);
-            AdornerLayer.GetAdornerLayer(listViewSortCol).Add(listViewSortAdorner);
-            Portfolio.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
+            AdornerLayer.GetAdornerLayer(listViewSortCol)?.Add(listViewSortAdorner);
+            //Portfolio.Items.SortDescriptions.Add(new SortDescription(sortBy, newDir));
 
 
-            ((OpenViewModel)DataContext).Reorder(sortBy, newDir);
+            //((OpenViewModel)DataContext).Reorder(sortBy, newDir);
         }
     }
 }
